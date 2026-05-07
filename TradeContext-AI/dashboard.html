@@ -8,6 +8,9 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Crect width='36' height='36' rx='8' fill='%230a1628'/%3E%3Cpolyline points='4,28 12,20 20,24 28,10' fill='none' stroke='%230ea5e9' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='28' cy='10' r='3.5' fill='%230ea5e9'/%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=DM+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://s3.tradingview.com/tv.js"></script>
+<!-- D3 + TopoJSON for the real-geometry World Pulse map -->
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 
@@ -140,7 +143,7 @@ html[data-theme="light"] .navbar{background:rgba(255,255,255,.96);}
 /* ═══════════ PAGE LAYOUT ═══════════ */
 /* Fluid layout — adapts gracefully from desktop down to mobile */
 body{overflow-x:hidden;overflow-y:auto;}
-.page-wrap{max-width:1920px;margin:0 auto;padding:20px 36px 80px;width:97%;}
+.page-wrap{max-width:none;margin:0 auto;padding:20px 28px 80px;width:99%;}
 .section-title{font-family:var(--sans);font-size:22px;font-weight:800;letter-spacing:-.02em;color:var(--text);margin-bottom:6px;display:flex;align-items:center;gap:10px;}
 .section-sub{font-family:var(--sans);font-size:13px;font-weight:400;color:var(--text2);margin-bottom:20px;}
 .section-block{margin-bottom:36px;}
@@ -201,7 +204,7 @@ body{overflow-x:hidden;overflow-y:auto;}
 .panel-body{padding:0;}
 
 /* ═══════════ CHART (smaller) ═══════════ */
-.chart-grid{display:grid;grid-template-columns:minmax(0,1fr) 420px;gap:0;}
+.chart-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,540px);gap:0;}
 @media (max-width:1280px){.chart-grid{grid-template-columns:minmax(0,1fr) 360px;}}
 @media (max-width:1024px){.chart-grid{grid-template-columns:1fr;}}
 /* Chart toolbar — single row, no wrap. Items overflow horizontally if needed */
@@ -266,14 +269,9 @@ body{overflow-x:hidden;overflow-y:auto;}
 .np-stat-mini{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:6px;text-align:center;}
 .np-stat-mini-val{font-family:var(--mono);font-size:14px;font-weight:800;line-height:1;}
 .np-stat-mini-lbl{font-family:var(--mono);font-size:7px;font-weight:700;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-top:4px;}
-.news-side-tabs{display:flex;align-items:stretch;background:var(--bg3);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;flex-shrink:0;}
-.news-side-tabs::-webkit-scrollbar{display:none;}
-.news-side-tabs .news-tab{font-size:10px;padding:9px 11px;flex-shrink:0;}
-/* Live status fills the right side of the tab row */
-.news-side-tabs .ns-live-status{margin-left:auto;display:flex;align-items:center;gap:6px;padding:0 14px;background:linear-gradient(90deg,transparent,rgba(52,211,153,.06));border-left:1px solid var(--border);font-family:var(--mono);font-size:9px;font-weight:700;color:var(--green2);letter-spacing:.08em;text-transform:uppercase;flex-shrink:0;white-space:nowrap;}
-.news-side-tabs .ns-live-status .ns-live-dot{width:6px;height:6px;border-radius:50%;background:var(--green2);box-shadow:0 0 6px rgba(52,211,153,.7);animation:blink 1.2s infinite;}
-.news-side-col.has-breaking .ns-live-status{background:linear-gradient(90deg,transparent,rgba(239,68,68,.1));color:var(--red2);}
-.news-side-col.has-breaking .ns-live-status .ns-live-dot{background:var(--red2);box-shadow:0 0 8px rgba(239,68,68,.8);animation:blink .6s infinite;}
+/* News tabs fill the entire row evenly — no LIVE pill anymore */
+.news-side-tabs{display:flex;align-items:stretch;background:var(--bg3);border-bottom:1px solid var(--border);flex-shrink:0;}
+.news-side-tabs .news-tab{font-size:11px;padding:11px 8px;flex:1;min-width:0;justify-content:center;text-align:center;}
 .news-side-scroll{flex:1;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border2) transparent;min-height:0;}
 .news-side-scroll::-webkit-scrollbar{width:6px;}
 .news-side-scroll::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
@@ -353,9 +351,36 @@ body{overflow-x:hidden;overflow-y:auto;}
 /* Gentle breath on the wrap glow */
 .world-map-wrap::after{content:'';position:absolute;inset:-2px;border-radius:8px;box-shadow:inset 0 0 60px rgba(14,165,233,.1);animation:mapBreath 5s ease-in-out infinite;pointer-events:none;}
 @keyframes mapBreath{0%,100%{opacity:.5;}50%{opacity:1;}}
+/* ═══════ BULL vs BEAR CASE PANEL ═══════ */
+.bb-panel{overflow:hidden;}
+.bb-panel .panel-h-title{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:900;}
+.bb-leaning{font-family:var(--mono);font-size:10px;font-weight:800;padding:4px 10px;border-radius:100px;letter-spacing:.1em;text-transform:uppercase;}
+.bb-leaning.bull{background:rgba(52,211,153,.15);color:var(--green2);border:1px solid rgba(52,211,153,.4);}
+.bb-leaning.bear{background:rgba(248,113,113,.15);color:var(--red2);border:1px solid rgba(248,113,113,.4);}
+.bb-leaning.neutral{background:rgba(245,158,11,.15);color:var(--yellow);border:1px solid rgba(245,158,11,.4);}
+.bb-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);}
+@media (max-width:780px){.bb-grid{grid-template-columns:1fr;}}
+.bb-side{padding:24px 28px;position:relative;overflow:hidden;min-height:280px;}
+.bb-bull{background:linear-gradient(135deg,rgba(16,185,129,.18) 0%,rgba(16,185,129,.06) 50%,rgba(52,211,153,.04) 100%);}
+.bb-bull::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad-bull);}
+.bb-bear{background:linear-gradient(135deg,rgba(239,68,68,.18) 0%,rgba(239,68,68,.06) 50%,rgba(248,113,113,.04) 100%);}
+.bb-bear::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad-bear);}
+.bb-side-h{font-family:var(--sans);font-size:18px;font-weight:900;letter-spacing:-.02em;margin-bottom:4px;}
+.bb-bull .bb-side-h{color:var(--green2);}
+.bb-bear .bb-side-h{color:var(--red2);}
+.bb-side-sub{font-family:var(--sans);font-size:12px;color:var(--text2);margin-bottom:18px;font-weight:500;}
+.bb-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:11px;}
+.bb-list li{font-family:var(--sans);font-size:13.5px;color:var(--text);line-height:1.55;padding-left:24px;position:relative;font-weight:500;}
+.bb-list li::before{content:'';position:absolute;left:0;top:8px;width:8px;height:8px;border-radius:50%;}
+.bb-bull .bb-list li::before{background:var(--green2);box-shadow:0 0 10px rgba(52,211,153,.5);}
+.bb-bear .bb-list li::before{background:var(--red2);box-shadow:0 0 10px rgba(248,113,113,.5);}
+.bb-list li .bb-meta{display:block;font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:3px;font-weight:600;letter-spacing:.04em;}
+.bb-empty{font-family:var(--mono);font-size:11px;color:var(--text3);font-style:italic;display:none;}
+.bb-list:empty + .bb-empty{display:block;}
+
 .world-map-svg{width:100%;height:100%;position:relative;z-index:1;}
-.world-map-svg .continent{fill:rgba(14,165,233,.08);stroke:rgba(14,165,233,.18);stroke-width:.5;animation:continentShimmer 8s ease-in-out infinite;}
-.world-map-svg .continent:nth-child(odd){animation-delay:-3s;}
+.world-map-svg .continent,.world-map-svg .country{fill:rgba(14,165,233,.10);stroke:rgba(14,165,233,.25);stroke-width:.4;animation:continentShimmer 8s ease-in-out infinite;transition:fill .25s;}
+.world-map-svg .country:hover{fill:rgba(14,165,233,.18);}
 @keyframes continentShimmer{0%,100%{fill:rgba(14,165,233,.07);}50%{fill:rgba(139,92,246,.09);}}
 .world-map-svg .grid-line{stroke:rgba(14,165,233,.07);stroke-width:.4;}
 /* Animated arcing connection lines between hot cities */
@@ -377,6 +402,26 @@ body{overflow-x:hidden;overflow-y:auto;}
 .world-city .label{font-family:var(--mono);font-size:9px;font-weight:700;fill:var(--text);pointer-events:none;}
 .world-city .signal-cnt{font-family:var(--mono);font-size:8px;fill:var(--text2);pointer-events:none;}
 @keyframes cityPulse{0%{r:5;opacity:.7;}100%{r:24;opacity:0;}}
+/* Tooltip on hover — floats over the map showing city volume info */
+.world-tooltip{position:absolute;pointer-events:none;background:linear-gradient(135deg,#0a1628,#0f1f3a);border:1px solid var(--border2);border-radius:10px;padding:14px 16px;min-width:220px;box-shadow:0 16px 48px rgba(0,0,0,.6);opacity:0;transform:translate(-50%,-110%) scale(.95);transition:opacity .18s var(--ease-out-quart),transform .18s var(--ease-out-quart);z-index:100;font-family:var(--sans);}
+.world-tooltip.show{opacity:1;transform:translate(-50%,-110%) scale(1);}
+.world-tooltip::after{content:'';position:absolute;top:100%;left:50%;margin-left:-7px;border:7px solid transparent;border-top-color:var(--border2);}
+.wt-header{display:flex;align-items:center;gap:8px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.wt-flag{font-size:18px;}
+.wt-name{font-size:14px;font-weight:800;color:var(--text);letter-spacing:-.01em;}
+.wt-ccy{font-family:var(--mono);font-size:9px;font-weight:700;color:var(--blue);background:var(--bluedim);padding:2px 7px;border-radius:4px;letter-spacing:.08em;}
+.wt-row{display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:11px;padding:4px 0;}
+.wt-row .lbl{color:var(--text3);font-weight:600;letter-spacing:.04em;text-transform:uppercase;font-size:9px;}
+.wt-row .val{color:var(--text);font-weight:800;}
+.wt-row .val.hot{color:var(--red2);}
+.wt-row .val.warm{color:var(--yellow);}
+.wt-row .val.calm{color:var(--green2);}
+.wt-row .val.dim{color:var(--text3);}
+.wt-status{margin-top:8px;padding:6px 9px;border-radius:6px;font-family:var(--mono);font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;text-align:center;}
+.wt-status.open{background:rgba(52,211,153,.12);color:var(--green2);border:1px solid rgba(52,211,153,.3);}
+.wt-status.closed{background:rgba(122,154,184,.08);color:var(--text2);border:1px solid var(--border);}
+.wt-status.opening{background:rgba(245,158,11,.1);color:var(--yellow);border:1px solid rgba(245,158,11,.3);}
+
 .world-map-legend{display:flex;gap:14px;padding:10px 4px 0;font-family:var(--mono);font-size:9px;font-weight:600;color:var(--text3);letter-spacing:.06em;}
 .world-map-legend .lg{display:inline-flex;align-items:center;gap:5px;}
 .world-map-legend .lg .swatch{width:8px;height:8px;border-radius:50%;display:inline-block;}
@@ -1000,7 +1045,6 @@ body{overflow-x:hidden;overflow-y:auto;}
               <button class="news-tab red" onclick="switchNewsTab(1,this)">⚡ Breaking</button>
               <button class="news-tab" onclick="switchNewsTab(2,this)">🔴 High</button>
               <button class="news-tab" onclick="switchNewsTab(3,this)">🏛️ Economic</button>
-              <div class="ns-live-status" id="nsLiveStatus"><span class="ns-live-dot"></span><span id="nsLiveLabel">LIVE · 0s ago</span></div>
             </div>
             <div class="news-side-scroll">
               <div class="news-cont active" id="newsCont0"></div>
@@ -1008,6 +1052,31 @@ body{overflow-x:hidden;overflow-y:auto;}
               <div class="news-cont" id="newsCont2"></div>
               <div class="news-cont" id="newsCont3"></div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════ BULL vs BEAR CASE — for the active chart symbol ═══════ -->
+      <div class="panel bb-panel" id="bbPanel">
+        <div class="panel-h">
+          <div class="panel-h-title">
+            ⚖️ <span id="bbSymbol">XAU/USD</span> — Bull vs Bear Case
+            <span class="bb-leaning" id="bbLeaning">Awaiting…</span>
+          </div>
+          <span style="font-family:var(--mono);font-size:10px;color:var(--text3);">Auto-built from live news bias · updates with every tick</span>
+        </div>
+        <div class="bb-grid">
+          <div class="bb-side bb-bull" id="bbBull">
+            <div class="bb-side-h">▲ BULLISH CASE</div>
+            <div class="bb-side-sub" id="bbBullSub">Why this could rip higher</div>
+            <ul class="bb-list" id="bbBullList"></ul>
+            <div class="bb-empty" id="bbBullEmpty">No bullish drivers yet — waiting on news.</div>
+          </div>
+          <div class="bb-side bb-bear" id="bbBear">
+            <div class="bb-side-h">▼ BEARISH CASE</div>
+            <div class="bb-side-sub" id="bbBearSub">What could flip it</div>
+            <ul class="bb-list" id="bbBearList"></ul>
+            <div class="bb-empty" id="bbBearEmpty">No bearish drivers — clean upside path.</div>
           </div>
         </div>
       </div>
@@ -1075,27 +1144,20 @@ body{overflow-x:hidden;overflow-y:auto;}
               <div class="mp-card-title">🌍 World Pulse — Financial Centre Heat Map</div>
               <div class="mp-card-sub">Where the news is hitting hardest right now · brighter = more market-moving signals</div>
             </div>
-            <div class="world-map-wrap">
-              <svg class="world-map-svg" viewBox="0 0 1000 460" preserveAspectRatio="xMidYMid meet">
-                <!-- subtle dotted grid -->
+            <div class="world-map-wrap" id="worldMapWrap">
+              <svg class="world-map-svg" id="worldMapSvg" viewBox="0 0 1000 500" preserveAspectRatio="xMidYMid meet">
                 <defs>
                   <pattern id="wm-grid" width="50" height="50" patternUnits="userSpaceOnUse">
                     <circle cx="1" cy="1" r="0.6" fill="rgba(14,165,233,.1)"/>
                   </pattern>
                 </defs>
-                <rect width="1000" height="460" fill="url(#wm-grid)"/>
-                <!-- Continents (simplified silhouettes) -->
-                <g class="continents">
-                  <path class="continent" d="M 90,80 Q 140,70 220,90 L 280,140 L 270,210 L 230,260 L 160,275 L 130,230 L 90,180 Z"/>
-                  <path class="continent" d="M 230,290 L 285,300 L 305,400 L 270,440 L 260,380 L 235,330 Z"/>
-                  <path class="continent" d="M 460,90 Q 520,80 555,110 L 565,150 L 535,170 L 480,160 L 460,130 Z"/>
-                  <path class="continent" d="M 480,180 L 565,180 L 585,280 L 555,360 L 510,370 L 490,300 Z"/>
-                  <path class="continent" d="M 560,80 Q 700,60 830,90 L 880,150 L 870,220 L 820,260 L 720,265 L 645,230 L 590,190 L 575,140 Z"/>
-                  <path class="continent" d="M 800,330 L 880,325 L 905,370 L 880,400 L 820,395 L 800,370 Z"/>
-                </g>
-                <!-- Major financial centres — IDs and labels added by JS -->
+                <rect width="1000" height="500" fill="url(#wm-grid)"/>
+                <!-- Real geography rendered by D3 + TopoJSON at runtime -->
+                <g id="worldCountries"></g>
                 <g id="worldCities"></g>
               </svg>
+              <!-- Hover tooltip — populated by JS with city volume info -->
+              <div class="world-tooltip" id="worldTooltip"></div>
             </div>
             <div class="world-map-legend">
               <span class="lg"><span class="swatch" style="background:var(--red2);box-shadow:0 0 6px rgba(248,113,113,.7);"></span>HOT (5+ signals/h)</span>
@@ -2633,21 +2695,34 @@ function renderMoodGrid(){
 
 // World Pulse Map — session-aware heat. Tokyo closed = Tokyo dim even if news hits JPY.
 // Each city tagged with the FX session whose hours determine its trading volume.
+// Real lat/long for each financial centre — D3 projection converts these to SVG coords
 var WORLD_CITIES=[
-  {id:'newyork',  name:'New York',    cx:230,cy:175,ccy:'USD',session:'ny'},
-  {id:'toronto',  name:'Toronto',     cx:215,cy:155,ccy:'CAD',session:'ny'},
-  {id:'london',   name:'London',      cx:495,cy:140,ccy:'GBP',session:'london'},
-  {id:'frankfurt',name:'Frankfurt',   cx:520,cy:148,ccy:'EUR',session:'london'},
-  {id:'zurich',   name:'Zurich',      cx:512,cy:158,ccy:'CHF',session:'london'},
-  {id:'tokyo',    name:'Tokyo',       cx:855,cy:185,ccy:'JPY',session:'tokyo'},
-  {id:'shanghai', name:'Shanghai',    cx:810,cy:200,ccy:'CNY',session:'tokyo'},
-  {id:'hongkong', name:'Hong Kong',   cx:805,cy:225,ccy:'CNY',session:'tokyo'},
-  {id:'singapore',name:'Singapore',   cx:770,cy:285,ccy:'CNY',session:'tokyo'},
-  {id:'sydney',   name:'Sydney',      cx:885,cy:380,ccy:'AUD',session:'sydney'},
-  {id:'auckland', name:'Auckland',    cx:935,cy:400,ccy:'NZD',session:'sydney'},
-  {id:'dubai',    name:'Dubai',       cx:625,cy:230,ccy:'USD',session:'london'},
-  {id:'mumbai',   name:'Mumbai',      cx:705,cy:245,ccy:'INR',session:'tokyo'}
+  {id:'newyork',  name:'New York',    lon:-74.00, lat:40.71, ccy:'USD',session:'ny'},
+  {id:'toronto',  name:'Toronto',     lon:-79.38, lat:43.65, ccy:'CAD',session:'ny'},
+  {id:'london',   name:'London',      lon:-0.13,  lat:51.51, ccy:'GBP',session:'london'},
+  {id:'frankfurt',name:'Frankfurt',   lon:8.68,   lat:50.11, ccy:'EUR',session:'london'},
+  {id:'zurich',   name:'Zurich',      lon:8.55,   lat:47.38, ccy:'CHF',session:'london'},
+  {id:'tokyo',    name:'Tokyo',       lon:139.69, lat:35.69, ccy:'JPY',session:'tokyo'},
+  {id:'shanghai', name:'Shanghai',    lon:121.47, lat:31.23, ccy:'CNY',session:'tokyo'},
+  {id:'hongkong', name:'Hong Kong',   lon:114.17, lat:22.32, ccy:'CNY',session:'tokyo'},
+  {id:'singapore',name:'Singapore',   lon:103.85, lat:1.35,  ccy:'CNY',session:'tokyo'},
+  {id:'sydney',   name:'Sydney',      lon:151.21, lat:-33.87,ccy:'AUD',session:'sydney'},
+  {id:'auckland', name:'Auckland',    lon:174.76, lat:-36.85,ccy:'NZD',session:'sydney'},
+  {id:'dubai',    name:'Dubai',       lon:55.27,  lat:25.20, ccy:'USD',session:'london'},
+  {id:'mumbai',   name:'Mumbai',      lon:72.83,  lat:19.08, ccy:'INR',session:'tokyo'}
 ];
+
+// Project a city's lat/long to SVG coords using the D3 projection (set up after world map loads)
+function projectCity(c){
+  if(typeof _worldProjection==='function'&&_worldProjection){
+    var pt=_worldProjection([c.lon,c.lat]);
+    if(pt)return {x:pt[0],y:pt[1]};
+  }
+  // Fallback before D3 loads — equirectangular by hand on 1000x500
+  var x=((c.lon+180)/360)*1000;
+  var y=((90-c.lat)/180)*500;
+  return {x:x,y:y};
+}
 
 // Returns 0..1 — how "open" a session is right now, based on UTC hour
 function sessionFactor(sid){
@@ -2661,6 +2736,61 @@ function sessionFactor(sid){
   if(hrTo<2)return 0.55;
   if(hrTo<5)return 0.3;
   return 0.15; // overnight / fully closed
+}
+
+// ════════════ BULL vs BEAR CASE ════════════
+// Builds two columns of bullet points from LIVE_NEWS for the active chart symbol.
+// Bullish drivers (news where the symbol moves up) on the left, bearish on the right.
+function renderBullBear(){
+  var sym=(window._activeSymLabel||'XAU/USD');
+  var symEl=document.getElementById('bbSymbol');if(symEl)symEl.textContent=sym;
+  var bullList=document.getElementById('bbBullList');
+  var bearList=document.getElementById('bbBearList');
+  var leaning=document.getElementById('bbLeaning');
+  if(!bullList||!bearList)return;
+
+  // Find news where this symbol appears, separate by per-asset direction
+  var bull=[],bear=[];
+  (LIVE_NEWS||[]).forEach(function(n){
+    if(!n.markets)return;
+    var hit=n.markets.find(function(m){return m.sym===sym||m.sym.toUpperCase()===sym.toUpperCase();});
+    if(!hit)return;
+    var item={
+      title:n.title,
+      reason:hit.rationale||(n.desc||'').slice(0,140),
+      pct:hit.pct,
+      time:n.time,
+      breaking:!!n.isBreaking,
+    };
+    if(hit.dir==='up')bull.push(item);
+    else if(hit.dir==='dn')bear.push(item);
+  });
+
+  // Take top 5 per side, prioritising breaking news
+  var sortFn=function(a,b){return (b.breaking?1:0)-(a.breaking?1:0);};
+  bull.sort(sortFn);bear.sort(sortFn);
+  bull=bull.slice(0,5);bear=bear.slice(0,5);
+
+  function render(items){
+    return items.map(function(i){
+      var pctStr=i.pct?' <strong style="font-weight:800;">'+i.pct+'</strong>':'';
+      var brkBadge=i.breaking?'<span style="background:rgba(239,68,68,.18);color:var(--red2);font-family:var(--mono);font-size:8px;font-weight:800;padding:1px 5px;border-radius:3px;margin-right:5px;letter-spacing:.06em;">⚡ BREAK</span>':'';
+      var cap=function(s){return s.charAt(0).toUpperCase()+s.slice(1);};
+      var reason=i.reason?cap(i.reason):cap(i.title.slice(0,90)+(i.title.length>90?'…':''));
+      return '<li>'+brkBadge+reason+pctStr+'<span class="bb-meta">'+i.time+' · '+(i.title.slice(0,70)+(i.title.length>70?'…':''))+'</span></li>';
+    }).join('');
+  }
+  bullList.innerHTML=render(bull);
+  bearList.innerHTML=render(bear);
+
+  // Overall leaning badge
+  if(leaning){
+    leaning.classList.remove('bull','bear','neutral');
+    if(bull.length>bear.length+1){leaning.classList.add('bull');leaning.textContent='▲ Leaning Bullish';}
+    else if(bear.length>bull.length+1){leaning.classList.add('bear');leaning.textContent='▼ Leaning Bearish';}
+    else if(bull.length===0&&bear.length===0){leaning.classList.add('neutral');leaning.textContent='Awaiting news';}
+    else{leaning.classList.add('neutral');leaning.textContent='● Mixed signals';}
+  }
 }
 
 function renderWorldMap(){
@@ -2689,27 +2819,29 @@ function renderWorldMap(){
   var totalSignals=0;
   cityData.forEach(function(d){
     var c=d.c, sigs=d.raw, fac=d.factor, w=d.weighted;
-    // Class by weighted intensity — closed markets stay dim even with high raw
+    var pt=projectCity(c);
     var cls=w>=5?'hot':w>=2?'warm':w>=0.5?'calm':'dim';
-    var pulse=w>=2?'<circle class="pulse" cx="'+c.cx+'" cy="'+c.cy+'" r="5"/>':'';
+    var pulse=w>=2?'<circle class="pulse" cx="'+pt.x+'" cy="'+pt.y+'" r="5"/>':'';
     var dotR=w>=5?6:w>=2?5:4;
     var sessLbl=fac>=1?'OPEN':fac>=0.5?'OPENS SOON':'CLOSED';
-    html+='<g class="world-city '+cls+'" data-city="'+c.id+'" data-session="'+sessLbl+'">'
+    // Bigger invisible hit-target for hover so tiny dots are still easy to hit
+    html+='<g class="world-city '+cls+'" data-city="'+c.id+'" data-session="'+sessLbl+'" style="cursor:pointer;">'
+      +'<circle cx="'+pt.x+'" cy="'+pt.y+'" r="14" fill="transparent"/>'
       +pulse
-      +'<circle class="dot" cx="'+c.cx+'" cy="'+c.cy+'" r="'+dotR+'"/>'
-      +'<text class="label" x="'+(c.cx+10)+'" y="'+(c.cy-3)+'">'+c.name+'</text>'
-      +'<text class="signal-cnt" x="'+(c.cx+10)+'" y="'+(c.cy+9)+'">'+(sigs?sigs+' sig · '+sessLbl:sessLbl)+'</text>'
+      +'<circle class="dot" cx="'+pt.x+'" cy="'+pt.y+'" r="'+dotR+'"/>'
+      +'<text class="label" x="'+(pt.x+10)+'" y="'+(pt.y-3)+'">'+c.name+'</text>'
+      +'<text class="signal-cnt" x="'+(pt.x+10)+'" y="'+(pt.y+9)+'">'+(sigs?sigs+' sig · '+sessLbl:sessLbl)+'</text>'
       +'</g>';
     totalSignals+=Math.round(w);
   });
 
-  // Animated arcs connecting the hottest pair of cities (top-3)
+  // Animated arcs connecting the hottest pair of cities
   var hot=cityData.filter(function(d){return d.weighted>=2;}).sort(function(a,b){return b.weighted-a.weighted;}).slice(0,4);
   for(var i=0;i<hot.length-1;i++){
-    var a=hot[i].c, b=hot[i+1].c;
-    var midX=(a.cx+b.cx)/2, midY=Math.min(a.cy,b.cy)-40;
+    var pa=projectCity(hot[i].c), pb=projectCity(hot[i+1].c);
+    var midX=(pa.x+pb.x)/2, midY=Math.min(pa.y,pb.y)-40;
     var cls=hot[i].weighted>=5?'hot':'warm';
-    html+='<path class="world-arc '+cls+'" d="M '+a.cx+' '+a.cy+' Q '+midX+' '+midY+' '+b.cx+' '+b.cy+'"/>';
+    html+='<path class="world-arc '+cls+'" d="M '+pa.x+' '+pa.y+' Q '+midX+' '+midY+' '+pb.x+' '+pb.y+'"/>';
   }
 
   g.innerHTML=html;
@@ -2725,7 +2857,111 @@ function refreshMacroPulse(){
   renderRiskTherm();
   renderMoodGrid();
   renderWorldMap();
+  renderBullBear();
 }
+
+// ════════════ REAL WORLD MAP — D3 + TopoJSON Mercator projection ════════════
+// Loads world-atlas TopoJSON (110m resolution, ~70KB), renders all countries as
+// real geographic shapes, then projects city lat/long to SVG coords so cities
+// align with their real-world locations.
+var _worldProjection=null;
+async function loadRealWorldMap(){
+  if(typeof d3==='undefined'||typeof topojson==='undefined'){
+    console.warn('D3 or TopoJSON not loaded yet, retrying…');
+    setTimeout(loadRealWorldMap,400);
+    return;
+  }
+  var svg=document.getElementById('worldMapSvg');
+  var countriesG=document.getElementById('worldCountries');
+  if(!svg||!countriesG)return;
+  try{
+    // World atlas — 110m simplified countries TopoJSON (public domain, ~70KB)
+    var url='https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json';
+    var data=await(await fetch(url)).json();
+    var countries=topojson.feature(data,data.objects.countries);
+    // Mercator-like projection sized to our 1000x500 viewBox
+    var projection=d3.geoEquirectangular().fitSize([1000,500],countries);
+    _worldProjection=projection;
+    var pathGen=d3.geoPath(projection);
+    // Render all countries — pure SVG paths, no interaction needed (cities handle that)
+    var html='';
+    countries.features.forEach(function(f){
+      var d=pathGen(f);
+      if(d)html+='<path class="country" d="'+d+'"/>';
+    });
+    countriesG.innerHTML=html;
+    console.log('[live] World map rendered with',countries.features.length,'countries');
+    // Re-render cities now that we have the projection
+    renderWorldMap();
+  }catch(e){
+    console.warn('Failed to load world map data:',e);
+  }
+}
+window.addEventListener('load',function(){setTimeout(loadRealWorldMap,500);});
+
+// ════════════ WORLD MAP HOVER TOOLTIP ════════════
+// Show city info bubble when hovering over a marker. Uses delegated mouseover
+// on the cities <g> so it works for dynamically-added cities.
+(function setupWorldHover(){
+  var wrap=document.getElementById('worldMapWrap');
+  var tip=document.getElementById('worldTooltip');
+  if(!wrap||!tip)return;
+  var FLAGS={
+    newyork:'🇺🇸',toronto:'🇨🇦',london:'🇬🇧',frankfurt:'🇩🇪',zurich:'🇨🇭',
+    tokyo:'🇯🇵',shanghai:'🇨🇳',hongkong:'🇭🇰',singapore:'🇸🇬',
+    sydney:'🇦🇺',auckland:'🇳🇿',dubai:'🇦🇪',mumbai:'🇮🇳'
+  };
+  function showTip(cityId,evt){
+    var city=(typeof WORLD_CITIES!=='undefined')?WORLD_CITIES.find(function(c){return c.id===cityId;}):null;
+    if(!city)return;
+    // Pull current sigs/factor — recompute from LIVE_NEWS
+    var counts={};
+    (LIVE_NEWS||[]).slice(0,50).forEach(function(n){
+      if(!n.markets)return;
+      n.markets.forEach(function(m){
+        var sym=(m.sym||'').toUpperCase();
+        ['USD','EUR','GBP','JPY','CHF','CAD','AUD','NZD','CNY','INR'].forEach(function(c){
+          if(sym.includes(c))counts[c]=(counts[c]||0)+1;
+        });
+      });
+    });
+    var sigs=Math.round(counts[city.ccy]||0);
+    var fac=(typeof sessionFactor==='function')?sessionFactor(city.session):0.5;
+    var weighted=sigs*fac;
+    var heatCls=weighted>=5?'hot':weighted>=2?'warm':weighted>=0.5?'calm':'dim';
+    var heatLbl=heatCls==='hot'?'🔴 HOT':heatCls==='warm'?'🟡 WARM':heatCls==='calm'?'🟢 CALM':'⚪ QUIET';
+    var sessLbl=fac>=1?'open':fac>=0.5?'opening':'closed';
+    var sessTxt=fac>=1?'🟢 MARKET OPEN':fac>=0.5?'🟡 OPENS SOON':'⚪ MARKET CLOSED';
+    tip.innerHTML='<div class="wt-header">'
+      +'<span class="wt-flag">'+(FLAGS[city.id]||'🌐')+'</span>'
+      +'<div style="flex:1;"><div class="wt-name">'+city.name+'</div></div>'
+      +'<span class="wt-ccy">'+city.ccy+'</span>'
+      +'</div>'
+      +'<div class="wt-row"><span class="lbl">News signals</span><span class="val '+heatCls+'">'+sigs+'</span></div>'
+      +'<div class="wt-row"><span class="lbl">Heat (session-weighted)</span><span class="val '+heatCls+'">'+heatLbl+'</span></div>'
+      +'<div class="wt-row"><span class="lbl">Session factor</span><span class="val">'+(fac*100).toFixed(0)+'%</span></div>'
+      +'<div class="wt-status '+sessLbl+'">'+sessTxt+'</div>';
+    // Position tooltip relative to the wrap, near the cursor
+    var rect=wrap.getBoundingClientRect();
+    tip.style.left=(evt.clientX-rect.left)+'px';
+    tip.style.top=(evt.clientY-rect.top)+'px';
+    tip.classList.add('show');
+  }
+  function hideTip(){tip.classList.remove('show');}
+  wrap.addEventListener('mouseover',function(e){
+    var g=e.target.closest('.world-city');
+    if(g&&g.dataset.city)showTip(g.dataset.city,e);
+  });
+  wrap.addEventListener('mousemove',function(e){
+    if(!tip.classList.contains('show'))return;
+    var rect=wrap.getBoundingClientRect();
+    tip.style.left=(e.clientX-rect.left)+'px';
+    tip.style.top=(e.clientY-rect.top)+'px';
+  });
+  wrap.addEventListener('mouseout',function(e){
+    if(!e.relatedTarget||!e.relatedTarget.closest||!e.relatedTarget.closest('.world-city'))hideTip();
+  });
+})();
 // Snapshot baselines on first tick (after a short delay so prices have settled), then refresh every 10s.
 setTimeout(function(){snapshotBaseline();refreshMacroPulse();},2000);
 setInterval(refreshMacroPulse,10000);
