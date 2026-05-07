@@ -1,0 +1,194 @@
+import Anthropic from '@anthropic-ai/sdk';
+import { z } from 'zod';
+import { env } from '../config/env';
+import { HttpError } from '../middleware/error';
+import { log } from '../lib/logger';
+import { getPrice } from './price.service';
+import { prisma } from '../config/db';
+import { anthropic, claudeAvailable } from './claude.service';
+
+/**
+ * AI Bias Engine — generates live fundamental + technical analysis per symbol.
+ *
+ * Claude is asked for:
+ *  - Fundamental analysis bias + 3 bullet points (news, macro drivers)
+ *  - Technical analysis bias + 3 bullet points (chart structure, indicators)
+ *  - Day-trade verdict (intraday bias)
+ *  - Swing-trade verdict (multi-day bias)
+ *
+ * Each call uses live price + recent news context for the symbol so the
+ * analysis is grounded, not hallucinated.
+ *
+ * Cached 10 min per symbol — TradeContext score uses 1h, but bias evolves
+ * faster so we refresh every 10 min or when news arrives that mentions
+ * the symbol (cache invalidation hook).
+ */
+const MODEL = 'claude-sonnet-4-6';
+const CACHE_TTL_MS = 10 * 60 * 1000;
+
+const BIAS_SYSTEM = `You are a senior trading desk analyst building a live AI bias dashboard for retail traders. Your job: given a symbol and recent context, produce a 4-part analysis.
+
+Return a single JSON object with this exact shape:
+
+{
+  "fundamental": {
+    "bias": "bullish" | "bearish" | "neutral",
+    "points": ["<short bullet>", "<short bullet>", "<short bullet>"]
+  },
+  "technical": {
+    "bias": "bullish" | "bearish" | "neutral",
+    "points": ["<short bullet>", "<short bullet>", "<short bullet>"]
+  },
+  "dayTrade": {
+    "bias": "bullish" | "bearish" | "neutral",
+    "rationale": "<one sentence>"
+  },
+  "swingTrade": {
+    "bias": "bullish" | "bearish" | "neutral",
+    "rationale": "<one sentence>"
+  }
+}
+
+Rules:
+- "fundamental" = macro drivers, central bank policy, news sentiment, economic data, geopolitical events
+- "technical" = price structure, support/resistance, momentum, volume, key MAs, chart patterns
+- Each "points" array = exactly 3 bullets, max 14 words each, present tense, specific
+- "dayTrade" = intraday (1-24h) — uses technicals + breaking news
+- "swingTrade" = multi-day to multi-week — leans more on fundamentals
+- "bias" can be "neutral" if conditions genuinely conflict — don't force a direction
+- "rationale" = one tight sentence, max 22 words
+
+Be honest about uncertainty. If price + news contradict, say so in a bullet.
+
+Return JSON ONLY. No markdown, no preface, no fences.`;
+
+const BiasSchema = z.object({
+  fundamental: z.object({
+    bias: z.enum(['bullish', 'bearish', 'neutral']),
+    points: z.array(z.string()).min(1).max(5),
+  }),
+  technical: z.object({
+    bias: z.enum(['bullish', 'bearish', 'neutral']),
+    points: z.array(z.string()).min(1).max(5),
+  }),
+  dayTrade: z.object({
+    bias: z.enum(['bullish', 'bearish', 'neutral']),
+    rationale: z.string().max(280),
+  }),
+  swingTrade: z.object({
+    bias: z.enum(['bullish', 'bearish', 'neutral']),
+    rationale: z.string().max(280),
+  }),
+});
+
+export type AiBias = z.infer<typeof BiasSchema>;
+
+interface CacheEntry {
+  data: AiBias;
+  generatedAt: number;
+  symbol: string;
+}
+const cache = new Map<string, CacheEntry>();
+
+/** Invalidate the cache for a symbol — called when fresh news arrives mentioning it. */
+export function invalidateBiasCache(symbol: string): void {
+  cache.delete(symbol.toUpperCase());
+}
+
+function getJsonText(msg: Anthropic.Messages.Message): string {
+  const block = msg.content.find((b) => b.type === 'text');
+  if (!block || block.type !== 'text') throw new Error('No text block');
+  return block.text.trim();
+}
+
+function parseJson(raw: string): unknown {
+  try { return JSON.parse(raw); } catch { /* fall through */ }
+  const fenced = raw.replace(/^```(?:json)?\s*/i, '').replace(/```$/, '').trim();
+  try { return JSON.parse(fenced); } catch { /* fall through */ }
+  const first = fenced.indexOf('{');
+  const last = fenced.lastIndexOf('}');
+  if (first >= 0 && last > first) return JSON.parse(fenced.slice(first, last + 1));
+  throw new Error('Claude response was not parseable JSON');
+}
+
+/** Build the user message: live price + last 5-10 news items mentioning this symbol. */
+async function buildContext(symbol: string): Promise<string> {
+  const sym = symbol.toUpperCase();
+  // Live price (Binance/Yahoo)
+  let priceLine = '';
+  try {
+    const tick = await getPrice(symbol);
+    if (tick.price > 0 && tick.source !== 'unsupported') {
+      const dec = tick.price >= 10000 ? 0 : tick.price >= 100 ? 2 : 5;
+      priceLine = `Current price: ${tick.price.toFixed(dec)} (${tick.changePercent >= 0 ? '+' : ''}${tick.changePercent.toFixed(2)}% on session)`;
+    }
+  } catch { /* swallow */ }
+
+  // Recent news mentioning this symbol — last 24h, 8 most relevant
+  const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
+  const news = await prisma.newsStory.findMany({
+    where: {
+      publishedAt: { gte: since },
+      affectedAssets: { has: sym },
+    },
+    orderBy: [{ isBreaking: 'desc' }, { publishedAt: 'desc' }],
+    take: 8,
+    select: { headline: true, bias: true, impact: true, isBreaking: true, reasoning: true, publishedAt: true },
+  });
+
+  const newsLines = news.map((n, i) => {
+    const ageH = Math.round((Date.now() - n.publishedAt.getTime()) / 3_600_000);
+    const tag = n.isBreaking ? '⚡' : n.impact === 'high' ? '🔴' : '·';
+    return `  ${i + 1}. ${tag} [${n.bias}/${n.impact}] ${n.headline.slice(0, 110)} (${ageH}h ago)${n.reasoning ? ' — ' + n.reasoning.slice(0, 100) : ''}`;
+  });
+
+  return [
+    `Symbol: ${sym}`,
+    priceLine,
+    '',
+    `Recent news (last 24h, ${news.length} stories mentioning ${sym}):`,
+    newsLines.length ? newsLines.join('\n') : '  (no news mentions in 24h — base on price + general macro)',
+    '',
+    'Generate the 4-part bias JSON. Be specific, current, honest.',
+  ].filter(Boolean).join('\n');
+}
+
+/**
+ * Get the live AI bias for a symbol. Caches per symbol for 10 min.
+ */
+export async function getBias(symbol: string, opts?: { force?: boolean }): Promise<{ bias: AiBias; generatedAt: number; cached: boolean }> {
+  if (!claudeAvailable() || !anthropic) {
+    throw new HttpError(503, 'Claude API not configured', 'CLAUDE_DISABLED');
+  }
+  const key = symbol.toUpperCase();
+
+  if (!opts?.force) {
+    const c = cache.get(key);
+    if (c && Date.now() - c.generatedAt < CACHE_TTL_MS) {
+      return { bias: c.data, generatedAt: c.generatedAt, cached: true };
+    }
+  }
+
+  const userMsg = await buildContext(symbol);
+
+  const response = await anthropic.messages.create({
+    model: MODEL,
+    max_tokens: 1200,
+    system: [{ type: 'text', text: BIAS_SYSTEM, cache_control: { type: 'ephemeral' } }],
+    messages: [{ role: 'user', content: userMsg }],
+  });
+
+  const raw = getJsonText(response);
+  const bias = BiasSchema.parse(parseJson(raw));
+
+  const generatedAt = Date.now();
+  cache.set(key, { data: bias, generatedAt, symbol: key });
+  log.info('AI Bias generated', {
+    symbol: key,
+    fundamental: bias.fundamental.bias,
+    technical: bias.technical.bias,
+    day: bias.dayTrade.bias,
+    swing: bias.swingTrade.bias,
+  });
+  return { bias, generatedAt, cached: false };
+}

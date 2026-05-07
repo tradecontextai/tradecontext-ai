@@ -189,9 +189,11 @@ body{overflow-x:hidden;overflow-y:auto;}
 .grid-2col{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
 .grid-2col>.panel{margin:0;}
 /* Trade Panel + Calendar side-by-side row — trade gets more width, calendar narrower */
-.trade-cal-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:20px;align-items:stretch;}
+/* 3-col row beneath chart: Trade (with direction dropdown) | AI Bias | Calendar */
+.trade-cal-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr) minmax(0,1fr);gap:20px;align-items:stretch;}
 .trade-cal-grid>.trade-panel,.trade-cal-grid>.panel,.trade-cal-grid>div{min-width:0;}
-@media (max-width:1100px){.trade-cal-grid{grid-template-columns:1fr;}}
+@media (max-width:1280px){.trade-cal-grid{grid-template-columns:1fr 1fr;}}
+@media (max-width:780px){.trade-cal-grid{grid-template-columns:1fr;}}
 
 /* ═══════════ PANEL (cards) ═══════════ */
 .panel{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
@@ -204,7 +206,7 @@ body{overflow-x:hidden;overflow-y:auto;}
 .panel-body{padding:0;}
 
 /* ═══════════ CHART (smaller) ═══════════ */
-.chart-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,540px);gap:0;}
+.chart-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,640px);gap:0;}
 @media (max-width:1280px){.chart-grid{grid-template-columns:minmax(0,1fr) 360px;}}
 @media (max-width:1024px){.chart-grid{grid-template-columns:1fr;}}
 /* Chart toolbar — single row, no wrap. Items overflow horizontally if needed */
@@ -338,9 +340,11 @@ body{overflow-x:hidden;overflow-y:auto;}
 .macro-pulse-panel{background:linear-gradient(135deg,var(--bg2),var(--bg3) 50%,var(--bg2));position:relative;overflow:hidden;}
 .macro-pulse-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad-prem);}
 /* Macro Pulse: top row (Currency Strength · Risk Therm · Mood) + bottom row (World Map) */
-.macro-pulse-grid{display:grid;grid-template-columns:1.4fr 0.7fr 1.4fr;gap:1px;background:var(--border);}
-@media (max-width:1100px){.macro-pulse-grid{grid-template-columns:1fr;}}
-.macro-pulse-grid-bottom{display:grid;grid-template-columns:1fr;gap:1px;background:var(--border);border-top:1px solid var(--border);}
+/* Macro Pulse: 4 cards in one row — World Pulse on the RIGHT, widest column */
+.macro-pulse-grid{display:grid;grid-template-columns:1fr 0.85fr 1fr 1.7fr;gap:1px;background:var(--border);}
+@media (max-width:1280px){.macro-pulse-grid{grid-template-columns:1fr 1fr;}}
+@media (max-width:780px){.macro-pulse-grid{grid-template-columns:1fr;}}
+.macro-pulse-grid-bottom{display:none;} /* legacy bottom row no longer used */
 
 /* World Map widget — animated, premium feel */
 .world-map-card{background:var(--bg2);padding:18px 20px;}
@@ -683,7 +687,84 @@ body{overflow-x:hidden;overflow-y:auto;}
 /* ═══════════ CALENDAR ═══════════ */
 /* Calendar matches Trade Panel height EXACTLY — locked at 540px max so it never grows.
    The cal-wrap fills remaining space and scrolls vertically. */
+/* Lock all 3 panels in trade-cal-grid to the same height with internal scroll */
 .trade-cal-grid{align-items:stretch;}
+.trade-cal-grid > *{height:560px;max-height:560px;display:flex;flex-direction:column;overflow:hidden;}
+.trade-cal-grid > .panel > .cal-wrap{flex:1;min-height:0;}
+
+/* ═══════ AI BIAS PANEL — fundamental + technical + day/swing verdict ═══════ */
+.aib-panel{background:linear-gradient(135deg,var(--bg2),var(--bg3) 50%,var(--bg2));position:relative;overflow:hidden;}
+.aib-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad-prem);z-index:1;}
+.aib-head{padding:16px 20px 12px;border-bottom:1px solid var(--border);flex-shrink:0;display:flex;justify-content:space-between;align-items:flex-end;gap:12px;}
+.aib-head-l .aib-eyebrow{font-family:var(--mono);font-size:9px;font-weight:800;background:var(--grad-prem);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:.16em;}
+.aib-head-l .aib-title{font-family:var(--sans);font-size:18px;font-weight:900;letter-spacing:-.02em;color:var(--text);margin-top:3px;line-height:1;}
+.aib-head-l .aib-sub{font-family:var(--mono);font-size:9px;color:var(--text3);margin-top:4px;letter-spacing:.04em;}
+.aib-refresh{background:var(--bg);border:1px solid var(--border);color:var(--text2);font-family:var(--mono);font-size:9px;font-weight:700;padding:6px 12px;border-radius:6px;cursor:pointer;transition:.18s var(--ease-out-quart);letter-spacing:.06em;text-transform:uppercase;}
+.aib-refresh:hover{border-color:var(--blue);color:var(--blue);}
+.aib-refresh:active{transform:scale(.95);}
+.aib-refresh.spinning{opacity:.6;pointer-events:none;}
+
+.aib-body{flex:1;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border2) transparent;padding:14px 18px;}
+.aib-body::-webkit-scrollbar{width:6px;}
+.aib-body::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+.aib-section{padding:11px 0;border-bottom:1px solid rgba(20,32,53,.5);}
+.aib-section:last-child{border-bottom:none;}
+.aib-section-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:10px;}
+.aib-section-name{font-family:var(--mono);font-size:9.5px;font-weight:800;color:var(--text3);letter-spacing:.14em;text-transform:uppercase;display:flex;align-items:center;gap:6px;}
+.aib-bias-pill{font-family:var(--mono);font-size:10px;font-weight:800;padding:3px 10px;border-radius:100px;letter-spacing:.1em;text-transform:uppercase;}
+.aib-bias-pill.bullish{background:rgba(52,211,153,.12);color:var(--green2);border:1px solid rgba(52,211,153,.4);}
+.aib-bias-pill.bearish{background:rgba(248,113,113,.12);color:var(--red2);border:1px solid rgba(248,113,113,.4);}
+.aib-bias-pill.neutral{background:rgba(245,158,11,.12);color:var(--yellow);border:1px solid rgba(245,158,11,.4);}
+.aib-points{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px;}
+.aib-points li{font-family:var(--sans);font-size:12px;color:var(--text);line-height:1.5;padding-left:16px;position:relative;font-weight:500;}
+.aib-points li::before{content:'';position:absolute;left:2px;top:7px;width:5px;height:5px;border-radius:50%;background:var(--text3);}
+.aib-section.bullish .aib-points li::before{background:var(--green2);box-shadow:0 0 6px rgba(52,211,153,.5);}
+.aib-section.bearish .aib-points li::before{background:var(--red2);box-shadow:0 0 6px rgba(248,113,113,.5);}
+.aib-section.neutral .aib-points li::before{background:var(--yellow);}
+
+.aib-verdicts{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border-top:1px solid var(--border);flex-shrink:0;}
+.aib-verdict{padding:14px 18px;background:var(--bg);}
+.aib-verdict-h{font-family:var(--mono);font-size:9.5px;font-weight:800;color:var(--text3);letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:5px;}
+.aib-verdict-bias{font-family:var(--sans);font-size:18px;font-weight:900;letter-spacing:-.01em;line-height:1;display:flex;align-items:center;gap:6px;margin-bottom:6px;}
+.aib-verdict.bullish .aib-verdict-bias{color:var(--green2);}
+.aib-verdict.bearish .aib-verdict-bias{color:var(--red2);}
+.aib-verdict.neutral .aib-verdict-bias{color:var(--yellow);}
+.aib-verdict-rationale{font-family:var(--sans);font-size:11.5px;color:var(--text2);line-height:1.55;font-weight:500;}
+
+.aib-loading{display:flex;align-items:center;justify-content:center;flex:1;font-family:var(--mono);font-size:11px;color:var(--text3);padding:30px;}
+.aib-loading .spinner{width:14px;height:14px;border:2px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;margin-right:10px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ═══════ TRADE PANEL — direction dropdown (Buy OR Sell, not both) ═══════ */
+.trade-panel{display:flex;flex-direction:column;background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.trade-panel-head{padding:14px 18px 10px;border-bottom:1px solid var(--border);background:var(--bg3);flex-shrink:0;}
+.trade-panel-h-title{font-family:var(--sans);font-size:15px;font-weight:800;color:var(--text);letter-spacing:-.01em;}
+.trade-panel-h-sub{font-family:var(--mono);font-size:9px;color:var(--text3);margin-top:3px;letter-spacing:.06em;}
+.trade-direction-row{display:flex;gap:0;padding:0;background:var(--bg3);border-bottom:1px solid var(--border);flex-shrink:0;}
+.trade-dir-btn{flex:1;padding:13px 14px;background:transparent;border:none;border-bottom:3px solid transparent;font-family:var(--sans);font-size:14px;font-weight:800;color:var(--text3);cursor:pointer;transition:.18s var(--ease-out-quart);letter-spacing:-.01em;display:flex;align-items:center;justify-content:center;gap:7px;}
+.trade-dir-btn:hover{color:var(--text);}
+.trade-dir-btn.active.buy{color:var(--green2);border-bottom-color:var(--green2);background:rgba(52,211,153,.06);}
+.trade-dir-btn.active.sell{color:var(--red2);border-bottom-color:var(--red2);background:rgba(248,113,113,.06);}
+.trade-form{padding:18px;flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:13px;}
+.trade-form-row{display:flex;gap:10px;}
+.trade-form-row > *{flex:1;}
+.trade-input-group label{display:block;font-family:var(--mono);font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px;}
+.trade-input-group input{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:13px;font-weight:600;padding:9px 11px;border-radius:6px;outline:none;transition:.15s;}
+.trade-input-group input:focus{border-color:var(--blue);background:var(--bg3);box-shadow:0 0 0 3px rgba(14,165,233,.1);}
+.trade-rr-row{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:6px;font-family:var(--mono);font-size:11px;}
+.trade-rr-row .lbl{color:var(--text3);font-weight:600;}
+.trade-rr-row .val{font-weight:800;}
+.trade-submit{padding:14px;border-radius:8px;border:none;font-family:var(--sans);font-size:15px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;transition:transform .22s var(--ease-out-quart),box-shadow .22s,filter .15s;color:#fff;}
+.trade-submit.buy{background:var(--grad-bull);box-shadow:0 4px 16px rgba(16,185,129,.3);}
+.trade-submit.sell{background:var(--grad-bear);box-shadow:0 4px 16px rgba(239,68,68,.3);}
+.trade-submit:hover{transform:translateY(-2px);filter:brightness(1.08);}
+.trade-submit:active{transform:translateY(-1px) scale(.97);transition-duration:.08s;}
+.trade-ai{padding:11px 14px;background:linear-gradient(135deg,rgba(14,165,233,.1),rgba(139,92,246,.06));border:1px solid rgba(14,165,233,.25);border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:.2s var(--ease-out-quart);}
+.trade-ai:hover{border-color:var(--blue);box-shadow:0 4px 16px rgba(14,165,233,.18);}
+.trade-ai-icon{font-size:18px;}
+.trade-ai-label{font-family:var(--sans);font-size:12px;font-weight:700;color:var(--text);}
+.trade-ai-cta{margin-left:auto;font-family:var(--mono);font-size:9px;font-weight:800;color:var(--blue);letter-spacing:.08em;text-transform:uppercase;}
 .trade-cal-grid > .trade-panel{height:540px;max-height:540px;}
 .trade-cal-grid > .panel{display:flex;flex-direction:column;height:540px;max-height:540px;overflow:hidden;}
 .trade-cal-grid > .panel > .cal-wrap{flex:1;min-height:0;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border2) transparent;}
@@ -1056,35 +1137,83 @@ body{overflow-x:hidden;overflow-y:auto;}
         </div>
       </div>
 
-      <!-- ═══════ BULL vs BEAR CASE — for the active chart symbol ═══════ -->
-      <div class="panel bb-panel" id="bbPanel">
-        <div class="panel-h">
-          <div class="panel-h-title">
-            ⚖️ <span id="bbSymbol">XAU/USD</span> — Bull vs Bear Case
-            <span class="bb-leaning" id="bbLeaning">Awaiting…</span>
-          </div>
-          <span style="font-family:var(--mono);font-size:10px;color:var(--text3);">Auto-built from live news bias · updates with every tick</span>
-        </div>
-        <div class="bb-grid">
-          <div class="bb-side bb-bull" id="bbBull">
-            <div class="bb-side-h">▲ BULLISH CASE</div>
-            <div class="bb-side-sub" id="bbBullSub">Why this could rip higher</div>
-            <ul class="bb-list" id="bbBullList"></ul>
-            <div class="bb-empty" id="bbBullEmpty">No bullish drivers yet — waiting on news.</div>
-          </div>
-          <div class="bb-side bb-bear" id="bbBear">
-            <div class="bb-side-h">▼ BEARISH CASE</div>
-            <div class="bb-side-sub" id="bbBearSub">What could flip it</div>
-            <ul class="bb-list" id="bbBearList"></ul>
-            <div class="bb-empty" id="bbBearEmpty">No bearish drivers — clean upside path.</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ═══════ TRADE + CALENDAR row (Trade left, Calendar right) ═══════ -->
+      <!-- ═══════ TRADE + AI BIAS + CALENDAR (3-column row) ═══════ -->
       <div class="trade-cal-grid" id="tradeCalRow">
-        <!-- Trade panel moved here by JS from below -->
-        <!-- Calendar slot — populated by reparentPanels() -->
+
+        <!-- ═══ Col 1: Trade Panel (direction dropdown — Buy OR Sell, not both) ═══ -->
+        <div class="trade-panel" id="tradePanel">
+          <div class="trade-panel-head">
+            <div class="trade-panel-h-title">⚡ Trade <span id="tradeSymLabel" style="color:var(--blue);">XAU/USD</span></div>
+            <div class="trade-panel-h-sub">Pick direction · single-form · saves space</div>
+          </div>
+          <div class="trade-direction-row">
+            <button class="trade-dir-btn buy active" id="tdBuy" onclick="setTradeDir('buy')">▲ Buy / Long</button>
+            <button class="trade-dir-btn sell" id="tdSell" onclick="setTradeDir('sell')">▼ Sell / Short</button>
+          </div>
+          <div class="trade-form">
+            <div class="trade-form-row">
+              <div class="trade-input-group">
+                <label>Live price</label>
+                <input id="tradePrice" value="—" readonly style="font-weight:800;">
+              </div>
+              <div class="trade-input-group">
+                <label>Lot size</label>
+                <input id="tradeSize" value="0.10">
+              </div>
+            </div>
+            <div class="trade-form-row">
+              <div class="trade-input-group">
+                <label>Stop loss</label>
+                <input id="tradeSL" value="—">
+              </div>
+              <div class="trade-input-group">
+                <label>Take profit</label>
+                <input id="tradeTP" value="—">
+              </div>
+            </div>
+            <div class="trade-rr-row">
+              <span class="lbl">Risk: <strong style="color:var(--text);">0.5% acct</strong></span>
+              <span><span class="lbl">R:R </span><span class="val" id="tradeRR" style="color:var(--green2);">1 : 3.1</span></span>
+            </div>
+            <div class="trade-ai" onclick="aiAutoFill()">
+              <span class="trade-ai-icon">✨</span>
+              <div>
+                <div class="trade-ai-label">AI Auto-Fill from Playbook</div>
+              </div>
+              <span class="trade-ai-cta">APPLY →</span>
+            </div>
+            <button class="trade-submit buy" id="tradeSubmit" onclick="submitTrade()">▲ BUY <span id="tradeSubmitSym">XAU/USD</span></button>
+          </div>
+        </div>
+
+        <!-- ═══ Col 2: AI Bias panel (live, Claude-generated) ═══ -->
+        <div class="panel aib-panel" id="aibPanel">
+          <div class="aib-head">
+            <div class="aib-head-l">
+              <div class="aib-eyebrow">🧠 AI BIAS · LIVE</div>
+              <div class="aib-title"><span id="aibSymbol">XAU/USD</span></div>
+              <div class="aib-sub">Fundamental + technical + day/swing verdict · refreshes every 10 min</div>
+            </div>
+            <button class="aib-refresh" id="aibRefresh" onclick="refreshAiBias(true)">↻ Refresh</button>
+          </div>
+          <div class="aib-body" id="aibBody">
+            <div class="aib-loading"><span class="spinner"></span>Generating analysis…</div>
+          </div>
+          <div class="aib-verdicts" id="aibVerdicts" style="display:none;">
+            <div class="aib-verdict" id="aibDayTrade">
+              <div class="aib-verdict-h">⚡ DAY TRADE</div>
+              <div class="aib-verdict-bias" id="aibDayBias">—</div>
+              <div class="aib-verdict-rationale" id="aibDayRationale">—</div>
+            </div>
+            <div class="aib-verdict" id="aibSwingTrade">
+              <div class="aib-verdict-h">📅 SWING TRADE</div>
+              <div class="aib-verdict-bias" id="aibSwingBias">—</div>
+              <div class="aib-verdict-rationale" id="aibSwingRationale">—</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══ Col 3: Economic Calendar (slot — populated by reparentPanels) ═══ -->
         <div id="calendarSlot"></div>
       </div>
 
@@ -1136,13 +1265,12 @@ body{overflow-x:hidden;overflow-y:auto;}
             <div class="mood-grid" id="moodGrid"></div>
             <div class="mood-summary" id="moodSummary" style="font-family:var(--mono);font-size:10px;color:var(--text2);text-align:center;margin-top:10px;line-height:1.5;">Awaiting data…</div>
           </div>
-        </div>
-        <!-- World Pulse Map (full width below the 3-card row) -->
-        <div class="macro-pulse-grid-bottom">
+
+          <!-- World Pulse Map — moved INTO the macro grid as the right-most column -->
           <div class="mp-card world-map-card">
             <div class="mp-card-h">
-              <div class="mp-card-title">🌍 World Pulse — Financial Centre Heat Map</div>
-              <div class="mp-card-sub">Where the news is hitting hardest right now · brighter = more market-moving signals</div>
+              <div class="mp-card-title">🌍 World Pulse</div>
+              <div class="mp-card-sub">Financial centre heat · session-aware · hover any city</div>
             </div>
             <div class="world-map-wrap" id="worldMapWrap">
               <svg class="world-map-svg" id="worldMapSvg" viewBox="0 0 1000 500" preserveAspectRatio="xMidYMid meet">
@@ -1152,61 +1280,19 @@ body{overflow-x:hidden;overflow-y:auto;}
                   </pattern>
                 </defs>
                 <rect width="1000" height="500" fill="url(#wm-grid)"/>
-                <!-- Real geography rendered by D3 + TopoJSON at runtime -->
                 <g id="worldCountries"></g>
                 <g id="worldCities"></g>
               </svg>
-              <!-- Hover tooltip — populated by JS with city volume info -->
               <div class="world-tooltip" id="worldTooltip"></div>
             </div>
             <div class="world-map-legend">
-              <span class="lg"><span class="swatch" style="background:var(--red2);box-shadow:0 0 6px rgba(248,113,113,.7);"></span>HOT (5+ signals/h)</span>
-              <span class="lg"><span class="swatch" style="background:var(--yellow);box-shadow:0 0 6px rgba(245,158,11,.7);"></span>WARM (2-4)</span>
-              <span class="lg"><span class="swatch" style="background:var(--green2);"></span>CALM (1)</span>
+              <span class="lg"><span class="swatch" style="background:var(--red2);box-shadow:0 0 6px rgba(248,113,113,.7);"></span>HOT</span>
+              <span class="lg"><span class="swatch" style="background:var(--yellow);"></span>WARM</span>
+              <span class="lg"><span class="swatch" style="background:var(--green2);"></span>CALM</span>
               <span class="lg"><span class="swatch" style="background:var(--text3);"></span>QUIET</span>
               <span style="margin-left:auto;color:var(--text2);" id="worldMapTotal">—</span>
             </div>
           </div>
-        </div>
-      </div>
-
-      <!-- BIG TRADE PANEL -->
-      <div class="trade-panel">
-        <div class="trade-side buy">
-          <div class="trade-h">
-            <div class="trade-h-name buy">▲ Buy / Long</div>
-            <div class="trade-h-price buy" id="tradeBuyPrice">3,121.50</div>
-          </div>
-          <div class="trade-input-row">
-            <div><label class="trade-lbl">Lot Size</label><input class="trade-input" id="tradeBuySize" value="0.10"></div>
-            <div><label class="trade-lbl">Stop Loss</label><input class="trade-input" id="tradeBuySL" value="3,068"></div>
-            <div><label class="trade-lbl">Take Profit</label><input class="trade-input" id="tradeBuyTP" value="3,180"></div>
-            <div><label class="trade-lbl">Risk</label><input class="trade-input" value="0.5%" readonly></div>
-          </div>
-          <div class="trade-rr"><span>R:R Ratio</span><strong style="color:var(--green2);">1 : 3.1</strong></div>
-          <button class="trade-btn buy" onclick="placeTrade('long')">▲ BUY XAU/USD</button>
-        </div>
-        <div class="trade-side sell">
-          <div class="trade-h">
-            <div class="trade-h-name sell">▼ Sell / Short</div>
-            <div class="trade-h-price sell" id="tradeSellPrice">3,121.30</div>
-          </div>
-          <div class="trade-input-row">
-            <div><label class="trade-lbl">Lot Size</label><input class="trade-input" id="tradeSellSize" value="0.10"></div>
-            <div><label class="trade-lbl">Stop Loss</label><input class="trade-input" id="tradeSellSL" value="3,180"></div>
-            <div><label class="trade-lbl">Take Profit</label><input class="trade-input" id="tradeSellTP" value="3,068"></div>
-            <div><label class="trade-lbl">Risk</label><input class="trade-input" value="0.5%" readonly></div>
-          </div>
-          <div class="trade-rr"><span>R:R Ratio</span><strong style="color:var(--red2);">1 : 2.4</strong></div>
-          <button class="trade-btn sell" onclick="placeTrade('short')">▼ SELL XAU/USD</button>
-        </div>
-        <div class="trade-ai" onclick="aiAutoFill()">
-          <span class="trade-ai-icon">✨</span>
-          <div style="flex:1;">
-            <div class="trade-ai-label">AI Auto-Fill from Playbook</div>
-            <div class="trade-ai-desc">Apply AI's suggested SL/TP/size based on Iran news bias + Fed pivot.</div>
-          </div>
-          <span class="trade-ai-cta">APPLY →</span>
         </div>
       </div>
 
@@ -1628,10 +1714,7 @@ body{overflow-x:hidden;overflow-y:auto;}
 
       <div class="cs-section">
         <div class="cs-section-title">📐 Chart Display</div>
-        <div class="cs-row">
-          <label>Show grid lines</label>
-          <div class="cs-toggle" id="csGrid" onclick="csToggle('csGrid')"></div>
-        </div>
+        <!-- Grid lines toggle removed — chart grids are always off, by request -->
         <div class="cs-row">
           <label>Show volume bars</label>
           <div class="cs-toggle on" id="csVolume" onclick="csToggle('csVolume')"></div>
@@ -1838,7 +1921,7 @@ function buildTicker(){
 buildTicker();
 
 // ════════════ CHART SETTINGS — custom panel + autosave to localStorage ════════════
-var CS_DEFAULTS={theme:'dark',palette:'default',grid:false,volume:true,legend:true,watermark:false,tz:'auto'};
+var CS_DEFAULTS={theme:'dark',palette:'default',volume:true,legend:true,watermark:false,tz:'auto'};
 var CS={};
 var CS_PALETTES={
   'default':{up:'#34d399',dn:'#f87171'},
@@ -1931,7 +2014,8 @@ function loadTV(){
       disabled_features:['header_symbol_search','volume_force_overlay'],
       overrides:(function(){
         var p=CS_PALETTES[CS.palette]||CS_PALETTES['default'];
-        var gridColor=CS.grid?(theme==='light'?'rgba(0,0,0,.08)':'rgba(255,255,255,.06)'):'rgba(0,0,0,0)';
+        // Chart grids ALWAYS off (by request — never show grids regardless of settings)
+        var gridColor='rgba(0,0,0,0)';
         return {
           'mainSeriesProperties.candleStyle.upColor':p.up,
           'mainSeriesProperties.candleStyle.downColor':p.dn,
@@ -2011,6 +2095,13 @@ async function fetchLivePrice(symbol){
 // Buy = ask (mid + half-spread). Sell = bid (mid - half-spread).
 // Spread varies by asset: forex ~0.01%, crypto ~0.05%, stocks/indices ~0.02%
 function syncTradePanelPrices(mid,sym){
+  // New unified trade form (direction-dropdown panel)
+  if(typeof fillTradeDefaults==='function')fillTradeDefaults(mid,_tradeDir||'buy');
+  // Trigger AI bias refresh when symbol changes (not on every price tick)
+  if(_aibLastSymbol&&_aibLastSymbol!==sym&&typeof refreshAiBias==='function')refreshAiBias();
+  // Legacy dual-side trade panel (no longer rendered, kept for backward compat)
+}
+function syncTradePanelPricesLegacy(mid,sym){
   var s=(sym||'').toUpperCase();
   var spreadPct=0.02; // default
   if(/USD$|EUR|GBP|JPY|CAD|CHF|AUD|NZD/.test(s) && !/BTC|ETH/.test(s)) spreadPct=0.01;
@@ -2738,10 +2829,131 @@ function sessionFactor(sid){
   return 0.15; // overnight / fully closed
 }
 
-// ════════════ BULL vs BEAR CASE ════════════
-// Builds two columns of bullet points from LIVE_NEWS for the active chart symbol.
-// Bullish drivers (news where the symbol moves up) on the left, bearish on the right.
-function renderBullBear(){
+// ════════════ AI BIAS PANEL — fetches /api/ai/bias for the active symbol ════════════
+// Replaces the old Bull-vs-Bear feed-derived view with full Claude-generated
+// fundamental + technical + day-trade + swing-trade analysis.
+var _aibLastSymbol=null;
+var _aibTimer=null;
+async function refreshAiBias(force){
+  var sym=(window._activeSymLabel||'XAU/USD');
+  var symEl=document.getElementById('aibSymbol');if(symEl)symEl.textContent=sym;
+  var tradeSymEl=document.getElementById('tradeSymLabel');if(tradeSymEl)tradeSymEl.textContent=sym;
+  var subEl=document.getElementById('tradeSubmitSym');if(subEl)subEl.textContent=sym;
+
+  var body=document.getElementById('aibBody');
+  var verdicts=document.getElementById('aibVerdicts');
+  var refreshBtn=document.getElementById('aibRefresh');
+  if(!body)return;
+  if(refreshBtn)refreshBtn.classList.add('spinning');
+
+  // Show spinner only on first load or forced refresh
+  if(force||_aibLastSymbol!==sym){
+    body.innerHTML='<div class="aib-loading"><span class="spinner"></span>Generating live analysis for '+sym+'…</div>';
+    if(verdicts)verdicts.style.display='none';
+  }
+
+  try{
+    var url=TC_API+'/api/ai/bias?symbol='+encodeURIComponent(sym)+(force?'&force=true':'');
+    var r=await fetch(url);
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    var d=await r.json();
+
+    function biasIcon(b){return b==='bullish'?'▲':b==='bearish'?'▼':'●';}
+    function biasLabel(b){return b==='bullish'?'BULLISH':b==='bearish'?'BEARISH':'NEUTRAL';}
+
+    function section(title,iconEm,sec){
+      return '<div class="aib-section '+sec.bias+'">'
+        +'<div class="aib-section-h">'
+          +'<div class="aib-section-name">'+iconEm+' '+title+'</div>'
+          +'<span class="aib-bias-pill '+sec.bias+'">'+biasIcon(sec.bias)+' '+biasLabel(sec.bias)+'</span>'
+        +'</div>'
+        +'<ul class="aib-points">'+sec.points.map(function(p){return '<li>'+p+'</li>';}).join('')+'</ul>'
+      +'</div>';
+    }
+
+    body.innerHTML=section('Fundamental','🌍',d.fundamental)+section('Technical','📊',d.technical);
+
+    // Verdicts row
+    if(verdicts){
+      verdicts.style.display='grid';
+      var dt=document.getElementById('aibDayTrade');
+      var sw=document.getElementById('aibSwingTrade');
+      if(dt){dt.className='aib-verdict '+d.dayTrade.bias;
+        document.getElementById('aibDayBias').textContent=biasIcon(d.dayTrade.bias)+' '+biasLabel(d.dayTrade.bias);
+        document.getElementById('aibDayRationale').textContent=d.dayTrade.rationale;}
+      if(sw){sw.className='aib-verdict '+d.swingTrade.bias;
+        document.getElementById('aibSwingBias').textContent=biasIcon(d.swingTrade.bias)+' '+biasLabel(d.swingTrade.bias);
+        document.getElementById('aibSwingRationale').textContent=d.swingTrade.rationale;}
+    }
+
+    _aibLastSymbol=sym;
+    console.log('[live] AI bias loaded for',sym,'·',d.cached?'cached':'fresh');
+  }catch(e){
+    body.innerHTML='<div class="aib-loading" style="color:var(--red2);">⚠️ Couldn\'t load AI bias — '+(e.message||'unknown error')+'<br><span style="color:var(--text3);font-size:10px;margin-top:8px;">Backend or Claude credits may be down.</span></div>';
+    console.warn('[live] AI bias fetch failed',e);
+  }finally{
+    if(refreshBtn)setTimeout(function(){refreshBtn.classList.remove('spinning');},400);
+  }
+}
+// Auto-refresh every 10 minutes
+function startAiBiasPolling(){
+  if(_aibTimer)clearInterval(_aibTimer);
+  refreshAiBias();
+  _aibTimer=setInterval(function(){refreshAiBias();},10*60*1000);
+}
+window.addEventListener('load',function(){setTimeout(startAiBiasPolling,1500);});
+
+// ════════════ TRADE PANEL — direction dropdown ════════════
+var _tradeDir='buy';
+function setTradeDir(d){
+  _tradeDir=d;
+  document.getElementById('tdBuy').classList.toggle('active',d==='buy');
+  document.getElementById('tdSell').classList.toggle('active',d==='sell');
+  var btn=document.getElementById('tradeSubmit');
+  if(btn){
+    btn.className='trade-submit '+d;
+    var arrow=d==='buy'?'▲ BUY':'▼ SELL';
+    var sym=(window._activeSymLabel||'XAU/USD');
+    btn.innerHTML=arrow+' <span id="tradeSubmitSym">'+sym+'</span>';
+  }
+  // Recompute defaults: if buy, SL below price + TP above; reversed for sell
+  var lp=document.getElementById('livePrice');
+  if(lp){
+    var price=parseFloat(lp.textContent.replace(/,/g,''));
+    if(!isNaN(price))fillTradeDefaults(price,d);
+  }
+}
+function fillTradeDefaults(price,dir){
+  var dec=price>=10000?0:price>=100?2:price>=10?3:5;
+  var slDelta=price*0.005, tpDelta=price*0.015; // 0.5% SL, 1.5% TP → 1:3 R:R
+  var sl=dir==='buy'?price-slDelta:price+slDelta;
+  var tp=dir==='buy'?price+tpDelta:price-tpDelta;
+  var fmt=function(v){return v.toLocaleString('en-GB',{minimumFractionDigits:dec,maximumFractionDigits:dec});};
+  var slEl=document.getElementById('tradeSL');
+  var tpEl=document.getElementById('tradeTP');
+  var prEl=document.getElementById('tradePrice');
+  if(prEl)prEl.value=fmt(price);
+  if(slEl)slEl.value=fmt(sl);
+  if(tpEl)tpEl.value=fmt(tp);
+  var rr=document.getElementById('tradeRR');
+  if(rr){rr.textContent='1 : 3.0';rr.style.color=dir==='buy'?'var(--green2)':'var(--red2)';}
+}
+function submitTrade(){
+  var sym=(window._activeSymLabel||'XAU/USD');
+  var size=document.getElementById('tradeSize').value;
+  var sl=document.getElementById('tradeSL').value;
+  var tp=document.getElementById('tradeTP').value;
+  toast({
+    kind:_tradeDir==='buy'?'green':'red',
+    icon:_tradeDir==='buy'?'▲':'▼',
+    title:(_tradeDir==='buy'?'Buy':'Sell')+' order sent · '+sym,
+    desc:size+' lots · SL '+sl+' · TP '+tp+' · routed to OANDA',
+    duration:4500
+  });
+}
+
+// ════════════ BULL vs BEAR (legacy — superseded by AI Bias panel) ════════════
+function renderBullBear_LEGACY(){
   var sym=(window._activeSymLabel||'XAU/USD');
   var symEl=document.getElementById('bbSymbol');if(symEl)symEl.textContent=sym;
   var bullList=document.getElementById('bbBullList');
@@ -2857,7 +3069,6 @@ function refreshMacroPulse(){
   renderRiskTherm();
   renderMoodGrid();
   renderWorldMap();
-  renderBullBear();
 }
 
 // ════════════ REAL WORLD MAP — D3 + TopoJSON Mercator projection ════════════

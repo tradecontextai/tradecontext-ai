@@ -9,6 +9,7 @@ import { journalRouter } from './journal';
 import { brokerRouter } from './broker';
 import { watchlistRouter } from './watchlist';
 import { alertsRouter } from './alerts';
+import { aiBiasRouter } from './ai-bias';
 import { newsClientCount } from '../ws/news-broadcast';
 
 export const apiRouter = Router();
@@ -23,6 +24,7 @@ apiRouter.use('/journal', journalRouter);
 apiRouter.use('/broker', brokerRouter);
 apiRouter.use('/watchlist', watchlistRouter);
 apiRouter.use('/alerts', alertsRouter);
+apiRouter.use('/ai', aiBiasRouter);
 
 apiRouter.get('/health', (_req, res) => {
   res.json({
