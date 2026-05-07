@@ -2881,7 +2881,14 @@ async function refreshAiBias(force){
   try{
     var url=TC_API+'/api/ai/bias?symbol='+encodeURIComponent(sym)+(force?'&force=true':'');
     var r=await fetch(url);
-    if(!r.ok)throw new Error('HTTP '+r.status);
+    if(!r.ok){
+      // Try to parse the JSON error envelope so we can show a useful message
+      var errBody=null;
+      try{errBody=await r.json();}catch(_){}
+      var err=new Error(errBody&&errBody.error?errBody.error.message:'HTTP '+r.status);
+      if(errBody&&errBody.error){err.code=errBody.error.code;err.raw=JSON.stringify(errBody);}
+      throw err;
+    }
     var d=await r.json();
 
     function biasIcon(b){return b==='bullish'?'▲':b==='bearish'?'▼':'●';}
@@ -2915,7 +2922,19 @@ async function refreshAiBias(force){
     _aibLastSymbol=sym;
     console.log('[live] AI bias loaded for',sym,'·',d.cached?'cached':'fresh');
   }catch(e){
-    body.innerHTML='<div class="aib-loading" style="color:var(--red2);">⚠️ Couldn\'t load AI bias — '+(e.message||'unknown error')+'<br><span style="color:var(--text3);font-size:10px;margin-top:8px;">Backend or Claude credits may be down.</span></div>';
+    // Check the error code from the structured response
+    var errCode=e.code||'';
+    if(errCode==='CLAUDE_NO_CREDITS'||(e.raw&&String(e.raw).indexOf('credits exhausted')>=0)){
+      body.innerHTML='<div style="padding:24px;text-align:center;">'
+        +'<div style="font-size:32px;margin-bottom:10px;">💳</div>'
+        +'<div style="font-family:var(--sans);font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px;">Anthropic credits exhausted</div>'
+        +'<div style="font-family:var(--sans);font-size:12px;color:var(--text2);max-width:340px;margin:0 auto 14px;line-height:1.5;">AI bias generation requires Anthropic credits. Top up your balance and the panel resumes automatically.</div>'
+        +'<a href="https://console.anthropic.com/settings/billing" target="_blank" rel="noopener" style="display:inline-block;font-family:var(--mono);font-size:10px;font-weight:700;color:#000;background:var(--blue);padding:9px 18px;border-radius:6px;text-decoration:none;letter-spacing:.06em;text-transform:uppercase;">↗ Top up Anthropic</a>'
+        +'<div style="font-family:var(--mono);font-size:9px;color:var(--text3);margin-top:12px;">After topping up, click ↻ Refresh on this panel</div>'
+      +'</div>';
+    }else{
+      body.innerHTML='<div class="aib-loading" style="color:var(--red2);">⚠️ Couldn\'t load AI bias — '+(e.message||'unknown error')+'<br><span style="color:var(--text3);font-size:10px;margin-top:8px;">Backend or Claude may be temporarily down.</span></div>';
+    }
     console.warn('[live] AI bias fetch failed',e);
   }finally{
     if(refreshBtn)setTimeout(function(){refreshBtn.classList.remove('spinning');},400);

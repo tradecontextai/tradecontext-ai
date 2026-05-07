@@ -90,6 +90,13 @@ interface CacheEntry {
 }
 const cache = new Map<string, CacheEntry>();
 
+// Circuit breaker — pauses Claude calls for 30 min after credit-balance error
+let _creditCircuitOpenUntil = 0;
+function isCreditError(e: unknown): boolean {
+  const msg = e instanceof Error ? e.message : String(e);
+  return msg.includes('credit balance is too low') || msg.includes('insufficient_quota');
+}
+
 /** Invalidate the cache for a symbol — called when fresh news arrives mentioning it. */
 export function invalidateBiasCache(symbol: string): void {
   cache.delete(symbol.toUpperCase());
@@ -155,6 +162,12 @@ async function buildContext(symbol: string): Promise<string> {
 
 /**
  * Get the live AI bias for a symbol. Caches per symbol for 10 min.
+ *
+ * Error handling:
+ *  - 503 CLAUDE_DISABLED   → no API key configured
+ *  - 503 CLAUDE_NO_CREDITS → user needs to top up Anthropic credits
+ *                            (circuit breaker also opens for 30 min so
+ *                             we don't hammer the API while exhausted)
  */
 export async function getBias(symbol: string, opts?: { force?: boolean }): Promise<{ bias: AiBias; generatedAt: number; cached: boolean }> {
   if (!claudeAvailable() || !anthropic) {
@@ -169,14 +182,50 @@ export async function getBias(symbol: string, opts?: { force?: boolean }): Promi
     }
   }
 
+  // Circuit breaker — if Claude credits ran out recently, fail fast with a
+  // clear message instead of hitting the API again. Frontend uses this code
+  // to show a "top up credits" prompt instead of a generic error.
+  if (Date.now() < _creditCircuitOpenUntil) {
+    const minsLeft = Math.ceil((_creditCircuitOpenUntil - Date.now()) / 60_000);
+    // If we have stale cached data, return it with a "stale" flag rather than nothing
+    const stale = cache.get(key);
+    if (stale) {
+      return { bias: stale.data, generatedAt: stale.generatedAt, cached: true };
+    }
+    throw new HttpError(
+      503,
+      `Anthropic API credits exhausted. Top up at console.anthropic.com/settings/billing. Auto-retry in ${minsLeft} min.`,
+      'CLAUDE_NO_CREDITS',
+    );
+  }
+
   const userMsg = await buildContext(symbol);
 
-  const response = await anthropic.messages.create({
-    model: MODEL,
-    max_tokens: 1200,
-    system: [{ type: 'text', text: BIAS_SYSTEM, cache_control: { type: 'ephemeral' } }],
-    messages: [{ role: 'user', content: userMsg }],
-  });
+  let response;
+  try {
+    response = await anthropic.messages.create({
+      model: MODEL,
+      max_tokens: 1200,
+      system: [{ type: 'text', text: BIAS_SYSTEM, cache_control: { type: 'ephemeral' } }],
+      messages: [{ role: 'user', content: userMsg }],
+    });
+  } catch (e) {
+    if (isCreditError(e)) {
+      _creditCircuitOpenUntil = Date.now() + 30 * 60 * 1000;
+      log.error('AI Bias: Anthropic credits exhausted — circuit breaker open for 30min. Top up at https://console.anthropic.com/settings/billing');
+      // Return stale cache if we have it, otherwise throw the helpful error
+      const stale = cache.get(key);
+      if (stale) {
+        return { bias: stale.data, generatedAt: stale.generatedAt, cached: true };
+      }
+      throw new HttpError(
+        503,
+        'Anthropic API credits exhausted. Top up at console.anthropic.com/settings/billing to resume AI bias generation.',
+        'CLAUDE_NO_CREDITS',
+      );
+    }
+    throw e;
+  }
 
   const raw = getJsonText(response);
   const bias = BiasSchema.parse(parseJson(raw));
@@ -191,4 +240,10 @@ export async function getBias(symbol: string, opts?: { force?: boolean }): Promi
     swing: bias.swingTrade.bias,
   });
   return { bias, generatedAt, cached: false };
+}
+
+/** Manually clear the credit circuit breaker — call when you've topped up. */
+export function resetCreditCircuit(): void {
+  _creditCircuitOpenUntil = 0;
+  log.info('AI Bias credit circuit breaker reset');
 }

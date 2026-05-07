@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import { optionalAuth } from '../middleware/auth';
-import { getBias } from '../services/ai-bias.service';
+import { getBias, resetCreditCircuit } from '../services/ai-bias.service';
 
 export const aiBiasRouter = Router();
 
@@ -25,4 +25,11 @@ aiBiasRouter.get('/bias', optionalAuth, async (req, res, next) => {
   } catch (e) {
     next(e);
   }
+});
+
+// ──────── POST /api/ai/bias/reset-circuit ────────
+// Admin: clear the credit-exhausted circuit breaker after topping up.
+aiBiasRouter.post('/bias/reset-circuit', (_req, res) => {
+  resetCreditCircuit();
+  res.json({ ok: true, message: 'Circuit breaker reset. Next /api/ai/bias call will hit Anthropic.' });
 });
