@@ -6,6 +6,13 @@ import { scoreHeadline, claudeAvailable } from './claude.service';
 import type { NewsStory, Bias, Impact } from '@prisma/client';
 import { broadcastNews } from '../ws/news-broadcast';
 
+// Circuit breaker — pauses polling for 30 min after credit-balance errors
+let _creditCircuitOpenUntil = 0;
+function isCreditError(e: unknown): boolean {
+  const msg = e instanceof Error ? e.message : String(e);
+  return msg.includes('credit balance is too low') || msg.includes('insufficient_quota');
+}
+
 /**
  * One pass: fetch latest news, dedupe against DB, score new items via Claude,
  * persist, broadcast over WebSocket.
@@ -17,6 +24,11 @@ export async function pollAndScore(): Promise<{ scanned: number; new: number; er
   }
   if (!claudeAvailable()) {
     log.debug('news poll skipped — ANTHROPIC_API_KEY missing');
+    return { scanned: 0, new: 0, errors: 0 };
+  }
+  if (Date.now() < _creditCircuitOpenUntil) {
+    const minsLeft = Math.ceil((_creditCircuitOpenUntil - Date.now()) / 60_000);
+    log.debug(`news poll skipped — Claude credit circuit open (retry in ${minsLeft}m)`);
     return { scanned: 0, new: 0, errors: 0 };
   }
 
@@ -50,6 +62,12 @@ export async function pollAndScore(): Promise<{ scanned: number; new: number; er
       }
     } catch (e) {
       errors++;
+      // Trip circuit breaker on credit-balance errors so we stop hammering the API
+      if (isCreditError(e)) {
+        _creditCircuitOpenUntil = Date.now() + 30 * 60 * 1000; // 30 min cooldown
+        log.error('Anthropic credit balance exhausted — pausing news poller for 30min. Top up at https://console.anthropic.com/settings/billing');
+        break; // stop this cycle immediately
+      }
       log.warn('Failed to score headline', {
         finnhubId: item.id,
         headline: item.headline.slice(0, 80),

@@ -5,6 +5,7 @@ import { newsRouter } from './news';
 import { playbooksRouter } from './playbooks';
 import { calendarRouter } from './calendar';
 import { priceRouter } from './price';
+import { journalRouter } from './journal';
 import { newsClientCount } from '../ws/news-broadcast';
 
 export const apiRouter = Router();
@@ -15,6 +16,7 @@ apiRouter.use('/news', newsRouter);
 apiRouter.use('/playbooks', playbooksRouter);
 apiRouter.use('/calendar', calendarRouter);
 apiRouter.use('/price', priceRouter);
+apiRouter.use('/journal', journalRouter);
 
 apiRouter.get('/health', (_req, res) => {
   res.json({
