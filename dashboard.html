@@ -775,6 +775,11 @@ body{overflow-x:hidden;overflow-y:auto;}
 .bd-search input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:9px 12px;color:var(--text);font-family:var(--sans);font-size:13px;outline:none;transition:.15s;}
 .bd-search input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(14,165,233,.1);}
 .bd-info{padding:0 14px 8px;font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;flex-shrink:0;}
+/* Region filter chips */
+.bd-region-chips{padding:4px 12px 8px;display:flex;flex-wrap:wrap;gap:5px;flex-shrink:0;}
+.bd-chip{font-family:var(--mono);font-size:9px;font-weight:700;background:var(--bg);border:1px solid var(--border);color:var(--text2);padding:5px 10px;border-radius:100px;cursor:pointer;transition:.15s var(--ease-out-quart);letter-spacing:.04em;}
+.bd-chip:hover{border-color:var(--blue);color:var(--blue);}
+.bd-chip.active{background:var(--bluedim2);border-color:var(--blue);color:var(--blue);}
 /* Scrollable broker list — visible chunky scrollbar so users see they can scroll */
 .bd-list{flex:1;overflow-y:auto;overflow-x:hidden;min-height:0;scrollbar-width:thin;scrollbar-color:var(--blue) var(--bg3);}
 .bd-list::-webkit-scrollbar{width:8px;}
@@ -1224,11 +1229,21 @@ body{overflow-x:hidden;overflow-y:auto;}
               </button>
               <div class="broker-dropdown" id="brokerDropdown">
                 <div class="bd-search">
-                  <input type="text" id="bdSearch" placeholder="🔍 Search regulated brokers…" oninput="filterBrokerDropdown(this.value)" />
+                  <input type="text" id="bdSearch" placeholder="🔍 Search by name, regulator, region or asset…" oninput="filterBrokerDropdown(this.value)" />
                 </div>
-                <div class="bd-info" id="bdInfo">All brokers shown · regulated only</div>
+                <div class="bd-region-chips" id="bdRegionChips">
+                  <button class="bd-chip active" data-region="all" onclick="setBrokerRegion('all',this)">All</button>
+                  <button class="bd-chip" data-region="UK" onclick="setBrokerRegion('UK',this)">🇬🇧 UK</button>
+                  <button class="bd-chip" data-region="EU" onclick="setBrokerRegion('EU',this)">🇪🇺 EU</button>
+                  <button class="bd-chip" data-region="US" onclick="setBrokerRegion('US',this)">🇺🇸 US</button>
+                  <button class="bd-chip" data-region="AU" onclick="setBrokerRegion('AU',this)">🇦🇺 AU</button>
+                  <button class="bd-chip" data-region="CA" onclick="setBrokerRegion('CA',this)">🇨🇦 CA</button>
+                  <button class="bd-chip" data-region="Asia" onclick="setBrokerRegion('Asia',this)">🌏 Asia</button>
+                  <button class="bd-chip" data-region="Global" onclick="setBrokerRegion('Global',this)">🌐 Global</button>
+                </div>
+                <div class="bd-info" id="bdInfo">All regulated brokers worldwide</div>
                 <div class="bd-list" id="bdList"></div>
-                <div class="bd-foot">⚠️ Each broker is regulated. We never place trades — you execute on their platform.</div>
+                <div class="bd-foot">⚠️ Every broker shown is regulated. We never place trades — you execute on their platform.</div>
               </div>
             </div>
             <div class="trade-disclaimer">⚠️ Setup helper only · we never place trades · execute on your broker</div>
@@ -2987,19 +3002,27 @@ var BROKER_LIST=[];
 var _bdLoadedFor=null;
 
 async function loadBrokerDirectory(){
-  var sym=(window._activeSymLabel||'XAU/USD');
-  if(_bdLoadedFor===sym)return; // already loaded for this symbol
+  if(BROKER_LIST.length)return; // already loaded — list is global, doesn't depend on symbol
   try{
-    var r=await fetch(TC_API+'/api/brokers/directory?symbol='+encodeURIComponent(sym));
+    var r=await fetch(TC_API+'/api/brokers/directory');
     if(!r.ok)throw new Error('HTTP '+r.status);
     var d=await r.json();
     BROKER_LIST=d.brokers||[];
-    _bdLoadedFor=sym;
+    _bdLoadedFor='all';
     renderBrokerDropdown('');
     updateBrokerDropdownLabel();
     var info=document.getElementById('bdInfo');
-    if(info)info.textContent=d.brokers.length+' regulated brokers · trade '+sym;
+    if(info)info.textContent=d.brokers.length+' regulated brokers worldwide';
   }catch(e){console.warn('broker directory fetch failed',e.message);}
+}
+
+// Region filter state
+var _bdRegion='all';
+function setBrokerRegion(region,btn){
+  _bdRegion=region;
+  document.querySelectorAll('.bd-chip').forEach(function(c){c.classList.remove('active');});
+  if(btn)btn.classList.add('active');
+  renderBrokerDropdown(document.getElementById('bdSearch').value||'');
 }
 
 function getPreferredBroker(){
@@ -3088,12 +3111,26 @@ function renderBrokerDropdown(filter){
   var f=(filter||'').toLowerCase();
   var pref=getPreferredBroker();
   var filtered=BROKER_LIST.filter(function(b){
+    if(_bdRegion!=='all'&&b.region!==_bdRegion)return false;
     if(!f)return true;
-    return b.name.toLowerCase().includes(f)||b.regulator.toLowerCase().includes(f)||(b.assets||[]).join(',').toLowerCase().includes(f);
+    return b.name.toLowerCase().includes(f)
+        ||b.regulator.toLowerCase().includes(f)
+        ||(b.assets||[]).join(',').toLowerCase().includes(f)
+        ||(b.region||'').toLowerCase().includes(f);
+  });
+  // Featured first, then alphabetical within their region group
+  filtered.sort(function(a,b){
+    return Number(!!b.featured)-Number(!!a.featured) || a.name.localeCompare(b.name);
   });
   if(!filtered.length){
-    list.innerHTML='<div style="padding:24px 14px;text-align:center;font-family:var(--mono);font-size:10px;color:var(--text3);">No brokers match "'+f+'"</div>';
+    list.innerHTML='<div style="padding:24px 14px;text-align:center;font-family:var(--mono);font-size:10px;color:var(--text3);">No brokers match · try a different region or clear search</div>';
     return;
+  }
+  // Update info line with the filtered count
+  var info=document.getElementById('bdInfo');
+  if(info){
+    var label=_bdRegion==='all'?'worldwide':_bdRegion;
+    info.textContent=filtered.length+' of '+BROKER_LIST.length+' regulated brokers · '+label;
   }
   list.innerHTML=filtered.map(function(b){
     var cls='bd-row';
@@ -3128,12 +3165,7 @@ function openBrokerSite(id){
   });
 }
 
-// Refresh dropdown when chart symbol changes
-var _origFetchLivePriceForBD=fetchLivePrice;
-fetchLivePrice=async function(symbol){
-  await _origFetchLivePriceForBD.apply(this,arguments);
-  if(symbol&&symbol!==_bdLoadedFor){_bdLoadedFor=null;loadBrokerDirectory();}
-};
+// Broker directory loads ONCE globally — doesn't refresh on symbol change
 window.addEventListener('load',function(){setTimeout(loadBrokerDirectory,1500);});
 
 // Backward-compat: openInBroker() now triggers the dropdown's preferred broker
