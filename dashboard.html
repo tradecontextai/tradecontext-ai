@@ -734,6 +734,7 @@ body{overflow-x:hidden;overflow-y:auto;}
 
 .aib-loading{display:flex;align-items:center;justify-content:center;flex:1;font-family:var(--mono);font-size:11px;color:var(--text3);padding:30px;}
 .aib-loading .spinner{width:14px;height:14px;border:2px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;margin-right:10px;}
+.aib-disclaimer{padding:10px 18px;background:rgba(245,158,11,.06);border-top:1px solid rgba(245,158,11,.2);font-family:var(--mono);font-size:9px;color:var(--yellow);line-height:1.55;text-align:center;letter-spacing:.04em;flex-shrink:0;}
 @keyframes spin{to{transform:rotate(360deg);}}
 
 /* ═══════ TRADE PANEL — direction dropdown (Buy OR Sell, not both) ═══════ */
@@ -760,6 +761,10 @@ body{overflow-x:hidden;overflow-y:auto;}
 .trade-submit.sell{background:var(--grad-bear);box-shadow:0 4px 16px rgba(239,68,68,.3);}
 .trade-submit:hover{transform:translateY(-2px);filter:brightness(1.08);}
 .trade-submit:active{transform:translateY(-1px) scale(.97);transition-duration:.08s;}
+.trade-submit-secondary{padding:14px 16px;border-radius:8px;border:1px solid var(--border2);background:var(--bg);color:var(--text2);font-family:var(--sans);font-size:13px;font-weight:700;cursor:pointer;transition:.18s var(--ease-out-quart);white-space:nowrap;}
+.trade-submit-secondary:hover{border-color:var(--blue);color:var(--blue);}
+.trade-submit-secondary:active{transform:scale(.97);transition-duration:.08s;}
+.trade-disclaimer{font-family:var(--mono);font-size:9px;color:var(--text3);text-align:center;line-height:1.5;letter-spacing:.04em;padding-top:4px;}
 .trade-ai{padding:11px 14px;background:linear-gradient(135deg,rgba(14,165,233,.1),rgba(139,92,246,.06));border:1px solid rgba(14,165,233,.25);border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:.2s var(--ease-out-quart);}
 .trade-ai:hover{border-color:var(--blue);box-shadow:0 4px 16px rgba(14,165,233,.18);}
 .trade-ai-icon{font-size:18px;}
@@ -1147,8 +1152,8 @@ body{overflow-x:hidden;overflow-y:auto;}
             <div class="trade-panel-h-sub">Pick direction · single-form · saves space</div>
           </div>
           <div class="trade-direction-row">
-            <button class="trade-dir-btn buy active" id="tdBuy" onclick="setTradeDir('buy')">▲ Buy / Long</button>
-            <button class="trade-dir-btn sell" id="tdSell" onclick="setTradeDir('sell')">▼ Sell / Short</button>
+            <button class="trade-dir-btn buy active" id="tdBuy" onclick="setTradeDir('buy')">▲ Long Setup</button>
+            <button class="trade-dir-btn sell" id="tdSell" onclick="setTradeDir('sell')">▼ Short Setup</button>
           </div>
           <div class="trade-form">
             <div class="trade-form-row">
@@ -1182,7 +1187,11 @@ body{overflow-x:hidden;overflow-y:auto;}
               </div>
               <span class="trade-ai-cta">APPLY →</span>
             </div>
-            <button class="trade-submit buy" id="tradeSubmit" onclick="submitTrade()">▲ BUY <span id="tradeSubmitSym">XAU/USD</span></button>
+            <div style="display:flex;gap:8px;">
+              <button class="trade-submit buy" id="tradeSubmit" onclick="copyTradeSetup()" style="flex:1;">📋 Copy Setup</button>
+              <button class="trade-submit-secondary" onclick="openInBroker()" title="Open this symbol in your connected broker">↗ Open in OANDA</button>
+            </div>
+            <div class="trade-disclaimer">⚠️ Setup helper only · we never place trades · execute on your broker</div>
           </div>
         </div>
 
@@ -1211,6 +1220,7 @@ body{overflow-x:hidden;overflow-y:auto;}
               <div class="aib-verdict-rationale" id="aibSwingRationale">—</div>
             </div>
           </div>
+          <div class="aib-disclaimer">⚠️ AI-generated market analysis · informational only · not personal financial advice · trading involves risk of loss · do your own research</div>
         </div>
 
         <!-- ═══ Col 3: Economic Calendar (slot — populated by reparentPanels) ═══ -->
@@ -1231,7 +1241,7 @@ body{overflow-x:hidden;overflow-y:auto;}
           <div class="mp-card">
             <div class="mp-card-h">
               <div class="mp-card-title">💪 Currency Strength</div>
-              <div class="mp-card-sub">Last 24h relative performance</div>
+              <div class="mp-card-sub">Since you opened the page · live drift</div>
             </div>
             <div class="ccy-strength" id="ccyStrength"></div>
           </div>
@@ -1296,64 +1306,25 @@ body{overflow-x:hidden;overflow-y:auto;}
         </div>
       </div>
 
-      <!-- AI PLAYBOOK -->
+      <!-- AI PLAYBOOK — live from /api/playbooks -->
       <div class="panel">
         <div class="panel-h">
-          <div class="panel-h-title">🤖 AI Trade Playbooks <span style="font-family:var(--mono);font-size:10px;color:var(--text3);font-weight:600;margin-left:6px;">Auto-generated</span></div>
+          <div class="panel-h-title">🤖 AI Trade Playbooks <span style="font-family:var(--mono);font-size:10px;color:var(--text3);font-weight:600;margin-left:6px;">Auto-generated from news</span></div>
           <a href="news-bias.html" class="panel-h-link">All playbooks →</a>
         </div>
-        <div>
-          <div class="play-card featured">
-            <div class="play-h">
-              <div>
-                <div class="play-sym-big">🥇 XAU/USD <span style="font-family:var(--mono);font-size:10px;color:var(--text3);font-weight:600;">Gold</span></div>
-                <div class="play-gen">Generated · Iran news + Fed dovish pivot · 2m ago</div>
-              </div>
-              <div class="conf-ring">
-                <svg width="54" height="54" viewBox="0 0 54 54" style="transform:rotate(-90deg);">
-                  <circle cx="27" cy="27" r="22" fill="none" stroke="var(--bg4)" stroke-width="4"/>
-                  <circle cx="27" cy="27" r="22" fill="none" stroke="#34d399" stroke-width="4" stroke-linecap="round" stroke-dasharray="138.2" stroke-dashoffset="18"/>
-                </svg>
-                <div class="conf-num">87</div>
-              </div>
-            </div>
-            <div class="case-block bull">
-              <div class="case-label">▲ Bull Case · Primary</div>
-              <div class="play-levels">
-                <div class="play-level"><div class="play-level-val">$3,095</div><div class="play-level-lbl">ENTRY</div></div>
-                <div class="play-level"><div class="play-level-val" style="color:var(--green2);">$3,180</div><div class="play-level-lbl">TAKE PROFIT</div></div>
-                <div class="play-level"><div class="play-level-val" style="color:var(--red2);">$3,068</div><div class="play-level-lbl">STOP LOSS</div></div>
-              </div>
-              <div class="play-desc">Safe-haven surge from Iran escalation + Fed dovish pivot. Institutional gold buying confirmed on volume. <strong style="color:var(--green2);">R:R 1:3.1</strong></div>
-            </div>
-            <div class="case-block bear">
-              <div class="case-label">▼ Bear · Invalidation</div>
-              <div class="play-desc">Break below <strong>$3,060</strong> on 4H close, or Iran ceasefire = safe-haven collapses fast.</div>
-            </div>
-            <div style="display:flex;gap:8px;margin-top:12px;">
-              <button class="trade-btn buy" style="flex:1;font-size:13px;padding:11px;" onclick="aiAutoFill()">⚡ Apply to Trade Panel</button>
-              <button class="broker-btn outline" style="flex:0 0 auto;padding:11px 16px;">📓 Save</button>
-            </div>
-          </div>
+        <div id="playbookContainer">
+          <div style="padding:30px;text-align:center;font-family:var(--mono);font-size:11px;color:var(--text3);">Loading playbooks…</div>
         </div>
       </div>
 
-      <!-- POSITIONS + HISTORY -->
+      <!-- POSITIONS + HISTORY — live from /api/broker/oanda/positions -->
       <div class="panel">
         <div class="panel-h">
-          <div class="panel-h-title">📊 Live Positions &amp; Trade History</div>
-          <div style="font-family:var(--mono);font-size:10px;color:var(--text3);">OANDA · IBKR · Binance · <span style="color:var(--green2);">●</span> Synced 3s ago</div>
+          <div class="panel-h-title">📊 Live Positions <span style="font-family:var(--mono);font-size:10px;color:var(--text3);font-weight:600;margin-left:6px;">From your connected brokers</span></div>
+          <div id="posSyncStatus" style="font-family:var(--mono);font-size:10px;color:var(--text3);">—</div>
         </div>
-        <div style="overflow-x:auto;">
-          <table class="data-table">
-            <thead><tr><th>Symbol</th><th>Dir</th><th style="text-align:right;">Size</th><th style="text-align:right;">Entry</th><th style="text-align:right;">Live</th><th style="text-align:right;">P&amp;L</th><th style="text-align:right;">SL</th><th style="text-align:right;">TP</th><th style="text-align:right;">R</th></tr></thead>
-            <tbody>
-              <tr><td style="font-weight:700;color:var(--text);">XAU/USD</td><td><span class="badge-long">▲ Long</span></td><td style="text-align:right;color:var(--text2);">0.5</td><td style="text-align:right;color:var(--text2);">3,095</td><td style="text-align:right;color:var(--text);font-weight:700;">3,121</td><td style="text-align:right;font-weight:800;color:var(--green2);">+$816</td><td style="text-align:right;color:var(--red2);">3,068</td><td style="text-align:right;color:var(--green2);">3,180</td><td style="text-align:right;color:var(--green2);">+3.2R</td></tr>
-              <tr><td style="font-weight:700;color:var(--text);">EUR/JPY</td><td><span class="badge-long">▲ Long</span></td><td style="text-align:right;color:var(--text2);">1.0</td><td style="text-align:right;color:var(--text2);">167.24</td><td style="text-align:right;color:var(--text);font-weight:700;">167.82</td><td style="text-align:right;font-weight:800;color:var(--green2);">+$244</td><td style="text-align:right;color:var(--red2);">166.40</td><td style="text-align:right;color:var(--green2);">169.50</td><td style="text-align:right;color:var(--green2);">+0.7R</td></tr>
-              <tr><td style="font-weight:700;color:var(--text);">BTC/USD</td><td><span class="badge-long">▲ Long</span></td><td style="text-align:right;color:var(--text2);">0.1</td><td style="text-align:right;color:var(--text2);">89,400</td><td style="text-align:right;color:var(--text);font-weight:700;">92,148</td><td style="text-align:right;font-weight:800;color:var(--green2);">+$274</td><td style="text-align:right;color:var(--red2);">87,000</td><td style="text-align:right;color:var(--green2);">97,000</td><td style="text-align:right;color:var(--green2);">+1.1R</td></tr>
-              <tr><td style="font-weight:700;color:var(--text);">GBP/USD</td><td><span class="badge-short">▼ Short</span></td><td style="text-align:right;color:var(--text2);">0.5</td><td style="text-align:right;color:var(--text2);">1.2810</td><td style="text-align:right;color:var(--text);font-weight:700;">1.2784</td><td style="text-align:right;font-weight:800;color:var(--green2);">+$130</td><td style="text-align:right;color:var(--red2);">1.2850</td><td style="text-align:right;color:var(--green2);">1.2720</td><td style="text-align:right;color:var(--green2);">+0.6R</td></tr>
-            </tbody>
-          </table>
+        <div id="posTableWrap" style="overflow-x:auto;min-height:120px;">
+          <div style="padding:30px;text-align:center;font-family:var(--mono);font-size:11px;color:var(--text3);">Loading positions…</div>
         </div>
       </div>
 
@@ -2938,19 +2909,52 @@ function fillTradeDefaults(price,dir){
   var rr=document.getElementById('tradeRR');
   if(rr){rr.textContent='1 : 3.0';rr.style.color=dir==='buy'?'var(--green2)':'var(--red2)';}
 }
-function submitTrade(){
+// Copy the trade setup to clipboard so the user can paste into their broker.
+// We never execute trades — that would require FCA/SEC authorisation.
+function copyTradeSetup(){
   var sym=(window._activeSymLabel||'XAU/USD');
+  var dir=_tradeDir==='buy'?'LONG':'SHORT';
   var size=document.getElementById('tradeSize').value;
+  var price=document.getElementById('tradePrice').value;
   var sl=document.getElementById('tradeSL').value;
   var tp=document.getElementById('tradeTP').value;
-  toast({
-    kind:_tradeDir==='buy'?'green':'red',
-    icon:_tradeDir==='buy'?'▲':'▼',
-    title:(_tradeDir==='buy'?'Buy':'Sell')+' order sent · '+sym,
-    desc:size+' lots · SL '+sl+' · TP '+tp+' · routed to OANDA',
-    duration:4500
-  });
+  var rr=document.getElementById('tradeRR').textContent;
+  var setup=
+    'TradeContext.ai setup — '+sym+'\n'
+    +'─────────────────────\n'
+    +'Direction:    '+dir+'\n'
+    +'Size:         '+size+' lots\n'
+    +'Entry (live): '+price+'\n'
+    +'Stop loss:    '+sl+'\n'
+    +'Take profit:  '+tp+'\n'
+    +'R:R:          '+rr+'\n'
+    +'Risk:         0.5% of account\n'
+    +'─────────────────────\n'
+    +'Generated: '+new Date().toISOString()+'\n'
+    +'⚠️ Not financial advice — execute at your own risk on your broker.';
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(setup).then(function(){
+      toast({kind:'green',icon:'📋',title:'Setup copied to clipboard',desc:'Paste into '+sym+' on your broker. We never place trades.',duration:5000});
+    }).catch(function(){fallback();});
+  }else fallback();
+  function fallback(){
+    toast({kind:'yellow',icon:'⚠️',title:'Clipboard unavailable',desc:'Copy this manually: '+sym+' '+dir+' size '+size+' SL '+sl+' TP '+tp,duration:8000});
+  }
 }
+
+// Deeplink to OANDA's web trader (opens their site in a new tab on the symbol).
+// We don't pre-fill the order — OANDA's deeplink format doesn't support it.
+// User reviews + executes on OANDA themselves.
+function openInBroker(){
+  var sym=(window._activeSymLabel||'XAU/USD');
+  // OANDA web trader URL — opens to the trade tab; user pastes the setup
+  var url='https://trade.oanda.com';
+  window.open(url,'_blank','noopener,noreferrer');
+  toast({kind:'blue',icon:'↗',title:'Opening OANDA…',desc:'Setup is on your clipboard if you copied it. Paste + review before executing.',duration:5000});
+}
+
+// Legacy alias kept so old onclick references don't break
+function submitTrade(){copyTradeSetup();}
 
 // ════════════ BULL vs BEAR (legacy — superseded by AI Bias panel) ════════════
 function renderBullBear_LEGACY(){
@@ -3301,6 +3305,251 @@ function setCalFilter(impact,btn){
 
 loadCalendar();
 setInterval(loadCalendar,10*60*1000); // refresh every 10 min
+
+// ════════════ LIVE WIRINGS — Playbooks, Positions, Broker, Journal ════════════
+
+// ──── 1. AI Trade Playbooks (panel) ────
+async function loadPlaybooks(){
+  var c=document.getElementById('playbookContainer');if(!c)return;
+  try{
+    var r=await fetch(TC_API+'/api/playbooks',{credentials:'include'});
+    if(r.status===401){
+      c.innerHTML=playbookEmptyState('Sign in to see your AI playbooks','Generate trade playbooks from any breaking news on Pro+.');
+      return;
+    }
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    var d=await r.json();
+    var pbs=d.playbooks||[];
+    if(!pbs.length){
+      c.innerHTML=playbookEmptyState('No playbooks yet','Open the News Bias panel and click "🤖 View AI Playbook →" on any story to generate one.');
+      return;
+    }
+    c.innerHTML=pbs.slice(0,3).map(renderPlaybookCard).join('');
+  }catch(e){
+    c.innerHTML=playbookEmptyState('Couldn\'t load playbooks',e.message||'Check backend.');
+  }
+}
+function playbookEmptyState(title,sub){
+  return '<div style="padding:36px 24px;text-align:center;">'
+    +'<div style="font-size:36px;margin-bottom:8px;">🤖</div>'
+    +'<div style="font-family:var(--sans);font-size:15px;font-weight:700;color:var(--text);margin-bottom:6px;">'+title+'</div>'
+    +'<div style="font-family:var(--sans);font-size:12px;color:var(--text2);max-width:340px;margin:0 auto;line-height:1.5;">'+sub+'</div>'
+    +'<a href="news-bias.html" style="display:inline-block;margin-top:14px;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--blue);background:var(--bluedim);border:1px solid rgba(14,165,233,.3);padding:7px 14px;border-radius:6px;text-decoration:none;letter-spacing:.06em;text-transform:uppercase;">📡 Browse news →</a>'
+    +'</div>';
+}
+function renderPlaybookCard(p){
+  var bias=p.bias||'neutral';
+  var conf=p.confidence||'medium';
+  var biasIcon=bias==='bull'?'▲':bias==='bear'?'▼':'●';
+  var biasLbl=bias==='bull'?'Bullish':bias==='bear'?'Bearish':'Neutral';
+  var primary=bias==='bear'?{entry:p.bearEntry,tp:p.bearTp,sl:p.bearSl}:{entry:p.bullEntry,tp:p.bullTp,sl:p.bullSl};
+  var ageMs=Date.now()-new Date(p.generatedAt).getTime();
+  var age=ageMs<3600000?Math.floor(ageMs/60000)+'m':Math.floor(ageMs/3600000)+'h';
+  var confPct=conf==='high'?87:conf==='medium'?65:42;
+  return '<div class="play-card featured" style="margin-bottom:12px;">'
+    +'<div class="play-h">'
+      +'<div>'
+        +'<div class="play-sym-big">'+biasIcon+' '+p.symbol+'</div>'
+        +'<div class="play-gen">Generated · '+age+' ago · '+conf+' confidence</div>'
+      +'</div>'
+      +'<div class="conf-ring">'
+        +'<svg width="54" height="54" viewBox="0 0 54 54" style="transform:rotate(-90deg);">'
+          +'<circle cx="27" cy="27" r="22" fill="none" stroke="var(--bg4)" stroke-width="4"/>'
+          +'<circle cx="27" cy="27" r="22" fill="none" stroke="'+(bias==='bear'?'#f87171':'#34d399')+'" stroke-width="4" stroke-linecap="round" stroke-dasharray="138.2" stroke-dashoffset="'+(138.2*(1-confPct/100)).toFixed(1)+'"/>'
+        +'</svg>'
+        +'<div class="conf-num">'+confPct+'</div>'
+      +'</div>'
+    +'</div>'
+    +'<div class="case-block '+(bias==='bear'?'bear':'bull')+'">'
+      +'<div class="case-label">'+biasIcon+' '+biasLbl+' Case · Primary</div>'
+      +(primary.entry?'<div class="play-levels">'
+        +'<div class="play-level"><div class="play-level-val">'+primary.entry+'</div><div class="play-level-lbl">ENTRY</div></div>'
+        +'<div class="play-level"><div class="play-level-val" style="color:var(--green2);">'+(primary.tp||'—')+'</div><div class="play-level-lbl">TAKE PROFIT</div></div>'
+        +'<div class="play-level"><div class="play-level-val" style="color:var(--red2);">'+(primary.sl||'—')+'</div><div class="play-level-lbl">STOP LOSS</div></div>'
+      +'</div>':'')
+      +(p.reasoning?'<div class="play-desc">'+p.reasoning+'</div>':'')
+    +'</div>'
+    +(p.keyLevels&&p.keyLevels.length?'<div style="font-family:var(--mono);font-size:10px;color:var(--text2);padding-top:8px;border-top:1px solid var(--border);margin-top:10px;">📍 Key levels: '+p.keyLevels.join(' · ')+'</div>':'')
+  +'</div>';
+}
+loadPlaybooks();
+setInterval(loadPlaybooks,2*60*1000); // every 2 min
+
+// ──── 2. Live Positions (from OANDA) ────
+async function loadPositions(){
+  var w=document.getElementById('posTableWrap');var sync=document.getElementById('posSyncStatus');
+  if(!w)return;
+  try{
+    var r=await fetch(TC_API+'/api/broker/oanda/positions',{credentials:'include'});
+    if(r.status===401){
+      w.innerHTML=positionsEmpty('Sign in to view positions','Connect a broker (Pro+) to see your live positions sync into the dashboard.');
+      if(sync)sync.textContent='Not signed in';
+      return;
+    }
+    if(r.status===404){
+      w.innerHTML=positionsEmpty('No broker connected','Connect OANDA, Binance, MT4/5, or IBKR to see your live positions here. Read-only access — we never place trades.');
+      if(sync)sync.textContent='No broker';
+      return;
+    }
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    var d=await r.json();
+    var positions=d.positions||[];
+    if(!positions.length){
+      w.innerHTML=positionsEmpty('No open positions','Your OANDA account has no open positions right now.');
+      if(sync)sync.innerHTML='OANDA · <span style="color:var(--green2);">●</span> Synced just now';
+      return;
+    }
+    var rows=positions.map(function(p){
+      var dirBadge=p.direction==='long'?'<span class="badge-long">▲ Long</span>':'<span class="badge-short">▼ Short</span>';
+      var pnlColor=p.unrealizedPL>=0?'var(--green2)':'var(--red2)';
+      var pnlSign=p.unrealizedPL>=0?'+':'-';
+      return '<tr>'
+        +'<td style="font-weight:700;color:var(--text);">'+p.instrument+'</td>'
+        +'<td>'+dirBadge+'</td>'
+        +'<td style="text-align:right;color:var(--text2);">'+p.units.toLocaleString('en-GB')+'</td>'
+        +'<td style="text-align:right;color:var(--text2);">'+(p.averagePrice||'—')+'</td>'
+        +'<td style="text-align:right;font-weight:800;color:'+pnlColor+';">'+pnlSign+'$'+Math.abs(p.unrealizedPL).toFixed(2)+'</td>'
+      +'</tr>';
+    }).join('');
+    w.innerHTML='<table class="data-table"><thead><tr><th>Symbol</th><th>Dir</th><th style="text-align:right;">Units</th><th style="text-align:right;">Avg Price</th><th style="text-align:right;">Unrealized P&L</th></tr></thead><tbody>'+rows+'</tbody></table>';
+    if(sync)sync.innerHTML='OANDA · <span style="color:var(--green2);">●</span> Synced just now · '+positions.length+' open';
+  }catch(e){
+    w.innerHTML=positionsEmpty('Couldn\'t load positions',e.message||'Backend or broker offline.');
+  }
+}
+function positionsEmpty(title,sub){
+  return '<div style="padding:34px 24px;text-align:center;">'
+    +'<div style="font-size:36px;margin-bottom:8px;">📊</div>'
+    +'<div style="font-family:var(--sans);font-size:15px;font-weight:700;color:var(--text);margin-bottom:6px;">'+title+'</div>'
+    +'<div style="font-family:var(--sans);font-size:12px;color:var(--text2);max-width:420px;margin:0 auto;line-height:1.5;">'+sub+'</div>'
+    +'<a href="broker-connect.html" style="display:inline-block;margin-top:14px;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--blue);background:var(--bluedim);border:1px solid rgba(14,165,233,.3);padding:7px 14px;border-radius:6px;text-decoration:none;letter-spacing:.06em;text-transform:uppercase;">🔌 Connect broker →</a>'
+  +'</div>';
+}
+loadPositions();
+setInterval(loadPositions,15*1000); // every 15s
+
+// ──── 3. Broker connection cards (from /api/broker/connections) ────
+async function loadBrokerConnections(){
+  // Find the broker grid inside the broker panel that gets reparented to the broker-funded row
+  var brokerGrids=document.querySelectorAll('.broker-grid');
+  var brokerGrid=null;
+  brokerGrids.forEach(function(g){var t=(g.closest('.panel')||{}).querySelector?(g.closest('.panel').querySelector('.panel-h-title')||{}).textContent:'';if(t&&t.indexOf('🔌')>=0)brokerGrid=g;});
+  if(!brokerGrid)return;
+  try{
+    var r=await fetch(TC_API+'/api/broker/connections',{credentials:'include'});
+    if(r.status===401){
+      brokerGrid.innerHTML=brokerEmpty();return;
+    }
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    var d=await r.json();
+    var conns=(d.connections||[]).filter(function(c){return c.brokerName!=='ftmo'&&c.brokerName!=='the5ers';}); // funded shown separately
+    if(!conns.length){
+      brokerGrid.innerHTML=brokerEmpty();return;
+    }
+    brokerGrid.innerHTML=conns.map(function(c){
+      var ago=c.lastSyncedAt?Math.floor((Date.now()-new Date(c.lastSyncedAt).getTime())/1000):null;
+      var agoStr=ago===null?'never':ago<60?ago+'s ago':ago<3600?Math.floor(ago/60)+'m ago':Math.floor(ago/3600)+'h ago';
+      return '<div class="broker-card connected">'
+        +'<div class="broker-h">'
+          +'<div class="broker-logo-big" style="background:#0a1628;display:flex;align-items:center;justify-content:center;color:var(--blue);font-weight:900;font-family:var(--mono);font-size:14px;">'+c.brokerName.slice(0,2).toUpperCase()+'</div>'
+          +'<div><div class="broker-name-big">'+c.brokerName.toUpperCase()+'</div>'
+          +'<div class="broker-status connected"><span style="font-size:10px;">●</span> '+(c.environment||'live')+' · synced '+agoStr+'</div></div>'
+          +'<div class="broker-pnl"><div class="broker-pnl-val" style="color:var(--text3);font-size:11px;">—</div><div class="broker-pnl-lbl">Click to sync</div></div>'
+        +'</div>'
+        +'<div class="broker-actions">'
+          +'<button class="broker-btn success" onclick="loadPositions()">↻ Sync Positions</button>'
+          +'<button class="broker-btn outline" onclick="brokerAction(\'disconnect\',\''+c.brokerName.toUpperCase()+'\')">Disconnect</button>'
+        +'</div>'
+      +'</div>';
+    }).join('')+'<div class="add-broker" onclick="window.location=\'broker-connect.html\'"><div class="plus">+</div><div class="add-broker-lbl">Add another broker</div><div class="add-broker-sub">25+ supported · MT4/5, IBKR, eToro, Schwab...</div></div>';
+  }catch(e){console.warn('broker connections fetch failed',e.message);}
+}
+function brokerEmpty(){
+  return '<div style="padding:34px 24px;text-align:center;">'
+    +'<div style="font-size:36px;margin-bottom:8px;">🔌</div>'
+    +'<div style="font-family:var(--sans);font-size:15px;font-weight:700;color:var(--text);margin-bottom:6px;">No broker connected</div>'
+    +'<div style="font-family:var(--sans);font-size:12px;color:var(--text2);max-width:340px;margin:0 auto;line-height:1.5;">Connect OANDA, Binance, MT4/5, or IBKR to sync positions + balance live. Read-only — we never place trades.</div>'
+    +'<a href="broker-connect.html" style="display:inline-block;margin-top:14px;font-family:var(--mono);font-size:10px;font-weight:700;color:#000;background:var(--blue);padding:9px 18px;border-radius:6px;text-decoration:none;letter-spacing:.06em;text-transform:uppercase;">+ Connect a broker</a>'
+  +'</div>';
+}
+window.addEventListener('load',function(){setTimeout(loadBrokerConnections,1200);});
+
+// ──── 4. AI Trading Journal — score + stats from /api/journal/* ────
+async function loadJournal(){
+  // Update Today P&L KPI from journal stats (deterministic, no Claude cost)
+  try{
+    var r=await fetch(TC_API+'/api/journal/stats',{credentials:'include'});
+    if(r.ok){
+      var d=await r.json();var s=d.stats;
+      var todayKpi=document.querySelectorAll('.kpi-card')[1];
+      if(todayKpi&&s){
+        var v=todayKpi.querySelector('.kpi-value');
+        var sub=todayKpi.querySelector('.kpi-sub');
+        if(v){
+          var sign=s.grossPnl>=0?'+':'-';
+          v.textContent=sign+'$'+Math.abs(s.grossPnl).toFixed(0);
+          v.style.color=s.grossPnl>=0?'var(--green2)':'var(--red2)';
+        }
+        if(sub)sub.textContent=s.totalTrades+' trades · '+s.winRate+'% win';
+      }
+      // Update Win Rate KPI (3rd card)
+      var wrKpi=document.querySelectorAll('.kpi-card')[2];
+      if(wrKpi&&s){
+        var v=wrKpi.querySelector('.kpi-value');
+        if(v){v.textContent=s.winRate+'%';}
+        var sub=wrKpi.querySelector('.kpi-sub');
+        if(sub)sub.textContent=s.totalTrades+' trades · PF '+s.profitFactor;
+      }
+    }
+  }catch(e){/* gracefully degrade */}
+  // Update TradeContext Score in journal panel (if present)
+  try{
+    var r2=await fetch(TC_API+'/api/journal/score',{credentials:'include'});
+    if(r2.ok){
+      var d2=await r2.json();
+      if(d2.score){
+        var scoreNum=document.querySelectorAll('.score-num');
+        scoreNum.forEach(function(el){el.textContent=d2.score.overall_score;});
+        // AI Score KPI (8th card)
+        var aiKpi=document.querySelectorAll('.kpi-card')[7];
+        if(aiKpi){
+          var v=aiKpi.querySelector('.kpi-value');
+          if(v)v.textContent=d2.score.overall_score;
+          var sub=aiKpi.querySelector('.kpi-sub');
+          if(sub)sub.textContent=d2.score.label;
+        }
+      }
+    }
+  }catch(e){/* gracefully degrade */}
+}
+window.addEventListener('load',function(){setTimeout(loadJournal,1500);});
+setInterval(loadJournal,60*1000); // every minute
+
+// ──── 5. Real news tab badges (replace hardcoded "12" / "2") ────
+function updateNewsTabBadges(){
+  var tabs=document.querySelectorAll('.news-side-tabs .news-tab');
+  if(!tabs.length||!LIVE_NEWS)return;
+  var counts=[
+    LIVE_NEWS.length, // top
+    LIVE_NEWS.filter(function(n){return n.isBreaking;}).length, // breaking
+    LIVE_NEWS.filter(function(n){return n.impact==='high';}).length, // high
+    LIVE_NEWS.filter(function(n){return (n.tab||[]).indexOf(3)>=0;}).length, // economic
+  ];
+  tabs.forEach(function(tab,i){
+    if(i>=4)return;
+    var existing=tab.querySelector('.badge');
+    if(existing)existing.remove();
+    if(counts[i]>0){
+      var b=document.createElement('span');
+      b.className='badge';
+      b.textContent=counts[i];
+      tab.appendChild(b);
+    }
+  });
+}
+// Hook into existing news-load flow
+var _origLoadLiveNews=loadLiveNews;
+loadLiveNews=async function(){await _origLoadLiveNews.apply(this,arguments);updateNewsTabBadges();};
 
 // ════════════ FAQ ════════════
 function toggleFaq(el){el.closest('.faq-item').classList.toggle('open');}

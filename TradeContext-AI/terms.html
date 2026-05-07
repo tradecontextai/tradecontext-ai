@@ -37,7 +37,18 @@ a{color:var(--blue);}
 <h2>1. Acceptance of Terms</h2>
 <p>By accessing or using TradeContext.ai, you agree to be bound by these Terms of Service. If you do not agree, please do not use our platform.</p>
 <h2>2. Description of Service</h2>
-<p>TradeContext.ai provides AI-powered market intelligence tools including news bias feeds, trade playbooks, economic calendars, trading journals and broker integrations. All content is for informational and educational purposes only.</p>
+<p>TradeContext.ai provides AI-powered market intelligence tools including news bias feeds, trade playbooks, economic calendars, trading journals and read-only broker integrations. All content is for informational and educational purposes only.</p>
+
+<h2>2a. What TradeContext.ai is NOT</h2>
+<p>To be unambiguous about our regulatory perimeter:</p>
+<ul>
+<li><strong>We are not a broker or dealer.</strong> We do not hold client funds, custody assets, or execute orders on your behalf.</li>
+<li><strong>We are not an investment adviser.</strong> Nothing we publish constitutes a personal recommendation tailored to your circumstances.</li>
+<li><strong>We are not a fund manager.</strong> We have no discretionary authority over any of your accounts.</li>
+<li><strong>We are not authorised by the FCA, SEC, CFTC, ASIC, or any other financial regulator</strong> to provide regulated activities.</li>
+<li><strong>The "Copy Setup" and "Open in OANDA" buttons</strong> are setup-helper tools — they format trade parameters for your clipboard or open your broker's website. They do not place, route, or transmit orders.</li>
+</ul>
+<p>If you are looking for a broker, an investment adviser, or a fund manager, you must use a separately authorised firm in your jurisdiction.</p>
 <h2>3. Subscription and Billing</h2>
 <p>TradeContext.ai offers paid subscription plans (Pro and Elite). By subscribing:</p>
 <ul>
@@ -50,7 +61,13 @@ a{color:var(--blue);}
 <h2>4. Not Financial Advice</h2>
 <p>TradeContext.ai is not a regulated financial adviser. All content, AI-generated playbooks, news bias scores and analysis are provided for informational purposes only. We are not responsible for any trading decisions made based on our platform.</p>
 <h2>5. Broker and Third-Party Integrations</h2>
-<p>When connecting your broker account, you grant TradeContext.ai read-only access to your trading data. We never place, modify or cancel trades on your behalf. Third-party services (MetaTrader, OANDA, Binance etc.) are governed by their own terms.</p>
+<p>When connecting your broker account, you grant TradeContext.ai <strong>read-only</strong> access to your trading data via the broker's published API. Specifically:</p>
+<ul>
+<li>We can <strong>read</strong>: account balance, open positions, trade history, margin information.</li>
+<li>We <strong>cannot</strong>: place new trades, modify existing trades, cancel orders, transfer funds, or change any account settings.</li>
+<li>API tokens you provide are encrypted at rest using AES-256-GCM. You can revoke them at any time from your broker's dashboard, and you can disconnect from TradeContext.ai with one click.</li>
+<li>Third-party services (MetaTrader, OANDA, Binance, Interactive Brokers, etc.) are governed by their own terms of service. Your relationship with them is direct.</li>
+</ul>
 <h2>6. Intellectual Property</h2>
 <p>All content, design, AI models and software on TradeContext.ai are the intellectual property of TradeContext.ai. You may not reproduce, distribute or create derivative works without our written permission.</p>
 <h2>7. Limitation of Liability</h2>
