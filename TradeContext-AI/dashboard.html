@@ -202,9 +202,15 @@ body{overflow-x:hidden;overflow-y:auto;}
 .three-col-row .panel{height:600px;max-height:600px;overflow:hidden;}
 .three-col-row .panel > .journal-hero,.three-col-row .panel > .kpi-grid-mini{flex-shrink:0;}
 /* FAQ section centered + capped to readable width */
-.faq-centered{max-width:920px;margin-left:auto!important;margin-right:auto!important;}
+.faq-centered{max-width:920px;margin-left:auto!important;margin-right:auto!important;text-align:center;}
 .faq-centered .section-title{text-align:center;}
 .faq-centered .section-sub{text-align:center;max-width:640px;margin-left:auto;margin-right:auto;}
+.faq-centered .panel{text-align:left;}
+.faq-q-badge{width:84px;height:84px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;margin:0 auto 18px;font-family:var(--sans);font-size:46px;font-weight:900;color:#fff;background:var(--grad-prem);box-shadow:0 0 0 0 rgba(14,165,233,.55),0 12px 32px rgba(14,165,233,.25);animation:faqPulse 2.4s ease-in-out infinite;position:relative;}
+.faq-q-badge::before{content:'';position:absolute;inset:-6px;border-radius:50%;border:2px solid rgba(14,165,233,.5);animation:faqRing 2.4s ease-out infinite;}
+.faq-q-badge::after{content:'';position:absolute;inset:-14px;border-radius:50%;border:1.5px solid rgba(139,92,246,.35);animation:faqRing 2.4s ease-out infinite .6s;}
+@keyframes faqPulse{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(14,165,233,.55),0 12px 32px rgba(14,165,233,.25);}50%{transform:scale(1.06);box-shadow:0 0 0 18px rgba(14,165,233,0),0 18px 44px rgba(14,165,233,.4);}}
+@keyframes faqRing{0%{transform:scale(.85);opacity:.9;}100%{transform:scale(1.4);opacity:0;}}
 /* Trade Panel + Calendar side-by-side row — trade gets more width, calendar narrower */
 /* 3-col row beneath chart: Trade (with direction dropdown) | AI Bias | Calendar */
 .trade-cal-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr) minmax(0,1fr);gap:20px;align-items:stretch;}
@@ -1723,9 +1729,10 @@ body{overflow-x:hidden;overflow-y:auto;}
     </div>
   </div>
 
-  <!-- ═══════ FAQ SECTION (centered with max-width) ═══════ -->
+  <!-- ═══════ FAQ SECTION (centered with pulsing question mark) ═══════ -->
   <div id="faqSection" class="section-block faq-centered" style="margin-top:48px;">
-    <div class="section-title">❓ Frequently Asked Questions</div>
+    <div class="faq-q-badge" aria-hidden="true">?</div>
+    <div class="section-title">Frequently Asked Questions</div>
     <div class="section-sub">Everything you need to know about TradeContext.ai. Still have questions? <a href="mailto:hello@tradecontext.ai" style="color:var(--blue);font-weight:700;">Email us →</a></div>
     <div class="panel">
       <div class="faq-list">
