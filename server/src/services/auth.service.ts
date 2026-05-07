@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import { prisma } from '../config/db';
 import { HttpError } from '../middleware/error';
 import { randomToken } from '../lib/crypto';
+import { sendWelcome, sendVerifyEmail, sendPasswordReset } from './email.service';
 
 const BCRYPT_ROUNDS = 12;
 
@@ -30,7 +31,10 @@ export async function createUser(email: string, password: string) {
     },
   });
 
-  // TODO: emailService.sendVerifyEmail(user.email, emailVerifyToken)
+  // Fire-and-forget — don't block signup on email delivery
+  void sendWelcome({ to: user.email });
+  void sendVerifyEmail({ to: user.email, token: emailVerifyToken });
+
   return user;
 }
 
@@ -68,7 +72,19 @@ export async function startPasswordReset(email: string) {
     },
   });
 
-  // TODO: emailService.sendPasswordReset(user.email, token)
+  void sendPasswordReset({ to: user.email, token });
+}
+
+/** Verify an email-verification token. */
+export async function verifyEmailByToken(token: string) {
+  const user = await prisma.user.findFirst({ where: { emailVerifyToken: token } });
+  if (!user) throw new HttpError(400, 'Invalid verification token', 'INVALID_TOKEN');
+  if (user.emailVerified) return user; // already verified — idempotent
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { emailVerified: true, emailVerifyToken: null },
+  });
+  return user;
 }
 
 export async function completePasswordReset(token: string, newPassword: string) {
