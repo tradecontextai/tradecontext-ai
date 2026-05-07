@@ -766,18 +766,21 @@ body{overflow-x:hidden;overflow-y:auto;}
 .trade-submit-secondary:active{transform:scale(.97);transition-duration:.08s;}
 .trade-disclaimer{font-family:var(--mono);font-size:9px;color:var(--text3);text-align:center;line-height:1.5;letter-spacing:.04em;padding-top:4px;}
 
-/* ═══════ BROKER DROPDOWN — opens above the trade buttons ═══════ */
-.broker-dropdown{position:absolute;bottom:calc(100% + 8px);right:0;background:var(--bg2);border:1px solid var(--border2);border-radius:10px;width:340px;max-height:420px;display:none;flex-direction:column;box-shadow:0 16px 48px rgba(0,0,0,.5);z-index:100;overflow:hidden;animation:bdIn .25s var(--ease-out-expo);transform-origin:bottom right;}
-@keyframes bdIn{from{opacity:0;transform:scale(.94) translateY(8px);}to{opacity:1;transform:scale(1) translateY(0);}}
+/* ═══════ BROKER DROPDOWN — fixed-position so it escapes overflow:hidden parents ═══════ */
+.broker-dropdown{position:fixed;background:var(--bg2);border:1px solid var(--border2);border-radius:10px;width:360px;max-height:480px;display:none;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.7);z-index:9998;overflow:hidden;animation:bdIn .25s var(--ease-out-expo);transform-origin:top right;}
+@keyframes bdIn{from{opacity:0;transform:scale(.95) translateY(-6px);}to{opacity:1;transform:scale(1) translateY(0);}}
 .broker-dropdown.open{display:flex;}
-.broker-dropdown::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad-prem);}
-.bd-search{padding:14px 14px 8px;}
-.bd-search input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px 11px;color:var(--text);font-family:var(--sans);font-size:12px;outline:none;transition:.15s;}
+.broker-dropdown::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad-prem);z-index:1;}
+.bd-search{padding:14px 14px 8px;flex-shrink:0;}
+.bd-search input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:9px 12px;color:var(--text);font-family:var(--sans);font-size:13px;outline:none;transition:.15s;}
 .bd-search input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(14,165,233,.1);}
-.bd-info{padding:0 14px 8px;font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;}
-.bd-list{flex:1;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border2) transparent;max-height:300px;}
-.bd-list::-webkit-scrollbar{width:5px;}
-.bd-list::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+.bd-info{padding:0 14px 8px;font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;flex-shrink:0;}
+/* Scrollable broker list — visible chunky scrollbar so users see they can scroll */
+.bd-list{flex:1;overflow-y:auto;overflow-x:hidden;min-height:0;scrollbar-width:thin;scrollbar-color:var(--blue) var(--bg3);}
+.bd-list::-webkit-scrollbar{width:8px;}
+.bd-list::-webkit-scrollbar-track{background:var(--bg3);}
+.bd-list::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--blue),var(--blue2));border-radius:4px;border:2px solid var(--bg3);}
+.bd-list::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,var(--blue2),var(--blue));}
 .bd-row{display:flex;align-items:center;gap:11px;padding:10px 14px;cursor:pointer;border-bottom:1px solid rgba(20,32,53,.4);transition:.15s var(--ease-out-quart);}
 .bd-row:hover{background:rgba(14,165,233,.06);transform:translateX(2px);}
 .bd-row.featured{background:linear-gradient(90deg,rgba(14,165,233,.04),transparent);}
@@ -3014,18 +3017,70 @@ function updateBrokerDropdownLabel(){
   else lbl.textContent='↗ Open in Broker';
 }
 
+// Position the dropdown relative to the trigger button — it's position:fixed
+// so we calculate viewport coords. Prefer above the button (room permitting),
+// otherwise below.
+function positionBrokerDropdown(){
+  var dd=document.getElementById('brokerDropdown');
+  var btn=document.getElementById('brokerDropdownBtn');
+  if(!dd||!btn)return;
+  var rect=btn.getBoundingClientRect();
+  var ddW=Math.min(360,window.innerWidth-24);
+  // Right-align with button, but keep on screen
+  var left=Math.min(rect.right-ddW, window.innerWidth-ddW-12);
+  if(left<12)left=12;
+  // Try above first
+  var spaceAbove=rect.top-12;
+  var spaceBelow=window.innerHeight-rect.bottom-12;
+  var maxH=480;
+  var top;
+  if(spaceAbove>=Math.min(maxH,spaceBelow)){
+    // Open above
+    var height=Math.min(maxH,spaceAbove);
+    top=rect.top-height-8;
+    dd.style.maxHeight=height+'px';
+    dd.style.transformOrigin='bottom right';
+  }else{
+    // Open below
+    top=rect.bottom+8;
+    dd.style.maxHeight=Math.min(maxH,spaceBelow)+'px';
+    dd.style.transformOrigin='top right';
+  }
+  dd.style.left=left+'px';
+  dd.style.top=top+'px';
+  dd.style.width=ddW+'px';
+}
+
 function toggleBrokerDropdown(e){
   if(e&&e.stopPropagation)e.stopPropagation();
   var dd=document.getElementById('brokerDropdown');if(!dd)return;
-  if(dd.classList.contains('open')){dd.classList.remove('open');return;}
+  if(dd.classList.contains('open')){closeBrokerDropdown();return;}
   loadBrokerDirectory();
+  positionBrokerDropdown();
   dd.classList.add('open');
   setTimeout(function(){var s=document.getElementById('bdSearch');if(s)s.focus();},80);
 }
 function closeBrokerDropdown(){var dd=document.getElementById('brokerDropdown');if(dd)dd.classList.remove('open');}
+
+// Close on outside click + reposition on window changes
 document.addEventListener('click',function(e){
   var dd=document.getElementById('brokerDropdown');var btn=document.getElementById('brokerDropdownBtn');
-  if(dd&&dd.classList.contains('open')&&!dd.contains(e.target)&&!btn.contains(e.target))closeBrokerDropdown();
+  if(dd&&dd.classList.contains('open')&&!dd.contains(e.target)&&btn&&!btn.contains(e.target))closeBrokerDropdown();
+});
+window.addEventListener('resize',function(){
+  var dd=document.getElementById('brokerDropdown');
+  if(dd&&dd.classList.contains('open'))positionBrokerDropdown();
+});
+window.addEventListener('scroll',function(){
+  var dd=document.getElementById('brokerDropdown');
+  if(dd&&dd.classList.contains('open'))positionBrokerDropdown();
+},true);
+// ESC key closes the dropdown
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){
+    var dd=document.getElementById('brokerDropdown');
+    if(dd&&dd.classList.contains('open'))closeBrokerDropdown();
+  }
 });
 
 function renderBrokerDropdown(filter){
