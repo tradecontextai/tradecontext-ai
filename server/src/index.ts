@@ -8,7 +8,9 @@ import { apiRouter } from './routes';
 import { stripeWebhookHandler, stripeWebhookRoute } from './routes/stripe';
 import { errorHandler, notFound } from './middleware/error';
 import { attachNewsWs } from './ws/news-broadcast';
+import { attachAlertWs } from './ws/alert-broadcast';
 import { startNewsPoller, stopNewsPoller } from './jobs/news-poller';
+import { startAlertMonitor, stopAlertMonitor } from './jobs/alert-monitor';
 import { log } from './lib/logger';
 
 const app = express();
@@ -37,8 +39,10 @@ app.use(errorHandler);
 // ──────── HTTP server (so we can attach WebSocket) ────────
 const server = http.createServer(app);
 
-// WebSocket: ws://host/ws/news
+// WebSocket: ws://host/ws/news (news bias broadcast)
 attachNewsWs(server);
+// WebSocket: ws://host/ws/alerts?userId=<id> (private alert push)
+attachAlertWs(server);
 
 // ──────── Boot ────────
 server.listen(env.PORT, () => {
@@ -49,12 +53,15 @@ server.listen(env.PORT, () => {
 
   // Start the news poller (skips silently if Finnhub or Claude key missing)
   startNewsPoller();
+  // Start the alert monitor (cheap — does nothing when no alerts are active)
+  startAlertMonitor();
 });
 
 // ──────── Graceful shutdown ────────
 const shutdown = (signal: string) => {
   log.info(`Received ${signal} — shutting down`);
   stopNewsPoller();
+  stopAlertMonitor();
   server.close(() => {
     log.info('HTTP server closed');
     process.exit(0);

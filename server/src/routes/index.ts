@@ -7,6 +7,8 @@ import { calendarRouter } from './calendar';
 import { priceRouter } from './price';
 import { journalRouter } from './journal';
 import { brokerRouter } from './broker';
+import { watchlistRouter } from './watchlist';
+import { alertsRouter } from './alerts';
 import { newsClientCount } from '../ws/news-broadcast';
 
 export const apiRouter = Router();
@@ -19,6 +21,8 @@ apiRouter.use('/calendar', calendarRouter);
 apiRouter.use('/price', priceRouter);
 apiRouter.use('/journal', journalRouter);
 apiRouter.use('/broker', brokerRouter);
+apiRouter.use('/watchlist', watchlistRouter);
+apiRouter.use('/alerts', alertsRouter);
 
 apiRouter.get('/health', (_req, res) => {
   res.json({

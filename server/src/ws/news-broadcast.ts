@@ -17,10 +17,10 @@ export function attachNewsWs(server: Server) {
   wss = new WebSocketServer({ noServer: true });
 
   server.on('upgrade', (req, socket, head) => {
-    if (req.url !== '/ws/news') {
-      socket.destroy();
-      return;
-    }
+    // Ignore upgrades for other paths — the alert WS handler (or others) handles those.
+    // We deliberately don't destroy here because multiple WS handlers share this server.
+    const url = new URL(req.url || '', 'http://x');
+    if (url.pathname !== '/ws/news') return;
     wss!.handleUpgrade(req, socket, head, (ws) => {
       wss!.emit('connection', ws, req);
     });
