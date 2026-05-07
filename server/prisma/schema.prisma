@@ -100,8 +100,10 @@ model BrokerConnection {
   apiKeyEncrypted    String?    @map("api_key_encrypted") @db.Text
   apiSecretEncrypted String?    @map("api_secret_encrypted") @db.Text
   accountId          String?    @map("account_id")
+  environment        String?    @default("live") @map("environment") // "live" | "practice" — for OANDA
   isConnected        Boolean    @default(true) @map("is_connected")
   lastSyncedAt       DateTime?  @map("last_synced_at")
+  lastSyncError      String?    @map("last_sync_error") @db.Text
   createdAt          DateTime   @default(now()) @map("created_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
