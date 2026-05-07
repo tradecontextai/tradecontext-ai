@@ -188,6 +188,23 @@ body{overflow-x:hidden;overflow-y:auto;}
 .col-main,.col-side{display:flex;flex-direction:column;gap:20px;}
 .grid-2col{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
 .grid-2col>.panel{margin:0;}
+/* 3-column row for AI Playbook · Live Positions · AI Journal */
+.three-col-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;align-items:stretch;}
+@media (max-width:1280px){.three-col-row{grid-template-columns:1fr 1fr;}}
+@media (max-width:780px){.three-col-row{grid-template-columns:1fr;}}
+.three-col-row > *{min-width:0;display:flex;flex-direction:column;}
+.three-col-panel{height:600px;max-height:600px;overflow:hidden;}
+.three-col-panel > .panel-h{flex-shrink:0;}
+.three-col-panel > .three-col-body{flex:1;min-height:0;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border2) transparent;}
+.three-col-panel > .three-col-body::-webkit-scrollbar{width:6px;}
+.three-col-panel > .three-col-body::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+/* Journal slot becomes the panel itself when reparented — keep height in sync */
+.three-col-row .panel{height:600px;max-height:600px;overflow:hidden;}
+.three-col-row .panel > .journal-hero,.three-col-row .panel > .kpi-grid-mini{flex-shrink:0;}
+/* FAQ section centered + capped to readable width */
+.faq-centered{max-width:920px;margin-left:auto!important;margin-right:auto!important;}
+.faq-centered .section-title{text-align:center;}
+.faq-centered .section-sub{text-align:center;max-width:640px;margin-left:auto;margin-right:auto;}
 /* Trade Panel + Calendar side-by-side row — trade gets more width, calendar narrower */
 /* 3-col row beneath chart: Trade (with direction dropdown) | AI Bias | Calendar */
 .trade-cal-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr) minmax(0,1fr);gap:20px;align-items:stretch;}
@@ -311,12 +328,8 @@ body{overflow-x:hidden;overflow-y:auto;}
 .chart-event-marker .ce-tip{position:absolute;top:24px;left:50%;transform:translateX(-50%);background:var(--bg2);border:1px solid var(--border2);padding:8px 12px;border-radius:6px;font-size:11px;white-space:nowrap;color:var(--text);box-shadow:var(--shadow);opacity:0;visibility:hidden;transition:.15s;z-index:10;}
 
 /* AI Strategy strip (horizontal, below chart) */
-/* AI Strategy strip — bold visible scrollbar so users know they can scroll horizontally */
-.ai-strip{display:flex;align-items:stretch;gap:1px;background:var(--border);border-top:1px solid var(--border);overflow-x:auto;scrollbar-width:auto;scrollbar-color:var(--blue) var(--bg3);padding-bottom:2px;}
-.ai-strip::-webkit-scrollbar{height:10px;background:var(--bg3);}
-.ai-strip::-webkit-scrollbar-thumb{background:linear-gradient(90deg,var(--blue),var(--blue2));border-radius:5px;border:2px solid var(--bg3);}
-.ai-strip::-webkit-scrollbar-thumb:hover{background:linear-gradient(90deg,var(--blue2),var(--blue));}
-.ai-strip::-webkit-scrollbar-track{background:var(--bg3);}
+/* AI Strategy strip — wraps to fit, no scroll. Cards flex to fill the row. */
+.ai-strip{display:flex;flex-wrap:wrap;align-items:stretch;gap:1px;background:var(--border);border-top:1px solid var(--border);overflow:hidden;}
 .ai-strip::-webkit-scrollbar{display:none;}
 .ai-strip-h{flex-shrink:0;padding:10px 14px;background:linear-gradient(135deg,rgba(14,165,233,.06),rgba(139,92,246,.04));display:flex;flex-direction:column;justify-content:center;border-right:1px solid var(--border);min-width:140px;}
 .ai-strip-title{font-family:var(--mono);font-size:9px;font-weight:800;background:var(--grad-prem);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:.14em;text-transform:uppercase;}
@@ -340,11 +353,14 @@ body{overflow-x:hidden;overflow-y:auto;}
 .macro-pulse-panel{background:linear-gradient(135deg,var(--bg2),var(--bg3) 50%,var(--bg2));position:relative;overflow:hidden;}
 .macro-pulse-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad-prem);}
 /* Macro Pulse: top row (Currency Strength · Risk Therm · Mood) + bottom row (World Map) */
-/* Macro Pulse: 4 cards in one row — World Pulse on the RIGHT, widest column */
-.macro-pulse-grid{display:grid;grid-template-columns:1fr 0.85fr 1fr 1.7fr;gap:1px;background:var(--border);}
+/* Macro Pulse: 4 cards in one row — equal heights, World Pulse on the right */
+.macro-pulse-grid{display:grid;grid-template-columns:1fr 0.85fr 1fr 1.7fr;gap:1px;background:var(--border);align-items:stretch;}
+.macro-pulse-grid > .mp-card{display:flex;flex-direction:column;min-height:0;}
+.macro-pulse-grid > .mp-card > *:not(.mp-card-h){flex:0 0 auto;}
+.macro-pulse-grid > .mp-card.world-map-card > .world-map-wrap{flex:1;min-height:280px;}
 @media (max-width:1280px){.macro-pulse-grid{grid-template-columns:1fr 1fr;}}
 @media (max-width:780px){.macro-pulse-grid{grid-template-columns:1fr;}}
-.macro-pulse-grid-bottom{display:none;} /* legacy bottom row no longer used */
+.macro-pulse-grid-bottom{display:none;}
 
 /* World Map widget — animated, premium feel */
 .world-map-card{background:var(--bg2);padding:18px 20px;}
@@ -406,8 +422,8 @@ body{overflow-x:hidden;overflow-y:auto;}
 .world-city .label{font-family:var(--mono);font-size:9px;font-weight:700;fill:var(--text);pointer-events:none;}
 .world-city .signal-cnt{font-family:var(--mono);font-size:8px;fill:var(--text2);pointer-events:none;}
 @keyframes cityPulse{0%{r:5;opacity:.7;}100%{r:24;opacity:0;}}
-/* Tooltip on hover — floats over the map showing city volume info */
-.world-tooltip{position:absolute;pointer-events:none;background:linear-gradient(135deg,#0a1628,#0f1f3a);border:1px solid var(--border2);border-radius:10px;padding:14px 16px;min-width:220px;box-shadow:0 16px 48px rgba(0,0,0,.6);opacity:0;transform:translate(-50%,-110%) scale(.95);transition:opacity .18s var(--ease-out-quart),transform .18s var(--ease-out-quart);z-index:100;font-family:var(--sans);}
+/* Tooltip on hover — position:fixed so it escapes overflow:hidden parent */
+.world-tooltip{position:fixed;pointer-events:none;background:linear-gradient(135deg,#0a1628,#0f1f3a);border:1px solid var(--border2);border-radius:10px;padding:14px 16px;min-width:240px;box-shadow:0 16px 48px rgba(0,0,0,.7);opacity:0;transform:translate(-50%,-110%) scale(.95);transition:opacity .18s var(--ease-out-quart),transform .18s var(--ease-out-quart);z-index:9990;font-family:var(--sans);}
 .world-tooltip.show{opacity:1;transform:translate(-50%,-110%) scale(1);}
 .world-tooltip::after{content:'';position:absolute;top:100%;left:50%;margin-left:-7px;border:7px solid transparent;border-top-color:var(--border2);}
 .wt-header{display:flex;align-items:center;gap:8px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);}
@@ -1361,30 +1377,37 @@ body{overflow-x:hidden;overflow-y:auto;}
         </div>
       </div>
 
-      <!-- AI PLAYBOOK — live from /api/playbooks -->
-      <div class="panel">
-        <div class="panel-h">
-          <div class="panel-h-title">🤖 AI Trade Playbooks <span style="font-family:var(--mono);font-size:10px;color:var(--text3);font-weight:600;margin-left:6px;">Auto-generated from news</span></div>
-          <a href="news-bias.html" class="panel-h-link">All playbooks →</a>
+      <!-- ═══════ 3-COLUMN ROW: AI Playbook · Live Positions · AI Journal ═══════ -->
+      <div class="three-col-row">
+        <!-- AI Playbook -->
+        <div class="panel three-col-panel">
+          <div class="panel-h">
+            <div class="panel-h-title">🤖 AI Playbooks</div>
+            <a href="news-bias.html" class="panel-h-link">All →</a>
+          </div>
+          <div id="playbookContainer" class="three-col-body">
+            <div style="padding:30px;text-align:center;font-family:var(--mono);font-size:11px;color:var(--text3);">Loading playbooks…</div>
+          </div>
         </div>
-        <div id="playbookContainer">
-          <div style="padding:30px;text-align:center;font-family:var(--mono);font-size:11px;color:var(--text3);">Loading playbooks…</div>
+
+        <!-- Live Positions -->
+        <div class="panel three-col-panel">
+          <div class="panel-h">
+            <div class="panel-h-title">📊 Live Positions</div>
+            <div id="posSyncStatus" style="font-family:var(--mono);font-size:10px;color:var(--text3);">—</div>
+          </div>
+          <div id="posTableWrap" class="three-col-body">
+            <div style="padding:30px;text-align:center;font-family:var(--mono);font-size:11px;color:var(--text3);">Loading positions…</div>
+          </div>
         </div>
+
+        <!-- AI Trading Journal — placeholder, JS reparents the journal panel here -->
+        <div id="journalSlot" class="three-col-panel-slot"></div>
       </div>
 
-      <!-- POSITIONS + HISTORY — live from /api/broker/oanda/positions -->
-      <div class="panel">
-        <div class="panel-h">
-          <div class="panel-h-title">📊 Live Positions <span style="font-family:var(--mono);font-size:10px;color:var(--text3);font-weight:600;margin-left:6px;">From your connected brokers</span></div>
-          <div id="posSyncStatus" style="font-family:var(--mono);font-size:10px;color:var(--text3);">—</div>
-        </div>
-        <div id="posTableWrap" style="overflow-x:auto;min-height:120px;">
-          <div style="padding:30px;text-align:center;font-family:var(--mono);font-size:11px;color:var(--text3);">Loading positions…</div>
-        </div>
-      </div>
-
-      <!-- BROKER + FUNDED row — populated by JS from old sidebar locations -->
-      <div class="grid-2col" id="brokerFundedRow"></div>
+      <!-- Broker + Funded panels intentionally NOT rendered here (removed —
+           we only support read-only broker integration via Live Positions). -->
+      <div style="display:none;" id="brokerFundedRow"></div>
 
     </div>
 
@@ -1557,8 +1580,8 @@ body{overflow-x:hidden;overflow-y:auto;}
     </div>
   </div>
 
-  <!-- ═══════ FAQ SECTION ═══════ -->
-  <div id="faqSection" class="section-block" style="margin-top:48px;">
+  <!-- ═══════ FAQ SECTION (centered with max-width) ═══════ -->
+  <div id="faqSection" class="section-block faq-centered" style="margin-top:48px;">
     <div class="section-title">❓ Frequently Asked Questions</div>
     <div class="section-sub">Everything you need to know about TradeContext.ai. Still have questions? <a href="mailto:hello@tradecontext.ai" style="color:var(--blue);font-weight:700;">Email us →</a></div>
     <div class="panel">
@@ -1753,6 +1776,30 @@ body{overflow-x:hidden;overflow-y:auto;}
           <label>Show watermark</label>
           <div class="cs-toggle" id="csWatermark" onclick="csToggle('csWatermark')"></div>
         </div>
+        <div class="cs-row">
+          <label>Background style</label>
+          <select class="cs-select" id="csBg" onchange="onCsChange()">
+            <option value="solid">Solid (default)</option>
+            <option value="subtle-gradient">Subtle gradient</option>
+            <option value="pure-black">Pure black (max contrast)</option>
+          </select>
+        </div>
+        <div class="cs-row">
+          <label>Bar spacing</label>
+          <select class="cs-select" id="csDensity" onchange="onCsChange()">
+            <option value="compact">Compact (more bars)</option>
+            <option value="normal" selected>Normal</option>
+            <option value="spacious">Spacious (fewer bars)</option>
+          </select>
+        </div>
+        <div class="cs-row">
+          <label>Scale font size</label>
+          <select class="cs-select" id="csScaleFont" onchange="onCsChange()">
+            <option value="11">Small (11px)</option>
+            <option value="13" selected>Default (13px)</option>
+            <option value="15">Large (15px)</option>
+          </select>
+        </div>
       </div>
 
       <div class="cs-section">
@@ -1788,8 +1835,8 @@ body{overflow-x:hidden;overflow-y:auto;}
 // - Journal        → full-width panel at end of col-main (further down the page)
 // - Calendar stays in col-side as a compact sidebar widget
 (function reparentPanels(){
-  var brokerRow=document.getElementById('brokerFundedRow');
   var calSlot=document.getElementById('calendarSlot');
+  var journalSlot=document.getElementById('journalSlot');
   var tradeCalRow=document.getElementById('tradeCalRow');
   var tradePanel=document.querySelector('.col-main > .trade-panel');
   var main=document.querySelector('.col-main');
@@ -1801,18 +1848,23 @@ body{overflow-x:hidden;overflow-y:auto;}
     tradeCalRow.insertBefore(tradePanel,calSlot);
   }
 
-  // 2. Move side-column panels: Broker/Funded → grid row, Calendar → trade-cal slot, Journal → bottom of main
+  // 2. Reparent side-column panels:
+  //    🔌 Broker / 🏆 Funded   → REMOVED (not rendered — we removed broker/funded from the page)
+  //    📅 Calendar              → trade-cal-grid (right column, next to Trade)
+  //    📓 Journal               → 3-col row (right slot, alongside Playbook + Positions)
   if(side){
     Array.from(side.children).forEach(function(panel){
       if(!panel.classList||!panel.classList.contains('panel'))return;
       var t=(panel.querySelector('.panel-h-title')||{}).textContent||'';
-      if((t.indexOf('🔌')>=0||t.indexOf('🏆')>=0)&&brokerRow){
-        brokerRow.appendChild(panel);
+      if(t.indexOf('🔌')>=0||t.indexOf('🏆')>=0){
+        // Drop entirely — no broker/funded UI on the dashboard anymore
+        panel.remove();
       }else if(t.indexOf('📅')>=0&&calSlot){
-        // Calendar — slot next to Trade panel
         calSlot.parentNode.replaceChild(panel,calSlot);
-      }else if(t.indexOf('📓')>=0){
-        main.appendChild(panel);
+      }else if(t.indexOf('📓')>=0&&journalSlot){
+        // Place journal in the 3-col row's third slot
+        panel.classList.add('three-col-panel');
+        journalSlot.parentNode.replaceChild(panel,journalSlot);
       }
     });
   }
@@ -1947,7 +1999,7 @@ function buildTicker(){
 buildTicker();
 
 // ════════════ CHART SETTINGS — custom panel + autosave to localStorage ════════════
-var CS_DEFAULTS={theme:'dark',palette:'default',volume:true,legend:true,watermark:false,tz:'auto'};
+var CS_DEFAULTS={theme:'dark',palette:'default',volume:true,legend:true,watermark:false,tz:'auto',bg:'solid',density:'normal',scaleFont:'13'};
 var CS={};
 var CS_PALETTES={
   'default':{up:'#34d399',dn:'#f87171'},
@@ -1971,6 +2023,9 @@ function saveChartSettings(){
 function applyChartSettingsToUI(){
   var t=document.getElementById('csTheme');if(t)t.value=CS.theme;
   var z=document.getElementById('csTZ');if(z)z.value=CS.tz;
+  var b=document.getElementById('csBg');if(b)b.value=CS.bg||'solid';
+  var d=document.getElementById('csDensity');if(d)d.value=CS.density||'normal';
+  var sf=document.getElementById('csScaleFont');if(sf)sf.value=CS.scaleFont||'13';
   ['grid','volume','legend','watermark'].forEach(function(k){
     var el=document.getElementById('cs'+k.charAt(0).toUpperCase()+k.slice(1));
     if(el)el.classList.toggle('on',!!CS[k]);
@@ -1983,6 +2038,9 @@ function applyChartSettingsToUI(){
 function onCsChange(){
   CS.theme=document.getElementById('csTheme').value;
   CS.tz=document.getElementById('csTZ').value;
+  var b=document.getElementById('csBg');if(b)CS.bg=b.value;
+  var d=document.getElementById('csDensity');if(d)CS.density=d.value;
+  var sf=document.getElementById('csScaleFont');if(sf)CS.scaleFont=sf.value;
   saveChartSettings();
   // Apply theme via the existing applyTheme path
   if(typeof applyTheme==='function')applyTheme(CS.theme);
@@ -2035,7 +2093,8 @@ function loadTV(){
       details:true,hotlist:true,calendar:true,
       studies:Array.from(_activeStudies),
       drawings_access:{type:'all'},
-      enabled_features:['side_toolbar_in_fullscreen_mode','header_widget','header_resolutions','header_chart_type','header_indicators','header_compare','header_undo_redo','header_fullscreen_button','left_toolbar','timeframes_toolbar','legend_widget','control_bar','header_screenshot','use_localstorage_for_settings'],
+      // 'use_localstorage_for_settings' removed — was causing user-saved gridlines to override our overrides
+      enabled_features:['side_toolbar_in_fullscreen_mode','header_widget','header_resolutions','header_chart_type','header_indicators','header_compare','header_undo_redo','header_fullscreen_button','left_toolbar','timeframes_toolbar','legend_widget','control_bar','header_screenshot'],
       // header_settings ENABLED — gives users the same chart-customisation gear icon as TradingView.com
       disabled_features:['header_symbol_search','volume_force_overlay'],
       overrides:(function(){
@@ -2049,13 +2108,24 @@ function loadTV(){
           'mainSeriesProperties.candleStyle.wickDownColor':p.dn,
           'mainSeriesProperties.candleStyle.borderUpColor':p.up,
           'mainSeriesProperties.candleStyle.borderDownColor':p.dn,
-          'paneProperties.background':theme==='light'?'#ffffff':'#03060d',
-          'paneProperties.backgroundType':'solid',
-          'paneProperties.vertGridProperties.color':gridColor,
-          'paneProperties.horzGridProperties.color':gridColor,
-          'paneProperties.crossHairProperties.color':theme==='light'?'#94a3b8':'#475569',
+          'paneProperties.background':theme==='light'?'#ffffff':(CS.bg==='pure-black'?'#000000':'#03060d'),
+          'paneProperties.backgroundType':CS.bg==='subtle-gradient'?'gradient':'solid',
+          'paneProperties.backgroundGradientStartColor':theme==='light'?'#ffffff':'#0a1220',
+          'paneProperties.backgroundGradientEndColor':theme==='light'?'#f1f5f9':'#03060d',
+          // Chart grids ALWAYS off — set both color AND style to hide them entirely
+          'paneProperties.vertGridProperties.color':'rgba(0,0,0,0)',
+          'paneProperties.horzGridProperties.color':'rgba(0,0,0,0)',
+          'paneProperties.vertGridProperties.style':0,
+          'paneProperties.horzGridProperties.style':0,
+          // Subtle dotted crosshair (less intrusive than the default solid)
+          'paneProperties.crossHairProperties.color':theme==='light'?'rgba(148,163,184,.5)':'rgba(122,154,184,.4)',
+          'paneProperties.crossHairProperties.style':2,
+          'paneProperties.crossHairProperties.width':1,
           'scalesProperties.lineColor':theme==='light'?'#e2e8f0':'#1e3050',
-          'scalesProperties.textColor':theme==='light'?'#64748b':'#7a9ab8'
+          'scalesProperties.textColor':theme==='light'?'#64748b':'#7a9ab8',
+          'scalesProperties.fontSize':parseInt(CS.scaleFont||'13',10),
+          // Bar spacing translates to chart density via priceScale margins
+          'mainSeriesProperties.priceLineWidth':1,
         };
       })(),
       width:'100%',height:'100%'
@@ -3370,7 +3440,6 @@ window.addEventListener('load',function(){setTimeout(loadRealWorldMap,500);});
   function showTip(cityId,evt){
     var city=(typeof WORLD_CITIES!=='undefined')?WORLD_CITIES.find(function(c){return c.id===cityId;}):null;
     if(!city)return;
-    // Pull current sigs/factor — recompute from LIVE_NEWS
     var counts={};
     (LIVE_NEWS||[]).slice(0,50).forEach(function(n){
       if(!n.markets)return;
@@ -3397,10 +3466,9 @@ window.addEventListener('load',function(){setTimeout(loadRealWorldMap,500);});
       +'<div class="wt-row"><span class="lbl">Heat (session-weighted)</span><span class="val '+heatCls+'">'+heatLbl+'</span></div>'
       +'<div class="wt-row"><span class="lbl">Session factor</span><span class="val">'+(fac*100).toFixed(0)+'%</span></div>'
       +'<div class="wt-status '+sessLbl+'">'+sessTxt+'</div>';
-    // Position tooltip relative to the wrap, near the cursor
-    var rect=wrap.getBoundingClientRect();
-    tip.style.left=(evt.clientX-rect.left)+'px';
-    tip.style.top=(evt.clientY-rect.top)+'px';
+    // position:fixed → coords relative to viewport, not parent
+    tip.style.left=evt.clientX+'px';
+    tip.style.top=evt.clientY+'px';
     tip.classList.add('show');
   }
   function hideTip(){tip.classList.remove('show');}
@@ -3410,9 +3478,12 @@ window.addEventListener('load',function(){setTimeout(loadRealWorldMap,500);});
   });
   wrap.addEventListener('mousemove',function(e){
     if(!tip.classList.contains('show'))return;
-    var rect=wrap.getBoundingClientRect();
-    tip.style.left=(e.clientX-rect.left)+'px';
-    tip.style.top=(e.clientY-rect.top)+'px';
+    tip.style.left=e.clientX+'px';
+    tip.style.top=e.clientY+'px';
+    // Keep on right side of the cursor if it'd overflow off-screen left
+    var tipW=tip.offsetWidth;
+    if(e.clientX-tipW/2<8){tip.style.left=(tipW/2+8)+'px';}
+    if(e.clientX+tipW/2>window.innerWidth-8){tip.style.left=(window.innerWidth-tipW/2-8)+'px';}
   });
   wrap.addEventListener('mouseout',function(e){
     if(!e.relatedTarget||!e.relatedTarget.closest||!e.relatedTarget.closest('.world-city'))hideTip();
