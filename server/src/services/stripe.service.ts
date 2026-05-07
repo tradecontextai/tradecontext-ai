@@ -3,6 +3,7 @@ import { env } from '../config/env';
 import { prisma } from '../config/db';
 import { HttpError } from '../middleware/error';
 import { log } from '../lib/logger';
+import { sendPaymentConfirmation, sendPaymentFailed } from './email.service';
 import type { Plan, PlanStatus } from '@prisma/client';
 
 if (!env.STRIPE_SECRET_KEY) {
@@ -145,6 +146,7 @@ async function syncSubscription(sub: Stripe.Subscription) {
   const priceId = item?.price.id;
   const plan = priceId ? planFromPriceId(priceId) : null;
 
+  const wasFree = user.plan === 'free';
   await prisma.user.update({
     where: { id: user.id },
     data: {
@@ -154,6 +156,16 @@ async function syncSubscription(sub: Stripe.Subscription) {
     },
   });
   log.info('Subscription synced', { userId: user.id, plan, status: sub.status });
+
+  // Send payment confirmation only when transitioning into a paid plan + active
+  if (wasFree && plan && sub.status === 'active') {
+    const meta = sub.metadata as { billing?: 'monthly' | 'annual' };
+    void sendPaymentConfirmation({
+      to: user.email,
+      plan,
+      billing: meta.billing === 'annual' ? 'annual' : 'monthly',
+    });
+  }
 }
 
 export async function handleStripeEvent(event: Stripe.Event) {
@@ -197,7 +209,18 @@ export async function handleStripeEvent(event: Stripe.Event) {
           where: { id: user.id },
           data: { planStatus: 'past_due' },
         });
-        // TODO: emailService.sendPaymentFailed(user.email)
+        // Build customer portal URL so the user can update their card
+        let updateUrl = `${env.CLIENT_URL}/dashboard.html`;
+        try {
+          const portal = await stripe.billingPortal.sessions.create({
+            customer: customerId,
+            return_url: `${env.CLIENT_URL}/dashboard.html`,
+          });
+          updateUrl = portal.url;
+        } catch (e) {
+          log.warn('Failed to create portal session for failed-payment email', { err: e instanceof Error ? e.message : e });
+        }
+        void sendPaymentFailed({ to: user.email, updatePaymentUrl: updateUrl });
         log.warn('Payment failed — grace period', { userId: user.id });
       }
       break;

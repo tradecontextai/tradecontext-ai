@@ -6,6 +6,7 @@ import {
   completePasswordReset,
   createUser,
   startPasswordReset,
+  verifyEmailByToken,
 } from '../services/auth.service';
 import {
   cookieName,
@@ -91,6 +92,18 @@ authRouter.post('/reset-password', async (req, res, next) => {
     const { token, password } = resetSchema.parse(req.body);
     await completePasswordReset(token, password);
     res.json({ ok: true });
+  } catch (e) {
+    next(e);
+  }
+});
+
+// ──────── POST /api/auth/verify-email ────────
+const verifySchema = z.object({ token: z.string().min(20) });
+authRouter.post('/verify-email', async (req, res, next) => {
+  try {
+    const { token } = verifySchema.parse(req.body);
+    const user = await verifyEmailByToken(token);
+    res.json({ ok: true, email: user.email, verified: true });
   } catch (e) {
     next(e);
   }
