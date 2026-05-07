@@ -761,10 +761,36 @@ body{overflow-x:hidden;overflow-y:auto;}
 .trade-submit.sell{background:var(--grad-bear);box-shadow:0 4px 16px rgba(239,68,68,.3);}
 .trade-submit:hover{transform:translateY(-2px);filter:brightness(1.08);}
 .trade-submit:active{transform:translateY(-1px) scale(.97);transition-duration:.08s;}
-.trade-submit-secondary{padding:14px 16px;border-radius:8px;border:1px solid var(--border2);background:var(--bg);color:var(--text2);font-family:var(--sans);font-size:13px;font-weight:700;cursor:pointer;transition:.18s var(--ease-out-quart);white-space:nowrap;}
+.trade-submit-secondary{padding:14px 16px;border-radius:8px;border:1px solid var(--border2);background:var(--bg);color:var(--text2);font-family:var(--sans);font-size:13px;font-weight:700;cursor:pointer;transition:.18s var(--ease-out-quart);white-space:nowrap;display:inline-flex;align-items:center;}
 .trade-submit-secondary:hover{border-color:var(--blue);color:var(--blue);}
 .trade-submit-secondary:active{transform:scale(.97);transition-duration:.08s;}
 .trade-disclaimer{font-family:var(--mono);font-size:9px;color:var(--text3);text-align:center;line-height:1.5;letter-spacing:.04em;padding-top:4px;}
+
+/* ═══════ BROKER DROPDOWN — opens above the trade buttons ═══════ */
+.broker-dropdown{position:absolute;bottom:calc(100% + 8px);right:0;background:var(--bg2);border:1px solid var(--border2);border-radius:10px;width:340px;max-height:420px;display:none;flex-direction:column;box-shadow:0 16px 48px rgba(0,0,0,.5);z-index:100;overflow:hidden;animation:bdIn .25s var(--ease-out-expo);transform-origin:bottom right;}
+@keyframes bdIn{from{opacity:0;transform:scale(.94) translateY(8px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.broker-dropdown.open{display:flex;}
+.broker-dropdown::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad-prem);}
+.bd-search{padding:14px 14px 8px;}
+.bd-search input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px 11px;color:var(--text);font-family:var(--sans);font-size:12px;outline:none;transition:.15s;}
+.bd-search input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(14,165,233,.1);}
+.bd-info{padding:0 14px 8px;font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;}
+.bd-list{flex:1;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border2) transparent;max-height:300px;}
+.bd-list::-webkit-scrollbar{width:5px;}
+.bd-list::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+.bd-row{display:flex;align-items:center;gap:11px;padding:10px 14px;cursor:pointer;border-bottom:1px solid rgba(20,32,53,.4);transition:.15s var(--ease-out-quart);}
+.bd-row:hover{background:rgba(14,165,233,.06);transform:translateX(2px);}
+.bd-row.featured{background:linear-gradient(90deg,rgba(14,165,233,.04),transparent);}
+.bd-row.preferred{background:rgba(52,211,153,.04);}
+.bd-row .bd-icon{font-size:18px;flex-shrink:0;width:22px;text-align:center;}
+.bd-row .bd-info-col{flex:1;min-width:0;}
+.bd-row .bd-name{font-family:var(--sans);font-size:13px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:6px;}
+.bd-row .bd-name .bd-star{color:var(--yellow);font-size:10px;}
+.bd-row .bd-name .bd-link{font-family:var(--mono);font-size:8px;font-weight:800;color:var(--green2);background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.3);padding:1px 5px;border-radius:3px;letter-spacing:.06em;}
+.bd-row .bd-reg{font-family:var(--mono);font-size:9px;color:var(--text3);margin-top:2px;letter-spacing:.04em;}
+.bd-row .bd-arrow{color:var(--text3);font-size:13px;flex-shrink:0;transition:.15s;}
+.bd-row:hover .bd-arrow{color:var(--blue);transform:translateX(2px);}
+.bd-foot{padding:10px 14px;background:var(--bg3);border-top:1px solid var(--border);font-family:var(--mono);font-size:9px;color:var(--text3);line-height:1.55;letter-spacing:.04em;}
 .trade-ai{padding:11px 14px;background:linear-gradient(135deg,rgba(14,165,233,.1),rgba(139,92,246,.06));border:1px solid rgba(14,165,233,.25);border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:.2s var(--ease-out-quart);}
 .trade-ai:hover{border-color:var(--blue);box-shadow:0 4px 16px rgba(14,165,233,.18);}
 .trade-ai-icon{font-size:18px;}
@@ -1187,9 +1213,20 @@ body{overflow-x:hidden;overflow-y:auto;}
               </div>
               <span class="trade-ai-cta">APPLY →</span>
             </div>
-            <div style="display:flex;gap:8px;">
+            <div style="display:flex;gap:8px;position:relative;">
               <button class="trade-submit buy" id="tradeSubmit" onclick="copyTradeSetup()" style="flex:1;">📋 Copy Setup</button>
-              <button class="trade-submit-secondary" onclick="openInBroker()" title="Open this symbol in your connected broker">↗ Open in OANDA</button>
+              <button class="trade-submit-secondary" id="brokerDropdownBtn" onclick="toggleBrokerDropdown(event)">
+                <span id="brokerDropdownLabel">↗ Open in OANDA</span>
+                <span style="opacity:.6;font-size:10px;margin-left:5px;">▾</span>
+              </button>
+              <div class="broker-dropdown" id="brokerDropdown">
+                <div class="bd-search">
+                  <input type="text" id="bdSearch" placeholder="🔍 Search regulated brokers…" oninput="filterBrokerDropdown(this.value)" />
+                </div>
+                <div class="bd-info" id="bdInfo">All brokers shown · regulated only</div>
+                <div class="bd-list" id="bdList"></div>
+                <div class="bd-foot">⚠️ Each broker is regulated. We never place trades — you execute on their platform.</div>
+              </div>
             </div>
             <div class="trade-disclaimer">⚠️ Setup helper only · we never place trades · execute on your broker</div>
           </div>
@@ -2942,15 +2979,113 @@ function copyTradeSetup(){
   }
 }
 
-// Deeplink to OANDA's web trader (opens their site in a new tab on the symbol).
-// We don't pre-fill the order — OANDA's deeplink format doesn't support it.
-// User reviews + executes on OANDA themselves.
-function openInBroker(){
+// ═══════ BROKER DROPDOWN — fetches /api/brokers/directory ═══════
+var BROKER_LIST=[];
+var _bdLoadedFor=null;
+
+async function loadBrokerDirectory(){
   var sym=(window._activeSymLabel||'XAU/USD');
-  // OANDA web trader URL — opens to the trade tab; user pastes the setup
-  var url='https://trade.oanda.com';
-  window.open(url,'_blank','noopener,noreferrer');
-  toast({kind:'blue',icon:'↗',title:'Opening OANDA…',desc:'Setup is on your clipboard if you copied it. Paste + review before executing.',duration:5000});
+  if(_bdLoadedFor===sym)return; // already loaded for this symbol
+  try{
+    var r=await fetch(TC_API+'/api/brokers/directory?symbol='+encodeURIComponent(sym));
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    var d=await r.json();
+    BROKER_LIST=d.brokers||[];
+    _bdLoadedFor=sym;
+    renderBrokerDropdown('');
+    updateBrokerDropdownLabel();
+    var info=document.getElementById('bdInfo');
+    if(info)info.textContent=d.brokers.length+' regulated brokers · trade '+sym;
+  }catch(e){console.warn('broker directory fetch failed',e.message);}
+}
+
+function getPreferredBroker(){
+  try{return localStorage.getItem('tc-preferred-broker')||'oanda';}catch(_){return 'oanda';}
+}
+function setPreferredBroker(id){
+  try{localStorage.setItem('tc-preferred-broker',id);}catch(_){}
+  updateBrokerDropdownLabel();
+}
+function updateBrokerDropdownLabel(){
+  var lbl=document.getElementById('brokerDropdownLabel');if(!lbl)return;
+  var pref=getPreferredBroker();
+  var b=BROKER_LIST.find(function(x){return x.id===pref;});
+  if(b)lbl.textContent='↗ Open in '+b.name;
+  else lbl.textContent='↗ Open in Broker';
+}
+
+function toggleBrokerDropdown(e){
+  if(e&&e.stopPropagation)e.stopPropagation();
+  var dd=document.getElementById('brokerDropdown');if(!dd)return;
+  if(dd.classList.contains('open')){dd.classList.remove('open');return;}
+  loadBrokerDirectory();
+  dd.classList.add('open');
+  setTimeout(function(){var s=document.getElementById('bdSearch');if(s)s.focus();},80);
+}
+function closeBrokerDropdown(){var dd=document.getElementById('brokerDropdown');if(dd)dd.classList.remove('open');}
+document.addEventListener('click',function(e){
+  var dd=document.getElementById('brokerDropdown');var btn=document.getElementById('brokerDropdownBtn');
+  if(dd&&dd.classList.contains('open')&&!dd.contains(e.target)&&!btn.contains(e.target))closeBrokerDropdown();
+});
+
+function renderBrokerDropdown(filter){
+  var list=document.getElementById('bdList');if(!list)return;
+  var f=(filter||'').toLowerCase();
+  var pref=getPreferredBroker();
+  var filtered=BROKER_LIST.filter(function(b){
+    if(!f)return true;
+    return b.name.toLowerCase().includes(f)||b.regulator.toLowerCase().includes(f)||(b.assets||[]).join(',').toLowerCase().includes(f);
+  });
+  if(!filtered.length){
+    list.innerHTML='<div style="padding:24px 14px;text-align:center;font-family:var(--mono);font-size:10px;color:var(--text3);">No brokers match "'+f+'"</div>';
+    return;
+  }
+  list.innerHTML=filtered.map(function(b){
+    var cls='bd-row';
+    if(b.featured)cls+=' featured';
+    if(b.id===pref)cls+=' preferred';
+    var star=b.featured?'<span class="bd-star" title="Popular">★</span>':'';
+    var integ=b.hasIntegration?'<span class="bd-link" title="Native API integration">LINKED</span>':'';
+    return '<div class="'+cls+'" onclick="openBrokerSite(\''+b.id+'\')">'
+      +'<div class="bd-icon">'+b.icon+'</div>'
+      +'<div class="bd-info-col">'
+        +'<div class="bd-name">'+b.name+star+integ+'</div>'
+        +'<div class="bd-reg">'+b.regulator+'</div>'
+      +'</div>'
+      +'<div class="bd-arrow">↗</div>'
+    +'</div>';
+  }).join('');
+}
+function filterBrokerDropdown(v){renderBrokerDropdown(v);}
+
+function openBrokerSite(id){
+  var b=BROKER_LIST.find(function(x){return x.id===id;});
+  if(!b){toast({kind:'red',icon:'⚠️',title:'Broker not found',duration:3000});return;}
+  setPreferredBroker(id);
+  closeBrokerDropdown();
+  window.open(b.url,'_blank','noopener,noreferrer');
+  toast({
+    kind:'blue',
+    icon:'↗',
+    title:'Opening '+b.name+'…',
+    desc:'Regulated by '+b.regulator+' · paste your setup from clipboard before executing',
+    duration:5500
+  });
+}
+
+// Refresh dropdown when chart symbol changes
+var _origFetchLivePriceForBD=fetchLivePrice;
+fetchLivePrice=async function(symbol){
+  await _origFetchLivePriceForBD.apply(this,arguments);
+  if(symbol&&symbol!==_bdLoadedFor){_bdLoadedFor=null;loadBrokerDirectory();}
+};
+window.addEventListener('load',function(){setTimeout(loadBrokerDirectory,1500);});
+
+// Backward-compat: openInBroker() now triggers the dropdown's preferred broker
+function openInBroker(){
+  var pref=getPreferredBroker();
+  if(BROKER_LIST.length)openBrokerSite(pref);
+  else toggleBrokerDropdown();
 }
 
 // Legacy alias kept so old onclick references don't break
