@@ -327,15 +327,15 @@ body{overflow-x:hidden;overflow-y:auto;}
 .chart-event-marker:hover .ce-tip{opacity:1;visibility:visible;}
 .chart-event-marker .ce-tip{position:absolute;top:24px;left:50%;transform:translateX(-50%);background:var(--bg2);border:1px solid var(--border2);padding:8px 12px;border-radius:6px;font-size:11px;white-space:nowrap;color:var(--text);box-shadow:var(--shadow);opacity:0;visibility:hidden;transition:.15s;z-index:10;}
 
-/* AI Strategy strip (horizontal, below chart) */
-/* AI Strategy strip — wraps to fit, no scroll. Cards flex to fill the row. */
-.ai-strip{display:flex;flex-wrap:wrap;align-items:stretch;gap:1px;background:var(--border);border-top:1px solid var(--border);overflow:hidden;}
+/* AI Strategy strip — clean grid, uniform card sizing, no overflow */
+.ai-strip{display:grid;grid-template-columns:160px 1fr;align-items:stretch;background:var(--border);border-top:1px solid var(--border);overflow:hidden;}
+@media (max-width:780px){.ai-strip{grid-template-columns:1fr;}}
 .ai-strip::-webkit-scrollbar{display:none;}
-.ai-strip-h{flex-shrink:0;padding:10px 14px;background:linear-gradient(135deg,rgba(14,165,233,.06),rgba(139,92,246,.04));display:flex;flex-direction:column;justify-content:center;border-right:1px solid var(--border);min-width:140px;}
+.ai-strip-h{padding:14px 16px;background:linear-gradient(135deg,rgba(14,165,233,.08),rgba(139,92,246,.05));display:flex;flex-direction:column;justify-content:center;gap:3px;border-right:1px solid var(--border);}
 .ai-strip-title{font-family:var(--mono);font-size:9px;font-weight:800;background:var(--grad-prem);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:.14em;text-transform:uppercase;}
-.ai-strip-sym{font-family:var(--sans);font-size:13px;font-weight:800;color:var(--text);margin-top:2px;}
-.ai-strip-conf{font-family:var(--mono);font-size:9px;color:var(--green2);font-weight:700;}
-.strat-list{display:flex;flex-direction:row;gap:1px;background:var(--border);flex:1;}
+.ai-strip-sym{font-family:var(--sans);font-size:14px;font-weight:800;color:var(--text);}
+.ai-strip-conf{font-family:var(--mono);font-size:9px;color:var(--text3);font-weight:600;}
+.strat-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1px;background:var(--border);padding:1px;}
 
 /* Strategy action badges — green "ON" when applied to chart */
 .strat-action-row{margin-top:8px;display:flex;justify-content:flex-end;}
@@ -344,6 +344,7 @@ body{overflow-x:hidden;overflow-y:auto;}
 .strat-action.off{background:var(--bg2);border:1px solid var(--border2);color:var(--text2);}
 .strat-action.manual{background:var(--bluedim2);border:1px solid rgba(14,165,233,.3);color:var(--blue);}
 .strat-card.active{border:1.5px solid var(--green2)!important;background:linear-gradient(135deg,rgba(52,211,153,.08),rgba(52,211,153,.02))!important;box-shadow:0 0 16px rgba(52,211,153,.18);}
+.strat-action-row{margin-top:auto;padding-top:8px;display:flex;justify-content:flex-end;}
 
 /* Active studies pill — sits just above the AI strip */
 .active-studies-pill{display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--bg2);border-bottom:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--text2);}
@@ -361,6 +362,75 @@ body{overflow-x:hidden;overflow-y:auto;}
 @media (max-width:1280px){.macro-pulse-grid{grid-template-columns:1fr 1fr;}}
 @media (max-width:780px){.macro-pulse-grid{grid-template-columns:1fr;}}
 .macro-pulse-grid-bottom{display:none;}
+
+/* ─── Macro Pulse: top WOW row (Sessions Clock · Fear&Greed · Vol Pulse) ─── */
+.mp-wow-row{display:grid;grid-template-columns:1.4fr 1fr 1.1fr;gap:1px;background:var(--border);align-items:stretch;border-bottom:1px solid var(--border);}
+@media (max-width:1280px){.mp-wow-row{grid-template-columns:1fr 1fr;}}
+@media (max-width:780px){.mp-wow-row{grid-template-columns:1fr;}}
+.mp-wow-row > .mp-card{display:flex;flex-direction:column;}
+
+/* Trading Sessions Clock */
+.sess-clock{padding:6px 4px 0;display:flex;flex-direction:column;gap:8px;}
+.sess-bar{position:relative;height:34px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+.sess-bar .sess-block{position:absolute;top:2px;bottom:2px;border-radius:4px;font-family:var(--mono);font-size:8.5px;font-weight:800;letter-spacing:.06em;color:#fff;display:flex;align-items:center;justify-content:center;text-transform:uppercase;opacity:.85;transition:.2s;cursor:default;}
+.sess-bar .sess-block.sydney{background:linear-gradient(135deg,#a78bfa,#8b5cf6);}
+.sess-bar .sess-block.tokyo{background:linear-gradient(135deg,#f87171,#ef4444);}
+.sess-bar .sess-block.london{background:linear-gradient(135deg,#34d399,#10b981);}
+.sess-bar .sess-block.ny{background:linear-gradient(135deg,#0ea5e9,#0284c7);}
+.sess-bar .sess-block:hover{opacity:1;transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.4);}
+.sess-bar .sess-overlap{position:absolute;top:2px;bottom:2px;background:repeating-linear-gradient(135deg,rgba(245,158,11,.55) 0 4px,rgba(245,158,11,.85) 4px 8px);border-radius:3px;pointer-events:none;mix-blend-mode:screen;}
+.sess-bar .sess-now{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--yellow);box-shadow:0 0 8px var(--yellow);z-index:5;animation:nowPulse 2s ease-in-out infinite;}
+.sess-bar .sess-now::before{content:'NOW';position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:7.5px;font-weight:900;color:var(--yellow);letter-spacing:.12em;}
+@keyframes nowPulse{0%,100%{opacity:.85;}50%{opacity:1;}}
+.sess-axis{display:flex;justify-content:space-between;font-family:var(--mono);font-size:8px;color:var(--text3);font-weight:700;padding:0 2px;letter-spacing:.05em;}
+.sess-status-row{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;}
+.sess-pill{padding:5px 6px;background:var(--bg3);border:1px solid var(--border);border-radius:5px;font-family:var(--mono);font-size:8.5px;font-weight:800;text-align:center;color:var(--text3);transition:.2s;}
+.sess-pill.open{background:rgba(52,211,153,.12);border-color:rgba(52,211,153,.4);color:var(--green2);box-shadow:0 0 10px rgba(52,211,153,.2);}
+.sess-pill.opening{background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.4);color:var(--yellow);}
+.sess-pill .sp-name{font-size:9px;}
+.sess-pill .sp-status{font-size:7.5px;opacity:.85;display:block;margin-top:1px;font-weight:700;letter-spacing:.06em;}
+.sess-overlap-info{font-family:var(--mono);font-size:9px;color:var(--text2);text-align:center;padding:4px 6px;background:rgba(245,158,11,.08);border:1px dashed rgba(245,158,11,.3);border-radius:4px;font-weight:600;}
+.sess-overlap-info strong{color:var(--yellow);}
+
+/* Fear & Greed gauge */
+.fg-gauge{position:relative;display:flex;flex-direction:column;align-items:center;padding:6px 0 4px;}
+.fg-svg{width:100%;max-width:200px;height:115px;display:block;}
+.fg-arc-bg{fill:none;stroke-width:14;stroke-linecap:round;}
+.fg-needle{stroke:var(--text);stroke-width:2.5;stroke-linecap:round;transition:transform .8s cubic-bezier(.22,.61,.36,1);transform-origin:100px 100px;}
+.fg-hub{fill:var(--text);stroke:var(--bg);stroke-width:2;}
+.fg-readout{margin-top:-22px;text-align:center;display:flex;flex-direction:column;gap:2px;align-items:center;}
+.fg-val{font-family:var(--sans);font-size:30px;font-weight:900;line-height:1;letter-spacing:-.02em;}
+.fg-lbl{font-family:var(--mono);font-size:9.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;}
+.fg-extreme-fear{color:#dc2626;}
+.fg-fear{color:#f87171;}
+.fg-neutral{color:#f59e0b;}
+.fg-greed{color:#34d399;}
+.fg-extreme-greed{color:#10b981;}
+.fg-tickrow{display:flex;justify-content:space-between;font-family:var(--mono);font-size:8px;color:var(--text3);font-weight:700;width:100%;max-width:200px;margin-top:2px;letter-spacing:.05em;}
+.fg-context{font-family:var(--mono);font-size:9.5px;color:var(--text2);text-align:center;margin-top:8px;padding:6px 8px;background:var(--bg3);border-radius:5px;font-weight:600;line-height:1.5;}
+
+/* Volatility Pulse */
+.vol-pulse{display:flex;flex-direction:column;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+.vol-row{display:grid;grid-template-columns:54px 1fr 56px;gap:8px;align-items:center;padding:7px 10px;background:var(--bg2);transition:.18s;}
+.vol-row:hover{background:var(--bg3);transform:translateX(2px);}
+.vol-row .vol-sym{font-family:var(--mono);font-size:10.5px;font-weight:800;color:var(--text);letter-spacing:.04em;}
+.vol-row .vol-bar-track{position:relative;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;}
+.vol-row .vol-bar-fill{position:absolute;top:0;bottom:0;border-radius:3px;transition:width .8s var(--ease-out-quart);}
+.vol-row.up .vol-bar-fill{left:50%;background:linear-gradient(90deg,rgba(52,211,153,.6),var(--green2));box-shadow:0 0 8px rgba(52,211,153,.5);}
+.vol-row.down .vol-bar-fill{right:50%;background:linear-gradient(270deg,rgba(248,113,113,.6),var(--red2));box-shadow:0 0 8px rgba(248,113,113,.5);}
+.vol-row .vol-bar-track::before{content:'';position:absolute;left:50%;top:-1px;bottom:-1px;width:1px;background:var(--text3);opacity:.5;}
+.vol-row .vol-pct{font-family:var(--mono);font-size:11px;font-weight:800;text-align:right;}
+.vol-row.up .vol-pct{color:var(--green2);}
+.vol-row.down .vol-pct{color:var(--red2);}
+.vol-foot{font-family:var(--mono);font-size:8.5px;color:var(--text3);text-align:center;padding:6px;background:var(--bg2);border-top:1px solid var(--border);font-weight:700;letter-spacing:.04em;}
+
+/* World Pulse zoom controls */
+.wm-zoom-ctrls{position:absolute;top:8px;right:8px;display:flex;flex-direction:column;gap:4px;z-index:6;}
+.wm-zoom-ctrls button{width:28px;height:28px;background:rgba(11,18,32,.85);border:1px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:14px;font-weight:800;cursor:pointer;border-radius:5px;display:flex;align-items:center;justify-content:center;transition:.15s;backdrop-filter:blur(6px);}
+.wm-zoom-ctrls button:hover{background:var(--blue);color:#fff;border-color:var(--blue);transform:scale(1.06);}
+.wm-zoom-ctrls button:active{transform:scale(.94);}
+.wm-zoom-hint{position:absolute;bottom:8px;left:8px;font-family:var(--mono);font-size:8.5px;color:var(--text3);background:rgba(11,18,32,.7);border:1px solid var(--border);padding:4px 8px;border-radius:4px;letter-spacing:.04em;font-weight:600;backdrop-filter:blur(4px);z-index:6;pointer-events:none;}
+.world-map-svg .zoom-layer{transition:transform .15s linear;}
 
 /* World Map widget — animated, premium feel */
 .world-map-card{background:var(--bg2);padding:18px 20px;}
@@ -520,8 +590,8 @@ body{overflow-x:hidden;overflow-y:auto;}
 .mood-cell.bear .m-arr{color:var(--red2);}
 .mood-cell.neut .m-arr{color:var(--yellow);}
 .mood-cell .m-cnt{font-family:var(--mono);font-size:8px;color:var(--text3);font-weight:600;}
-.strat-card{flex-shrink:0;min-width:200px;background:var(--bg2);padding:10px 12px;cursor:pointer;transition:.18s var(--ease-out-quart);}
-.strat-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;cursor:pointer;transition:transform .22s var(--ease-out-quart),border-color .15s,background .15s,box-shadow .22s;}
+.strat-card{display:flex;flex-direction:column;background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:11px 13px;cursor:pointer;transition:transform .22s var(--ease-out-quart),border-color .15s,background .15s,box-shadow .22s;min-height:128px;}
+.strat-card .strat-card-note{flex:1;}
 .strat-card:hover{transform:translateY(-2px);border-color:var(--blue);box-shadow:0 6px 18px rgba(14,165,233,.18);}
 .strat-card:active{transform:translateY(0) scale(.98);transition-duration:.08s;}
 .strat-card:hover{border-color:var(--blue);background:var(--bluedim);}
@@ -1155,7 +1225,7 @@ body{overflow-x:hidden;overflow-y:auto;}
               <div class="ai-strip-h">
                 <div class="ai-strip-title">🤖 AI Strategy</div>
                 <div class="ai-strip-sym" id="aiSideSym">XAU/USD</div>
-                <div class="ai-strip-conf">Click to toggle on chart</div>
+                <div class="ai-strip-conf">Tap a card to overlay it</div>
               </div>
               <div class="strat-list" id="stratList"></div>
             </div>
@@ -1307,6 +1377,69 @@ body{overflow-x:hidden;overflow-y:auto;}
           </div>
           <span style="font-family:var(--mono);font-size:10px;color:var(--text3);">Updates every 10s · what most platforms hide</span>
         </div>
+
+        <!-- ─── WOW row: Sessions Clock · Fear & Greed · Volatility Pulse ─── -->
+        <div class="mp-wow-row">
+          <!-- Sessions Clock -->
+          <div class="mp-card">
+            <div class="mp-card-h">
+              <div class="mp-card-title">🕐 Trading Sessions Clock</div>
+              <div class="mp-card-sub">Liquidity windows · overlap zones = peak volatility</div>
+            </div>
+            <div class="sess-clock">
+              <div class="sess-bar" id="sessBar"></div>
+              <div class="sess-axis">
+                <span>00 UTC</span><span>06</span><span>12</span><span>18</span><span>24</span>
+              </div>
+              <div class="sess-status-row" id="sessStatusRow"></div>
+              <div class="sess-overlap-info" id="sessOverlapInfo">—</div>
+            </div>
+          </div>
+
+          <!-- Fear & Greed Gauge -->
+          <div class="mp-card">
+            <div class="mp-card-h">
+              <div class="mp-card-title">😱 Fear &amp; Greed</div>
+              <div class="mp-card-sub">Market emotion index · 0 (panic) → 100 (euphoria)</div>
+            </div>
+            <div class="fg-gauge">
+              <svg class="fg-svg" viewBox="0 0 200 115" preserveAspectRatio="xMidYMid meet">
+                <defs>
+                  <linearGradient id="fgGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#dc2626"/>
+                    <stop offset="25%" stop-color="#f87171"/>
+                    <stop offset="50%" stop-color="#f59e0b"/>
+                    <stop offset="75%" stop-color="#34d399"/>
+                    <stop offset="100%" stop-color="#10b981"/>
+                  </linearGradient>
+                </defs>
+                <!-- semicircle arc 0..180° from (20,100) to (180,100) -->
+                <path class="fg-arc-bg" stroke="url(#fgGrad)" d="M 20 100 A 80 80 0 0 1 180 100"/>
+                <line class="fg-needle" id="fgNeedle" x1="100" y1="100" x2="100" y2="28"/>
+                <circle class="fg-hub" cx="100" cy="100" r="6"/>
+              </svg>
+              <div class="fg-tickrow">
+                <span>0</span><span>25</span><span>50</span><span>75</span><span>100</span>
+              </div>
+              <div class="fg-readout">
+                <div class="fg-val" id="fgVal">—</div>
+                <div class="fg-lbl" id="fgLbl">Calculating…</div>
+              </div>
+              <div class="fg-context" id="fgContext">Aggregates news bias, risk-on/off, and price drift.</div>
+            </div>
+          </div>
+
+          <!-- Volatility Pulse -->
+          <div class="mp-card">
+            <div class="mp-card-h">
+              <div class="mp-card-title">⚡ Volatility Pulse</div>
+              <div class="mp-card-sub">Biggest movers right now · session % change</div>
+            </div>
+            <div class="vol-pulse" id="volPulse"></div>
+            <div class="vol-foot" id="volPulseFoot">↑ Sorted by absolute % move since you opened</div>
+          </div>
+        </div>
+
         <div class="macro-pulse-grid">
           <!-- Currency Strength Meter -->
           <div class="mp-card">
@@ -1361,9 +1494,17 @@ body{overflow-x:hidden;overflow-y:auto;}
                   </pattern>
                 </defs>
                 <rect width="1000" height="500" fill="url(#wm-grid)"/>
-                <g id="worldCountries"></g>
-                <g id="worldCities"></g>
+                <g class="zoom-layer" id="worldZoomLayer">
+                  <g id="worldCountries"></g>
+                  <g id="worldCities"></g>
+                </g>
               </svg>
+              <div class="wm-zoom-ctrls">
+                <button id="wmZoomIn" title="Zoom in">+</button>
+                <button id="wmZoomOut" title="Zoom out">−</button>
+                <button id="wmZoomReset" title="Reset">⟳</button>
+              </div>
+              <div class="wm-zoom-hint">scroll to zoom · drag to pan</div>
               <div class="world-tooltip" id="worldTooltip"></div>
             </div>
             <div class="world-map-legend">
@@ -2298,7 +2439,7 @@ function buildStratList(symLabel){
     html+='<div class="strat-card'+(isActive?' active':'')+'" data-strat="'+k+'" onclick="applyStrat(\''+k+'\',\''+symLabel+'\')">'
       +'<div class="strat-card-h"><div class="strat-card-name">'+STRAT_LABELS[k]+'</div><div class="strat-card-bias '+biasC+'">'+biasLbl+'</div></div>'
       +levelsHtml
-      +'<div style="font-family:var(--mono);font-size:9px;color:var(--text2);margin-top:6px;line-height:1.5;font-weight:500;">'+note+'</div>'
+      +'<div class="strat-card-note" style="font-family:var(--mono);font-size:9px;color:var(--text2);margin-top:6px;line-height:1.5;font-weight:500;">'+note+'</div>'
       +'<div class="strat-action-row">'+actionBadge+'</div>'
       +'</div>';
   });
@@ -3384,7 +3525,243 @@ function refreshMacroPulse(){
   renderRiskTherm();
   renderMoodGrid();
   renderWorldMap();
+  renderSessionsClock();
+  renderFearGreed();
+  renderVolatilityPulse();
 }
+
+// ════════════ TRADING SESSIONS CLOCK ════════════
+// Visual 24h bar showing London/NY/Tokyo/Sydney sessions with overlap zones.
+// Overlaps = peak liquidity (e.g. London/NY 13-17 UTC = highest volatility window).
+function renderSessionsClock(){
+  var bar=document.getElementById('sessBar');
+  var statusRow=document.getElementById('sessStatusRow');
+  var info=document.getElementById('sessOverlapInfo');
+  if(!bar||!statusRow||!info)return;
+  var W=100; // % width
+  var html='';
+  // Render each session as a positioned block on the 24h bar
+  SESS.forEach(function(s){
+    if(s.openUTC<s.closeUTC){
+      var left=(s.openUTC/24)*W, w=((s.closeUTC-s.openUTC)/24)*W;
+      html+='<div class="sess-block '+s.id+'" style="left:'+left+'%;width:'+w+'%;" title="'+s.id.toUpperCase()+' '+s.openUTC+'-'+s.closeUTC+' UTC">'+s.id.toUpperCase()+'</div>';
+    }else{
+      // Wraps midnight (Sydney 22-7) — split into two blocks
+      var leftA=(s.openUTC/24)*W, wA=((24-s.openUTC)/24)*W;
+      var wB=(s.closeUTC/24)*W;
+      html+='<div class="sess-block '+s.id+'" style="left:'+leftA+'%;width:'+wA+'%;" title="'+s.id.toUpperCase()+'">'+s.id.toUpperCase()+'</div>';
+      html+='<div class="sess-block '+s.id+'" style="left:0;width:'+wB+'%;"></div>';
+    }
+  });
+  // Overlaps: pairwise intersect highlight
+  function range(s){return s.openUTC<s.closeUTC?[[s.openUTC,s.closeUTC]]:[[s.openUTC,24],[0,s.closeUTC]];}
+  var allRanges=[];
+  SESS.forEach(function(s){range(s).forEach(function(r){allRanges.push({id:s.id,r:r});});});
+  var overlaps=[];
+  for(var i=0;i<allRanges.length;i++){
+    for(var j=i+1;j<allRanges.length;j++){
+      if(allRanges[i].id===allRanges[j].id)continue;
+      var lo=Math.max(allRanges[i].r[0],allRanges[j].r[0]);
+      var hi=Math.min(allRanges[i].r[1],allRanges[j].r[1]);
+      if(hi>lo+0.01)overlaps.push({a:allRanges[i].id,b:allRanges[j].id,lo:lo,hi:hi});
+    }
+  }
+  overlaps.forEach(function(o){
+    var left=(o.lo/24)*W, w=((o.hi-o.lo)/24)*W;
+    html+='<div class="sess-overlap" style="left:'+left+'%;width:'+w+'%;" title="'+o.a+'+'+o.b+' overlap"></div>';
+  });
+  // NOW marker
+  var now=new Date(), nowH=now.getUTCHours()+now.getUTCMinutes()/60;
+  html+='<div class="sess-now" style="left:'+((nowH/24)*W)+'%;"></div>';
+  bar.innerHTML=html;
+
+  // Status pills row + which sessions are currently open
+  var openNow=[];
+  var statusHtml=SESS.map(function(s){
+    var open=isSessionOpen(s,now);
+    var hrs=hoursLeft(s,now);
+    var name=s.id==='ny'?'NY':s.id.charAt(0).toUpperCase()+s.id.slice(1);
+    var cls=open?'open':(hrs<=1?'opening':'');
+    var status=open?(hrs.toFixed(1)+'h left'):(hrs<=1?'opens '+(Math.round(hrs*60))+'m':'opens '+hrs.toFixed(1)+'h');
+    if(open)openNow.push(name);
+    return '<div class="sess-pill '+cls+'"><div class="sp-name">'+name+'</div><div class="sp-status">'+status+'</div></div>';
+  }).join('');
+  statusRow.innerHTML=statusHtml;
+
+  // Live overlap info (most powerful: London+NY 13-17 UTC)
+  var activeOverlap=overlaps.find(function(o){return nowH>=o.lo&&nowH<o.hi;});
+  if(activeOverlap){
+    var pair=activeOverlap.a.toUpperCase()+'+'+activeOverlap.b.toUpperCase();
+    info.innerHTML='🔥 <strong>'+pair+'</strong> overlap LIVE · peak liquidity window';
+  }else if(openNow.length>=2){
+    info.textContent=openNow.join(' + ')+' open · '+openNow.length+' centres active';
+  }else if(openNow.length===1){
+    info.textContent=openNow[0]+' session · single-centre liquidity';
+  }else{
+    info.textContent='Off-hours · thin liquidity, wider spreads';
+  }
+}
+
+// ════════════ FEAR & GREED INDEX ════════════
+// Aggregates news bias + risk-on/off + currency drift into a 0-100 score.
+// 0 = panic, 50 = neutral, 100 = euphoria. Updates every 10s.
+function computeFearGreed(){
+  var risk=(typeof computeRisk==='function')?computeRisk():{score:50};
+  var riskScore=risk.score;
+  // News bias contribution: count bull vs bear among LIVE_NEWS
+  var bull=0,bear=0,neut=0;
+  (LIVE_NEWS||[]).slice(0,40).forEach(function(n){
+    if(n.bias==='bull')bull++;
+    else if(n.bias==='bear')bear++;
+    else neut++;
+  });
+  var total=bull+bear+neut;
+  var newsScore=total===0?50:50+((bull-bear)/total)*50;
+  // Currency drift: avg pct of CCY_LIST since baseline (proxy for dollar strength inverted)
+  var driftScore=50;
+  if(typeof CCY_LIST!=='undefined'&&typeof ccyStrengthFor==='function'){
+    var drifts=CCY_LIST.map(function(c){return ccyStrengthFor(c);}).filter(function(v){return !isNaN(v);});
+    if(drifts.length){
+      var avgAbs=drifts.reduce(function(a,b){return a+Math.abs(b);},0)/drifts.length;
+      // High movement = either fear or greed; normalize 0..1.5% → 30..70 spread
+      driftScore=50+(avgAbs<.3?0:avgAbs>1.5?20:(avgAbs-.3)/1.2*20)*(bull>=bear?1:-1);
+    }
+  }
+  // Weighted blend: risk 40%, news 40%, drift 20%
+  var score=Math.round(riskScore*0.4+newsScore*0.4+driftScore*0.2);
+  score=Math.max(0,Math.min(100,score));
+  var label, cls;
+  if(score<25){label='Extreme Fear';cls='fg-extreme-fear';}
+  else if(score<45){label='Fear';cls='fg-fear';}
+  else if(score<55){label='Neutral';cls='fg-neutral';}
+  else if(score<75){label='Greed';cls='fg-greed';}
+  else {label='Extreme Greed';cls='fg-extreme-greed';}
+  return {score:score,label:label,cls:cls,bull:bull,bear:bear,total:total};
+}
+function renderFearGreed(){
+  var fg=computeFearGreed();
+  var needle=document.getElementById('fgNeedle');
+  var val=document.getElementById('fgVal');
+  var lbl=document.getElementById('fgLbl');
+  var ctx=document.getElementById('fgContext');
+  if(!needle||!val||!lbl)return;
+  // Map 0..100 → -90°..+90° rotation around center (100,100)
+  var deg=-90+(fg.score/100)*180;
+  needle.style.transform='rotate('+deg+'deg)';
+  val.textContent=fg.score;
+  val.className='fg-val '+fg.cls;
+  lbl.textContent=fg.label;
+  lbl.className='fg-lbl '+fg.cls;
+  if(ctx){
+    if(fg.total>0){
+      ctx.innerHTML='<strong style="color:var(--green2);">'+fg.bull+' bullish</strong> · <strong style="color:var(--red2);">'+fg.bear+' bearish</strong> stories · risk score '+fg.score;
+    }else{
+      ctx.textContent='Awaiting news flow…';
+    }
+  }
+}
+
+// ════════════ VOLATILITY PULSE — top movers right now ════════════
+// Uses _TD ticker prices vs their starting baseline to surface the biggest movers.
+// Click any row to load that symbol on the chart.
+var _volBaseline=null;
+function renderVolatilityPulse(){
+  var el=document.getElementById('volPulse');
+  if(!el||typeof _TD==='undefined'||!_TD.length)return;
+  // Snapshot baseline on first render
+  if(!_volBaseline){
+    _volBaseline={};
+    _TD.forEach(function(t){_volBaseline[t.s]=t.p;});
+  }
+  var rows=_TD.map(function(t){
+    var base=_volBaseline[t.s]||t.p;
+    var pct=base?((t.p-base)/base)*100:0;
+    return {sym:t.s,pct:pct,price:t.p};
+  });
+  rows.sort(function(a,b){return Math.abs(b.pct)-Math.abs(a.pct);});
+  var top=rows.slice(0,6);
+  var maxAbs=Math.max.apply(null,top.map(function(r){return Math.abs(r.pct);}));
+  if(!isFinite(maxAbs)||maxAbs<=0)maxAbs=1;
+  el.innerHTML=top.map(function(r){
+    var dir=r.pct>=0?'up':'down';
+    var sign=r.pct>=0?'+':'';
+    var w=(Math.abs(r.pct)/maxAbs)*50; // each side of centerline = 50%
+    return '<div class="vol-row '+dir+'" title="'+r.sym+' · '+sign+r.pct.toFixed(2)+'% since you opened">'
+      +'<div class="vol-sym">'+r.sym+'</div>'
+      +'<div class="vol-bar-track"><div class="vol-bar-fill" style="width:'+w.toFixed(1)+'%;"></div></div>'
+      +'<div class="vol-pct">'+sign+r.pct.toFixed(2)+'%</div>'
+    +'</div>';
+  }).join('');
+}
+
+// ════════════ WORLD MAP ZOOM + PAN ════════════
+(function setupWorldMapZoom(){
+  var wrap=document.getElementById('worldMapWrap');
+  var svg=document.getElementById('worldMapSvg');
+  var layer=document.getElementById('worldZoomLayer');
+  if(!wrap||!svg||!layer)return;
+  var state={k:1,x:0,y:0};
+  var MIN=1,MAX=8;
+  function apply(){
+    layer.setAttribute('transform','translate('+state.x+' '+state.y+') scale('+state.k+')');
+  }
+  function clamp(){
+    // Keep map mostly within viewport bounds
+    var vbW=1000, vbH=500;
+    var maxOffX=(state.k-1)*vbW, maxOffY=(state.k-1)*vbH;
+    state.x=Math.max(-maxOffX,Math.min(0,state.x));
+    state.y=Math.max(-maxOffY,Math.min(0,state.y));
+  }
+  function zoomAtPoint(factor,cx,cy){
+    var newK=Math.max(MIN,Math.min(MAX,state.k*factor));
+    if(newK===state.k)return;
+    // Convert client coords to SVG viewBox coords
+    var rect=svg.getBoundingClientRect();
+    var sx=(cx-rect.left)/rect.width*1000;
+    var sy=(cy-rect.top)/rect.height*500;
+    // Zoom about the cursor: keep that point fixed
+    state.x=sx-(sx-state.x)*(newK/state.k);
+    state.y=sy-(sy-state.y)*(newK/state.k);
+    state.k=newK;
+    clamp();apply();
+  }
+  // Wheel zoom
+  wrap.addEventListener('wheel',function(e){
+    e.preventDefault();
+    var factor=e.deltaY<0?1.18:1/1.18;
+    zoomAtPoint(factor,e.clientX,e.clientY);
+  },{passive:false});
+  // Drag pan
+  var drag=null;
+  wrap.addEventListener('mousedown',function(e){
+    if(e.target.closest('.wm-zoom-ctrls')||e.target.closest('.world-city'))return;
+    drag={x:e.clientX,y:e.clientY,sx:state.x,sy:state.y};
+    wrap.style.cursor='grabbing';
+  });
+  window.addEventListener('mousemove',function(e){
+    if(!drag)return;
+    var rect=svg.getBoundingClientRect();
+    var dx=(e.clientX-drag.x)/rect.width*1000;
+    var dy=(e.clientY-drag.y)/rect.height*500;
+    state.x=drag.sx+dx;
+    state.y=drag.sy+dy;
+    clamp();apply();
+  });
+  window.addEventListener('mouseup',function(){if(drag){drag=null;wrap.style.cursor='';}});
+  // Buttons
+  document.getElementById('wmZoomIn').addEventListener('click',function(){
+    var rect=wrap.getBoundingClientRect();
+    zoomAtPoint(1.4,rect.left+rect.width/2,rect.top+rect.height/2);
+  });
+  document.getElementById('wmZoomOut').addEventListener('click',function(){
+    var rect=wrap.getBoundingClientRect();
+    zoomAtPoint(1/1.4,rect.left+rect.width/2,rect.top+rect.height/2);
+  });
+  document.getElementById('wmZoomReset').addEventListener('click',function(){
+    state={k:1,x:0,y:0};apply();
+  });
+  apply();
+})();
 
 // ════════════ REAL WORLD MAP — D3 + TopoJSON Mercator projection ════════════
 // Loads world-atlas TopoJSON (110m resolution, ~70KB), renders all countries as
