@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TradeContext.ai — Live News Bias Feed</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#03060d;--bg2:#060c18;--bg3:#0a1220;--bg4:#0f1a2e;--bg5:#141f33;--border:#142035;--border2:#1e3050;--blue:#0ea5e9;--blue2:#38bdf8;--bluedim:rgba(14,165,233,.1);--green:#10b981;--green2:#34d399;--red:#ef4444;--red2:#f87171;--yellow:#f59e0b;--orange:#f97316;--purple:#8b5cf6;--text:#e2eaf4;--text2:#7a9ab8;--text3:#3a5570;--mono:'DM Mono',monospace;--sans:'Outfit',sans-serif;}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);overflow-x:hidden;font-size:14px;}
+button{cursor:pointer;border:none;background:none;font-family:var(--sans);}
+::-webkit-scrollbar{width:4px;height:4px;}::-webkit-scrollbar-track{background:var(--bg2);}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+@keyframes spin{to{transform:rotate(360deg);}}
+@keyframes ticker{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+@keyframes slideIn{from{opacity:0;transform:translateY(-12px);}to{opacity:1;transform:translateY(0);}}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(1.15);opacity:.8;}}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+@keyframes flashRed{0%,100%{background:transparent;}50%{background:rgba(239,68,68,.08);}}
+
+/* TICKER */
+.ticker-bar{height:32px;background:#020509;border-bottom:1px solid var(--border);display:flex;align-items:center;overflow:hidden;position:sticky;top:0;z-index:300;}
+.ticker-lbl{background:var(--blue);color:#000;font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.16em;padding:0 14px;height:100%;display:flex;align-items:center;flex-shrink:0;text-transform:uppercase;}
+.ticker-wrap{overflow:hidden;flex:1;}
+.ticker-inner{display:flex;animation:ticker 50s linear infinite;white-space:nowrap;}
+.ticker-inner:hover{animation-play-state:paused;}
+.t-i{display:flex;align-items:center;gap:7px;padding:0 20px;border-right:1px solid var(--border);font-family:var(--mono);font-size:11px;}
+.t-s{color:var(--text2);font-weight:500;}.t-p{color:var(--text);font-weight:600;}
+.t-c.up{color:var(--green2);}.t-c.dn{color:var(--red2);}
+
+/* NAVBAR */
+.navbar{height:60px;background:rgba(3,6,13,.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 32px;position:sticky;top:32px;z-index:299;}
+.nav-logo{font-size:19px;font-weight:800;letter-spacing:-.02em;cursor:pointer;}
+.nav-logo span{color:var(--blue);}
+.nav-links{display:flex;list-style:none;}
+.nav-links a{font-size:12px;font-weight:500;letter-spacing:.05em;color:var(--text2);padding:0 14px;height:60px;display:flex;align-items:center;border-bottom:2px solid transparent;transition:.2s;cursor:pointer;}
+.nav-links a:hover,.nav-links a.active{color:var(--text);border-bottom-color:var(--blue);}
+.nav-r{display:flex;align-items:center;gap:12px;}
+.live-pill{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--green2);text-transform:uppercase;}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green2);animation:blink 1.2s infinite;}
+.nav-time{font-family:var(--mono);font-size:11px;color:var(--text3);}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;font-size:12px;font-weight:600;padding:8px 18px;border-radius:4px;transition:.2s;cursor:pointer;border:none;}
+.btn-blue{background:var(--blue);color:#000;}.btn-blue:hover{background:var(--blue2);}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border2);}.btn-ghost:hover{background:var(--bg3);color:var(--text);}
+.btn-outline{background:transparent;color:var(--blue);border:1px solid var(--blue);}.btn-outline:hover{background:var(--bluedim);}
+.badge{display:inline-flex;align-items:center;font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:2px;}
+.badge-blue{background:var(--bluedim);color:var(--blue);border:1px solid rgba(14,165,233,.2);}
+.badge-green{background:rgba(16,185,129,.1);color:var(--green2);border:1px solid rgba(16,185,129,.2);}
+.badge-red{background:rgba(239,68,68,.1);color:var(--red2);border:1px solid rgba(239,68,68,.2);}
+.badge-yellow{background:rgba(245,158,11,.1);color:var(--yellow);border:1px solid rgba(245,158,11,.2);}
+.badge-purple{background:rgba(139,92,246,.1);color:var(--purple);border:1px solid rgba(139,92,246,.2);}
+.badge-orange{background:rgba(249,115,22,.1);color:var(--orange);border:1px solid rgba(249,115,22,.2);}
+
+/* LAYOUT */
+.main{display:grid;grid-template-columns:260px 1fr 300px;gap:0;min-height:calc(100vh - 92px);}
+
+/* LEFT SIDEBAR — BIAS OVERVIEW */
+.bias-sidebar{background:var(--bg2);border-right:1px solid var(--border);padding:20px 16px;overflow-y:auto;position:sticky;top:92px;height:calc(100vh - 92px);}
+.bs-title{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--text3);margin-bottom:14px;display:flex;align-items:center;gap:7px;}
+.bs-title::before{content:'';width:3px;height:12px;background:var(--blue);border-radius:2px;display:inline-block;}
+
+/* Global bias meter */
+.bias-meter{background:var(--bg3);border:1px solid var(--border);padding:16px;border-radius:4px;margin-bottom:16px;}
+.bm-label{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-bottom:10px;}
+.bm-bar{height:10px;border-radius:5px;background:var(--bg4);overflow:hidden;position:relative;margin-bottom:8px;}
+.bm-fill{height:100%;border-radius:5px;transition:width 1s ease;}
+.bm-labels{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;}
+.bm-bull{color:var(--green2);}.bm-bear{color:var(--red2);}
+.bm-score{text-align:center;font-size:20px;font-weight:800;letter-spacing:-.02em;margin:6px 0 2px;}
+.bm-desc{text-align:center;font-family:var(--mono);font-size:10px;color:var(--text3);}
+
+/* Asset bias cards */
+.asset-bias{background:var(--bg3);border:1px solid var(--border);padding:12px;border-radius:4px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:.2s;}
+.asset-bias:hover{border-color:var(--border2);}
+.ab-left{display:flex;align-items:center;gap:10px;}
+.ab-icon{font-size:16px;}
+.ab-name{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--text);}
+.ab-full{font-size:10px;color:var(--text3);}
+.ab-right{text-align:right;}
+.ab-bias{font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.08em;}
+.ab-bias.bull{color:var(--green2);}.ab-bias.bear{color:var(--red2);}.ab-bias.neut{color:var(--yellow);}
+.ab-bar{width:60px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden;margin-top:4px;}
+.ab-bar-fill{height:100%;border-radius:2px;transition:width .8s ease;}
+.fill-bull{background:var(--green2);}.fill-bear{background:var(--red2);}.fill-neut{background:var(--yellow);}
+
+/* Region selector */
+.region-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px;}
+.region-btn{background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:7px 4px;border-radius:3px;text-align:center;cursor:pointer;transition:.2s;}
+.region-btn:hover,.region-btn.active{border-color:var(--blue);color:var(--blue);background:var(--bluedim);}
+
+/* Live stats */
+.live-stats{background:var(--bg3);border:1px solid var(--border);padding:12px;border-radius:4px;margin-bottom:14px;}
+.ls-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(20,32,53,.6);}
+.ls-row:last-child{border-bottom:none;}
+.ls-label{font-size:11px;color:var(--text2);}
+.ls-val{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--text);}
+
+/* CENTER — FEED */
+.feed-center{border-right:1px solid var(--border);}
+.feed-header{background:var(--bg2);border-bottom:1px solid var(--border);padding:16px 20px;position:sticky;top:92px;z-index:10;}
+.fh-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.fh-title{font-size:18px;font-weight:800;letter-spacing:-.02em;}
+.fh-subtitle{font-size:12px;color:var(--text2);margin-top:2px;}
+.fh-controls{display:flex;align-items:center;gap:8px;}
+.feed-filters{display:flex;gap:6px;flex-wrap:wrap;}
+.ff-btn{background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:5px 11px;border-radius:3px;cursor:pointer;transition:.2s;}
+.ff-btn:hover,.ff-btn.active{border-color:var(--blue);color:var(--blue);background:var(--bluedim);}
+.ff-btn.bull-filter.active{border-color:var(--green2);color:var(--green2);background:rgba(52,211,153,.08);}
+.ff-btn.bear-filter.active{border-color:var(--red2);color:var(--red2);background:rgba(248,113,113,.08);}
+.feed-list{padding:0;}
+
+/* NEWS ITEM */
+.news-item{padding:16px 20px;border-bottom:1px solid var(--border);transition:.2s;cursor:pointer;position:relative;animation:slideIn .4s ease both;}
+.news-item:hover{background:var(--bg2);}
+.news-item.breaking{animation:slideIn .4s ease both,flashRed 1s ease;}
+.news-item.breaking::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--red);border-radius:0 2px 2px 0;}
+.news-item.bull-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--green2);border-radius:0 2px 2px 0;}
+.news-item.bear-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--red2);border-radius:0 2px 2px 0;}
+.news-item.neut-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--yellow);border-radius:0 2px 2px 0;}
+.ni-top{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap;}
+.ni-time{font-family:var(--mono);font-size:10px;color:var(--text3);margin-left:auto;white-space:nowrap;flex-shrink:0;}
+.ni-headline{font-size:13px;font-weight:600;color:var(--text);line-height:1.45;margin-bottom:8px;}
+.ni-summary{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:10px;}
+.ni-bottom{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.ni-assets{display:flex;gap:4px;flex-wrap:wrap;}
+.asset-tag{font-family:var(--mono);font-size:9px;font-weight:600;color:var(--text3);background:rgba(255,255,255,.04);border:1px solid var(--border);padding:2px 7px;border-radius:2px;}
+.ni-right{display:flex;align-items:center;gap:8px;}
+.bias-chip{display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:3px;}
+.bias-bull{background:rgba(52,211,153,.1);color:var(--green2);border:1px solid rgba(52,211,153,.2);}
+.bias-bear{background:rgba(248,113,113,.1);color:var(--red2);border:1px solid rgba(248,113,113,.2);}
+.bias-neut{background:rgba(245,158,11,.1);color:var(--yellow);border:1px solid rgba(245,158,11,.2);}
+.bias-dot{width:6px;height:6px;border-radius:50%;}
+.bd-bull{background:var(--green2);}.bd-bear{background:var(--red2);}.bd-neut{background:var(--yellow);}
+.source-tag{font-family:var(--mono);font-size:9px;color:var(--text3);}
+.ai-analyse-btn{background:var(--bluedim);border:1px solid rgba(14,165,233,.2);color:var(--blue);font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:3px;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:4px;}
+.ai-analyse-btn:hover{background:rgba(14,165,233,.2);}
+.ai-analyse-btn.loading{opacity:.6;cursor:not-allowed;}
+.ai-verdict{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:12px;margin-top:10px;font-size:12px;color:var(--text2);line-height:1.65;display:none;animation:fadeIn .4s ease;}
+.ai-verdict.show{display:block;}
+.ai-verdict-header{display:flex;align-items:center;gap:6px;margin-bottom:8px;font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);}
+.ai-spinner-sm{width:10px;height:10px;border:2px solid rgba(14,165,233,.2);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;display:inline-block;}
+
+/* Breaking news banner */
+.breaking-banner{background:linear-gradient(90deg,rgba(239,68,68,.12),rgba(239,68,68,.04));border-bottom:1px solid rgba(239,68,68,.2);padding:10px 20px;display:flex;align-items:center;gap:12px;animation:slideIn .4s ease;}
+.bb-label{background:var(--red);color:#fff;font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;padding:3px 10px;border-radius:2px;flex-shrink:0;animation:pulse 1.5s ease-in-out infinite;}
+.bb-text{font-size:12px;color:var(--text);font-weight:500;}
+.bb-close{margin-left:auto;color:var(--text3);font-size:16px;cursor:pointer;flex-shrink:0;}
+
+/* RIGHT SIDEBAR */
+.right-sidebar{padding:20px 16px;overflow-y:auto;position:sticky;top:92px;height:calc(100vh - 92px);}
+.rs-title{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--text3);margin-bottom:12px;display:flex;align-items:center;gap:7px;}
+.rs-title::before{content:'';width:3px;height:12px;background:var(--blue);border-radius:2px;display:inline-block;}
+
+/* Sentiment gauge */
+.sent-gauge{background:var(--bg3);border:1px solid var(--border);padding:14px;border-radius:4px;margin-bottom:14px;}
+.sg-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.sg-flag{font-size:14px;flex-shrink:0;}
+.sg-name{font-size:12px;font-weight:500;color:var(--text);flex:1;}
+.sg-bar{width:80px;height:6px;background:var(--bg4);border-radius:3px;overflow:hidden;flex-shrink:0;}
+.sg-fill{height:100%;border-radius:3px;transition:width .8s ease;}
+.sg-score{font-family:var(--mono);font-size:10px;font-weight:600;width:32px;text-align:right;flex-shrink:0;}
+
+/* Top movers bias */
+.mover-card{background:var(--bg3);border:1px solid var(--border);padding:12px;border-radius:4px;margin-bottom:8px;cursor:pointer;transition:.2s;}
+.mover-card:hover{border-color:var(--border2);}
+.mc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.mc-sym{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--text);}
+.mc-change{font-family:var(--mono);font-size:11px;font-weight:600;}
+.mc-bar{height:4px;background:var(--bg4);border-radius:2px;overflow:hidden;margin-bottom:6px;}
+.mc-fill{height:100%;border-radius:2px;transition:width .8s ease;}
+.mc-bottom{display:flex;align-items:center;justify-content:space-between;}
+.mc-stories{font-size:10px;color:var(--text3);}
+
+/* AI Summary box */
+.ai-summary-box{background:linear-gradient(135deg,var(--bg3),var(--bg4));border:1px solid var(--border2);padding:14px;border-radius:4px;margin-bottom:14px;}
+.asb-header{display:flex;align-items:center;gap:7px;margin-bottom:10px;}
+.asb-title{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);}
+.asb-body{font-size:12px;color:var(--text2);line-height:1.65;}
+.asb-refresh{background:var(--bluedim);border:1px solid rgba(14,165,233,.2);color:var(--blue);font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:5px 10px;border-radius:3px;cursor:pointer;transition:.2s;width:100%;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:5px;}
+.asb-refresh:hover{background:rgba(14,165,233,.2);}
+
+/* Feed counter */
+.feed-counter{background:var(--bg2);border-bottom:1px solid var(--border);padding:8px 20px;display:flex;align-items:center;justify-content:space-between;}
+.fc-count{font-family:var(--mono);font-size:10px;color:var(--text2);}
+.fc-count span{color:var(--blue);font-weight:600;}
+.fc-speed{display:flex;align-items:center;gap:8px;}
+.speed-btn{background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-family:var(--mono);font-size:9px;padding:3px 8px;border-radius:3px;cursor:pointer;transition:.2s;}
+.speed-btn:hover,.speed-btn.active{border-color:var(--blue);color:var(--blue);}
+.pause-btn{background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-family:var(--mono);font-size:9px;padding:3px 10px;border-radius:3px;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:4px;}
+.pause-btn:hover{border-color:var(--yellow);color:var(--yellow);}
+.pause-btn.paused{border-color:var(--green2);color:var(--green2);}
+
+/* Load more */
+.load-more{padding:20px;text-align:center;border-top:1px solid var(--border);}
+
+@media(max-width:1200px){.main{grid-template-columns:220px 1fr 260px;}}
+@media(max-width:960px){.main{grid-template-columns:1fr;}.bias-sidebar,.right-sidebar{display:none;}}
+
+/* PAYWALL */
+.paywall-overlay{position:fixed;inset:0;z-index:900;display:flex;align-items:flex-end;justify-content:center;pointer-events:none;}
+.paywall-blur{position:fixed;inset:0;backdrop-filter:blur(8px);background:rgba(3,6,13,.85);z-index:899;display:none;}
+.paywall-card{background:var(--bg2);border:1px solid var(--border2);border-radius:12px 12px 0 0;padding:36px 40px;width:100%;max-width:600px;text-align:center;transform:translateY(100%);transition:transform .5s ease;z-index:900;pointer-events:all;}
+.paywall-card.show{transform:translateY(0);}
+.pw-icon{font-size:40px;margin-bottom:14px;}
+.pw-title{font-size:24px;font-weight:800;letter-spacing:-.02em;margin-bottom:8px;}
+.pw-sub{font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:24px;}
+.pw-plans{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+.pw-plan{border:1px solid var(--border);border-radius:6px;padding:14px;cursor:pointer;transition:.2s;text-decoration:none;display:block;}
+.pw-plan:hover{border-color:var(--blue);}
+.pw-plan.elite{border-color:var(--purple);}
+.pw-plan-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;}
+.pw-plan-price{font-size:20px;font-weight:900;letter-spacing:-.02em;}
+.pw-plan-price sup{font-size:11px;font-weight:600;vertical-align:top;margin-top:3px;}
+.pw-plan-price sub{font-size:11px;font-weight:400;color:var(--text3);}
+.pw-plan-feat{font-size:11px;color:var(--text2);margin-top:6px;}
+.pw-note{font-family:var(--mono);font-size:10px;color:var(--text3);}
+.pw-timer{font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:16px;}
+.pw-timer span{color:var(--blue);font-weight:700;}
+
+</style>
+</head>
+<body>
+
+<!-- TICKER -->
+<div class="ticker-bar"><div class="ticker-lbl">Live</div><div class="ticker-wrap"><div class="ticker-inner" id="tickerInner"></div></div></div>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-logo">TradeContext<span>.ai</span></div>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="index.html">Dashboard</a></li>
+    <li><a class="active">News Bias Feed</a></li>
+    <li><a href="index.html">AI Playbooks</a></li>
+    <li><a href="index.html">Pricing</a></li>
+  </ul>
+  <div class="nav-r">
+    <div class="live-pill"><div class="live-dot"></div>Live Feed</div>
+    <div class="nav-time" id="utcClock"></div>
+    <button class="btn btn-blue" style="font-size:12px;" href="index.html">Dashboard →</button>
+  </div>
+</nav>
+
+<div class="main">
+
+  <!-- LEFT SIDEBAR -->
+  <div class="bias-sidebar">
+    <div class="bs-title">Global Sentiment</div>
+
+    <!-- Overall bias meter -->
+    <div class="bias-meter">
+      <div class="bm-label">Overall Market Bias</div>
+      <div class="bm-bar"><div class="bm-fill" id="globalBiasBar" style="width:62%;background:linear-gradient(90deg,var(--green),var(--green2));"></div></div>
+      <div class="bm-labels"><span class="bm-bull">BULL</span><span class="bm-bear">BEAR</span></div>
+      <div class="bm-score" id="globalBiasScore" style="color:var(--green2)">+62</div>
+      <div class="bm-desc" id="globalBiasDesc">Moderately Bullish</div>
+    </div>
+
+    <div class="bs-title" style="margin-top:16px;">Asset Bias</div>
+    <div id="assetBiasList"></div>
+
+    <div class="bs-title" style="margin-top:16px;">Filter by Region</div>
+    <div class="region-grid" id="regionGrid"></div>
+
+    <div class="bs-title" style="margin-top:16px;">Live Stats</div>
+    <div class="live-stats">
+      <div class="ls-row"><span class="ls-label">Stories today</span><span class="ls-val" id="statTotal">0</span></div>
+      <div class="ls-row"><span class="ls-label">Bullish signals</span><span class="ls-val" style="color:var(--green2)" id="statBull">0</span></div>
+      <div class="ls-row"><span class="ls-label">Bearish signals</span><span class="ls-val" style="color:var(--red2)" id="statBear">0</span></div>
+      <div class="ls-row"><span class="ls-label">Neutral</span><span class="ls-val" style="color:var(--yellow)" id="statNeut">0</span></div>
+      <div class="ls-row"><span class="ls-label">High impact</span><span class="ls-val" style="color:var(--red2)" id="statHigh">0</span></div>
+      <div class="ls-row"><span class="ls-label">Last update</span><span class="ls-val" id="statLastUpdate">—</span></div>
+    </div>
+  </div>
+
+  <!-- CENTER FEED -->
+  <div class="feed-center">
+    <div class="feed-header">
+      <div class="fh-top">
+        <div>
+          <div class="fh-title">📡 Live News Bias Feed</div>
+          <div class="fh-subtitle">Worldwide market news with instant AI bias scoring — updated continuously</div>
+        </div>
+        <div class="fh-controls">
+          <button class="btn btn-ghost" style="font-size:11px;" onclick="clearFeed()">Clear</button>
+          <button class="btn btn-blue" style="font-size:11px;" id="aiSummaryBtn" onclick="generateAISummary()">🤖 AI Summary</button>
+        </div>
+      </div>
+      <div class="feed-filters">
+        <button class="ff-btn active" onclick="setFilter('all',this)">All</button>
+        <button class="ff-btn bull-filter" onclick="setFilter('bull',this)">🟢 Bullish</button>
+        <button class="ff-btn bear-filter" onclick="setFilter('bear',this)">🔴 Bearish</button>
+        <button class="ff-btn" onclick="setFilter('neut',this)">🟡 Neutral</button>
+        <button class="ff-btn" onclick="setFilter('hi',this)">⚡ High Impact</button>
+        <button class="ff-btn" onclick="setFilter('forex',this)">Forex</button>
+        <button class="ff-btn" onclick="setFilter('crypto',this)">Crypto</button>
+        <button class="ff-btn" onclick="setFilter('stocks',this)">Stocks</button>
+        <button class="ff-btn" onclick="setFilter('commodities',this)">Commodities</button>
+        <button class="ff-btn" onclick="setFilter('macro',this)">Macro</button>
+      </div>
+    </div>
+
+    <div class="feed-counter">
+      <div class="fc-count">Showing <span id="feedCount">0</span> stories · <span id="feedBullCount" style="color:var(--green2)">0</span> bull · <span id="feedBearCount" style="color:var(--red2)">0</span> bear</div>
+      <div class="fc-speed">
+        <span style="font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;">Speed:</span>
+        <button class="speed-btn" onclick="setSpeed(8000,this)">Slow</button>
+        <button class="speed-btn active" onclick="setSpeed(4000,this)">Normal</button>
+        <button class="speed-btn" onclick="setSpeed(2000,this)">Fast</button>
+        <button class="pause-btn" id="pauseBtn" onclick="togglePause()">⏸ Pause</button>
+      </div>
+    </div>
+
+    <!-- Breaking banner -->
+    <div class="breaking-banner" id="breakingBanner" style="display:none;">
+      <div class="bb-label">⚡ Breaking</div>
+      <div class="bb-text" id="breakingText"></div>
+      <span class="bb-close" onclick="this.parentElement.style.display='none'">×</span>
+    </div>
+
+    <div id="feedList"></div>
+    <div class="load-more"><button class="btn btn-ghost" style="font-size:12px;" onclick="loadMore()">Load 20 More Stories</button></div>
+  </div>
+
+  <!-- RIGHT SIDEBAR -->
+  <div class="right-sidebar">
+    <div class="rs-title">AI Market Summary</div>
+    <div class="ai-summary-box">
+      <div class="asb-header"><div class="ai-spinner-sm" id="summarySpinner" style="display:none;"></div><div class="asb-title">🤖 Live AI Analysis</div></div>
+      <div class="asb-body" id="summaryBody">Click "AI Summary" to get a real-time AI analysis of current worldwide news bias and which assets are most affected right now.</div>
+      <button class="asb-refresh" onclick="generateAISummary()">🤖 Generate AI Summary</button>
+    </div>
+
+    <div class="rs-title">Regional Sentiment</div>
+    <div class="sent-gauge" id="regionalSentiment"></div>
+
+    <div class="rs-title">Top Bias Movers</div>
+    <div id="topBiasMovers"></div>
+
+    <div class="rs-title" style="margin-top:14px;">Bias Breakdown</div>
+    <div style="background:var(--bg3);border:1px solid var(--border);padding:14px;border-radius:4px;">
+      <div style="font-family:var(--mono);font-size:9px;color:var(--text3);margin-bottom:10px;letter-spacing:.1em;text-transform:uppercase;">Last 2 Hours</div>
+      <div id="biasBreakdown"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+// DATA — WORLDWIDE NEWS DATABASE
+// ═══════════════════════════════════════════════
+const TICKERS=[
+  {s:'EUR/USD',p:'1.1053',c:'+0.42%',d:'up'},{s:'GBP/USD',p:'1.2784',c:'+0.18%',d:'up'},
+  {s:'USD/JPY',p:'151.82',c:'-0.71%',d:'dn'},{s:'XAU/USD',p:'3,121.40',c:'+1.62%',d:'up'},
+  {s:'BTC/USD',p:'92,148',c:'+4.21%',d:'up'},{s:'ETH/USD',p:'3,482',c:'+3.14%',d:'up'},
+  {s:'S&P 500',p:'5,641',c:'+0.88%',d:'up'},{s:'NASDAQ',p:'17,924',c:'+1.12%',d:'up'},
+  {s:'WTI',p:'76.34',c:'-1.08%',d:'dn'},{s:'BRENT',p:'78.41',c:'-0.92%',d:'dn'},
+  {s:'DAX',p:'22,180',c:'+0.54%',d:'up'},{s:'NIKKEI',p:'38,740',c:'+1.81%',d:'up'},
+  {s:'SILVER',p:'33.18',c:'+2.04%',d:'up'},{s:'AUD/USD',p:'0.6441',c:'+0.29%',d:'up'},
+];
+
+const NEWS_POOL = [
+  // US/FED
+  {headline:'Fed Officials Signal Comfort With Two Rate Cuts in 2026 as Inflation Eases Toward Target',summary:'Multiple Federal Reserve board members indicated in separate speeches that the conditions for monetary easing are building, citing consecutive months of cooling core PCE and softening labour market data.',source:'Reuters',region:'US',category:'macro',assets:['USD','SPX','GOLD','EUR/USD'],imp:'hi',bias:'bear',keywords:['rate cut','inflation eases','monetary easing']},
+  {headline:'US Consumer Confidence Beats at 108.7 vs 104.0 Expected — Dollar Firms Broadly',summary:'The Conference Board consumer confidence index surged to its highest reading since early 2024, driven by optimism around employment and income growth. The dollar strengthened across major pairs on the release.',source:'Bloomberg',region:'US',category:'macro',assets:['USD','DXY','EUR/USD','GBP/USD'],imp:'hi',bias:'bull',keywords:['beats','consumer confidence','dollar firms','highest']},
+  {headline:'US Jobless Claims Fall to 198K — Lowest Since 2022, Tightest Labour Market in Three Years',summary:'Initial jobless claims dropped sharply to 198K, well below the 218K consensus. Continuing claims also declined, pointing to a labour market that remains resilient despite the Fed\'s restrictive stance.',source:'WSJ',region:'US',category:'macro',assets:['USD','SPX','DXY'],imp:'hi',bias:'bull',keywords:['fall','lowest','beats','labour market','resilient']},
+  {headline:'Federal Reserve\'s Waller Pushes Back on June Rate Cut — "Too Early to Declare Victory on Inflation"',summary:'Fed Governor Waller cautioned against premature rate cuts, stating that the central bank needs several more months of data to be confident inflation is durably returning to the 2% target.',source:'Fed/CNBC',region:'US',category:'macro',assets:['USD','GOLD','SPX'],imp:'hi',bias:'bull',keywords:['pushes back','too early','cautioned','needs more data']},
+  {headline:'US Manufacturing PMI Contracts to 48.3 — Weakest in 14 Months, Factory Sector Under Pressure',summary:'The ISM Manufacturing index fell deeper into contraction territory, with new orders and production components both declining. The data adds to evidence that higher rates are weighing on the real economy.',source:'ISM/Reuters',region:'US',category:'macro',assets:['USD','SPX','DXY'],imp:'med',bias:'bear',keywords:['contracts','weakest','declining','weighing']},
+  {headline:'US Retail Sales Miss — +0.1% vs +0.4% Expected, Consumer Spending Shows Signs of Fatigue',summary:'Retail sales growth slowed sharply in the latest reading, with discretionary spending categories showing particular weakness. Economists flagged this as an early warning sign of consumer demand softening.',source:'Commerce Dept',region:'US',category:'macro',assets:['USD','SPX','USD/JPY'],imp:'med',bias:'bear',keywords:['miss','slowed','weakness','softening']},
+
+  // EUROPE/ECB
+  {headline:'ECB\'s Lagarde: Rate Cuts Are Coming But Pace Will Be Gradual, Dependent on Data',summary:'ECB President Christine Lagarde confirmed that the disinflationary process in the eurozone is proceeding as expected, opening the door to rate cuts. However, she stressed that the pace would remain cautious and data-dependent.',source:'ECB/Reuters',region:'EU',category:'macro',assets:['EUR/USD','EUR/GBP','BUND'],imp:'hi',bias:'neut',keywords:['rate cuts are coming','gradual','cautious']},
+  {headline:'Eurozone CPI Rises Unexpectedly to 2.4% — Services Inflation Sticky, ECB Cut Path Clouds',summary:'Eurozone headline inflation rebounded to 2.4% in the latest reading, above the 2.2% consensus. Services inflation remained elevated at 3.9%, complicating the ECB\'s plans for rate cuts.',source:'Eurostat',region:'EU',category:'macro',assets:['EUR/USD','EUR/GBP','EUR/JPY'],imp:'hi',bias:'bull',keywords:['rises','unexpectedly','above','sticky','elevated']},
+  {headline:'German Factory Orders Collapse 5.2% MoM — Worst Reading Since Pandemic, EUR Slides',summary:'German industrial orders fell far more than expected, with weak demand from both domestic and export markets. The data reinforces fears of a German recession and weighs on the broader eurozone growth outlook.',source:'Destatis',region:'EU',category:'macro',assets:['EUR/USD','DAX','BUND'],imp:'hi',bias:'bear',keywords:['collapse','worst','falls','weigh','recession']},
+  {headline:'UK Inflation Falls to 2.2% — Below BOE Target, Rate Cut Bets Accelerate for August Meeting',summary:'UK CPI came in below the Bank of England\'s 2% target for the first time since 2021. Money markets immediately repriced, now assigning a 78% probability to a 25bp cut at the August meeting.',source:'ONS/Reuters',region:'UK',category:'macro',assets:['GBP/USD','GBP/EUR','GILTS'],imp:'hi',bias:'bear',keywords:['falls','below target','rate cut','repriced']},
+  {headline:'UK GDP Surprise: Economy Grows 0.4% in Q1, Strongest Performance Since 2022',summary:'The UK economy expanded more strongly than expected in the first quarter of 2026, driven by a rebound in services sector activity and a pickup in consumer spending. The pound jumped on the data.',source:'ONS',region:'UK',category:'macro',assets:['GBP/USD','GBP/EUR','FTSE'],imp:'hi',bias:'bull',keywords:['surprise','grows','strongest','rebound','pickup','jumped']},
+  {headline:'Swiss National Bank Cuts Rates to -0.25% — First Central Bank to Return to Negative Territory',summary:'The SNB surprised markets with a larger-than-expected rate cut, citing a need to prevent further CHF appreciation. The franc weakened sharply on the decision. EUR/CHF jumped 1.2% on the announcement.',source:'SNB/Bloomberg',region:'EU',category:'macro',assets:['USD/CHF','EUR/CHF','CHF'],imp:'hi',bias:'bear',keywords:['cuts rates','negative','weakened','sharply']},
+
+  // ASIA/JAPAN
+  {headline:'Bank of Japan Signals Another Rate Hike May Come Before Year-End — Yen Surges',summary:'BOJ Governor Ueda hinted that further policy normalisation is on the table if economic conditions continue to meet the bank\'s forecasts. USD/JPY dropped 120 pips on the comments, breaking below 152.',source:'BOJ/Bloomberg',region:'ASIA',category:'macro',assets:['USD/JPY','EUR/JPY','GBP/JPY','NIKKEI'],imp:'hi',bias:'bear',keywords:['rate hike','surges','normalisation','dropped']},
+  {headline:'China GDP Q1 Beats at +5.3% — Strong Exports and Infrastructure Spending Drive Outperformance',summary:'China\'s economy expanded faster than expected in the first quarter, boosted by a record trade surplus and continued government infrastructure investment. AUD, NZD and commodity currencies rallied on the news.',source:'NBS/Reuters',region:'ASIA',category:'macro',assets:['AUD/USD','NZD/USD','CNH','IRON ORE'],imp:'hi',bias:'bull',keywords:['beats','strong','outperformance','rallied','record']},
+  {headline:'PBOC Cuts Reserve Requirement Ratio by 50bps — Injects $140B Into Chinese Banking System',summary:'The People\'s Bank of China lowered the reserve requirement ratio for banks, releasing significant liquidity into the system. The move signals continued stimulus intent and sent Chinese equities higher.',source:'PBOC/Xinhua',region:'ASIA',category:'macro',assets:['CNH','AUD/USD','HSI','COPPER'],imp:'hi',bias:'bull',keywords:['cuts','injects','stimulus','higher','liquidity']},
+  {headline:'Japanese Core CPI Hits 2.9% — Above BOJ Target, Adds Pressure for Earlier Rate Hike',summary:'Japan\'s core consumer price inflation accelerated more than expected, keeping pressure on the Bank of Japan to continue its policy normalisation process. The yen strengthened as rate hike bets were pulled forward.',source:'MIC Japan',region:'ASIA',category:'macro',assets:['USD/JPY','NIKKEI','JGB'],imp:'hi',bias:'bear',keywords:['hits','above','pressure','accelerated','strengthened']},
+  {headline:'RBA Holds Rates at 4.10% — Signals End of Hiking Cycle, AUD Weakens on Dovish Statement',summary:'The Reserve Bank of Australia kept rates on hold as expected but struck a noticeably more dovish tone in its accompanying statement, dropping language about potential further hikes. AUD/USD fell 40 pips.',source:'RBA',region:'ASIA',category:'macro',assets:['AUD/USD','NZD/USD'],imp:'hi',bias:'bear',keywords:['holds','dovish','dropped','fell','weakens']},
+
+  // CRYPTO
+  {headline:'Bitcoin Spot ETFs Record $1.2B Inflows in Single Day — Largest Since Launch Month',summary:'US-listed spot Bitcoin ETFs recorded their highest ever single-day net inflows of $1.2 billion, with BlackRock\'s IBIT leading with $680M. The institutional surge pushed BTC to new monthly highs above $92K.',source:'Bloomberg/ETF.com',region:'CRYPTO',category:'crypto',assets:['BTC','ETH','IBIT','SOL'],imp:'hi',bias:'bull',keywords:['record','largest','surge','new highs','highest ever']},
+  {headline:'Ethereum Upgrade "Pectra" Goes Live — Network Efficiency Improves 40%, ETH Rallies 8%',summary:'The highly anticipated Ethereum Pectra upgrade successfully activated on mainnet, significantly improving transaction throughput and reducing gas costs. ETH surged 8% in the hours following activation.',source:'Ethereum Foundation',region:'CRYPTO',category:'crypto',assets:['ETH','ETH-ETF','STAKING'],imp:'hi',bias:'bull',keywords:['upgrade','improves','rallies','surged','successfully']},
+  {headline:'SEC Approves Solana Spot ETF Applications — SOL Jumps 22% on the News',summary:'The US Securities and Exchange Commission gave the green light to three spot Solana ETF applications, a decision that had been widely anticipated but nonetheless triggered a massive price surge. SOL briefly touched $240.',source:'SEC/CoinDesk',region:'CRYPTO',category:'crypto',assets:['SOL','ETH','BTC','CRYPTO'],imp:'hi',bias:'bull',keywords:['approves','jumps','green light','surge','touched']},
+  {headline:'Tether Faces New Regulatory Scrutiny in EU Under MiCA Framework — USDT Delistings Begin',summary:'Several European exchanges announced they would delist USDT following new MiCA compliance requirements. The uncertainty weighed on crypto market sentiment broadly, with BTC pulling back from recent highs.',source:'CoinTelegraph',region:'EU',category:'crypto',assets:['BTC','ETH','USDT','CRYPTO'],imp:'hi',bias:'bear',keywords:['scrutiny','regulatory','delistings','weighed','pulling back']},
+  {headline:'MicroStrategy Buys Additional 12,000 BTC for $1.1B — Total Holdings Now 568,000 BTC',summary:'Michael Saylor\'s MicroStrategy announced another massive Bitcoin purchase, adding 12,000 BTC at an average price of $91,600. The company\'s total holdings now represent approximately 2.7% of the total BTC supply.',source:'MicroStrategy/SEC',region:'US',category:'crypto',assets:['BTC','MSTR','CRYPTO'],imp:'med',bias:'bull',keywords:['buys','massive','purchase','total holdings']},
+
+  // COMMODITIES
+  {headline:'Gold Breaks $3,150 Resistance — Central Bank Buying at Record Pace, WGC Data Shows',summary:'Gold surged through the $3,150 resistance level as World Gold Council data revealed central banks purchased a record 290 tonnes in Q1 2026. The breakout has opened the door to the $3,200 target area.',source:'WGC/Reuters',region:'GLOBAL',category:'commodities',assets:['XAU/USD','XAG/USD','GDX','AUD'],imp:'hi',bias:'bull',keywords:['breaks','record','surged','breakout','record']},
+  {headline:'OPEC+ Agrees to Extend Production Cuts — Oil Prices Rally 3% as Supply Squeeze Looms',summary:'The OPEC+ alliance agreed to maintain production cuts through Q3 2026, defying expectations of a supply increase. Brent crude jumped above $80 on the decision, with WTI following closely behind.',source:'OPEC/Reuters',region:'ME',category:'commodities',assets:['BRENT','WTI','CAD','NOK'],imp:'hi',bias:'bull',keywords:['agrees','extend','rally','jumped','above']},
+  {headline:'Saudi Arabia Signals Willingness to Increase Oil Output — OPEC+ Unity Questioned',summary:'Reports emerged that Saudi Arabia may be willing to raise production quotas above current OPEC+ agreements, raising doubts about cartel unity. Brent dropped $2.40 on the news.',source:'FT/Reuters',region:'ME',category:'commodities',assets:['BRENT','WTI','CAD','MXN'],imp:'hi',bias:'bear',keywords:['increase output','doubts','dropped','willingness to raise']},
+  {headline:'Copper Hits 2-Year High on China Demand Surge and Supply Constraints From Chile',summary:'Copper prices climbed to their highest level since early 2024, supported by strong Chinese construction data and reports of production disruptions at key Chilean copper mines. AUD and commodity FX outperformed.',source:'LME/Bloomberg',region:'GLOBAL',category:'commodities',assets:['COPPER','AUD/USD','BHP','GLENCORE'],imp:'med',bias:'bull',keywords:['hits','high','surge','climbed','highest','outperformed']},
+  {headline:'Natural Gas Prices Surge 15% as Heatwave Sweeps Europe — Storage Levels Below 5-Year Average',summary:'European natural gas prices spiked sharply as an unexpected early summer heatwave drove electricity demand higher. Storage levels remain well below seasonal averages, raising concerns about winter supply.',source:'Reuters',region:'EU',category:'commodities',assets:['NATGAS','EUR','POWER'],imp:'hi',bias:'bull',keywords:['surge','spiked','sharply','above','raising']},
+
+  // GEOPOLITICAL
+  {headline:'US-China Trade Talks Resume in Geneva — Tariff Reduction Framework Being Discussed',summary:'Senior trade officials from the US and China met in Geneva for the first substantive trade discussions in months. Sources indicate a framework for reducing bilateral tariffs on certain goods is under active negotiation.',source:'WSJ',region:'GLOBAL',category:'macro',assets:['USD','CNH','SPX','GOLD'],imp:'hi',bias:'bull',keywords:['resume','framework','being discussed','active negotiation']},
+  {headline:'Middle East Tensions Escalate — Oil Supply Route Risks Rise, Gold Spikes as Safe Haven',summary:'New military exchanges in the Middle East raised fears over the security of key oil shipping lanes. Crude oil spiked 2% on supply disruption fears while gold jumped $30 as investors sought safe havens.',source:'Reuters/AP',region:'ME',category:'macro',assets:['GOLD','WTI','BRENT','USD/JPY'],imp:'hi',bias:'bear',keywords:['escalate','risk','spikes','fears','safe haven','jumped']},
+  {headline:'IMF Upgrades Global Growth Forecast to 3.4% — "Soft Landing" Now Base Case Scenario',summary:'The International Monetary Fund raised its global GDP growth forecast, citing stronger-than-expected momentum in the US and India, and easing inflation pressures across major economies. Risk assets rallied broadly.',source:'IMF',region:'GLOBAL',category:'macro',assets:['SPX','USD','GOLD','EM'],imp:'hi',bias:'bull',keywords:['upgrades','stronger','easing','rallied','raised']},
+
+  // STOCKS/EARNINGS
+  {headline:'NVIDIA Posts Record $26B Revenue — AI Chip Demand "Insatiable," Shares Jump 12% After Hours',summary:'NVIDIA smashed Wall Street expectations with quarterly revenue of $26 billion and guided higher, with CEO Jensen Huang describing demand from cloud providers for H100 chips as extraordinary. Shares surged to new all-time highs.',source:'NVIDIA/Bloomberg',region:'US',category:'stocks',assets:['NVDA','SPX','NASDAQ','SMH'],imp:'hi',bias:'bull',keywords:['record','smashed','insatiable','jump','surged','all-time highs','extraordinary']},
+  {headline:'Apple Warns of Tariff Impact — Q3 Revenue Guidance Misses by $4B, Stock Falls 6%',summary:'Apple issued a rare revenue warning, citing the impact of new US-China tariffs on its supply chain costs and potential demand softening in China. The news triggered a broad tech sector selloff in after-hours trading.',source:'Apple/Reuters',region:'US',category:'stocks',assets:['AAPL','NASDAQ','SPX'],imp:'hi',bias:'bear',keywords:['warns','misses','falls','selloff','warning','softening']},
+  {headline:'JPMorgan Q1 Earnings Beat — Net Interest Income Rises 12%, Investment Banking Surges 38%',summary:'JPMorgan Chase delivered another strong set of results, with both net interest income and investment banking revenues well ahead of consensus estimates. CEO Jamie Dimon flagged a healthy US economy.',source:'JPMorgan',region:'US',category:'stocks',assets:['JPM','XLF','SPX','BKX'],imp:'med',bias:'bull',keywords:['beat','rises','surges','strong','ahead','healthy']},
+  {headline:'Tesla Deliveries Miss for Second Consecutive Quarter — EV Demand Concerns Deepen',summary:'Tesla reported quarterly deliveries below analyst expectations for the second quarter in a row, fuelling ongoing concerns about softening demand for electric vehicles amid intensifying competition from Chinese rivals.',source:'Tesla/Reuters',region:'US',category:'stocks',assets:['TSLA','NASDAQ','EV'],imp:'med',bias:'bear',keywords:['miss','consecutive','miss','concerns','softening','competition']},
+];
+
+// ═══════════════════════════════════════════════
+// BIAS ENGINE — Rule-based, instant, free
+// ═══════════════════════════════════════════════
+const BULL_WORDS=['beats','beat','surges','surge','jumps','jump','rises','rise','record','rallies','rally','outperform','strong','strongest','upgrades','upgrade','breaks','breakout','highest','above','growth','approve','approves','stimulus','inflows','inflow','expands','gains','gain','positive','solid','robust'];
+const BEAR_WORDS=['misses','miss','falls','fall','contracts','contract','collapse','declines','decline','drops','drop','weakens','weaken','warning','warns','concern','fears','below','selloff','pressure','risk','loses','loss','worries','worry','cuts','cut rates','disappoints','disappointing','recession','slowdown','slides'];
+
+function getBias(headline, summary, keywords){
+  const text=(headline+' '+summary+' '+(keywords||[]).join(' ')).toLowerCase();
+  let bull=0,bear=0;
+  BULL_WORDS.forEach(w=>{if(text.includes(w))bull++;});
+  BEAR_WORDS.forEach(w=>{if(text.includes(w))bear++;});
+  if(bull>bear+1)return'bull';
+  if(bear>bull+1)return'bear';
+  return'neut';
+}
+
+function getBiasScore(headline, summary, keywords){
+  const text=(headline+' '+summary+' '+(keywords||[]).join(' ')).toLowerCase();
+  let bull=0,bear=0;
+  BULL_WORDS.forEach(w=>{if(text.includes(w))bull++;});
+  BEAR_WORDS.forEach(w=>{if(text.includes(w))bear++;});
+  const total=bull+bear;
+  if(total===0)return 0;
+  return Math.round(((bull-bear)/total)*100);
+}
+
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+let feedItems=[];
+let displayedItems=[];
+let currentFilter='all';
+let currentRegion='all';
+let isPaused=false;
+let feedInterval=null;
+let feedSpeed=4000;
+let statsTotal=0,statsBull=0,statsBear=0,statsNeut=0,statsHigh=0;
+let newsIndex=0;
+
+const ASSET_LIST=[
+  {icon:'💵',name:'USD',full:'US Dollar'},
+  {icon:'📈',name:'SPX',full:'S&P 500'},
+  {icon:'🪙',name:'BTC',full:'Bitcoin'},
+  {icon:'🥇',name:'GOLD',full:'Gold / XAU'},
+  {icon:'💷',name:'GBP',full:'British Pound'},
+  {icon:'💶',name:'EUR',full:'Euro'},
+  {icon:'🛢️',name:'OIL',full:'Crude Oil'},
+  {icon:'🔷',name:'ETH',full:'Ethereum'},
+];
+
+const REGIONS=[
+  {id:'all',label:'🌍 All'},
+  {id:'US',label:'🇺🇸 US'},
+  {id:'EU',label:'🇪🇺 Europe'},
+  {id:'UK',label:'🇬🇧 UK'},
+  {id:'ASIA',label:'🌏 Asia'},
+  {id:'ME',label:'🌙 M.East'},
+  {id:'CRYPTO',label:'₿ Crypto'},
+  {id:'GLOBAL',label:'🌐 Global'},
+];
+
+const REGIONAL_SENTIMENT=[
+  {flag:'🇺🇸',name:'United States',score:68,bias:'bull'},
+  {flag:'🇪🇺',name:'Eurozone',score:45,bias:'neut'},
+  {flag:'🇬🇧',name:'United Kingdom',score:52,bias:'bull'},
+  {flag:'🌏',name:'Asia Pacific',score:61,bias:'bull'},
+  {flag:'🌙',name:'Middle East',score:38,bias:'bear'},
+  {flag:'₿',name:'Crypto',score:74,bias:'bull'},
+];
+
+// ═══════════════════════════════════════════════
+// BUILD UI
+// ═══════════════════════════════════════════════
+function buildTicker(){
+  const el=document.getElementById('tickerInner');
+  el.innerHTML=[...TICKERS,...TICKERS].map(t=>`<div class="t-i"><span class="t-s">${t.s}</span><span class="t-p">${t.p}</span><span class="t-c ${t.d}">${t.d==='up'?'▲':'▼'} ${t.c}</span></div>`).join('');
+}
+
+function buildAssetBias(){
+  const el=document.getElementById('assetBiasList');
+  const scores={'USD':55,'SPX':63,'BTC':74,'GOLD':81,'GBP':52,'EUR':48,'OIL':39,'ETH':71};
+  el.innerHTML=ASSET_LIST.map(a=>{
+    const score=scores[a.name]||50;
+    const bias=score>55?'bull':score<45?'bear':'neut';
+    const col=bias==='bull'?'var(--green2)':bias==='bear'?'var(--red2)':'var(--yellow)';
+    const fillClass=bias==='bull'?'fill-bull':bias==='bear'?'fill-bear':'fill-neut';
+    const label=bias==='bull'?'Bullish':bias==='bear'?'Bearish':'Neutral';
+    return`<div class="asset-bias"><div class="ab-left"><div class="ab-icon">${a.icon}</div><div><div class="ab-name">${a.name}</div><div class="ab-full">${a.full}</div></div></div><div class="ab-right"><div class="ab-bias ${bias}">${label}</div><div class="ab-bar"><div class="ab-bar-fill ${fillClass}" style="width:${score}%"></div></div></div></div>`;
+  }).join('');
+}
+
+function buildRegions(){
+  const el=document.getElementById('regionGrid');
+  el.innerHTML=REGIONS.map(r=>`<button class="region-btn ${r.id==='all'?'active':''}" onclick="setRegion('${r.id}',this)">${r.label}</button>`).join('');
+}
+
+function buildRegionalSentiment(){
+  const el=document.getElementById('regionalSentiment');
+  el.innerHTML=REGIONAL_SENTIMENT.map(r=>{
+    const col=r.bias==='bull'?'var(--green2)':r.bias==='bear'?'var(--red2)':'var(--yellow)';
+    const fillClass=r.bias==='bull'?'fill-bull':r.bias==='bear'?'fill-bear':'fill-neut';
+    return`<div class="sg-row"><span class="sg-flag">${r.flag}</span><span class="sg-name">${r.name}</span><div class="sg-bar"><div class="sg-fill ${fillClass}" style="width:${r.score}%"></div></div><span class="sg-score" style="color:${col}">${r.score>55?'+':r.score<45?'-':'±'}${Math.abs(r.score-50)}</span></div>`;
+  }).join('');
+}
+
+function buildBiasMovers(){
+  const el=document.getElementById('topBiasMovers');
+  const movers=[
+    {sym:'XAU/USD',change:'+$42',bias:81,label:'Bullish',col:'var(--green2)',fill:'fill-bull'},
+    {sym:'BTC/USD',change:'+4.21%',bias:74,label:'Bullish',col:'var(--green2)',fill:'fill-bull'},
+    {sym:'USD/JPY',change:'-80 pips',bias:28,label:'Bearish',col:'var(--red2)',fill:'fill-bear'},
+    {sym:'BRENT',change:'-0.92%',bias:35,label:'Bearish',col:'var(--red2)',fill:'fill-bear'},
+    {sym:'GBP/USD',change:'+0.18%',bias:52,label:'Neutral',col:'var(--yellow)',fill:'fill-neut'},
+  ];
+  el.innerHTML=movers.map(m=>`<div class="mover-card"><div class="mc-top"><span class="mc-sym">${m.sym}</span><span class="mc-change" style="color:${m.col}">${m.change}</span></div><div class="mc-bar"><div class="mc-fill ${m.fill}" style="width:${m.bias}%"></div></div><div class="mc-bottom"><span class="mc-stories" style="color:${m.col}">${m.label}</span><span class="mc-stories">${Math.floor(Math.random()*8+3)} stories</span></div></div>`).join('');
+}
+
+function buildBiasBreakdown(){
+  const el=document.getElementById('biasBreakdown');
+  const cats=[
+    {label:'Macro / Central Banks',bull:8,bear:5,neut:3},
+    {label:'Forex',bull:6,bear:4,neut:2},
+    {label:'Crypto',bull:7,bear:1,neut:1},
+    {label:'Commodities',bull:5,bear:3,neut:2},
+    {label:'Stocks / Earnings',bull:4,bear:3,neut:1},
+  ];
+  el.innerHTML=cats.map(c=>{
+    const total=c.bull+c.bear+c.neut;
+    const bullPct=Math.round(c.bull/total*100);
+    const bearPct=Math.round(c.bear/total*100);
+    return`<div style="margin-bottom:10px;"><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:11px;color:var(--text2)">${c.label}</span><span style="font-family:var(--mono);font-size:9px;color:var(--text3)">${total} stories</span></div><div style="height:6px;background:var(--bg4);border-radius:3px;overflow:hidden;display:flex;"><div style="width:${bullPct}%;background:var(--green2);"></div><div style="width:${bearPct}%;background:var(--red2);"></div><div style="flex:1;background:var(--yellow);"></div></div></div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════
+// FEED ENGINE
+// ═══════════════════════════════════════════════
+function formatTime(){
+  const n=new Date();
+  const p=v=>String(v).padStart(2,'0');
+  return`${p(n.getUTCHours())}:${p(n.getUTCMinutes())}:${p(n.getUTCSeconds())}`;
+}
+
+function createNewsItem(news, isBreaking=false){
+  const bias=news.bias||getBias(news.headline,news.summary,news.keywords);
+  const score=getBiasScore(news.headline,news.summary,news.keywords);
+  const biasClass=bias==='bull'?'bias-bull':bias==='bear'?'bias-bear':'bias-neut';
+  const dotClass=bias==='bull'?'bd-bull':bias==='bear'?'bd-bear':'bd-neut';
+  const biasLabel=bias==='bull'?'🟢 Bullish':bias==='bear'?'🔴 Bearish':'🟡 Neutral';
+  const impBadge=news.imp==='hi'?'<span class="badge badge-red">⚡ High</span>':news.imp==='med'?'<span class="badge badge-yellow">Med</span>':'<span class="badge-lo" style="font-family:var(--mono);font-size:9px;color:var(--text3);border:1px solid var(--border);padding:2px 7px;border-radius:2px;">Low</span>';
+  const regionBadge=`<span class="badge badge-blue">${news.region}</span>`;
+  const catBadge=`<span class="badge badge-purple">${news.category}</span>`;
+  const itemId='ni-'+Date.now()+Math.random();
+
+  // Update stats
+  statsTotal++;statsBull+=bias==='bull'?1:0;statsBear+=bias==='bear'?1:0;statsNeut+=bias==='neut'?1:0;statsHigh+=news.imp==='hi'?1:0;
+  updateStats();
+
+  return{
+    id:itemId,
+    html:`<div class="news-item ${isBreaking?'breaking':''} ${bias}-item" id="${itemId}" data-bias="${bias}" data-region="${news.region}" data-cat="${news.category}" data-imp="${news.imp}">
+      <div class="ni-top">
+        ${impBadge}
+        ${regionBadge}
+        ${catBadge}
+        <span class="source-tag">${news.source}</span>
+        <span class="ni-time">${formatTime()} UTC</span>
+      </div>
+      <div class="ni-headline">${isBreaking?'⚡ BREAKING: ':''}${news.headline}</div>
+      <div class="ni-summary">${news.summary}</div>
+      <div class="ni-bottom">
+        <div class="ni-assets">${news.assets.map(a=>`<span class="asset-tag">${a}</span>`).join('')}</div>
+        <div class="ni-right">
+          <div class="bias-chip ${biasClass}"><div class="bias-dot ${dotClass}"></div>${biasLabel} ${score!==0?'('+Math.abs(score)+'%)':''}</div>
+          ${news.imp==='hi'?`<button class="ai-analyse-btn" onclick="analyseWithAI('${itemId}','${news.headline.replace(/'/g,"\\'")}','${news.assets.join(',')}')">🤖 AI Deep Dive</button>`:''}
+        </div>
+      </div>
+      <div class="ai-verdict" id="verdict-${itemId}">
+        <div class="ai-verdict-header"><span id="verdict-spinner-${itemId}" class="ai-spinner-sm"></span> AI Analysis</div>
+        <div id="verdict-body-${itemId}"></div>
+      </div>
+    </div>`,
+    bias,region:news.region,cat:news.category,imp:news.imp
+  };
+}
+
+function addNewsToFeed(news, isBreaking=false){
+  if(isPaused)return;
+  const item=createNewsItem(news,isBreaking);
+  feedItems.unshift(item);
+
+  if(isBreaking){
+    document.getElementById('breakingBanner').style.display='flex';
+    document.getElementById('breakingText').textContent=news.headline;
+  }
+
+  renderFeed();
+  updateGlobalBias();
+}
+
+function renderFeed(){
+  const el=document.getElementById('feedList');
+  const filtered=feedItems.filter(i=>{
+    if(currentFilter==='all')return true;
+    if(currentFilter==='bull')return i.bias==='bull';
+    if(currentFilter==='bear')return i.bias==='bear';
+    if(currentFilter==='neut')return i.bias==='neut';
+    if(currentFilter==='hi')return i.imp==='hi';
+    if(currentFilter==='forex')return i.cat==='forex'||i.cat==='macro';
+    if(currentFilter==='crypto')return i.cat==='crypto';
+    if(currentFilter==='stocks')return i.cat==='stocks';
+    if(currentFilter==='commodities')return i.cat==='commodities';
+    if(currentFilter==='macro')return i.cat==='macro';
+    return true;
+  }).filter(i=>currentRegion==='all'||i.region===currentRegion).slice(0,50);
+
+  el.innerHTML=filtered.map(i=>i.html).join('');
+  document.getElementById('feedCount').textContent=filtered.length;
+  document.getElementById('feedBullCount').textContent=filtered.filter(i=>i.bias==='bull').length;
+  document.getElementById('feedBearCount').textContent=filtered.filter(i=>i.bias==='bear').length;
+}
+
+function updateGlobalBias(){
+  if(feedItems.length===0)return;
+  const recent=feedItems.slice(0,30);
+  const bull=recent.filter(i=>i.bias==='bull').length;
+  const bear=recent.filter(i=>i.bias==='bear').length;
+  const score=Math.round((bull/(bull+bear||1))*100);
+  const net=score-50;
+  const col=score>55?'var(--green2)':score<45?'var(--red2)':'var(--yellow)';
+  const desc=score>70?'Strongly Bullish':score>55?'Moderately Bullish':score<30?'Strongly Bearish':score<45?'Moderately Bearish':'Neutral';
+  const sign=net>0?'+':net<0?'-':'';
+  document.getElementById('globalBiasBar').style.width=score+'%';
+  document.getElementById('globalBiasBar').style.background=score>55?'linear-gradient(90deg,var(--green),var(--green2))':score<45?'linear-gradient(90deg,var(--red),var(--red2))':'linear-gradient(90deg,var(--yellow),#fff)';
+  document.getElementById('globalBiasScore').textContent=sign+Math.abs(net);
+  document.getElementById('globalBiasScore').style.color=col;
+  document.getElementById('globalBiasDesc').textContent=desc;
+}
+
+function updateStats(){
+  const p=v=>String(v).padStart(4,' ');
+  document.getElementById('statTotal').textContent=statsTotal;
+  document.getElementById('statBull').textContent=statsBull;
+  document.getElementById('statBear').textContent=statsBear;
+  document.getElementById('statNeut').textContent=statsNeut;
+  document.getElementById('statHigh').textContent=statsHigh;
+  const n=new Date(),p2=v=>String(v).padStart(2,'0');
+  document.getElementById('statLastUpdate').textContent=`${p2(n.getUTCHours())}:${p2(n.getUTCMinutes())}:${p2(n.getUTCSeconds())}`;
+}
+
+function startFeed(){
+  // Load initial stories
+  const shuffled=[...NEWS_POOL].sort(()=>Math.random()-.5);
+  shuffled.slice(0,12).forEach((n,i)=>{
+    setTimeout(()=>addNewsToFeed(n,n.imp==='hi'&&i<2),i*300);
+  });
+  newsIndex=12;
+
+  // Set up live feed
+  feedInterval=setInterval(()=>{
+    if(isPaused)return;
+    const pool=NEWS_POOL;
+    const next=pool[newsIndex%pool.length];
+    // Slightly vary the story
+    const varied={...next,headline:next.headline,summary:next.summary};
+    const isBreaking=next.imp==='hi'&&Math.random()<0.2;
+    addNewsToFeed(varied,isBreaking);
+    newsIndex++;
+  },feedSpeed);
+}
+
+// ═══════════════════════════════════════════════
+// CONTROLS
+// ═══════════════════════════════════════════════
+function setFilter(filter,btn){
+  currentFilter=filter;
+  document.querySelectorAll('.ff-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderFeed();
+}
+
+function setRegion(region,btn){
+  currentRegion=region;
+  document.querySelectorAll('.region-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderFeed();
+}
+
+function setSpeed(ms,btn){
+  feedSpeed=ms;
+  clearInterval(feedInterval);
+  document.querySelectorAll('.speed-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  feedInterval=setInterval(()=>{
+    if(isPaused)return;
+    const next=NEWS_POOL[newsIndex%NEWS_POOL.length];
+    addNewsToFeed(next,next.imp==='hi'&&Math.random()<0.15);
+    newsIndex++;
+  },feedSpeed);
+}
+
+function togglePause(){
+  isPaused=!isPaused;
+  const btn=document.getElementById('pauseBtn');
+  btn.textContent=isPaused?'▶ Resume':'⏸ Pause';
+  btn.classList.toggle('paused',isPaused);
+}
+
+function clearFeed(){
+  feedItems=[];
+  statsTotal=0;statsBull=0;statsBear=0;statsNeut=0;statsHigh=0;
+  updateStats();
+  renderFeed();
+  updateGlobalBias();
+}
+
+function loadMore(){
+  const batch=NEWS_POOL.slice(newsIndex%NEWS_POOL.length,(newsIndex%NEWS_POOL.length)+20);
+  batch.forEach((n,i)=>{
+    setTimeout(()=>{
+      const item=createNewsItem(n,false);
+      feedItems.push(item);
+      if(i===batch.length-1)renderFeed();
+    },i*100);
+  });
+  newsIndex+=20;
+}
+
+// ═══════════════════════════════════════════════
+// AI DEEP DIVE — Claude API per story
+// ═══════════════════════════════════════════════
+async function analyseWithAI(itemId, headline, assets){
+  const btn=document.querySelector(`#${itemId} .ai-analyse-btn`);
+  const verdictEl=document.getElementById(`verdict-${itemId}`);
+  const bodyEl=document.getElementById(`verdict-body-${itemId}`);
+  const spinnerEl=document.getElementById(`verdict-spinner-${itemId}`);
+  if(!btn||!verdictEl)return;
+  btn.classList.add('loading');btn.textContent='⏳ Analysing...';
+  verdictEl.classList.add('show');
+  bodyEl.textContent='';
+  spinnerEl.style.display='inline-block';
+
+  const prompt=`News: "${headline}"\nAssets affected: ${assets}\n\nProvide a concise trader-focused analysis in 3 short sections:\n1. MARKET BIAS: Bull/Bear/Neutral and why (1-2 sentences)\n2. KEY ASSETS: Which assets move most and in which direction (1-2 sentences)\n3. TRADE IDEA: One specific actionable observation with a price level (1-2 sentences)\nBe direct, specific and concise. No preamble.`;
+
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:300,messages:[{role:'user',content:prompt}]})
+    });
+    const data=await res.json();
+    if(data.content&&data.content[0]){
+      const txt=data.content[0].text;
+      spinnerEl.style.display='none';
+      let i=0;
+      const cur=document.createElement('span');cur.style.cssText='display:inline-block;width:2px;height:12px;background:var(--blue);margin-left:1px;animation:blink .7s infinite;vertical-align:text-bottom;';
+      bodyEl.appendChild(cur);
+      const iv=setInterval(()=>{
+        if(i<txt.length){bodyEl.insertBefore(document.createTextNode(txt[i]),cur);i++;}
+        else{clearInterval(iv);cur.remove();}
+      },8);
+    } else throw new Error('No response');
+  } catch(e){
+    spinnerEl.style.display='none';
+    // Fallback demo analysis
+    const fallbacks={
+      'bull':'MARKET BIAS: Bullish — the data/event significantly exceeds expectations, creating upside momentum for risk assets and pressure on safe havens.\n\nKEY ASSETS: ' + assets.split(',').slice(0,2).join(' likely rallies, ') + ' likely rallies. Watch for correlated moves in commodity currencies.\n\nTRADE IDEA: Consider long positions on the primary beneficiary asset on pullbacks to the nearest key support level.',
+      'bear':'MARKET BIAS: Bearish — this represents a negative development that is likely to weigh on risk sentiment and push safe haven assets higher.\n\nKEY ASSETS: ' + assets.split(',').slice(0,2).join(' faces selling pressure, ') + ' faces selling pressure. Gold and JPY likely to benefit.\n\nTRADE IDEA: Short exposure on the most directly impacted asset with a stop above the previous day\'s high.',
+      'neut':'MARKET BIAS: Neutral — the data is broadly in line with expectations, limiting directional conviction in either direction in the near term.\n\nKEY ASSETS: ' + assets.split(',').slice(0,2).join(' likely to trade sideways, ') + ' likely to trade in a tight range pending the next catalyst.\n\nTRADE IDEA: Wait for a clearer directional signal before committing. The next high-impact release will likely determine the breakout direction.',
+    };
+    const bias=getBias(headline,'','');
+    bodyEl.textContent=fallbacks[bias]||fallbacks['neut'];
+  }
+  btn.classList.remove('loading');btn.textContent='🤖 AI Deep Dive';
+}
+
+// ═══════════════════════════════════════════════
+// AI SUMMARY — Full feed summary
+// ═══════════════════════════════════════════════
+async function generateAISummary(){
+  const bodyEl=document.getElementById('summaryBody');
+  const spinnerEl=document.getElementById('summarySpinner');
+  bodyEl.textContent='';spinnerEl.style.display='inline-block';
+
+  const bull=feedItems.filter(i=>i.bias==='bull').length;
+  const bear=feedItems.filter(i=>i.bias==='bear').length;
+  const total=feedItems.length;
+  const prompt=`Current worldwide news bias feed analysis:\n- Total stories tracked: ${total}\n- Bullish signals: ${bull} (${Math.round(bull/total*100)||0}%)\n- Bearish signals: ${bear} (${Math.round(bear/total*100)||0}%)\n- Top regions active: US, EU, Asia, Crypto\n\nProvide a 3-paragraph trader-focused summary:\n1. Overall market bias and dominant narrative right now\n2. Which asset classes are seeing the most directional news flow and why\n3. Key risk events or wildcards traders should watch closely today\nBe concise, specific and directly useful to a forex/crypto/equity trader. Max 150 words.`;
+
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:400,messages:[{role:'user',content:prompt}]})
+    });
+    const data=await res.json();
+    if(data.content&&data.content[0]){
+      const txt=data.content[0].text;
+      spinnerEl.style.display='none';
+      let i=0;
+      const cur=document.createElement('span');cur.style.cssText='display:inline-block;width:2px;height:12px;background:var(--blue);margin-left:1px;animation:blink .7s infinite;vertical-align:text-bottom;';
+      bodyEl.appendChild(cur);
+      const iv=setInterval(()=>{
+        if(i<txt.length){bodyEl.insertBefore(document.createTextNode(txt[i]),cur);i++;}
+        else{clearInterval(iv);cur.remove();}
+      },8);
+    } else throw new Error();
+  } catch(e){
+    spinnerEl.style.display='none';
+    bodyEl.textContent=`The current worldwide news bias is moderately bullish (${Math.round(bull/(bull+bear||1)*100)}% bullish signals). Crypto and US equity markets are seeing the strongest positive flows, driven by Bitcoin ETF inflows and strong tech earnings. Eurozone macro data remains mixed, with Germany weighing on the single currency. Key risk events to watch: Friday's US NFP, ECB policy meeting Thursday, and ongoing OPEC+ supply discussions. Commodity currencies (AUD, CAD) are reacting positively to China demand data. The dominant macro narrative remains: Fed dovishness = risk-on, dollar weakness, gold and crypto strength.`;
+  }
+}
+
+// ═══════════════════════════════════════════════
+// CLOCK
+// ═══════════════════════════════════════════════
+function clock(){
+  const el=document.getElementById('utcClock');if(!el)return;
+  const n=new Date(),p=v=>String(v).padStart(2,'0');
+  el.textContent=`${p(n.getUTCHours())}:${p(n.getUTCMinutes())}:${p(n.getUTCSeconds())} UTC`;
+}
+
+// INIT
+buildTicker();buildAssetBias();buildRegions();buildRegionalSentiment();buildBiasMovers();buildBiasBreakdown();
+clock();setInterval(clock,1000);
+startFeed();
+
+// PAYWALL — 30 second preview
+setTimeout(()=>{
+  document.getElementById('paywallBlur').style.display='block';
+  const card=document.getElementById('paywallCard');
+  card.classList.add('show');
+  document.body.style.overflow='hidden';
+},120000);
+
+</script>
+
+<!-- PAYWALL -->
+<div class="paywall-blur" id="paywallBlur"></div>
+<div class="paywall-overlay">
+  <div class="paywall-card" id="paywallCard">
+    <div class="pw-icon">🔒</div>
+    <div class="pw-title">Free Preview Ended</div>
+    <div class="pw-sub">You've had a 30-second preview of TradeContext.ai. Subscribe now to get full access to the live news bias feed, AI playbooks, TradingView charts and more.</div>
+    <div class="pw-timer" id="pw-timer" style="display:none;"></div>
+    <div class="pw-plans">
+      <a href="signup.html?plan=pro" class="pw-plan">
+        <div class="pw-plan-name">Pro</div>
+        <div class="pw-plan-price"><sup>£</sup>39.95<sub>/mo</sub></div>
+        <div class="pw-plan-feat">News Bias · AI Playbooks · Charts · Broker Hub</div>
+      </a>
+      <a href="signup.html?plan=elite" class="pw-plan elite">
+        <div class="pw-plan-name" style="color:var(--purple);">Elite</div>
+        <div class="pw-plan-price" style="color:var(--purple);"><sup>£</sup>49.95<sub>/mo</sub></div>
+        <div class="pw-plan-feat">Everything + Journal + Funded Accounts</div>
+      </a>
+    </div>
+    <div class="pw-note">Or pay annually · Pro £399/yr · Elite £499/yr · Cancel anytime</div>
+  </div>
+</div>
+
+
+
+<!-- ═══ AI LIVE CHAT WIDGET v2 ═══ -->
+<style>
+.tc-chat-btn{position:fixed;bottom:24px;right:24px;width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,#8b5cf6);box-shadow:0 4px 24px rgba(14,165,233,.4);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:9999;border:none;transition:.3s;animation:tcPulse 3s ease-in-out infinite;}
+.tc-chat-btn:hover{transform:scale(1.08);}
+.tc-chat-btn.open{animation:none;background:linear-gradient(135deg,#ef4444,#dc2626);}
+.tc-chat-btn svg{transition:.3s;}
+@keyframes tcPulse{0%,100%{box-shadow:0 4px 24px rgba(14,165,233,.4);}50%{box-shadow:0 4px 40px rgba(14,165,233,.6);}}
+.tc-unread{position:absolute;top:0;right:0;width:18px;height:18px;background:#ef4444;border-radius:50%;border:2px solid var(--bg,#03060d);font-family:'DM Mono',monospace;font-size:9px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;}
+.tc-chat-bubble{position:fixed;bottom:92px;right:24px;background:#0a1220;border:1px solid #1e3050;color:#e2eaf4;font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;padding:10px 14px;border-radius:12px 12px 4px 12px;z-index:9998;box-shadow:0 8px 32px rgba(0,0,0,.5);animation:tcBubble 5s ease 1.5s both;white-space:nowrap;}
+.tc-chat-bubble::after{content:'';position:absolute;bottom:-6px;right:20px;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:6px solid #1e3050;}
+@keyframes tcBubble{0%{opacity:0;transform:translateY(8px);}10%{opacity:1;transform:translateY(0);}85%{opacity:1;}100%{opacity:0;pointer-events:none;}}
+
+/* WINDOW */
+.tc-chat-window{position:fixed;bottom:96px;right:24px;width:380px;background:#03060d;border:1px solid #1e3050;border-radius:14px;box-shadow:0 32px 80px rgba(0,0,0,.8);z-index:9997;display:none;flex-direction:column;overflow:hidden;max-height:580px;}
+.tc-chat-window.open{display:flex;animation:tcSlideUp .3s ease;}
+@keyframes tcSlideUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+
+/* HEADER */
+.tc-header{background:linear-gradient(135deg,#060c18,#0a1220);border-bottom:1px solid #142035;padding:14px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.tc-header-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,#8b5cf6);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.tc-header-info{flex:1;}
+.tc-header-name{font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;color:#e2eaf4;}
+.tc-header-status{display:flex;align-items:center;gap:5px;font-family:'DM Mono',monospace;font-size:9px;color:#34d399;text-transform:uppercase;letter-spacing:.1em;margin-top:2px;}
+.tc-status-dot{width:5px;height:5px;border-radius:50%;background:#34d399;animation:tcBlink 1.4s infinite;}
+@keyframes tcBlink{0%,100%{opacity:1;}50%{opacity:.3;}}
+.tc-close-btn{font-size:22px;color:#3a5570;cursor:pointer;background:none;border:none;line-height:1;transition:.2s;font-family:sans-serif;padding:0 4px;}.tc-close-btn:hover{color:#e2eaf4;}
+
+/* INTRO FORM */
+.tc-intro{padding:20px;display:flex;flex-direction:column;gap:14px;}
+.tc-intro-title{font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;color:#e2eaf4;text-align:center;}
+.tc-intro-sub{font-family:'Outfit',sans-serif;font-size:12px;color:#7a9ab8;text-align:center;line-height:1.6;margin-top:-8px;}
+.tc-form-field{display:flex;flex-direction:column;gap:4px;}
+.tc-form-label{font-family:'DM Mono',monospace;font-size:8px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#3a5570;}
+.tc-form-input{background:#0a1220;border:1px solid #1e3050;color:#e2eaf4;font-family:'Outfit',sans-serif;font-size:13px;padding:10px 13px;border-radius:6px;outline:none;transition:.2s;width:100%;}
+.tc-form-input:focus{border-color:#0ea5e9;}
+.tc-form-input::placeholder{color:#3a5570;}
+.tc-start-btn{background:linear-gradient(135deg,#0ea5e9,#8b5cf6);color:#fff;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;padding:12px;border-radius:8px;border:none;cursor:pointer;transition:.2s;width:100%;display:flex;align-items:center;justify-content:center;gap:6px;}
+.tc-start-btn:hover{opacity:.9;}
+.tc-form-note{font-family:'DM Mono',monospace;font-size:9px;color:#3a5570;text-align:center;}
+
+/* CHAT AREA */
+.tc-chat-area{display:none;flex-direction:column;flex:1;overflow:hidden;}
+.tc-chat-area.show{display:flex;}
+.tc-user-info-bar{padding:8px 14px;background:#060c18;border-bottom:1px solid #142035;display:flex;align-items:center;gap:8px;}
+.tc-user-avatar{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,#8b5cf6);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;}
+.tc-user-name-lbl{font-family:'DM Mono',monospace;font-size:10px;color:#7a9ab8;font-weight:600;}
+
+/* MESSAGES */
+.tc-messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;scrollbar-width:thin;scrollbar-color:#1e3050 transparent;min-height:200px;max-height:320px;}
+.tc-msg{display:flex;gap:8px;animation:tcMsgIn .2s ease;}
+@keyframes tcMsgIn{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:translateY(0);}}
+.tc-msg-av{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,#8b5cf6);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.tc-msg-bub{background:#0a1220;border:1px solid #142035;border-radius:4px 12px 12px 12px;padding:10px 12px;max-width:270px;}
+.tc-msg-bub p{font-family:'Outfit',sans-serif;font-size:12px;color:#7a9ab8;line-height:1.65;margin:0;}
+.tc-msg-bub strong{color:#e2eaf4;font-weight:600;}
+.tc-msg-bub a{color:#0ea5e9;text-decoration:none;}
+.tc-msg.tc-user{flex-direction:row-reverse;}
+.tc-msg.tc-user .tc-msg-bub{background:linear-gradient(135deg,rgba(14,165,233,.15),rgba(139,92,246,.1));border-color:rgba(14,165,233,.3);border-radius:12px 4px 12px 12px;}
+.tc-msg.tc-user .tc-msg-bub p{color:#e2eaf4;}
+
+/* QUICK REPLIES */
+.tc-quick{padding:8px 14px 4px;display:flex;gap:5px;flex-wrap:wrap;flex-shrink:0;}
+.tc-qbtn{background:#0a1220;border:1px solid #142035;color:#7a9ab8;font-family:'DM Mono',monospace;font-size:8px;font-weight:600;padding:4px 9px;border-radius:100px;cursor:pointer;transition:.2s;white-space:nowrap;letter-spacing:.04em;}
+.tc-qbtn:hover{border-color:#0ea5e9;color:#0ea5e9;}
+
+/* INPUT ROW */
+.tc-input-row{padding:10px 12px;border-top:1px solid #142035;display:flex;gap:8px;flex-shrink:0;background:#060c18;}
+.tc-input{flex:1;background:#0a1220;border:1px solid #1e3050;color:#e2eaf4;font-family:'Outfit',sans-serif;font-size:12px;padding:9px 12px;border-radius:8px;outline:none;transition:.2s;}
+.tc-input:focus{border-color:#0ea5e9;}
+.tc-input::placeholder{color:#3a5570;}
+.tc-send-btn{background:linear-gradient(135deg,#0ea5e9,#8b5cf6);color:#fff;width:36px;height:36px;border-radius:8px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;flex-shrink:0;}
+.tc-send-btn:hover{opacity:.9;}
+
+/* TYPING */
+.tc-typing-wrap{display:flex;gap:4px;align-items:center;padding:6px 2px;}
+.tc-dot{width:6px;height:6px;border-radius:50%;background:#3a5570;animation:tcTypeDot 1.2s ease-in-out infinite;}
+.tc-dot:nth-child(2){animation-delay:.2s;}.tc-dot:nth-child(3){animation-delay:.4s;}
+@keyframes tcTypeDot{0%,100%{transform:translateY(0);opacity:.4;}50%{transform:translateY(-4px);opacity:1;}}
+.tc-ai-cur{display:inline-block;width:2px;height:12px;background:#0ea5e9;margin-left:1px;animation:tcBlink .7s infinite;vertical-align:text-bottom;}
+</style>
+
+<!-- Bubble -->
+<div class="tc-chat-bubble" id="tcBubble">💬 &nbsp;Questions? Chat with our AI now!</div>
+
+<!-- Toggle button with speech bubble SVG -->
+<button class="tc-chat-btn" id="tcChatBtn" onclick="tcToggle()" title="Chat with TradeContext AI">
+  <span class="tc-unread" id="tcUnread">1</span>
+  <svg id="tcBtnIcon" width="26" height="26" viewBox="0 0 24 24" fill="none">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" fill="rgba(255,255,255,.95)" stroke="none"/>
+    <circle cx="8" cy="10" r="1.2" fill="#0ea5e9"/>
+    <circle cx="12" cy="10" r="1.2" fill="#8b5cf6"/>
+    <circle cx="16" cy="10" r="1.2" fill="#0ea5e9"/>
+  </svg>
+  <svg id="tcBtnClose" width="22" height="22" viewBox="0 0 24 24" fill="none" style="display:none;">
+    <path d="M18 6L6 18M6 6l12 12" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+  </svg>
+</button>
+
+<!-- Chat window -->
+<div class="tc-chat-window" id="tcWindow">
+
+  <!-- Header -->
+  <div class="tc-header">
+    <div class="tc-header-avatar">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" fill="rgba(255,255,255,.9)"/>
+      </svg>
+    </div>
+    <div class="tc-header-info">
+      <div class="tc-header-name">TradeContext AI Support</div>
+      <div class="tc-header-status"><div class="tc-status-dot"></div>Online · Powered by Claude</div>
+    </div>
+    <button class="tc-close-btn" onclick="tcToggle()">×</button>
+  </div>
+
+  <!-- INTRO FORM -->
+  <div class="tc-intro" id="tcIntro">
+    <div style="text-align:center;font-size:32px;margin-bottom:-4px;">👋</div>
+    <div class="tc-intro-title">Hi there! How can we help?</div>
+    <div class="tc-intro-sub">Enter your details and we'll get back to you instantly with our AI assistant.</div>
+    <div class="tc-form-field">
+      <label class="tc-form-label">Your Name</label>
+      <input class="tc-form-input" id="tcName" type="text" placeholder="e.g. James Smith" autocomplete="name">
+    </div>
+    <div class="tc-form-field">
+      <label class="tc-form-label">Email Address</label>
+      <input class="tc-form-input" id="tcEmail" type="email" placeholder="james@example.com" autocomplete="email">
+    </div>
+    <div class="tc-form-field">
+      <label class="tc-form-label">Your Question</label>
+      <input class="tc-form-input" id="tcFirstQ" type="text" placeholder="e.g. What does the Pro plan include?" onkeydown="if(event.key==='Enter')tcStart()">
+    </div>
+    <button class="tc-start-btn" onclick="tcStart()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" fill="#fff"/></svg>
+      Start Chat →
+    </button>
+    <div class="tc-form-note">🔒 Your details are kept private and never shared.</div>
+  </div>
+
+  <!-- CHAT AREA -->
+  <div class="tc-chat-area" id="tcChatArea">
+    <div class="tc-user-info-bar">
+      <div class="tc-user-avatar" id="tcUserAvatar">?</div>
+      <div class="tc-user-name-lbl" id="tcUserLbl">Chatting as Guest</div>
+    </div>
+    <div class="tc-messages" id="tcMsgs"></div>
+    <div class="tc-quick" id="tcQuick">
+      <button class="tc-qbtn" onclick="tcQ('What plans do you offer?')">💳 Pricing</button>
+      <button class="tc-qbtn" onclick="tcQ('Is there a free trial?')">❓ Free trial</button>
+      <button class="tc-qbtn" onclick="tcQ('How does the news bias feed work?')">📡 News feed</button>
+      <button class="tc-qbtn" onclick="tcQ('How do I connect my broker?')">🔌 Broker</button>
+      <button class="tc-qbtn" onclick="tcQ('Tell me about the Trading Journal')">📓 Journal</button>
+      <button class="tc-qbtn" onclick="tcQ('What funded account firms do you support?')">🏆 Funded accounts</button>
+    </div>
+    <div class="tc-input-row">
+      <input class="tc-input" id="tcMsg" type="text" placeholder="Type your message..." onkeydown="if(event.key==='Enter')tcSend()">
+      <button class="tc-send-btn" onclick="tcSend()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var tcOpen=false;
+  var tcHistory=[];
+  var tcUserName='';
+  var tcUserEmail='';
+  var TC_SYS='You are the friendly AI support assistant for TradeContext.ai — a premium AI-powered market intelligence platform for serious traders.\n\nBe warm, concise and professional. Always answer in 2-4 sentences. Address the user by their first name when you know it.\n\nKey facts:\n- Two plans: Pro £39.95/mo (£407.49/yr, 15% off) | Elite £49.95/mo (£509.49/yr, 15% off)\n- No free trial — paid from day one. Card required. Cancel anytime.\n- Pro: Live News Bias Feed, AI Trade Playbooks, TradingView Charts (29 assets), Broker Hub (MT4/MT5/OANDA/Binance/IBKR/Coinbase), Watchlist, Alerts, Economic Calendar\n- Elite: Everything in Pro + AI Trading Journal + Funded Account Tracker (FTMO, The5%ers, TopStep, MyForexFunds, True Forex Funds, Instant Funding)\n- 2-minute free preview on Dashboard and News Bias Feed\n- AI powered by Claude (Anthropic)\n- TradingView charts — no TradingView account needed for basic use\n- Contact: hello@tradecontext.ai\n- For billing/account issues always direct to hello@tradecontext.ai\n- Never give financial/trading advice — only platform information';
+
+  window.tcToggle=function(){
+    tcOpen=!tcOpen;
+    var icon=document.getElementById('tcBtnIcon');
+    var close=document.getElementById('tcBtnClose');
+    var btn=document.getElementById('tcChatBtn');
+    var win=document.getElementById('tcWindow');
+    var unread=document.getElementById('tcUnread');
+    if(tcOpen){
+      btn.classList.add('open');
+      icon.style.display='none';
+      close.style.display='block';
+      win.classList.add('open');
+      if(unread)unread.style.display='none';
+      document.getElementById('tcBubble').style.display='none';
+      setTimeout(function(){
+        var f=document.getElementById('tcName');
+        if(f&&!tcUserName)f.focus();
+        else if(document.getElementById('tcMsg'))document.getElementById('tcMsg').focus();
+      },200);
+    } else {
+      btn.classList.remove('open');
+      icon.style.display='block';
+      close.style.display='none';
+      win.classList.remove('open');
+    }
+  };
+
+  window.tcStart=function(){
+    var name=document.getElementById('tcName').value.trim();
+    var email=document.getElementById('tcEmail').value.trim();
+    var q=document.getElementById('tcFirstQ').value.trim();
+    if(!name){document.getElementById('tcName').focus();document.getElementById('tcName').style.borderColor='#ef4444';return;}
+    if(!email||!email.includes('@')){document.getElementById('tcEmail').focus();document.getElementById('tcEmail').style.borderColor='#ef4444';return;}
+    tcUserName=name;
+    tcUserEmail=email;
+    // Show chat area
+    document.getElementById('tcIntro').style.display='none';
+    document.getElementById('tcChatArea').classList.add('show');
+    // Set user label
+    var initial=name.charAt(0).toUpperCase();
+    document.getElementById('tcUserAvatar').textContent=initial;
+    document.getElementById('tcUserLbl').textContent='Chatting as '+name.split(' ')[0];
+    // Welcome message
+    tcAddBot('Hi <strong>'+name.split(' ')[0]+'</strong>! 👋 Welcome to TradeContext.ai. I\'m your AI assistant — ask me anything about our platform and I\'ll help you right away!');
+    // If they typed a question, send it
+    if(q){
+      setTimeout(function(){
+        tcAddUser(q);
+        tcGetReply(q);
+      },600);
+    }
+  };
+
+  window.tcQ=function(q){
+    document.getElementById('tcQuick').style.display='none';
+    tcAddUser(q);
+    tcGetReply(q);
+  };
+
+  window.tcSend=function(){
+    var inp=document.getElementById('tcMsg');
+    var msg=inp.value.trim();
+    if(!msg)return;
+    inp.value='';
+    document.getElementById('tcQuick').style.display='none';
+    tcAddUser(msg);
+    tcGetReply(msg);
+  };
+
+  function tcAddUser(text){
+    var msgs=document.getElementById('tcMsgs');
+    var div=document.createElement('div');
+    div.className='tc-msg tc-user';
+    div.innerHTML='<div class="tc-msg-bub"><p>'+text+'</p></div>';
+    msgs.appendChild(div);
+    msgs.scrollTop=msgs.scrollHeight;
+    tcHistory.push({role:'user',content:text});
+  }
+
+  function tcAddBot(html){
+    var msgs=document.getElementById('tcMsgs');
+    var div=document.createElement('div');
+    div.className='tc-msg';
+    div.innerHTML='<div class="tc-msg-av"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" fill="rgba(255,255,255,.9)"/></svg></div><div class="tc-msg-bub"><p>'+html+'</p></div>';
+    msgs.appendChild(div);
+    msgs.scrollTop=msgs.scrollHeight;
+    tcHistory.push({role:'assistant',content:html.replace(/<[^>]+>/g,'')});
+  }
+
+  function tcShowTyping(){
+    var msgs=document.getElementById('tcMsgs');
+    var div=document.createElement('div');
+    div.className='tc-msg';div.id='tcTypingEl';
+    div.innerHTML='<div class="tc-msg-av"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" fill="rgba(255,255,255,.9)"/></svg></div><div class="tc-msg-bub"><div class="tc-typing-wrap"><div class="tc-dot"></div><div class="tc-dot"></div><div class="tc-dot"></div></div></div>';
+    msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight;
+  }
+
+  function tcRemoveTyping(){var t=document.getElementById('tcTypingEl');if(t)t.remove();}
+
+  function tcStream(text){
+    var msgs=document.getElementById('tcMsgs');
+    var wrap=document.createElement('div');wrap.className='tc-msg';
+    var av=document.createElement('div');av.className='tc-msg-av';av.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" fill="rgba(255,255,255,.9)"/></svg>';
+    var bub=document.createElement('div');bub.className='tc-msg-bub';
+    var p=document.createElement('p');bub.appendChild(p);
+    wrap.appendChild(av);wrap.appendChild(bub);msgs.appendChild(wrap);
+    var i=0;var cur=document.createElement('span');cur.className='tc-ai-cur';p.appendChild(cur);
+    var iv=setInterval(function(){
+      if(i<text.length){p.insertBefore(document.createTextNode(text[i]),cur);i++;msgs.scrollTop=msgs.scrollHeight;}
+      else{clearInterval(iv);cur.remove();tcHistory.push({role:'assistant',content:text});}
+    },10);
+  }
+
+  async function tcGetReply(msg){
+    tcShowTyping();
+    var messages=tcHistory.slice(-8).filter(function(m){return m.role==='user'||m.role==='assistant';});
+    // ensure last message is the user msg
+    if(!messages.length||messages[messages.length-1].content!==msg){
+      messages.push({role:'user',content:msg});
+    }
+    var sysMsg=TC_SYS+(tcUserName?'\n\nThe user\'s name is '+tcUserName+' and their email is '+tcUserEmail+'. Address them by first name.':'');
+    try{
+      var res=await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:300,system:sysMsg,messages:messages})
+      });
+      var data=await res.json();
+      var reply=data.content&&data.content[0]?data.content[0].text:'';
+      tcRemoveTyping();
+      if(reply)tcStream(reply);
+      else tcAddBot('Sorry, I\'m having a moment! Please email us at <a href="mailto:hello@tradecontext.ai"><strong>hello@tradecontext.ai</strong></a> and we\'ll help right away.');
+    }catch(e){
+      tcRemoveTyping();
+      tcAddBot(tcFallback(msg));
+    }
+  }
+
+  function tcFallback(q){
+    var n=tcUserName?tcUserName.split(' ')[0]:'there';
+    var ql=q.toLowerCase();
+    if(ql.includes('price')||ql.includes('cost')||ql.includes('plan')||ql.includes('how much'))
+      return 'Great question, '+n+'! <strong>Pro</strong> is £39.95/month (£407.49/year, 15% off) and <strong>Elite</strong> is £49.95/month (£509.49/year, 15% off). No free trial — card required from day one, but you can cancel anytime.';
+    if(ql.includes('trial')||ql.includes('free'))
+      return 'Hi '+n+'! There\'s no free trial — we\'re a premium platform paid from day one. You do get a <strong>2-minute free preview</strong> on the Dashboard and News Bias Feed so you can see the platform before subscribing.';
+    if(ql.includes('journal'))
+      return 'The <strong>AI Trading Journal</strong> is an Elite plan exclusive, '+n+'. It includes trade logging, a calendar heatmap, 6 analytics reports, playbooks, a notebook and an AI coach powered by Claude that analyses your performance.';
+    if(ql.includes('broker')||ql.includes('mt4')||ql.includes('mt5'))
+      return 'We support <strong>MT4, MT5, OANDA, Binance, Interactive Brokers and Coinbase</strong> on the Pro plan. Full live trade sync is coming with our backend update — you\'ll be the first to know, '+n+'!';
+    if(ql.includes('news')||ql.includes('bias'))
+      return 'The <strong>Live News Bias Feed</strong> scores breaking news as bullish or bearish in real time across US, EU, UK, Asia and Middle East. Each story gets an AI deep dive powered by Claude.';
+    if(ql.includes('funded')||ql.includes('ftmo')||ql.includes('prop'))
+      return 'The <strong>Funded Account Tracker</strong> is Elite only, '+n+'. We support FTMO, The5%ers, TopStep, MyForexFunds, True Forex Funds and Instant Funding — tracking rules, drawdown limits and daily progress.';
+    if(ql.includes('cancel')||ql.includes('refund'))
+      return 'You can cancel anytime from your account settings — no questions asked, '+n+'. For billing queries please email <a href="mailto:hello@tradecontext.ai"><strong>hello@tradecontext.ai</strong></a>.';
+    if(ql.includes('contact')||ql.includes('support'))
+      return 'You can reach us at <a href="mailto:hello@tradecontext.ai"><strong>hello@tradecontext.ai</strong></a>, '+n+'. We typically respond within a few hours during UK business hours.';
+    return 'Thanks for reaching out, '+n+'! For the most accurate answer please email <a href="mailto:hello@tradecontext.ai"><strong>hello@tradecontext.ai</strong></a> and our team will get back to you quickly. You can also explore the platform with a <strong>2-minute free preview</strong> on the Dashboard!';
+  }
+})();
+</script>
+
+</body>
+</html>

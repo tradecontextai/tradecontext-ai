@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TradeContext.ai — Broker Connection Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#03060d;--bg2:#060c18;--bg3:#0a1220;--bg4:#0f1a2e;--bg5:#141f33;--border:#142035;--border2:#1e3050;--blue:#0ea5e9;--blue2:#38bdf8;--bluedim:rgba(14,165,233,.1);--green:#10b981;--green2:#34d399;--red:#ef4444;--red2:#f87171;--yellow:#f59e0b;--orange:#f97316;--purple:#8b5cf6;--text:#e2eaf4;--text2:#7a9ab8;--text3:#3a5570;--mono:'DM Mono',monospace;--sans:'Outfit',sans-serif;}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);overflow-x:hidden;font-size:14px;}
+button{cursor:pointer;border:none;background:none;font-family:var(--sans);}
+input,select{font-family:var(--sans);}
+::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:var(--bg2);}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+@keyframes spin{to{transform:rotate(360deg);}}
+@keyframes ticker{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.7;transform:scale(1.05);}}
+@keyframes slideIn{from{opacity:0;transform:translateX(-10px);}to{opacity:1;transform:translateX(0);}}
+@keyframes countUp{from{opacity:0;}to{opacity:1;}}
+
+/* TICKER */
+.ticker-bar{height:30px;background:#020509;border-bottom:1px solid var(--border);display:flex;align-items:center;overflow:hidden;position:sticky;top:0;z-index:300;}
+.ticker-lbl{background:var(--blue);color:#000;font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.16em;padding:0 12px;height:100%;display:flex;align-items:center;flex-shrink:0;text-transform:uppercase;}
+.ticker-wrap{overflow:hidden;flex:1;}
+.ticker-inner{display:flex;animation:ticker 50s linear infinite;white-space:nowrap;}
+.t-i{display:flex;align-items:center;gap:6px;padding:0 18px;border-right:1px solid var(--border);font-family:var(--mono);font-size:11px;}
+.t-s{color:var(--text2);font-weight:500;}.t-p{color:var(--text);font-weight:600;}
+.t-c.up{color:var(--green2);}.t-c.dn{color:var(--red2);}
+
+/* NAVBAR */
+.navbar{height:56px;background:rgba(3,6,13,.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 32px;position:sticky;top:30px;z-index:299;}
+.nav-logo{font-size:19px;font-weight:800;letter-spacing:-.02em;cursor:pointer;}
+.nav-logo span{color:var(--blue);}
+.nav-links{display:flex;list-style:none;}
+.nav-links a{font-size:12px;font-weight:500;letter-spacing:.05em;color:var(--text2);padding:0 14px;height:56px;display:flex;align-items:center;border-bottom:2px solid transparent;transition:.2s;cursor:pointer;}
+.nav-links a:hover,.nav-links a.active{color:var(--text);border-bottom-color:var(--blue);}
+.nav-r{display:flex;align-items:center;gap:10px;}
+.live-pill{display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--green2);text-transform:uppercase;}
+.live-dot{width:5px;height:5px;border-radius:50%;background:var(--green2);animation:blink 1.2s infinite;}
+.nav-time{font-family:var(--mono);font-size:11px;color:var(--text3);}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;font-size:12px;font-weight:600;padding:8px 18px;border-radius:4px;transition:.2s;cursor:pointer;border:none;}
+.btn-blue{background:var(--blue);color:#000;}.btn-blue:hover{background:var(--blue2);}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border2);}.btn-ghost:hover{background:var(--bg3);color:var(--text);}
+.btn-green{background:var(--green);color:#000;font-weight:700;}.btn-green:hover{background:var(--green2);}
+.btn-red{background:var(--red);color:#fff;font-weight:700;}.btn-red:hover{opacity:.85;}
+.badge{display:inline-flex;align-items:center;font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:2px;}
+.badge-green{background:rgba(16,185,129,.1);color:var(--green2);border:1px solid rgba(16,185,129,.2);}
+.badge-red{background:rgba(239,68,68,.1);color:var(--red2);border:1px solid rgba(239,68,68,.2);}
+.badge-blue{background:var(--bluedim);color:var(--blue);border:1px solid rgba(14,165,233,.2);}
+.badge-yellow{background:rgba(245,158,11,.1);color:var(--yellow);border:1px solid rgba(245,158,11,.2);}
+.badge-grey{background:rgba(255,255,255,.05);color:var(--text3);border:1px solid var(--border);}
+
+/* PAGE */
+.page-wrap{max-width:1300px;margin:0 auto;padding:28px 32px;}
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;}
+.ph-title{font-size:24px;font-weight:800;letter-spacing:-.02em;}
+.ph-sub{font-size:12px;color:var(--text2);margin-top:3px;}
+
+/* KPI ROW */
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:28px;}
+.kpi{background:var(--bg3);border:1px solid var(--border);padding:16px;transition:.2s;animation:fadeUp .4s ease both;}
+.kpi:hover{border-color:var(--border2);}
+.kpi-lbl{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:7px;}
+.kpi-val{font-size:22px;font-weight:800;letter-spacing:-.02em;}
+.kpi-sub{font-family:var(--mono);font-size:10px;margin-top:3px;}
+
+/* SECTION HEADER */
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.sh-title{font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--text2);display:flex;align-items:center;gap:7px;}
+.sh-title::before{content:'';width:3px;height:13px;background:var(--blue);border-radius:2px;display:inline-block;}
+.sh-action{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--blue);opacity:.7;cursor:pointer;transition:.2s;}.sh-action:hover{opacity:1;}
+
+/* ═══ CONNECTION HUB ═══ */
+.hub-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px;}
+.broker-card{background:var(--bg3);border:1px solid var(--border);padding:22px;border-radius:6px;transition:.2s;position:relative;overflow:hidden;}
+.broker-card:hover{border-color:var(--border2);}
+.broker-card.connected{border-color:var(--green);box-shadow:0 0 20px rgba(16,185,129,.08);}
+.broker-card.connected::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--green2);}
+.broker-card.connecting{border-color:var(--yellow);}
+.bc-header{display:flex;align-items:center;gap:14px;margin-bottom:14px;}
+.bc-logo{width:44px;height:44px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.bc-name{font-size:15px;font-weight:700;color:var(--text);}
+.bc-type{font-family:var(--mono);font-size:9px;color:var(--text3);margin-top:2px;letter-spacing:.06em;text-transform:uppercase;}
+.bc-status{margin-left:auto;display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;}
+.bs-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.bs-connected{color:var(--green2);}.bs-connected .bs-dot{background:var(--green2);animation:pulse 1.5s infinite;}
+.bs-disconnected{color:var(--text3);}.bs-disconnected .bs-dot{background:var(--text3);}
+.bs-connecting{color:var(--yellow);}.bs-connecting .bs-dot{background:var(--yellow);animation:blink .8s infinite;}
+.bc-desc{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:14px;}
+.bc-fields{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
+.bc-field{display:flex;flex-direction:column;gap:4px;}
+.bc-label{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);}
+.bc-input{background:var(--bg2);border:1px solid var(--border);color:var(--text);font-size:12px;padding:8px 10px;border-radius:3px;outline:none;transition:.2s;width:100%;}
+.bc-input:focus{border-color:var(--blue);}
+.bc-input::placeholder{color:var(--text3);}
+.bc-actions{display:flex;gap:8px;}
+.bc-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px;background:var(--bg4);border-radius:4px;margin-top:12px;}
+.bcs{text-align:center;}
+.bcs-val{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--text);}
+.bcs-lbl{font-family:var(--mono);font-size:8px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-top:2px;}
+
+/* MT4/5 Special */
+.mt-download{background:var(--bg4);border:1px solid var(--border);border-radius:4px;padding:12px;margin-bottom:12px;}
+.mt-download-title{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text2);margin-bottom:6px;}
+.mt-steps{list-style:none;counter-reset:steps;}
+.mt-step{display:flex;gap:8px;margin-bottom:6px;font-size:11px;color:var(--text2);line-height:1.5;}
+.mt-step-num{font-family:var(--mono);font-size:9px;font-weight:700;color:var(--blue);background:var(--bluedim);border:1px solid rgba(14,165,233,.2);width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.mt-download-btn{background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;font-size:11px;font-weight:700;padding:8px 14px;border-radius:3px;display:flex;align-items:center;gap:5px;transition:.2s;cursor:pointer;margin-top:8px;width:100%;justify-content:center;}
+.mt-download-btn:hover{opacity:.9;}
+
+/* ═══ LIVE POSITIONS ═══ */
+.positions-layout{display:grid;grid-template-columns:1fr 320px;gap:20px;margin-bottom:28px;}
+.positions-table{width:100%;border-collapse:collapse;}
+.pt-head th{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);padding:10px 14px;text-align:left;background:var(--bg2);border-bottom:1px solid var(--border);border-top:1px solid var(--border);}
+.pt-head th:not(:first-child){text-align:right;}
+.pt-row{border-bottom:1px solid rgba(20,32,53,.6);transition:.15s;animation:slideIn .3s ease both;}
+.pt-row:hover{background:var(--bg3);}
+.pt-row td{padding:12px 14px;font-size:12px;color:var(--text2);}
+.pt-row td:not(:first-child){text-align:right;}
+.pt-sym{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--text);}
+.pt-broker{font-family:var(--mono);font-size:9px;color:var(--text3);margin-top:2px;}
+.pt-dir{font-family:var(--mono);font-size:10px;font-weight:600;padding:2px 7px;border-radius:2px;}
+.pt-dir.long{background:rgba(52,211,153,.1);color:var(--green2);border:1px solid rgba(52,211,153,.2);}
+.pt-dir.short{background:rgba(248,113,113,.1);color:var(--red2);border:1px solid rgba(248,113,113,.2);}
+.pt-pnl{font-family:var(--mono);font-size:13px;font-weight:700;}
+.pt-pnl.pos{color:var(--green2);}.pt-pnl.neg{color:var(--red2);}
+.pt-price{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--text);}
+.pt-mkt{font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:1px;}
+.close-btn{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:var(--red2);font-family:var(--mono);font-size:9px;font-weight:600;padding:3px 8px;border-radius:2px;cursor:pointer;transition:.2s;}
+.close-btn:hover{background:rgba(239,68,68,.2);}
+.ai-note-btn{background:var(--bluedim);border:1px solid rgba(14,165,233,.2);color:var(--blue);font-family:var(--mono);font-size:9px;font-weight:600;padding:3px 8px;border-radius:2px;cursor:pointer;transition:.2s;margin-right:4px;}
+.ai-note-btn:hover{background:rgba(14,165,233,.2);}
+
+/* Live PnL panel */
+.live-pnl-panel{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:18px;}
+.lpp-title{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-bottom:14px;display:flex;align-items:center;gap:7px;}
+.lpp-title::before{content:'';width:3px;height:11px;background:var(--green2);border-radius:2px;display:inline-block;}
+.lpp-total{text-align:center;padding:16px 0;border-bottom:1px solid var(--border);margin-bottom:14px;}
+.lpp-total-val{font-size:32px;font-weight:900;letter-spacing:-.03em;}
+.lpp-total-lbl{font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:4px;letter-spacing:.1em;text-transform:uppercase;}
+.lpp-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(20,32,53,.5);}
+.lpp-row:last-child{border-bottom:none;}
+.lpp-lbl{font-size:12px;color:var(--text2);}
+.lpp-val{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--text);}
+.pulse-live{display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:9px;color:var(--green2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;}
+.pulse-dot{width:6px;height:6px;border-radius:50%;background:var(--green2);animation:blink 1s infinite;}
+
+/* ═══ TRADE HISTORY ═══ */
+.history-table{width:100%;border-collapse:collapse;}
+.ht-head th{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);padding:10px 14px;text-align:left;background:var(--bg2);border-bottom:1px solid var(--border);border-top:1px solid var(--border);}
+.ht-head th:not(:first-child){text-align:right;}
+.ht-row{border-bottom:1px solid rgba(20,32,53,.6);transition:.15s;cursor:pointer;}
+.ht-row:hover{background:var(--bg3);}
+.ht-row td{padding:11px 14px;font-size:12px;color:var(--text2);}
+.ht-row td:not(:first-child){text-align:right;}
+.ht-sym{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--text);}
+.ht-pnl{font-family:var(--mono);font-size:12px;font-weight:700;}
+.ht-pnl.pos{color:var(--green2);}.ht-pnl.neg{color:var(--red2);}
+.ht-broker{font-family:var(--mono);font-size:9px;color:var(--text3);}
+.import-btn{background:var(--green);color:#000;font-family:var(--mono);font-size:9px;font-weight:700;padding:3px 8px;border-radius:2px;cursor:pointer;transition:.2s;}
+.import-btn:hover{background:var(--green2);}
+.import-btn.done{background:var(--bluedim);border:1px solid var(--blue);color:var(--blue);}
+
+/* ═══ NOTIFICATION TOAST ═══ */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--bg3);border:1px solid var(--border2);padding:14px 18px;border-radius:6px;font-size:13px;color:var(--text);z-index:999;animation:fadeUp .3s ease;display:flex;align-items:center;gap:10px;max-width:360px;box-shadow:0 8px 32px rgba(0,0,0,.4);}
+.toast.success{border-color:var(--green2);}
+.toast.error{border-color:var(--red2);}
+.toast.info{border-color:var(--blue);}
+
+/* ═══ AI POSITION ANALYSIS ═══ */
+.ai-position-box{background:var(--bg4);border:1px solid var(--border);border-radius:4px;padding:12px;margin:4px 14px 10px;font-size:11px;color:var(--text2);line-height:1.65;display:none;animation:fadeUp .3s ease;}
+.ai-position-box.show{display:block;}
+.ai-pos-header{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:7px;display:flex;align-items:center;gap:5px;}
+.ai-spinner-xs{width:9px;height:9px;border:2px solid rgba(14,165,233,.2);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;display:inline-block;}
+.ai-cursor{display:inline-block;width:2px;height:12px;background:var(--blue);margin-left:1px;animation:blink .7s infinite;vertical-align:text-bottom;}
+
+/* TABS */
+.tab-bar{display:flex;border-bottom:1px solid var(--border);margin-bottom:20px;}
+.tab-btn{padding:10px 20px;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);cursor:pointer;transition:.2s;border-bottom:2px solid transparent;}
+.tab-btn:hover{color:var(--text2);}
+.tab-btn.active{color:var(--blue);border-bottom-color:var(--blue);}
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+
+/* Empty states */
+.empty-state{text-align:center;padding:48px 20px;}
+.es-icon{font-size:40px;margin-bottom:12px;}
+.es-title{font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px;}
+.es-sub{font-size:13px;color:var(--text2);}
+
+/* Security notice */
+.security-notice{background:rgba(14,165,233,.06);border:1px solid rgba(14,165,233,.15);border-radius:4px;padding:14px 16px;margin-bottom:24px;display:flex;align-items:flex-start;gap:12px;}
+.sn-icon{font-size:18px;flex-shrink:0;margin-top:1px;}
+.sn-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px;}
+.sn-body{font-size:12px;color:var(--text2);line-height:1.6;}
+
+@media(max-width:1100px){.hub-grid{grid-template-columns:1fr 1fr;}.positions-layout{grid-template-columns:1fr;}.kpi-row{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:768px){.navbar{padding:0 16px;}.nav-links{display:none;}.page-wrap{padding:16px;}.hub-grid{grid-template-columns:1fr;}.kpi-row{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+
+<!-- TICKER -->
+<div class="ticker-bar"><div class="ticker-lbl">Live</div><div class="ticker-wrap"><div class="ticker-inner" id="tickerInner"></div></div></div>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-logo">TradeContext<span>.ai</span></div>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="index.html">Dashboard</a></li>
+    <li><a href="markets.html">Markets</a></li>
+    <li><a href="journal.html">Journal</a></li>
+    <li><a class="active">Broker Connect</a></li>
+  </ul>
+  <div class="nav-r">
+    <div class="live-pill"><div class="live-dot"></div>Live</div>
+    <div class="nav-time" id="utcClock"></div>
+  </div>
+</nav>
+
+<div class="page-wrap">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div>
+      <div class="ph-title">🔌 Broker Connection Hub</div>
+      <div class="ph-sub">Connect your broker or MetaTrader to sync live trades, auto-import history and track real-time P&L</div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <span class="badge badge-green" id="connectedBadge">● 1 Connected</span>
+      <button class="btn btn-ghost" style="font-size:12px;" onclick="refreshAll()">↻ Refresh All</button>
+    </div>
+  </div>
+
+  <!-- SECURITY NOTICE -->
+  <div class="security-notice">
+    <div class="sn-icon">🔒</div>
+    <div>
+      <div class="sn-title">Your credentials are secure</div>
+      <div class="sn-body">All API keys and credentials are encrypted with AES-256 and stored securely. We use <strong>read-only</strong> API access — we can never place or close trades on your behalf. MetaTrader connections use a local EA bridge that never shares your password.</div>
+    </div>
+  </div>
+
+  <!-- KPI ROW -->
+  <div class="kpi-row" id="kpiRow"></div>
+
+  <!-- TABS -->
+  <div class="tab-bar">
+    <div class="tab-btn active" onclick="setTab('connections',this)">🔌 Connections</div>
+    <div class="tab-btn" onclick="setTab('live',this)">📡 Live Positions</div>
+    <div class="tab-btn" onclick="setTab('history',this)">📋 Trade History</div>
+    <div class="tab-btn" onclick="setTab('sync',this)">⚙️ Sync Settings</div>
+  </div>
+
+  <!-- TAB: CONNECTIONS -->
+  <div class="tab-content active" id="tab-connections">
+    <div class="sh" style="margin-bottom:16px;">
+      <div class="sh-title">Connect a Broker or Platform</div>
+      <span class="sh-action" onclick="showAllBrokers()">View all supported brokers →</span>
+    </div>
+    <div class="hub-grid" id="brokerGrid"></div>
+  </div>
+
+  <!-- TAB: LIVE POSITIONS -->
+  <div class="tab-content" id="tab-live">
+    <div class="positions-layout">
+      <div>
+        <div class="sh">
+          <div class="sh-title">Open Positions</div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="pulse-live"><div class="pulse-dot"></div>Updating live</div>
+            <span class="sh-action" onclick="refreshPositions()">↻ Refresh</span>
+          </div>
+        </div>
+        <table class="positions-table">
+          <thead class="pt-head"><tr>
+            <th>Symbol</th><th>Direction</th><th>Size</th><th>Entry</th><th>Market</th><th>P&L</th><th>Duration</th><th>Actions</th>
+          </tr></thead>
+          <tbody id="positionsBody"></tbody>
+        </table>
+        <div id="positionAIBoxes"></div>
+      </div>
+      <div class="live-pnl-panel">
+        <div class="pulse-live"><div class="pulse-dot"></div>Live P&L</div>
+        <div class="lpp-total">
+          <div class="lpp-total-val" id="totalOpenPnl" style="color:var(--green2)">+$0.00</div>
+          <div class="lpp-total-lbl">Total Open P&L</div>
+        </div>
+        <div id="lppRows"></div>
+        <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);">
+          <button class="btn btn-blue" style="width:100%;font-size:12px;justify-content:center;" onclick="exportPositions()">📥 Export to Journal</button>
+          <div style="font-family:var(--mono);font-size:9px;color:var(--text3);text-align:center;margin-top:7px;">Closed trades auto-import to journal</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: HISTORY -->
+  <div class="tab-content" id="tab-history">
+    <div class="sh">
+      <div class="sh-title">Closed Trade History</div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-ghost" style="font-size:11px;" onclick="importAll()">📥 Import All to Journal</button>
+        <button class="btn btn-ghost" style="font-size:11px;">↓ Export CSV</button>
+      </div>
+    </div>
+    <div style="margin-bottom:14px;display:flex;gap:8px;flex-wrap:wrap;">
+      <select id="historyBrokerFilter" onchange="renderHistory()" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-size:12px;padding:7px 12px;border-radius:3px;outline:none;font-family:var(--sans);">
+        <option value="all">All Brokers</option>
+        <option value="mt4">MetaTrader 4</option>
+        <option value="mt5">MetaTrader 5</option>
+        <option value="oanda">OANDA</option>
+        <option value="binance">Binance</option>
+      </select>
+      <select id="historyOutcomeFilter" onchange="renderHistory()" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);font-size:12px;padding:7px 12px;border-radius:3px;outline:none;font-family:var(--sans);">
+        <option value="all">All Outcomes</option>
+        <option value="win">Wins Only</option>
+        <option value="loss">Losses Only</option>
+      </select>
+    </div>
+    <table class="history-table">
+      <thead class="ht-head"><tr>
+        <th>Symbol</th><th>Broker</th><th>Open</th><th>Close</th><th>Direction</th><th>Size</th><th>Entry</th><th>Exit</th><th>P&L</th><th>Pips</th><th>Action</th>
+      </tr></thead>
+      <tbody id="historyBody"></tbody>
+    </table>
+  </div>
+
+  <!-- TAB: SYNC SETTINGS -->
+  <div class="tab-content" id="tab-sync">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+      <div>
+        <div class="sh"><div class="sh-title">Auto-Import Settings</div></div>
+        <div style="background:var(--bg3);border:1px solid var(--border);padding:20px;border-radius:4px;">
+          <div style="display:flex;flex-direction:column;gap:14px;">
+            <div class="lpp-row" style="border:none;padding:0 0 12px;border-bottom:1px solid var(--border);">
+              <div>
+                <div style="font-size:13px;font-weight:600;color:var(--text);">Auto-import closed trades</div>
+                <div style="font-size:11px;color:var(--text2);margin-top:2px;">Automatically add closed broker trades to your journal</div>
+              </div>
+              <div class="tgl on" onclick="this.classList.toggle('on')" style="width:38px;height:20px;background:var(--blue);border:1px solid var(--blue);border-radius:100px;position:relative;cursor:pointer;flex-shrink:0;"><div class="tgl-knob" style="width:14px;height:14px;border-radius:50%;background:#fff;position:absolute;top:2px;left:calc(100% - 16px);transition:.2s;"></div></div>
+            </div>
+            <div class="lpp-row" style="border:none;padding:0 0 12px;border-bottom:1px solid var(--border);">
+              <div>
+                <div style="font-size:13px;font-weight:600;color:var(--text);">Live position sync</div>
+                <div style="font-size:11px;color:var(--text2);margin-top:2px;">Refresh open positions every 5 seconds</div>
+              </div>
+              <div class="tgl on" onclick="this.classList.toggle('on')" style="width:38px;height:20px;background:var(--blue);border:1px solid var(--blue);border-radius:100px;position:relative;cursor:pointer;flex-shrink:0;"><div class="tgl-knob" style="width:14px;height:14px;border-radius:50%;background:#fff;position:absolute;top:2px;left:calc(100% - 16px);transition:.2s;"></div></div>
+            </div>
+            <div class="lpp-row" style="border:none;padding:0 0 12px;border-bottom:1px solid var(--border);">
+              <div>
+                <div style="font-size:13px;font-weight:600;color:var(--text);">Push alerts on trade close</div>
+                <div style="font-size:11px;color:var(--text2);margin-top:2px;">Get notified when a position closes with P&L summary</div>
+              </div>
+              <div class="tgl on" onclick="this.classList.toggle('on')" style="width:38px;height:20px;background:var(--blue);border:1px solid var(--blue);border-radius:100px;position:relative;cursor:pointer;flex-shrink:0;"><div class="tgl-knob" style="width:14px;height:14px;border-radius:50%;background:#fff;position:absolute;top:2px;left:calc(100% - 16px);transition:.2s;"></div></div>
+            </div>
+            <div class="lpp-row" style="border:none;padding:0;">
+              <div>
+                <div style="font-size:13px;font-weight:600;color:var(--text);">AI analysis on close</div>
+                <div style="font-size:11px;color:var(--text2);margin-top:2px;">Auto-generate AI trade review when position closes</div>
+              </div>
+              <div class="tgl" onclick="this.classList.toggle('on');this.style.background=this.classList.contains('on')?'var(--blue)':'var(--bg4)';" style="width:38px;height:20px;background:var(--bg4);border:1px solid var(--border2);border-radius:100px;position:relative;cursor:pointer;flex-shrink:0;"><div class="tgl-knob" style="width:14px;height:14px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:.2s;"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="sh"><div class="sh-title">Sync Frequency</div></div>
+        <div style="background:var(--bg3);border:1px solid var(--border);padding:20px;border-radius:4px;">
+          <div style="margin-bottom:14px;">
+            <label style="font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);display:block;margin-bottom:7px;">Live Position Update Interval</label>
+            <select style="width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);font-size:13px;padding:10px 12px;border-radius:3px;outline:none;">
+              <option>Every 5 seconds</option>
+              <option>Every 10 seconds</option>
+              <option>Every 30 seconds</option>
+              <option>Every minute</option>
+            </select>
+          </div>
+          <div style="margin-bottom:14px;">
+            <label style="font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);display:block;margin-bottom:7px;">Trade History Lookback</label>
+            <select style="width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);font-size:13px;padding:10px 12px;border-radius:3px;outline:none;">
+              <option>Last 30 days</option>
+              <option>Last 90 days</option>
+              <option>Last 6 months</option>
+              <option>Last 12 months</option>
+              <option>All time</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);display:block;margin-bottom:7px;">Timezone</label>
+            <select style="width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);font-size:13px;padding:10px 12px;border-radius:3px;outline:none;">
+              <option>UTC (Recommended)</option>
+              <option>GMT (London)</option>
+              <option>EST (New York)</option>
+              <option>JST (Tokyo)</option>
+              <option>AEST (Sydney)</option>
+            </select>
+          </div>
+          <button class="btn btn-blue" style="width:100%;margin-top:16px;justify-content:center;font-size:13px;">Save Settings</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- TOAST -->
+<div id="toast" style="display:none;" class="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════
+const TICKERS=[
+  {s:'EUR/USD',p:'1.1053',c:'+0.42%',d:'up'},{s:'GBP/USD',p:'1.2784',c:'+0.18%',d:'up'},
+  {s:'USD/JPY',p:'151.82',c:'-0.71%',d:'dn'},{s:'XAU/USD',p:'3,121.40',c:'+1.62%',d:'up'},
+  {s:'BTC/USD',p:'92,148',c:'+4.21%',d:'up'},{s:'ETH/USD',p:'3,482',c:'+3.14%',d:'up'},
+  {s:'S&P 500',p:'5,641',c:'+0.88%',d:'up'},{s:'WTI',p:'76.34',c:'-1.08%',d:'dn'},
+];
+
+const BROKERS = [
+  {
+    id:'mt4', name:'MetaTrader 4', type:'MT4 · EA Bridge', logo:'📊', status:'connected',
+    desc:'Connect via our free Expert Advisor (EA). Install on your MT4 terminal and it syncs all open and closed trades in real time.',
+    method:'ea',
+    stats:{trades:847,winRate:62,totalPnl:'+$14,820'}
+  },
+  {
+    id:'mt5', name:'MetaTrader 5', type:'MT5 · EA Bridge', logo:'📈', status:'disconnected',
+    desc:'Our MT5 Expert Advisor provides the same real-time sync as MT4 with support for multi-asset trading including stocks and futures.',
+    method:'ea',
+    stats:null
+  },
+  {
+    id:'oanda', name:'OANDA', type:'Forex Broker · REST API', logo:'🌐', status:'disconnected',
+    desc:'Direct REST API connection. Enter your OANDA API key and account ID for instant live trade sync — no software download needed.',
+    method:'api',
+    fields:[{label:'API Key',placeholder:'Enter your OANDA API key',type:'password'},{label:'Account ID',placeholder:'e.g. 001-001-1234567-001',type:'text'}],
+    stats:null
+  },
+  {
+    id:'binance', name:'Binance', type:'Crypto Exchange · API', logo:'🟡', status:'disconnected',
+    desc:'Connect your Binance account via read-only API keys to sync spot and futures trades automatically.',
+    method:'api',
+    fields:[{label:'API Key',placeholder:'Your Binance API key',type:'password'},{label:'Secret Key',placeholder:'Your Binance secret key',type:'password'}],
+    stats:null
+  },
+  {
+    id:'ib', name:'Interactive Brokers', type:'Multi-Asset Broker · TWS', logo:'🏦', status:'disconnected',
+    desc:'Connect via IBKR TWS API or Client Portal API. Supports stocks, options, futures, forex and crypto across all account types.',
+    method:'api',
+    fields:[{label:'Client ID',placeholder:'Your IBKR client ID',type:'text'},{label:'Port',placeholder:'7497 (paper) or 7496 (live)',type:'text'}],
+    stats:null
+  },
+  {
+    id:'coinbase', name:'Coinbase Advanced', type:'Crypto Exchange · API', logo:'🔵', status:'disconnected',
+    desc:'Sync your Coinbase Advanced Trade account using read-only API credentials for full crypto portfolio and trade tracking.',
+    method:'api',
+    fields:[{label:'API Key Name',placeholder:'Your Coinbase API key name',type:'text'},{label:'Private Key',placeholder:'Your private key',type:'password'}],
+    stats:null
+  },
+];
+
+const LIVE_POSITIONS = [
+  {id:'p1',sym:'XAU/USD',broker:'mt4',dir:'long',size:0.5,entry:3072.10,market:3121.40,pnl:246.50,pips:49.3,duration:'6h 14m',sl:3050.00,tp:3150.00},
+  {id:'p2',sym:'EUR/USD',broker:'mt4',dir:'long',size:1.0,entry:1.1008,market:1.1053,pnl:450.00,pips:45.0,duration:'3h 22m',sl:1.0970,tp:1.1100},
+  {id:'p3',sym:'USD/JPY',broker:'mt4',dir:'short',size:0.8,entry:152.84,market:151.82,pnl:816.00,pips:102.0,duration:'1h 58m',sl:153.20,tp:151.00},
+  {id:'p4',sym:'BTC/USD',broker:'oanda',dir:'long',size:0.02,entry:88200,market:92148,pnl:78.96,pips:394.8,duration:'28m',sl:86000,tp:95000},
+];
+
+const TRADE_HISTORY = [
+  {sym:'GBP/USD',broker:'mt4',open:'2026-04-01 13:30',close:'2026-04-01 16:45',dir:'long',size:1.0,entry:1.2810,exit:1.2764,pnl:-460,pips:-46,imported:false},
+  {sym:'WTI Oil',broker:'mt4',open:'2026-03-31 15:00',close:'2026-03-31 17:30',dir:'short',size:0.5,entry:77.42,exit:78.18,pnl:-380,pips:-76,imported:false},
+  {sym:'EUR/JPY',broker:'mt4',open:'2026-03-30 09:15',close:'2026-03-30 14:20',dir:'long',size:0.7,entry:167.24,exit:168.81,pnl:882,pips:157,imported:true},
+  {sym:'AUD/USD',broker:'mt4',open:'2026-03-29 02:30',close:'2026-03-29 08:45',dir:'long',size:1.5,entry:0.6420,exit:0.6458,pnl:570,pips:38,imported:true},
+  {sym:'NASDAQ',broker:'mt5',open:'2026-03-28 14:00',close:'2026-03-28 20:30',dir:'long',size:0.1,entry:17580,exit:17924,pnl:344,pips:344,imported:false},
+  {sym:'ETH/USD',broker:'binance',open:'2026-03-27 18:00',close:'2026-03-28 06:00',dir:'long',size:0.5,entry:3210,exit:3482,pnl:136,pips:272,imported:false},
+  {sym:'USD/CAD',broker:'oanda',open:'2026-03-26 13:30',close:'2026-03-26 16:00',dir:'short',size:1.0,entry:1.3580,exit:1.3542,pnl:280,pips:38,imported:true},
+  {sym:'XAG/USD',broker:'mt4',open:'2026-03-25 10:00',close:'2026-03-25 14:30',dir:'long',size:1.0,entry:31.84,exit:33.18,pnl:1340,pips:134,imported:true},
+];
+
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+let brokerStates = {};
+BROKERS.forEach(b=>brokerStates[b.id]=b.status);
+let pnlInterval = null;
+let livePnl = {...Object.fromEntries(LIVE_POSITIONS.map(p=>[p.id,p.pnl]))};
+
+// ═══════════════════════════════════════════════
+// BUILD KPI ROW
+// ═══════════════════════════════════════════════
+function buildKPIs(){
+  const connected = BROKERS.filter(b=>brokerStates[b.id]==='connected').length;
+  const openPnl = LIVE_POSITIONS.reduce((s,p)=>s+livePnl[p.id],0);
+  const histWins = TRADE_HISTORY.filter(t=>t.pnl>0).length;
+  const histTotal = TRADE_HISTORY.length;
+  const histPnl = TRADE_HISTORY.reduce((s,t)=>s+t.pnl,0);
+  document.getElementById('kpiRow').innerHTML=`
+    <div class="kpi" style="animation-delay:.05s"><div class="kpi-lbl">Brokers Connected</div><div class="kpi-val" style="color:var(--blue)">${connected}</div><div class="kpi-sub" style="color:var(--text2)">of ${BROKERS.length} available</div></div>
+    <div class="kpi" style="animation-delay:.1s"><div class="kpi-lbl">Open Positions</div><div class="kpi-val">${LIVE_POSITIONS.length}</div><div class="kpi-sub" style="color:var(--text2)">across all brokers</div></div>
+    <div class="kpi" style="animation-delay:.15s"><div class="kpi-lbl">Live Open P&L</div><div class="kpi-val" style="color:var(--green2)">+$${openPnl.toFixed(0)}</div><div class="kpi-sub" style="color:var(--green2)">↑ Updating live</div></div>
+    <div class="kpi" style="animation-delay:.2s"><div class="kpi-lbl">History Win Rate</div><div class="kpi-val" style="color:${histWins/histTotal>=.5?'var(--green2)':'var(--red2)'}">${Math.round(histWins/histTotal*100)}%</div><div class="kpi-sub" style="color:var(--text2)">${histWins}W / ${histTotal-histWins}L</div></div>
+    <div class="kpi" style="animation-delay:.25s"><div class="kpi-lbl">Total Synced P&L</div><div class="kpi-val" style="color:${histPnl>=0?'var(--green2)':'var(--red2)'}">${histPnl>=0?'+':''}$${histPnl.toFixed(0)}</div><div class="kpi-sub" style="color:var(--text2)">All time imported</div></div>`;
+}
+
+// ═══════════════════════════════════════════════
+// BUILD BROKER CARDS
+// ═══════════════════════════════════════════════
+function buildBrokerGrid(){
+  document.getElementById('brokerGrid').innerHTML = BROKERS.map(b=>brokerCard(b)).join('');
+}
+
+function brokerCard(b){
+  const state = brokerStates[b.id];
+  const statusHtml = state==='connected'
+    ? `<div class="bc-status bs-connected"><div class="bs-dot"></div>Connected</div>`
+    : state==='connecting'
+    ? `<div class="bc-status bs-connecting"><div class="bs-dot"></div>Connecting...</div>`
+    : `<div class="bc-status bs-disconnected"><div class="bs-dot"></div>Not connected</div>`;
+
+  const statsHtml = state==='connected' && b.stats ? `
+    <div class="bc-stats">
+      <div class="bcs"><div class="bcs-val">${b.stats.trades}</div><div class="bcs-lbl">Trades</div></div>
+      <div class="bcs"><div class="bcs-val">${b.stats.winRate}%</div><div class="bcs-lbl">Win Rate</div></div>
+      <div class="bcs"><div class="bcs-val" style="color:var(--green2)">${b.stats.totalPnl}</div><div class="bcs-lbl">P&L</div></div>
+    </div>` : '';
+
+  const eaHtml = b.method==='ea' && state!=='connected' ? `
+    <div class="mt-download">
+      <div class="mt-download-title">📥 Setup Instructions</div>
+      <ol class="mt-steps">
+        <li class="mt-step"><div class="mt-step-num">1</div>Download the TradeContext EA file below</li>
+        <li class="mt-step"><div class="mt-step-num">2</div>Open ${b.name} → File → Open Data Folder → MQL${b.id==='mt4'?'4':'5'} → Experts</li>
+        <li class="mt-step"><div class="mt-step-num">3</div>Copy the EA file into the Experts folder</li>
+        <li class="mt-step"><div class="mt-step-num">4</div>Restart ${b.name} and attach EA to any chart</li>
+        <li class="mt-step"><div class="mt-step-num">5</div>Enter your TradeContext API key in the EA settings</li>
+      </ol>
+      <div class="mt-download-btn" onclick="downloadEA('${b.id}')">⬇ Download TradeContext ${b.name} EA (.ex${b.id==='mt4'?'4':'5'})</div>
+    </div>
+    <div style="margin-bottom:10px;">
+      <label style="font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);display:block;margin-bottom:5px;">Your TradeContext API Key</label>
+      <input class="bc-input" type="text" placeholder="Paste your TradeContext API key (from Settings)" id="ea-key-${b.id}">
+      <div style="font-family:var(--mono);font-size:9px;color:var(--text3);margin-top:4px;">Find your API key in Settings → API Access</div>
+    </div>` : '';
+
+  const apiHtml = b.method==='api' && state!=='connected' ? (b.fields||[]).map(f=>`
+    <div class="bc-field">
+      <div class="bc-label">${f.label}</div>
+      <input class="bc-input" type="${f.type}" placeholder="${f.placeholder}" id="api-${b.id}-${f.label.replace(/\s/g,'-').toLowerCase()}">
+    </div>`).join('') : '';
+
+  const actionHtml = state==='connected'
+    ? `<button class="btn btn-ghost" style="font-size:11px;" onclick="disconnectBroker('${b.id}')">Disconnect</button>
+       <button class="btn btn-blue" style="font-size:11px;" onclick="syncBroker('${b.id}')">↻ Sync Now</button>`
+    : state==='connecting'
+    ? `<button class="btn btn-ghost" style="font-size:11px;cursor:not-allowed;opacity:.5;">Connecting...</button>`
+    : b.method==='ea'
+    ? `<button class="btn btn-green" style="font-size:11px;" onclick="connectBroker('${b.id}')">✓ Verify Connection</button>`
+    : `<button class="btn btn-blue" style="font-size:11px;" onclick="connectBroker('${b.id}')">Connect ${b.name}</button>`;
+
+  return`<div class="broker-card ${state}" id="card-${b.id}" style="animation:fadeUp .4s ease both;">
+    <div class="bc-header">
+      <div class="bc-logo" style="background:${state==='connected'?'rgba(16,185,129,.1)':'var(--bg4)'};">${b.logo}</div>
+      <div><div class="bc-name">${b.name}</div><div class="bc-type">${b.type}</div></div>
+      ${statusHtml}
+    </div>
+    <div class="bc-desc">${b.desc}</div>
+    <div class="bc-fields">${eaHtml}${apiHtml}</div>
+    <div class="bc-actions">${actionHtml}</div>
+    ${statsHtml}
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════
+// BUILD LIVE POSITIONS
+// ═══════════════════════════════════════════════
+function buildPositions(){
+  const body = document.getElementById('positionsBody');
+  body.innerHTML = LIVE_POSITIONS.map(p=>{
+    const pnl = livePnl[p.id];
+    const pnlClass = pnl>=0?'pos':'neg';
+    const pnlSign = pnl>=0?'+':'';
+    return`<tr class="pt-row">
+      <td><div class="pt-sym">${p.sym}</div><div class="pt-broker">${p.broker.toUpperCase()} · SL: ${p.sl} · TP: ${p.tp}</div></td>
+      <td><span class="pt-dir ${p.dir}">${p.dir==='long'?'📈 Long':'📉 Short'}</span></td>
+      <td style="font-family:var(--mono);font-size:12px">${p.size}</td>
+      <td><div class="pt-price">${p.entry}</div></td>
+      <td><div class="pt-price">${p.market}</div><div class="pt-mkt">Market price</div></td>
+      <td><div class="pt-pnl ${pnlClass}" id="pnl-${p.id}">${pnlSign}$${Math.abs(pnl).toFixed(2)}</div><div style="font-family:var(--mono);font-size:9px;color:var(--text3)">${p.pips.toFixed(1)} pips</div></td>
+      <td style="font-family:var(--mono);font-size:11px;color:var(--text3)">${p.duration}</td>
+      <td><button class="ai-note-btn" onclick="analysePosition('${p.id}','${p.sym}','${p.dir}',${p.entry},${p.market},${pnl})">🤖 AI</button><button class="close-btn" onclick="closePosition('${p.id}','${p.sym}',${pnl})">Close</button></td>
+    </tr>`;
+  }).join('');
+  updateLivePnlPanel();
+}
+
+function updateLivePnlPanel(){
+  const total = Object.values(livePnl).reduce((s,v)=>s+v,0);
+  const totalEl = document.getElementById('totalOpenPnl');
+  if(totalEl){
+    totalEl.textContent=(total>=0?'+':'')+'$'+Math.abs(total).toFixed(2);
+    totalEl.style.color=total>=0?'var(--green2)':'var(--red2)';
+  }
+  document.getElementById('lppRows').innerHTML=LIVE_POSITIONS.map(p=>{
+    const pnl=livePnl[p.id];
+    return`<div class="lpp-row">
+      <span class="lpp-lbl">${p.sym} <span style="font-family:var(--mono);font-size:9px;color:var(--text3)">${p.dir}</span></span>
+      <span class="lpp-val" style="color:${pnl>=0?'var(--green2)':'var(--red2)'}">${pnl>=0?'+':''}$${Math.abs(pnl).toFixed(2)}</span>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════
+// BUILD HISTORY
+// ═══════════════════════════════════════════════
+function renderHistory(){
+  const brokerF = document.getElementById('historyBrokerFilter')?.value||'all';
+  const outcomeF = document.getElementById('historyOutcomeFilter')?.value||'all';
+  const filtered = TRADE_HISTORY.filter(t=>{
+    if(brokerF!=='all'&&t.broker!==brokerF)return false;
+    if(outcomeF==='win'&&t.pnl<=0)return false;
+    if(outcomeF==='loss'&&t.pnl>=0)return false;
+    return true;
+  });
+  document.getElementById('historyBody').innerHTML=filtered.map((t,i)=>`
+    <tr class="ht-row">
+      <td><div class="ht-sym">${t.sym}</div></td>
+      <td><div class="ht-broker">${t.broker.toUpperCase()}</div></td>
+      <td style="font-family:var(--mono);font-size:10px;color:var(--text3)">${t.open.split(' ')[0]}</td>
+      <td style="font-family:var(--mono);font-size:10px;color:var(--text3)">${t.close.split(' ')[0]}</td>
+      <td><span class="badge ${t.dir==='long'?'badge-green':'badge-red'}">${t.dir==='long'?'↑ Long':'↓ Short'}</span></td>
+      <td style="font-family:var(--mono)">${t.size}</td>
+      <td style="font-family:var(--mono)">${t.entry}</td>
+      <td style="font-family:var(--mono)">${t.exit}</td>
+      <td><span class="ht-pnl ${t.pnl>=0?'pos':'neg'}">${t.pnl>=0?'+':''}$${Math.abs(t.pnl)}</span></td>
+      <td style="font-family:var(--mono);color:${t.pips>=0?'var(--green2)':'var(--red2)'}">${t.pips>=0?'+':''}${t.pips}</td>
+      <td><button class="import-btn ${t.imported?'done':''}" onclick="importTrade(${i},this)">${t.imported?'✓ Imported':'+ Import'}</button></td>
+    </tr>`).join('');
+}
+
+// ═══════════════════════════════════════════════
+// CONTROLS
+// ═══════════════════════════════════════════════
+function setTab(id,btn){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-'+id).classList.add('active');
+  if(id==='live')buildPositions();
+  if(id==='history')renderHistory();
+}
+
+function connectBroker(id, signupUrl){
+  if(signupUrl && brokerStates[id]==='disconnected'){
+    // Show connection modal
+    showBrokerModal(id, signupUrl);
+    return;
+  }
+  brokerStates[id]='connecting';
+  buildBrokerGrid();
+  showToast('info','🔄 Connecting to '+BROKERS.find(b=>b.id===id)?.name+'...');
+  setTimeout(()=>{
+    brokerStates[id]='connected';
+    buildBrokerGrid();
+    buildKPIs();
+    showToast('success','✅ Connected to '+BROKERS.find(b=>b.id===id)?.name+' successfully!');
+    updateConnectedBadge();
+  },2400);
+}
+
+function showBrokerModal(id, signupUrl){
+  const b = BROKERS.find(b=>b.id===id);
+  if(!b) return;
+  const existing = document.getElementById('brokerModal');
+  if(existing) existing.remove();
+  const modal = document.createElement('div');
+  modal.id = 'brokerModal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px;';
+  modal.innerHTML = `
+    <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:8px;padding:28px;max-width:440px;width:100%;animation:fadeUp .3s ease;">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+        <span style="font-size:28px;">${b.logo}</span>
+        <div>
+          <div style="font-size:18px;font-weight:800;color:var(--text);">${b.name}</div>
+          <div style="font-family:var(--mono);font-size:9px;color:var(--text3);">${b.type}</div>
+        </div>
+        <button onclick="document.getElementById('brokerModal').remove()" style="margin-left:auto;font-size:22px;color:var(--text3);cursor:pointer;background:none;border:none;">×</button>
+      </div>
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:14px;margin-bottom:16px;">
+        <div style="font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:10px;">How to connect:</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="display:flex;gap:10px;font-size:12px;color:var(--text2);"><span style="background:var(--bluedim);border:1px solid rgba(14,165,233,.2);color:var(--blue);font-family:var(--mono);font-size:9px;font-weight:700;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</span>Open a ${b.name} account using the button below</div>
+          <div style="display:flex;gap:10px;font-size:12px;color:var(--text2);"><span style="background:var(--bluedim);border:1px solid rgba(14,165,233,.2);color:var(--blue);font-family:var(--mono);font-size:9px;font-weight:700;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</span>${b.method==='ea'?'Download and install our EA on your '+b.name+' terminal':'Generate a read-only API key from your '+b.name+' account'}</div>
+          <div style="display:flex;gap:10px;font-size:12px;color:var(--text2);"><span style="background:var(--bluedim);border:1px solid rgba(14,165,233,.2);color:var(--blue);font-family:var(--mono);font-size:9px;font-weight:700;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">3</span>Paste your ${b.method==='ea'?'TradeContext API key into the EA settings':'API key into the fields above'}</div>
+          <div style="display:flex;gap:10px;font-size:12px;color:var(--text2);"><span style="background:var(--bluedim);border:1px solid rgba(14,165,233,.2);color:var(--blue);font-family:var(--mono);font-size:9px;font-weight:700;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">4</span>Your live trades will sync automatically in real time</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <a href="${signupUrl}" target="_blank" style="flex:1;background:var(--blue);color:#000;font-size:13px;font-weight:700;padding:11px;border-radius:4px;text-align:center;text-decoration:none;transition:.2s;">Open ${b.name} Account →</a>
+        <button onclick="proceedConnect('${id}');document.getElementById('brokerModal').remove();" style="background:var(--bg3);border:1px solid var(--border2);color:var(--text2);font-size:12px;font-weight:600;padding:11px 16px;border-radius:4px;cursor:pointer;font-family:var(--sans);">I already have an account</button>
+      </div>
+      <div style="font-family:var(--mono);font-size:9px;color:var(--text3);text-align:center;margin-top:10px;">🔒 Read-only access only · We can never place trades on your behalf</div>
+    </div>`;
+  document.body.appendChild(modal);
+  modal.addEventListener('click', e=>{ if(e.target===modal) modal.remove(); });
+}
+
+function proceedConnect(id){
+  brokerStates[id]='connecting';
+  buildBrokerGrid();
+  showToast('info','🔄 Connecting to '+BROKERS.find(b=>b.id===id)?.name+'...');
+  setTimeout(()=>{
+    brokerStates[id]='connected';
+    buildBrokerGrid();
+    buildKPIs();
+    showToast('success','✅ Connected to '+BROKERS.find(b=>b.id===id)?.name+' successfully!');
+    updateConnectedBadge();
+  },2400);
+}
+
+function disconnectBroker(id){
+  if(!confirm('Disconnect '+BROKERS.find(b=>b.id===id)?.name+'? Your trade history will be retained.'))return;
+  brokerStates[id]='disconnected';
+  buildBrokerGrid();
+  buildKPIs();
+  updateConnectedBadge();
+  showToast('info','Disconnected from '+BROKERS.find(b=>b.id===id)?.name);
+}
+
+function syncBroker(id){
+  showToast('info','↻ Syncing '+BROKERS.find(b=>b.id===id)?.name+'...');
+  setTimeout(()=>showToast('success','✅ Sync complete — 3 new trades imported'),1800);
+}
+
+function downloadEA(platform){
+  showToast('info','⬇ Downloading TradeContext_'+platform.toUpperCase()+'_EA... (Demo mode — connect real server to enable)');
+}
+
+function updateConnectedBadge(){
+  const n=Object.values(brokerStates).filter(s=>s==='connected').length;
+  const el=document.getElementById('connectedBadge');
+  if(el)el.textContent=`● ${n} Connected`;
+}
+
+function refreshAll(){
+  showToast('info','↻ Refreshing all connected brokers...');
+  setTimeout(()=>showToast('success','✅ All brokers refreshed'),1500);
+}
+
+function refreshPositions(){
+  // Simulate P&L drift
+  LIVE_POSITIONS.forEach(p=>{
+    const drift=(Math.random()-.45)*8;
+    livePnl[p.id]=parseFloat((livePnl[p.id]+drift).toFixed(2));
+    const el=document.getElementById('pnl-'+p.id);
+    if(el){
+      const pnl=livePnl[p.id];
+      el.textContent=(pnl>=0?'+':'')+'$'+Math.abs(pnl).toFixed(2);
+      el.className='pt-pnl '+(pnl>=0?'pos':'neg');
+    }
+  });
+  updateLivePnlPanel();
+}
+
+function closePosition(id,sym,pnl){
+  if(!confirm(`Close ${sym}? Current P&L: ${pnl>=0?'+':''}$${Math.abs(pnl).toFixed(2)}`))return;
+  showToast('success',`✅ ${sym} closed. P&L: ${pnl>=0?'+':''}$${Math.abs(pnl).toFixed(2)} — Auto-importing to Journal...`);
+  setTimeout(()=>showToast('info','📓 Trade imported to your Journal automatically'),2000);
+}
+
+function exportPositions(){
+  showToast('success','📥 All open positions exported to Journal');
+}
+
+function importTrade(idx,btn){
+  TRADE_HISTORY[idx].imported=true;
+  btn.textContent='✓ Imported';btn.className='import-btn done';
+  showToast('success','📓 Trade imported to Journal successfully');
+}
+
+function importAll(){
+  TRADE_HISTORY.forEach(t=>t.imported=true);
+  renderHistory();
+  showToast('success','📓 All trades imported to Journal successfully');
+}
+
+function showAllBrokers(){
+  showToast('info','📋 Full broker list: MT4, MT5, OANDA, Binance, Coinbase, IBKR, Pepperstone, IC Markets, Bybit, and more — coming soon');
+}
+
+// ═══════════════════════════════════════════════
+// AI POSITION ANALYSIS
+// ═══════════════════════════════════════════════
+async function analysePosition(id,sym,dir,entry,market,pnl){
+  // Find or create AI box below the table
+  let box = document.getElementById('ai-box-'+id);
+  if(!box){
+    const container = document.getElementById('positionAIBoxes');
+    box = document.createElement('div');
+    box.id = 'ai-box-'+id;
+    box.className = 'ai-position-box show';
+    box.innerHTML=`<div class="ai-pos-header"><span class="ai-spinner-xs"></span>Analysing ${sym} position...</div><div id="ai-pos-body-${id}"></div>`;
+    container.appendChild(box);
+  } else {
+    box.classList.add('show');
+    document.getElementById('ai-pos-body-'+id).textContent='';
+    box.querySelector('.ai-pos-header').innerHTML=`<span class="ai-spinner-xs"></span>Analysing ${sym}...`;
+  }
+
+  const prompt=`Live trade analysis:
+Symbol: ${sym} | Direction: ${dir} | Entry: ${entry} | Current market: ${market}
+Unrealised P&L: ${pnl>=0?'+':''}$${Math.abs(pnl).toFixed(2)}
+
+In 3 concise sentences: 1) Is this position performing as expected given current news flow? 2) Should the trader consider adjusting stop loss or take profit? 3) What is the key risk to watch right now? Be direct and specific.`;
+
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:250,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();
+    const txt=data.content?.[0]?.text||'';
+    const bodyEl=document.getElementById('ai-pos-body-'+id);
+    box.querySelector('.ai-pos-header').innerHTML=`🤖 AI Position Analysis — ${sym}`;
+    bodyEl.textContent='';
+    let i=0;const cur=document.createElement('span');cur.className='ai-cursor';bodyEl.appendChild(cur);
+    const iv=setInterval(()=>{if(i<txt.length){bodyEl.insertBefore(document.createTextNode(txt[i]),cur);i++;}else{clearInterval(iv);cur.remove();}},8);
+  }catch(e){
+    const bodyEl=document.getElementById('ai-pos-body-'+id);
+    box.querySelector('.ai-pos-header').innerHTML=`🤖 AI Position Analysis — ${sym}`;
+    const msgs={
+      up:`${sym} is performing well — the ${dir} position is ${pnl>=0?'in profit':'underwater'} by $${Math.abs(pnl).toFixed(2)}. Given the current bullish news flow (Fed dovishness, risk-on sentiment), consider trailing your stop to protect profits. Key risk: Friday's NFP could cause a sharp reversal if it prints above 220K.`,
+      dn:`The ${dir} position on ${sym} is showing ${pnl>=0?'profit':'loss'} of $${Math.abs(pnl).toFixed(2)}. Current market conditions support the bearish thesis. Consider whether your take profit level accounts for key support at the next round number. Main risk: a surprise central bank statement could trigger a sharp spike against the position.`
+    };
+    bodyEl.textContent=dir==='long'?msgs.up:msgs.dn;
+  }
+}
+
+// ═══════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════
+let toastTimer;
+function showToast(type,msg){
+  const el=document.getElementById('toast');
+  el.className=`toast ${type}`;
+  el.innerHTML=`${type==='success'?'✅':type==='error'?'❌':'ℹ️'} ${msg}`;
+  el.style.display='flex';
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>el.style.display='none',3500);
+}
+
+// ═══════════════════════════════════════════════
+// TICKER & CLOCK
+// ═══════════════════════════════════════════════
+function buildTicker(){
+  const el=document.getElementById('tickerInner');
+  el.innerHTML=[...TICKERS,...TICKERS].map(t=>`<div class="t-i"><span class="t-s">${t.s}</span><span class="t-p">${t.p}</span><span class="t-c ${t.d}">${t.d==='up'?'▲':'▼'} ${t.c}</span></div>`).join('');
+}
+function clock(){
+  const el=document.getElementById('utcClock');if(!el)return;
+  const n=new Date(),p=v=>String(v).padStart(2,'0');
+  el.textContent=`${p(n.getUTCHours())}:${p(n.getUTCMinutes())}:${p(n.getUTCSeconds())} UTC`;
+}
+
+// ═══════════════════════════════════════════════
+// LIVE P&L SIMULATION
+// ═══════════════════════════════════════════════
+function startLivePnl(){
+  pnlInterval=setInterval(()=>{
+    LIVE_POSITIONS.forEach(p=>{
+      const drift=(Math.random()-.48)*3;
+      livePnl[p.id]=parseFloat((livePnl[p.id]+drift).toFixed(2));
+      const el=document.getElementById('pnl-'+p.id);
+      if(el){
+        const pnl=livePnl[p.id];
+        el.textContent=(pnl>=0?'+':'')+'$'+Math.abs(pnl).toFixed(2);
+        el.className='pt-pnl '+(pnl>=0?'pos':'neg');
+      }
+    });
+    updateLivePnlPanel();
+  },5000);
+}
+
+// INIT
+buildTicker();
+buildKPIs();
+buildBrokerGrid();
+renderHistory();
+startLivePnl();
+clock();setInterval(clock,1000);
+</script>
+
+
+<!-- ═══ AI LIVE CHAT WIDGET v2 ═══ -->
+<style>
+.tc-chat-btn{position:fixed;bottom:24px;right:24px;width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,#8b5cf6);box-shadow:0 4px 24px rgba(14,165,233,.4);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:9999;border:none;transition:.3s;animation:tcPulse 3s ease-in-out infinite;}
+.tc-chat-btn:hover{transform:scale(1.08);}
+.tc-chat-btn.open{animation:none;background:linear-gradient(135deg,#ef4444,#dc2626);}
+.tc-chat-btn svg{transition:.3s;}
+@keyframes tcPulse{0%,100%{box-shadow:0 4px 24px rgba(14,165,233,.4);}50%{box-shadow:0 4px 40px rgba(14,165,233,.6);}}
+.tc-unread{position:absolute;top:0;right:0;width:18px;height:18px;background:#ef4444;border-radius:50%;border:2px solid var(--bg,#03060d);font-family:'DM Mono',monospace;font-size:9px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;}
+.tc-chat-bubble{position:fixed;bottom:92px;right:24px;background:#0a1220;border:1px solid #1e3050;color:#e2eaf4;font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;padding:10px 14px;border-radius:12px 12px 4px 12px;z-index:9998;box-shadow:0 8px 32px rgba(0,0,0,.5);animation:tcBubble 5s ease 1.5s both;white-space:nowrap;}
+.tc-chat-bubble::after{content:'';position:absolute;bottom:-6px;right:20px;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:6px solid #1e3050;}
+@keyframes tcBubble{0%{opacity:0;transform:translateY(8px);}10%{opacity:1;transform:translateY(0);}85%{opacity:1;}100%{opacity:0;pointer-events:none;}}
+
+/* WINDOW */
+.tc-chat-window{position:fixed;bottom:96px;right:24px;width:380px;background:#03060d;border:1px solid #1e3050;border-radius:14px;box-shadow:0 32px 80px rgba(0,0,0,.8);z-index:9997;display:none;flex-direction:column;overflow:hidden;max-height:580px;}
+.tc-chat-window.open{display:flex;animation:tcSlideUp .3s ease;}
+@keyframes tcSlideUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+
+/* HEADER */
+.tc-header{background:linear-gradient(135deg,#060c18,#0a1220);border-bottom:1px solid #142035;padding:14px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.tc-header-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,#8b5cf6);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.tc-header-info{flex:1;}
+.tc-header-name{font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;color:#e2eaf4;}
+.tc-header-status{display:flex;align-items:center;gap:5px;font-family:'DM Mono',monospace;font-size:9px;color:#34d399;text-transform:uppercase;letter-spacing:.1em;margin-top:2px;}
+.tc-status-dot{width:5px;height:5px;border-radius:50%;background:#34d399;animation:tcBlink 1.4s infinite;}
+@keyframes tcBlink{0%,100%{opacity:1;}50%{opacity:.3;}}
+.tc-close-btn{font-size:22px;color:#3a5570;cursor:pointer;background:none;border:none;line-height:1;transition:.2s;font-family:sans-serif;padding:0 4px;}.tc-close-btn:hover{color:#e2eaf4;}
+
+/* INTRO FORM */
+.tc-intro{padding:20px;display:flex;flex-direction:column;gap:14px;}
+.tc-intro-title{font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;color:#e2eaf4;text-align:center;}
+.tc-intro-sub{font-family:'Outfit',sans-serif;font-size:12px;color:#7a9ab8;text-align:center;line-height:1.6;margin-top:-8px;}
+.tc-form-field{display:flex;flex-direction:column;gap:4px;}
+.tc-form-label{font-family:'DM Mono',monospace;font-size:8px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#3a5570;}
+.tc-form-input{background:#0a1220;border:1px solid #1e3050;color:#e2eaf4;font-family:'Outfit',sans-serif;font-size:13px;padding:10px 13px;border-radius:6px;outline:none;transition:.2s;width:100%;}
+.tc-form-input:focus{border-color:#0ea5e9;}
+.tc-form-input::placeholder{color:#3a5570;}
+.tc-start-btn{background:linear-gradient(135deg,#0ea5e9,#8b5cf6);color:#fff;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;padding:12px;border-radius:8px;border:none;cursor:pointer;transition:.2s;width:100%;display:flex;align-items:center;justify-content:center;gap:6px;}
+.tc-start-btn:hover{opacity:.9;}
+.tc-form-note{font-family:'DM Mono',monospace;font-size:9px;color:#3a5570;text-align:center;}
+
+/* CHAT AREA */
+.tc-chat-area{display:none;flex-direction:column;flex:1;overflow:hidden;}
+.tc-chat-area.show{display:flex;}
+.tc-user-info-bar{padding:8px 14px;background:#060c18;border-bottom:1px solid #142035;display:flex;align-items:center;gap:8px;}
+.tc-user-avatar{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,#8b5cf6);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;}
+.tc-user-name-lbl{font-family:'DM Mono',monospace;font-size:10px;color:#7a9ab8;font-weight:600;}
+
+/* MESSAGES */
+.tc-messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;scrollbar-width:thin;scrollbar-color:#1e3050 transparent;min-height:200px;max-height:320px;}
+.tc-msg{display:flex;gap:8px;animation:tcMsgIn .2s ease;}
+@keyframes tcMsgIn{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:translateY(0);}}
+.tc-msg-av{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,#8b5cf6);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.tc-msg-bub{background:#0a1220;border:1px solid #142035;border-radius:4px 12px 12px 12px;padding:10px 12px;max-width:270px;}
+.tc-msg-bub p{font-family:'Outfit',sans-serif;font-size:12px;color:#7a9ab8;line-height:1.65;margin:0;}
+.tc-msg-bub strong{color:#e2eaf4;font-weight:600;}
+.tc-msg-bub a{color:#0ea5e9;text-decoration:none;}
+.tc-msg.tc-user{flex-direction:row-reverse;}
+.tc-msg.tc-user .tc-msg-bub{background:linear-gradient(135deg,rgba(14,165,233,.15),rgba(139,92,246,.1));border-color:rgba(14,165,233,.3);border-radius:12px 4px 12px 12px;}
+.tc-msg.tc-user .tc-msg-bub p{color:#e2eaf4;}
+
+/* QUICK REPLIES */
+.tc-quick{padding:8px 14px 4px;display:flex;gap:5px;flex-wrap:wrap;flex-shrink:0;}
+.tc-qbtn{background:#0a1220;border:1px solid #142035;color:#7a9ab8;font-family:'DM Mono',monospace;font-size:8px;font-weight:600;padding:4px 9px;border-radius:100px;cursor:pointer;transition:.2s;white-space:nowrap;letter-spacing:.04em;}
+.tc-qbtn:hover{border-color:#0ea5e9;color:#0ea5e9;}
+
+/* INPUT ROW */
+.tc-input-row{padding:10px 12px;border-top:1px solid #142035;display:flex;gap:8px;flex-shrink:0;background:#060c18;}
+.tc-input{flex:1;background:#0a1220;border:1px solid #1e3050;color:#e2eaf4;font-family:'Outfit',sans-serif;font-size:12px;padding:9px 12px;border-radius:8px;outline:none;transition:.2s;}
+.tc-input:focus{border-color:#0ea5e9;}
+.tc-input::placeholder{color:#3a5570;}
+.tc-send-btn{background:linear-gradient(135deg,#0ea5e9,#8b5cf6);color:#fff;width:36px;height:36px;border-radius:8px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;flex-shrink:0;}
+.tc-send-btn:hover{opacity:.9;}
+
+/* TYPING */
+.tc-typing-wrap{display:flex;gap:4px;align-items:center;padding:6px 2px;}
+.tc-dot{width:6px;height:6px;border-radius:50%;background:#3a5570;animation:tcTypeDot 1.2s ease-in-out infinite;}
+.tc-dot:nth-child(2){animation-delay:.2s;}.tc-dot:nth-child(3){animation-delay:.4s;}
+@keyframes tcTypeDot{0%,100%{transform:translateY(0);opacity:.4;}50%{transform:translateY(-4px);opacity:1;}}
+.tc-ai-cur{display:inline-block;width:2px;height:12px;background:#0ea5e9;margin-left:1px;animation:tcBlink .7s infinite;vertical-align:text-bottom;}
+</style>
+
+<!-- Bubble -->
+<div class="tc-chat-bubble" id="tcBubble">💬 &nbsp;Questions? Chat with our AI now!</div>
+
+<!-- Toggle button with speech bubble SVG -->
+<button class="tc-chat-btn" id="tcChatBtn" onclick="tcToggle()" title="Chat with TradeContext AI">
+  <span class="tc-unread" id="tcUnread">1</span>
+  <svg id="tcBtnIcon" width="26" height="26" viewBox="0 0 24 24" fill="none">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" fill="rgba(255,255,255,.95)" stroke="none"/>
+    <circle cx="8" cy="10" r="1.2" fill="#0ea5e9"/>
+    <circle cx="12" cy="10" r="1.2" fill="#8b5cf6"/>
+    <circle cx="16" cy="10" r="1.2" fill="#0ea5e9"/>
+  </svg>
+  <svg id="tcBtnClose" width="22" height="22" viewBox="0 0 24 24" fill="none" style="display:none;">
+    <path d="M18 6L6 18M6 6l12 12" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+  </svg>
+</button>
+
+<!-- Chat window -->
+<div class="tc-chat-window" id="tcWindow">
+
+  <!-- Header -->
+  <div class="tc-header">
+    <div class="tc-header-avatar">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" fill="rgba(255,255,255,.9)"/>
+      </svg>
+    </div>
+    <div class="tc-header-info">
+      <div class="tc-header-name">TradeContext AI Support</div>
+      <div class="tc-header-status"><div class="tc-status-dot"></div>Online · Powered by Claude</div>
+    </div>
+    <button class="tc-close-btn" onclick="tcToggle()">×</button>
+  </div>
+
+  <!-- INTRO FORM -->
+  <div class="tc-intro" id="tcIntro">
+    <div style="text-align:center;font-size:32px;margin-bottom:-4px;">👋</div>
+    <div class="tc-intro-title">Hi there! How can we help?</div>
+    <div class="tc-intro-sub">Enter your details and we'll get back to you instantly with our AI assistant.</div>
+    <div class="tc-form-field">
+      <label class="tc-form-label">Your Name</label>
+      <input class="tc-form-input" id="tcName" type="text" placeholder="e.g. James Smith" autocomplete="name">
+    </div>
+    <div class="tc-form-field">
+      <label class="tc-form-label">Email Address</label>
+      <input class="tc-form-input" id="tcEmail" type="email" placeholder="james@example.com" autocomplete="email">
+    </div>
+    <div class="tc-form-field">
+      <label class="tc-form-label">Your Question</label>
+      <input class="tc-form-input" id="tcFirstQ" type="text" placeholder="e.g. What does the Pro plan include?" onkeydown="if(event.key==='Enter')tcStart()">
+    </div>
+    <button class="tc-start-btn" onclick="tcStart()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" fill="#fff"/></svg>
+      Start Chat →
+    </button>
+    <div class="tc-form-note">🔒 Your details are kept private and never shared.</div>
+  </div>
+
+  <!-- CHAT AREA -->
+  <div class="tc-chat-area" id="tcChatArea">
+    <div class="tc-user-info-bar">
+      <div class="tc-user-avatar" id="tcUserAvatar">?</div>
+      <div class="tc-user-name-lbl" id="tcUserLbl">Chatting as Guest</div>
+    </div>
+    <div class="tc-messages" id="tcMsgs"></div>
+    <div class="tc-quick" id="tcQuick">
+      <button class="tc-qbtn" onclick="tcQ('What plans do you offer?')">💳 Pricing</button>
+      <button class="tc-qbtn" onclick="tcQ('Is there a free trial?')">❓ Free trial</button>
+      <button class="tc-qbtn" onclick="tcQ('How does the news bias feed work?')">📡 News feed</button>
+      <button class="tc-qbtn" onclick="tcQ('How do I connect my broker?')">🔌 Broker</button>
+      <button class="tc-qbtn" onclick="tcQ('Tell me about the Trading Journal')">📓 Journal</button>
+      <button class="tc-qbtn" onclick="tcQ('What funded account firms do you support?')">🏆 Funded accounts</button>
+    </div>
+    <div class="tc-input-row">
+      <input class="tc-input" id="tcMsg" type="text" placeholder="Type your message..." onkeydown="if(event.key==='Enter')tcSend()">
+      <button class="tc-send-btn" onclick="tcSend()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var tcOpen=false;
+  var tcHistory=[];
+  var tcUserName='';
+  var tcUserEmail='';
+  var TC_SYS='You are the friendly AI support assistant for TradeContext.ai — a premium AI-powered market intelligence platform for serious traders.\n\nBe warm, concise and professional. Always answer in 2-4 sentences. Address the user by their first name when you know it.\n\nKey facts:\n- Two plans: Pro £39.95/mo (£407.49/yr, 15% off) | Elite £49.95/mo (£509.49/yr, 15% off)\n- No free trial — paid from day one. Card required. Cancel anytime.\n- Pro: Live News Bias Feed, AI Trade Playbooks, TradingView Charts (29 assets), Broker Hub (MT4/MT5/OANDA/Binance/IBKR/Coinbase), Watchlist, Alerts, Economic Calendar\n- Elite: Everything in Pro + AI Trading Journal + Funded Account Tracker (FTMO, The5%ers, TopStep, MyForexFunds, True Forex Funds, Instant Funding)\n- 2-minute free preview on Dashboard and News Bias Feed\n- AI powered by Claude (Anthropic)\n- TradingView charts — no TradingView account needed for basic use\n- Contact: hello@tradecontext.ai\n- For billing/account issues always direct to hello@tradecontext.ai\n- Never give financial/trading advice — only platform information';
+
+  window.tcToggle=function(){
+    tcOpen=!tcOpen;
+    var icon=document.getElementById('tcBtnIcon');
+    var close=document.getElementById('tcBtnClose');
+    var btn=document.getElementById('tcChatBtn');
+    var win=document.getElementById('tcWindow');
+    var unread=document.getElementById('tcUnread');
+    if(tcOpen){
+      btn.classList.add('open');
+      icon.style.display='none';
+      close.style.display='block';
+      win.classList.add('open');
+      if(unread)unread.style.display='none';
+      document.getElementById('tcBubble').style.display='none';
+      setTimeout(function(){
+        var f=document.getElementById('tcName');
+        if(f&&!tcUserName)f.focus();
+        else if(document.getElementById('tcMsg'))document.getElementById('tcMsg').focus();
+      },200);
+    } else {
+      btn.classList.remove('open');
+      icon.style.display='block';
+      close.style.display='none';
+      win.classList.remove('open');
+    }
+  };
+
+  window.tcStart=function(){
+    var name=document.getElementById('tcName').value.trim();
+    var email=document.getElementById('tcEmail').value.trim();
+    var q=document.getElementById('tcFirstQ').value.trim();
+    if(!name){document.getElementById('tcName').focus();document.getElementById('tcName').style.borderColor='#ef4444';return;}
+    if(!email||!email.includes('@')){document.getElementById('tcEmail').focus();document.getElementById('tcEmail').style.borderColor='#ef4444';return;}
+    tcUserName=name;
+    tcUserEmail=email;
+    // Show chat area
+    document.getElementById('tcIntro').style.display='none';
+    document.getElementById('tcChatArea').classList.add('show');
+    // Set user label
+    var initial=name.charAt(0).toUpperCase();
+    document.getElementById('tcUserAvatar').textContent=initial;
+    document.getElementById('tcUserLbl').textContent='Chatting as '+name.split(' ')[0];
+    // Welcome message
+    tcAddBot('Hi <strong>'+name.split(' ')[0]+'</strong>! 👋 Welcome to TradeContext.ai. I\'m your AI assistant — ask me anything about our platform and I\'ll help you right away!');
+    // If they typed a question, send it
+    if(q){
+      setTimeout(function(){
+        tcAddUser(q);
+        tcGetReply(q);
+      },600);
+    }
+  };
+
+  window.tcQ=function(q){
+    document.getElementById('tcQuick').style.display='none';
+    tcAddUser(q);
+    tcGetReply(q);
+  };
+
+  window.tcSend=function(){
+    var inp=document.getElementById('tcMsg');
+    var msg=inp.value.trim();
+    if(!msg)return;
+    inp.value='';
+    document.getElementById('tcQuick').style.display='none';
+    tcAddUser(msg);
+    tcGetReply(msg);
+  };
+
+  function tcAddUser(text){
+    var msgs=document.getElementById('tcMsgs');
+    var div=document.createElement('div');
+    div.className='tc-msg tc-user';
+    div.innerHTML='<div class="tc-msg-bub"><p>'+text+'</p></div>';
+    msgs.appendChild(div);
+    msgs.scrollTop=msgs.scrollHeight;
+    tcHistory.push({role:'user',content:text});
+  }
+
+  function tcAddBot(html){
+    var msgs=document.getElementById('tcMsgs');
+    var div=document.createElement('div');
+    div.className='tc-msg';
+    div.innerHTML='<div class="tc-msg-av"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" fill="rgba(255,255,255,.9)"/></svg></div><div class="tc-msg-bub"><p>'+html+'</p></div>';
+    msgs.appendChild(div);
+    msgs.scrollTop=msgs.scrollHeight;
+    tcHistory.push({role:'assistant',content:html.replace(/<[^>]+>/g,'')});
+  }
+
+  function tcShowTyping(){
+    var msgs=document.getElementById('tcMsgs');
+    var div=document.createElement('div');
+    div.className='tc-msg';div.id='tcTypingEl';
+    div.innerHTML='<div class="tc-msg-av"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" fill="rgba(255,255,255,.9)"/></svg></div><div class="tc-msg-bub"><div class="tc-typing-wrap"><div class="tc-dot"></div><div class="tc-dot"></div><div class="tc-dot"></div></div></div>';
+    msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight;
+  }
+
+  function tcRemoveTyping(){var t=document.getElementById('tcTypingEl');if(t)t.remove();}
+
+  function tcStream(text){
+    var msgs=document.getElementById('tcMsgs');
+    var wrap=document.createElement('div');wrap.className='tc-msg';
+    var av=document.createElement('div');av.className='tc-msg-av';av.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" fill="rgba(255,255,255,.9)"/></svg>';
+    var bub=document.createElement('div');bub.className='tc-msg-bub';
+    var p=document.createElement('p');bub.appendChild(p);
+    wrap.appendChild(av);wrap.appendChild(bub);msgs.appendChild(wrap);
+    var i=0;var cur=document.createElement('span');cur.className='tc-ai-cur';p.appendChild(cur);
+    var iv=setInterval(function(){
+      if(i<text.length){p.insertBefore(document.createTextNode(text[i]),cur);i++;msgs.scrollTop=msgs.scrollHeight;}
+      else{clearInterval(iv);cur.remove();tcHistory.push({role:'assistant',content:text});}
+    },10);
+  }
+
+  async function tcGetReply(msg){
+    tcShowTyping();
+    var messages=tcHistory.slice(-8).filter(function(m){return m.role==='user'||m.role==='assistant';});
+    // ensure last message is the user msg
+    if(!messages.length||messages[messages.length-1].content!==msg){
+      messages.push({role:'user',content:msg});
+    }
+    var sysMsg=TC_SYS+(tcUserName?'\n\nThe user\'s name is '+tcUserName+' and their email is '+tcUserEmail+'. Address them by first name.':'');
+    try{
+      var res=await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:300,system:sysMsg,messages:messages})
+      });
+      var data=await res.json();
+      var reply=data.content&&data.content[0]?data.content[0].text:'';
+      tcRemoveTyping();
+      if(reply)tcStream(reply);
+      else tcAddBot('Sorry, I\'m having a moment! Please email us at <a href="mailto:hello@tradecontext.ai"><strong>hello@tradecontext.ai</strong></a> and we\'ll help right away.');
+    }catch(e){
+      tcRemoveTyping();
+      tcAddBot(tcFallback(msg));
+    }
+  }
+
+  function tcFallback(q){
+    var n=tcUserName?tcUserName.split(' ')[0]:'there';
+    var ql=q.toLowerCase();
+    if(ql.includes('price')||ql.includes('cost')||ql.includes('plan')||ql.includes('how much'))
+      return 'Great question, '+n+'! <strong>Pro</strong> is £39.95/month (£407.49/year, 15% off) and <strong>Elite</strong> is £49.95/month (£509.49/year, 15% off). No free trial — card required from day one, but you can cancel anytime.';
+    if(ql.includes('trial')||ql.includes('free'))
+      return 'Hi '+n+'! There\'s no free trial — we\'re a premium platform paid from day one. You do get a <strong>2-minute free preview</strong> on the Dashboard and News Bias Feed so you can see the platform before subscribing.';
+    if(ql.includes('journal'))
+      return 'The <strong>AI Trading Journal</strong> is an Elite plan exclusive, '+n+'. It includes trade logging, a calendar heatmap, 6 analytics reports, playbooks, a notebook and an AI coach powered by Claude that analyses your performance.';
+    if(ql.includes('broker')||ql.includes('mt4')||ql.includes('mt5'))
+      return 'We support <strong>MT4, MT5, OANDA, Binance, Interactive Brokers and Coinbase</strong> on the Pro plan. Full live trade sync is coming with our backend update — you\'ll be the first to know, '+n+'!';
+    if(ql.includes('news')||ql.includes('bias'))
+      return 'The <strong>Live News Bias Feed</strong> scores breaking news as bullish or bearish in real time across US, EU, UK, Asia and Middle East. Each story gets an AI deep dive powered by Claude.';
+    if(ql.includes('funded')||ql.includes('ftmo')||ql.includes('prop'))
+      return 'The <strong>Funded Account Tracker</strong> is Elite only, '+n+'. We support FTMO, The5%ers, TopStep, MyForexFunds, True Forex Funds and Instant Funding — tracking rules, drawdown limits and daily progress.';
+    if(ql.includes('cancel')||ql.includes('refund'))
+      return 'You can cancel anytime from your account settings — no questions asked, '+n+'. For billing queries please email <a href="mailto:hello@tradecontext.ai"><strong>hello@tradecontext.ai</strong></a>.';
+    if(ql.includes('contact')||ql.includes('support'))
+      return 'You can reach us at <a href="mailto:hello@tradecontext.ai"><strong>hello@tradecontext.ai</strong></a>, '+n+'. We typically respond within a few hours during UK business hours.';
+    return 'Thanks for reaching out, '+n+'! For the most accurate answer please email <a href="mailto:hello@tradecontext.ai"><strong>hello@tradecontext.ai</strong></a> and our team will get back to you quickly. You can also explore the platform with a <strong>2-minute free preview</strong> on the Dashboard!';
+  }
+})();
+</script>
+
+</body>
+</html>

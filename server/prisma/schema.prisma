@@ -1,0 +1,282 @@
+// TradeContext.ai — Prisma schema
+// Mirrors the SQL schema from TRADECONTEXT_BRIEFING.md §5.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ───────────── ENUMS ─────────────
+enum Plan {
+  free
+  pro
+  elite
+}
+
+enum PlanStatus {
+  active
+  cancelled
+  past_due
+  trialing
+  incomplete
+}
+
+enum BrokerName {
+  oanda
+  binance
+  mt4
+  mt5
+  ibkr
+  coinbase
+  kraken
+}
+
+enum Direction {
+  long
+  short
+}
+
+enum Bias {
+  bull
+  bear
+  neutral
+}
+
+enum Impact {
+  high
+  medium
+  low
+}
+
+enum AlertCondition {
+  above
+  below
+}
+
+enum JournalEntryType {
+  trade
+  note
+  mistake
+  reflection
+}
+
+// ───────────── USERS ─────────────
+model User {
+  id                    String     @id @default(uuid())
+  email                 String     @unique
+  passwordHash          String     @map("password_hash")
+  plan                  Plan       @default(free)
+  planStatus            PlanStatus @default(active) @map("plan_status")
+  stripeCustomerId      String?    @unique @map("stripe_customer_id")
+  stripeSubscriptionId  String?    @unique @map("stripe_subscription_id")
+  emailVerified         Boolean    @default(false) @map("email_verified")
+  emailVerifyToken      String?    @map("email_verify_token")
+  passwordResetToken    String?    @map("password_reset_token")
+  passwordResetExpires  DateTime?  @map("password_reset_expires")
+  createdAt             DateTime   @default(now()) @map("created_at")
+  updatedAt             DateTime   @updatedAt @map("updated_at")
+
+  brokerConnections BrokerConnection[]
+  positions         Position[]
+  trades            Trade[]
+  journalEntries    JournalEntry[]
+  playbooks         Playbook[]
+  watchlist         WatchlistItem[]
+  alerts            Alert[]
+  fundedAccounts    FundedAccount[]
+
+  @@map("users")
+}
+
+// ───────────── BROKERS ─────────────
+model BrokerConnection {
+  id                 String     @id @default(uuid())
+  userId             String     @map("user_id")
+  brokerName         BrokerName @map("broker_name")
+  apiKeyEncrypted    String?    @map("api_key_encrypted") @db.Text
+  apiSecretEncrypted String?    @map("api_secret_encrypted") @db.Text
+  accountId          String?    @map("account_id")
+  isConnected        Boolean    @default(true) @map("is_connected")
+  lastSyncedAt       DateTime?  @map("last_synced_at")
+  createdAt          DateTime   @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("broker_connections")
+}
+
+model Position {
+  id           String    @id @default(uuid())
+  userId       String    @map("user_id")
+  brokerName   String    @map("broker_name")
+  symbol       String
+  direction    Direction
+  size         Decimal   @db.Decimal(15, 4)
+  entryPrice   Decimal   @map("entry_price") @db.Decimal(15, 5)
+  currentPrice Decimal?  @map("current_price") @db.Decimal(15, 5)
+  pnl          Decimal?  @db.Decimal(15, 2)
+  stopLoss     Decimal?  @map("stop_loss") @db.Decimal(15, 5)
+  takeProfit   Decimal?  @map("take_profit") @db.Decimal(15, 5)
+  openedAt     DateTime  @map("opened_at")
+  syncedAt     DateTime  @default(now()) @map("synced_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([symbol])
+  @@map("positions")
+}
+
+// ───────────── JOURNAL ─────────────
+model Trade {
+  id          String    @id @default(uuid())
+  userId      String    @map("user_id")
+  symbol      String
+  direction   Direction
+  size        Decimal   @db.Decimal(15, 4)
+  entryPrice  Decimal   @map("entry_price") @db.Decimal(15, 5)
+  exitPrice   Decimal?  @map("exit_price") @db.Decimal(15, 5)
+  stopLoss    Decimal?  @map("stop_loss") @db.Decimal(15, 5)
+  takeProfit  Decimal?  @map("take_profit") @db.Decimal(15, 5)
+  pnl         Decimal?  @db.Decimal(15, 2)
+  pnlR        Decimal?  @map("pnl_r") @db.Decimal(6, 2) // R-multiple
+  setupType   String?   @map("setup_type") // 'news_trade' | 'ai_playbook' | 'sr_level' etc
+  broker      String?
+  notes       String?   @db.Text
+  aiScore     Int?      @map("ai_score") // 0-100
+  openedAt    DateTime  @map("opened_at")
+  closedAt    DateTime? @map("closed_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  journalEntries JournalEntry[]
+
+  @@index([userId])
+  @@index([userId, openedAt])
+  @@map("trades")
+}
+
+model JournalEntry {
+  id        String           @id @default(uuid())
+  userId    String           @map("user_id")
+  entryType JournalEntryType @map("entry_type")
+  content   String           @db.Text
+  tradeId   String?          @map("trade_id")
+  createdAt DateTime         @default(now()) @map("created_at")
+
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trade Trade? @relation(fields: [tradeId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@map("journal_entries")
+}
+
+// ───────────── NEWS + PLAYBOOKS ─────────────
+model NewsStory {
+  id              String   @id @default(uuid())
+  finnhubId       String   @unique @map("finnhub_id")
+  headline        String   @db.Text
+  summary         String?  @db.Text
+  source          String?
+  url             String?  @db.Text
+  bias            Bias?
+  impact          Impact?
+  isBreaking      Boolean  @default(false) @map("is_breaking")
+  affectedAssets  String[] @map("affected_assets")
+  // Richer per-asset detail: [{ symbol, direction, expectedMovePct, rationale }]
+  affectedMarkets Json?    @map("affected_markets")
+  reasoning       String?  @db.Text
+  publishedAt     DateTime @map("published_at")
+  scoredAt        DateTime @default(now()) @map("scored_at")
+
+  playbooks Playbook[]
+
+  @@index([publishedAt])
+  @@index([isBreaking])
+  @@map("news_stories")
+}
+
+model Playbook {
+  id          String   @id @default(uuid())
+  userId      String?  @map("user_id")
+  symbol      String
+  newsId      String?  @map("news_id")
+  bias        Bias
+  confidence  Impact
+  bullEntry   Decimal? @map("bull_entry") @db.Decimal(15, 5)
+  bullTp      Decimal? @map("bull_tp") @db.Decimal(15, 5)
+  bullSl      Decimal? @map("bull_sl") @db.Decimal(15, 5)
+  bearEntry   Decimal? @map("bear_entry") @db.Decimal(15, 5)
+  bearTp      Decimal? @map("bear_tp") @db.Decimal(15, 5)
+  bearSl      Decimal? @map("bear_sl") @db.Decimal(15, 5)
+  reasoning   String?  @db.Text
+  keyLevels   String[] @map("key_levels")
+  generatedAt DateTime @default(now()) @map("generated_at")
+
+  user User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  news NewsStory? @relation(fields: [newsId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([symbol])
+  @@map("playbooks")
+}
+
+// ───────────── WATCHLIST + ALERTS ─────────────
+model WatchlistItem {
+  id      String   @id @default(uuid())
+  userId  String   @map("user_id")
+  symbol  String
+  addedAt DateTime @default(now()) @map("added_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, symbol])
+  @@index([userId])
+  @@map("watchlist")
+}
+
+model Alert {
+  id          String         @id @default(uuid())
+  userId      String         @map("user_id")
+  symbol      String
+  condition   AlertCondition
+  price       Decimal        @db.Decimal(15, 5)
+  triggered   Boolean        @default(false)
+  triggeredAt DateTime?      @map("triggered_at")
+  createdAt   DateTime       @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([symbol, triggered])
+  @@map("alerts")
+}
+
+// ───────────── FUNDED ACCOUNTS ─────────────
+model FundedAccount {
+  id                    String   @id @default(uuid())
+  userId                String   @map("user_id")
+  firmName              String   @map("firm_name") // 'ftmo' | 'the5ers' | 'topstep'
+  accountSize           Decimal  @map("account_size") @db.Decimal(15, 2)
+  profitTargetPct       Decimal  @map("profit_target_pct") @db.Decimal(5, 2)
+  dailyLossLimitPct     Decimal  @map("daily_loss_limit_pct") @db.Decimal(5, 2)
+  maxDrawdownPct        Decimal  @map("max_drawdown_pct") @db.Decimal(5, 2)
+  currentProfitPct      Decimal? @map("current_profit_pct") @db.Decimal(5, 2)
+  currentDailyLossPct   Decimal? @map("current_daily_loss_pct") @db.Decimal(5, 2)
+  phase                 String? // 'Phase 1' | 'Phase 2' | 'Funded'
+  startDate             DateTime? @map("start_date") @db.Date
+  endDate               DateTime? @map("end_date") @db.Date
+  isActive              Boolean  @default(true) @map("is_active")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+  createdAt             DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("funded_accounts")
+}

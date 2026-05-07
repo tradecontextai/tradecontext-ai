@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TradeContext.ai — Privacy Policy</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#03060d;--bg2:#060c18;--bg3:#0a1220;--border:#142035;--blue:#0ea5e9;--text:#e2eaf4;--text2:#7a9ab8;--text3:#3a5570;--sans:'Outfit',sans-serif;--mono:'DM Mono',monospace;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);}
+.navbar{height:56px;background:rgba(3,6,13,.97);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 40px;}
+.nav-logo{font-size:18px;font-weight:800;letter-spacing:-.02em;text-decoration:none;color:var(--text);}
+.nav-logo span{color:var(--blue);}
+.back{font-family:var(--mono);font-size:10px;color:var(--text3);text-decoration:none;}
+.back:hover{color:var(--text2);}
+.content{max-width:760px;margin:60px auto;padding:0 40px 80px;}
+h1{font-size:32px;font-weight:800;letter-spacing:-.02em;margin-bottom:8px;}
+.date{font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:40px;}
+h2{font-size:18px;font-weight:700;margin:32px 0 10px;color:var(--text);}
+p{font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:14px;}
+ul{padding-left:20px;margin-bottom:14px;}
+li{font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:6px;}
+a{color:var(--blue);}
+.disclaimer{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:16px;margin:24px 0;font-size:13px;color:var(--text2);line-height:1.7;}
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <a class="nav-logo" href="home.html">TradeContext<span>.ai</span></a>
+  <a href="home.html" class="back">← Back to Home</a>
+</nav>
+<div class="content">
+<h1>Privacy Policy</h1>
+<div class="date">Last updated: April 2026</div>
+<h2>1. Information We Collect</h2>
+<p>We collect information you provide when signing up (name, email, payment details) and data generated from your use of the platform (trading journal entries, watchlists, broker connections).</p>
+<h2>2. How We Use Your Information</h2>
+<ul>
+<li>To provide and improve our services</li>
+<li>To process your subscription payments via Stripe</li>
+<li>To send you account-related emails and product updates</li>
+<li>To generate AI-powered trade analysis and journal reviews</li>
+<li>To personalise your experience on the platform</li>
+</ul>
+<h2>3. Broker Data</h2>
+<p>When you connect a broker, we receive read-only access to your trade history and open positions. This data is used solely to power your journal and analytics. We never share your broker data with third parties.</p>
+<h2>4. Data Security</h2>
+<p>All data is encrypted in transit (TLS) and at rest (AES-256). API keys and broker credentials are stored using industry-standard encryption. We never store your broker passwords.</p>
+<h2>5. Third Party Services</h2>
+<p>We use Stripe for payment processing, Anthropic (Claude) for AI features, and Finnhub for market data. Each has their own privacy policy governing their data practices.</p>
+<h2>6. Your Rights</h2>
+<p>You have the right to access, correct or delete your personal data at any time. Contact us at <a href="mailto:hello@tradecontext.ai">hello@tradecontext.ai</a> to exercise these rights.</p>
+<h2>7. Cookies</h2>
+<p>We use essential cookies to keep you logged in and remember your preferences. We do not use advertising cookies or sell your data to advertisers.</p>
+<h2>8. Contact</h2>
+<p>Questions? Email us at <a href="mailto:hello@tradecontext.ai">hello@tradecontext.ai</a></p>
+</div>
+
+
+<!-- ═══ AI LIVE CHAT WIDGET v2 ═══ -->
+<style>
+.tc-chat-btn{position:fixed;bottom:24px;right:24px;width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,#8b5cf6);box-shadow:0 4px 24px rgba(14,165,233,.4);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:9999;border:none;transition:.3s;animation:tcPulse 3s ease-in-out infinite;}
+.tc-chat-btn:hover{transform:scale(1.08);}
+.tc-chat-btn.open{animation:none;background:linear-gradient(135deg,#ef4444,#dc2626);}
+.tc-chat-btn svg{transition:.3s;}
+@keyframes tcPulse{0%,100%{box-shadow:0 4px 24px rgba(14,165,233,.4);}50%{box-shadow:0 4px 40px rgba(14,165,233,.6);}}
+.tc-unread{position:absolute;top:0;right:0;width:18px;height:18px;background:#ef4444;border-radius:50%;border:2px solid var(--bg,#03060d);font-family:'DM Mono',monospace;font-size:9px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;}
+.tc-chat-bubble{position:fixed;bottom:92px;right:24px;background:#0a1220;border:1px solid #1e3050;color:#e2eaf4;font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;padding:10px 14px;border-radius:12px 12px 4px 12px;z-index:9998;box-shadow:0 8px 32px rgba(0,0,0,.5);animation:tcBubble 5s ease 1.5s both;white-space:nowrap;}
+.tc-chat-bubble::after{content:'';position:absolute;bottom:-6px;right:20px;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:6px solid #1e3050;}
+@keyframes tcBubble{0%{opacity:0;transform:translateY(8px);}10%{opacity:1;transform:translateY(0);}85%{opacity:1;}100%{opacity:0;pointer-events:none;}}
+
+/* WINDOW */
+.tc-chat-window{position:fixed;bottom:96px;right:24px;width:380px;background:#03060d;border:1px solid #1e3050;border-radius:14px;box-shadow:0 32px 80px rgba(0,0,0,.8);z-index:9997;display:none;flex-direction:column;overflow:hidden;max-height:580px;}
+.tc-chat-window.open{display:flex;animation:tcSlideUp .3s ease;}
+@keyframes tcSlideUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+
+/* HEADER */
+.tc-header{background:linear-gradient(135deg,#060c18,#0a1220);border-bottom:1px solid #142035;padding:14px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.tc-header-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,#8b5cf6);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.tc-header-info{flex:1;}
+.tc-header-name{font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;color:#e2eaf4;}
+.tc-header-status{display:flex;align-items:center;gap:5px;font-family:'DM Mono',monospace;font-size:9px;color:#34d399;text-transform:uppercase;letter-spacing:.1em;margin-top:2px;}
+.tc-status-dot{width:5px;height:5px;border-radius:50%;background:#34d399;animation:tcBlink 1.4s infinite;}
+@keyframes tcBlink{0%,100%{opacity:1;}50%{opacity:.3;}}
+.tc-close-btn{font-size:22px;color:#3a5570;cursor:pointer;background:none;border:none;line-height:1;transition:.2s;font-family:sans-serif;padding:0 4px;}.tc-close-btn:hover{color:#e2eaf4;}
+
+/* INTRO FORM */
+.tc-intro{padding:20px;display:flex;flex-direction:column;gap:14px;}
+.tc-intro-title{font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;color:#e2eaf4;text-align:center;}
+.tc-intro-sub{font-family:'Outfit',sans-serif;font-size:12px;color:#7a9ab8;text-align:center;line-height:1.6;margin-top:-8px;}
+.tc-form-field{display:flex;flex-direction:column;gap:4px;}
+.tc-form-label{font-family:'DM Mono',monospace;font-size:8px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#3a5570;}
+.tc-form-input{background:#0a1220;border:1px solid #1e3050;color:#e2eaf4;font-family:'Outfit',sans-serif;font-size:13px;padding:10px 13px;border-radius:6px;outline:none;transition:.2s;width:100%;}
+.tc-form-input:focus{border-color:#0ea5e9;}
+.tc-form-input::placeholder{color:#3a5570;}
+.tc-start-btn{background:linear-gradient(135deg,#0ea5e9,#8b5cf6);color:#fff;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;padding:12px;border-radius:8px;border:none;cursor:pointer;transition:.2s;width:100%;display:flex;align-items:center;justify-content:center;gap:6px;}
+.tc-start-btn:hover{opacity:.9;}
+.tc-form-note{font-family:'DM Mono',monospace;font-size:9px;color:#3a5570;text-align:center;}
+
+/* CHAT AREA */
+.tc-chat-area{display:none;flex-direction:column;flex:1;overflow:hidden;}
+.tc-chat-area.show{display:flex;}
+.tc-user-info-bar{padding:8px 14px;background:#060c18;border-bottom:1px solid #142035;display:flex;align-items:center;gap:8px;}
+.tc-user-avatar{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,#8b5cf6);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;}
+.tc-user-name-lbl{font-family:'DM Mono',monospace;font-size:10px;color:#7a9ab8;font-weight:600;}
+
+/* MESSAGES */
+.tc-messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;scrollbar-width:thin;scrollbar-color:#1e3050 transparent;min-height:200px;max-height:320px;}
+.tc-msg{display:flex;gap:8px;animation:tcMsgIn .2s ease;}
+@keyframes tcMsgIn{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:translateY(0);}}
+.tc-msg-av{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,#8b5cf6);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.tc-msg-bub{background:#0a1220;border:1px solid #142035;border-radius:4px 12px 12px 12px;padding:10px 12px;max-width:270px;}
+.tc-msg-bub p{font-family:'Outfit',sans-serif;font-size:12px;color:#7a9ab8;line-height:1.65;margin:0;}
+.tc-msg-bub strong{color:#e2eaf4;font-weight:600;}
+.tc-msg-bub a{color:#0ea5e9;text-decoration:none;}
+.tc-msg.tc-user{flex-direction:row-reverse;}
+.tc-msg.tc-user .tc-msg-bub{background:linear-gradient(135deg,rgba(14,165,233,.15),rgba(139,92,246,.1));border-color:rgba(14,165,233,.3);border-radius:12px 4px 12px 12px;}
+.tc-msg.tc-user .tc-msg-bub p{color:#e2eaf4;}
+
+/* QUICK REPLIES */
+.tc-quick{padding:8px 14px 4px;display:flex;gap:5px;flex-wrap:wrap;flex-shrink:0;}
+.tc-qbtn{background:#0a1220;border:1px solid #142035;color:#7a9ab8;font-family:'DM Mono',monospace;font-size:8px;font-weight:600;padding:4px 9px;border-radius:100px;cursor:pointer;transition:.2s;white-space:nowrap;letter-spacing:.04em;}
+.tc-qbtn:hover{border-color:#0ea5e9;color:#0ea5e9;}
+
+/* INPUT ROW */
+.tc-input-row{padding:10px 12px;border-top:1px solid #142035;display:flex;gap:8px;flex-shrink:0;background:#060c18;}
+.tc-input{flex:1;background:#0a1220;border:1px solid #1e3050;color:#e2eaf4;font-family:'Outfit',sans-serif;font-size:12px;padding:9px 12px;border-radius:8px;outline:none;transition:.2s;}
+.tc-input:focus{border-color:#0ea5e9;}
+.tc-input::placeholder{color:#3a5570;}
+.tc-send-btn{background:linear-gradient(135deg,#0ea5e9,#8b5cf6);color:#fff;width:36px;height:36px;border-radius:8px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;flex-shrink:0;}
+.tc-send-btn:hover{opacity:.9;}
+
+/* TYPING */
+.tc-typing-wrap{display:flex;gap:4px;align-items:center;padding:6px 2px;}
+.tc-dot{width:6px;height:6px;border-radius:50%;background:#3a5570;animation:tcTypeDot 1.2s ease-in-out infinite;}
+.tc-dot:nth-child(2){animation-delay:.2s;}.tc-dot:nth-child(3){animation-delay:.4s;}
+@keyframes tcTypeDot{0%,100%{transform:translateY(0);opacity:.4;}50%{transform:translateY(-4px);opacity:1;}}
+.tc-ai-cur{display:inline-block;width:2px;height:12px;background:#0ea5e9;margin-left:1px;animation:tcBlink .7s infinite;vertical-align:text-bottom;}
+</style>
+
+<!-- Bubble -->
+<div class="tc-chat-bubble" id="tcBubble">💬 &nbsp;Questions? Chat with our AI now!</div>
+
+<!-- Toggle button with speech bubble SVG -->
+<button class="tc-chat-btn" id="tcChatBtn" onclick="tcToggle()" title="Chat with TradeContext AI">
+  <span class="tc-unread" id="tcUnread">1</span>
+  <svg id="tcBtnIcon" width="26" height="26" viewBox="0 0 24 24" fill="none">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" fill="rgba(255,255,255,.95)" stroke="none"/>
+    <circle cx="8" cy="10" r="1.2" fill="#0ea5e9"/>
+    <circle cx="12" cy="10" r="1.2" fill="#8b5cf6"/>
+    <circle cx="16" cy="10" r="1.2" fill="#0ea5e9"/>
+  </svg>
+  <svg id="tcBtnClose" width="22" height="22" viewBox="0 0 24 24" fill="none" style="display:none;">
+    <path d="M18 6L6 18M6 6l12 12" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+  </svg>
+</button>
+
+<!-- Chat window -->
+<div class="tc-chat-window" id="tcWindow">
+
+  <!-- Header -->
+  <div class="tc-header">
+    <div class="tc-header-avatar">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" fill="rgba(255,255,255,.9)"/>
+      </svg>
+    </div>
+    <div class="tc-header-info">
+      <div class="tc-header-name">TradeContext AI Support</div>
+      <div class="tc-header-status"><div class="tc-status-dot"></div>Online · Powered by Claude</div>
+    </div>
+    <button class="tc-close-btn" onclick="tcToggle()">×</button>
+  </div>
+
+  <!-- INTRO FORM -->
+  <div class="tc-intro" id="tcIntro">
+    <div style="text-align:center;font-size:32px;margin-bottom:-4px;">👋</div>
+    <div class="tc-intro-title">Hi there! How can we help?</div>
+    <div class="tc-intro-sub">Enter your details and we'll get back to you instantly with our AI assistant.</div>
+    <div class="tc-form-field">
+      <label class="tc-form-label">Your Name</label>
+      <input class="tc-form-input" id="tcName" type="text" placeholder="e.g. James Smith" autocomplete="name">
+    </div>
+    <div class="tc-form-field">
+      <label class="tc-form-label">Email Address</label>
+      <input class="tc-form-input" id="tcEmail" type="email" placeholder="james@example.com" autocomplete="email">
+    </div>
+    <div class="tc-form-field">
+      <label class="tc-form-label">Your Question</label>
+      <input class="tc-form-input" id="tcFirstQ" type="text" placeholder="e.g. What does the Pro plan include?" onkeydown="if(event.key==='Enter')tcStart()">
+    </div>
+    <button class="tc-start-btn" onclick="tcStart()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" fill="#fff"/></svg>
+      Start Chat →
+    </button>
+    <div class="tc-form-note">🔒 Your details are kept private and never shared.</div>
+  </div>
+
+  <!-- CHAT AREA -->
+  <div class="tc-chat-area" id="tcChatArea">
+    <div class="tc-user-info-bar">
+      <div class="tc-user-avatar" id="tcUserAvatar">?</div>
+      <div class="tc-user-name-lbl" id="tcUserLbl">Chatting as Guest</div>
+    </div>
+    <div class="tc-messages" id="tcMsgs"></div>
+    <div class="tc-quick" id="tcQuick">
+      <button class="tc-qbtn" onclick="tcQ('What plans do you offer?')">💳 Pricing</button>
+      <button class="tc-qbtn" onclick="tcQ('Is there a free trial?')">❓ Free trial</button>
+      <button class="tc-qbtn" onclick="tcQ('How does the news bias feed work?')">📡 News feed</button>
+      <button class="tc-qbtn" onclick="tcQ('How do I connect my broker?')">🔌 Broker</button>
+      <button class="tc-qbtn" onclick="tcQ('Tell me about the Trading Journal')">📓 Journal</button>
+      <button class="tc-qbtn" onclick="tcQ('What funded account firms do you support?')">🏆 Funded accounts</button>
+    </div>
+    <div class="tc-input-row">
+      <input class="tc-input" id="tcMsg" type="text" placeholder="Type your message..." onkeydown="if(event.key==='Enter')tcSend()">
+      <button class="tc-send-btn" onclick="tcSend()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var tcOpen=false;
+  var tcHistory=[];
+  var tcUserName='';
+  var tcUserEmail='';
+  var TC_SYS='You are the friendly AI support assistant for TradeContext.ai — a premium AI-powered market intelligence platform for serious traders.\n\nBe warm, concise and professional. Always answer in 2-4 sentences. Address the user by their first name when you know it.\n\nKey facts:\n- Two plans: Pro £39.95/mo (£407.49/yr, 15% off) | Elite £49.95/mo (£509.49/yr, 15% off)\n- No free trial — paid from day one. Card required. Cancel anytime.\n- Pro: Live News Bias Feed, AI Trade Playbooks, TradingView Charts (29 assets), Broker Hub (MT4/MT5/OANDA/Binance/IBKR/Coinbase), Watchlist, Alerts, Economic Calendar\n- Elite: Everything in Pro + AI Trading Journal + Funded Account Tracker (FTMO, The5%ers, TopStep, MyForexFunds, True Forex Funds, Instant Funding)\n- 2-minute free preview on Dashboard and News Bias Feed\n- AI powered by Claude (Anthropic)\n- TradingView charts — no TradingView account needed for basic use\n- Contact: hello@tradecontext.ai\n- For billing/account issues always direct to hello@tradecontext.ai\n- Never give financial/trading advice — only platform information';
+
+  window.tcToggle=function(){
+    tcOpen=!tcOpen;
+    var icon=document.getElementById('tcBtnIcon');
+    var close=document.getElementById('tcBtnClose');
+    var btn=document.getElementById('tcChatBtn');
+    var win=document.getElementById('tcWindow');
+    var unread=document.getElementById('tcUnread');
+    if(tcOpen){
+      btn.classList.add('open');
+      icon.style.display='none';
+      close.style.display='block';
+      win.classList.add('open');
+      if(unread)unread.style.display='none';
+      document.getElementById('tcBubble').style.display='none';
+      setTimeout(function(){
+        var f=document.getElementById('tcName');
+        if(f&&!tcUserName)f.focus();
+        else if(document.getElementById('tcMsg'))document.getElementById('tcMsg').focus();
+      },200);
+    } else {
+      btn.classList.remove('open');
+      icon.style.display='block';
+      close.style.display='none';
+      win.classList.remove('open');
+    }
+  };
+
+  window.tcStart=function(){
+    var name=document.getElementById('tcName').value.trim();
+    var email=document.getElementById('tcEmail').value.trim();
+    var q=document.getElementById('tcFirstQ').value.trim();
+    if(!name){document.getElementById('tcName').focus();document.getElementById('tcName').style.borderColor='#ef4444';return;}
+    if(!email||!email.includes('@')){document.getElementById('tcEmail').focus();document.getElementById('tcEmail').style.borderColor='#ef4444';return;}
+    tcUserName=name;
+    tcUserEmail=email;
+    // Show chat area
+    document.getElementById('tcIntro').style.display='none';
+    document.getElementById('tcChatArea').classList.add('show');
+    // Set user label
+    var initial=name.charAt(0).toUpperCase();
+    document.getElementById('tcUserAvatar').textContent=initial;
+    document.getElementById('tcUserLbl').textContent='Chatting as '+name.split(' ')[0];
+    // Welcome message
+    tcAddBot('Hi <strong>'+name.split(' ')[0]+'</strong>! 👋 Welcome to TradeContext.ai. I\'m your AI assistant — ask me anything about our platform and I\'ll help you right away!');
+    // If they typed a question, send it
+    if(q){
+      setTimeout(function(){
+        tcAddUser(q);
+        tcGetReply(q);
+      },600);
+    }
+  };
+
+  window.tcQ=function(q){
+    document.getElementById('tcQuick').style.display='none';
+    tcAddUser(q);
+    tcGetReply(q);
+  };
+
+  window.tcSend=function(){
+    var inp=document.getElementById('tcMsg');
+    var msg=inp.value.trim();
+    if(!msg)return;
+    inp.value='';
+    document.getElementById('tcQuick').style.display='none';
+    tcAddUser(msg);
+    tcGetReply(msg);
+  };
+
+  function tcAddUser(text){
+    var msgs=document.getElementById('tcMsgs');
+    var div=document.createElement('div');
+    div.className='tc-msg tc-user';
+    div.innerHTML='<div class="tc-msg-bub"><p>'+text+'</p></div>';
+    msgs.appendChild(div);
+    msgs.scrollTop=msgs.scrollHeight;
+    tcHistory.push({role:'user',content:text});
+  }
+
+  function tcAddBot(html){
+    var msgs=document.getElementById('tcMsgs');
+    var div=document.createElement('div');
+    div.className='tc-msg';
+    div.innerHTML='<div class="tc-msg-av"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" fill="rgba(255,255,255,.9)"/></svg></div><div class="tc-msg-bub"><p>'+html+'</p></div>';
+    msgs.appendChild(div);
+    msgs.scrollTop=msgs.scrollHeight;
+    tcHistory.push({role:'assistant',content:html.replace(/<[^>]+>/g,'')});
+  }
+
+  function tcShowTyping(){
+    var msgs=document.getElementById('tcMsgs');
+    var div=document.createElement('div');
+    div.className='tc-msg';div.id='tcTypingEl';
+    div.innerHTML='<div class="tc-msg-av"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" fill="rgba(255,255,255,.9)"/></svg></div><div class="tc-msg-bub"><div class="tc-typing-wrap"><div class="tc-dot"></div><div class="tc-dot"></div><div class="tc-dot"></div></div></div>';
+    msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight;
+  }
+
+  function tcRemoveTyping(){var t=document.getElementById('tcTypingEl');if(t)t.remove();}
+
+  function tcStream(text){
+    var msgs=document.getElementById('tcMsgs');
+    var wrap=document.createElement('div');wrap.className='tc-msg';
+    var av=document.createElement('div');av.className='tc-msg-av';av.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" fill="rgba(255,255,255,.9)"/></svg>';
+    var bub=document.createElement('div');bub.className='tc-msg-bub';
+    var p=document.createElement('p');bub.appendChild(p);
+    wrap.appendChild(av);wrap.appendChild(bub);msgs.appendChild(wrap);
+    var i=0;var cur=document.createElement('span');cur.className='tc-ai-cur';p.appendChild(cur);
+    var iv=setInterval(function(){
+      if(i<text.length){p.insertBefore(document.createTextNode(text[i]),cur);i++;msgs.scrollTop=msgs.scrollHeight;}
+      else{clearInterval(iv);cur.remove();tcHistory.push({role:'assistant',content:text});}
+    },10);
+  }
+
+  async function tcGetReply(msg){
+    tcShowTyping();
+    var messages=tcHistory.slice(-8).filter(function(m){return m.role==='user'||m.role==='assistant';});
+    // ensure last message is the user msg
+    if(!messages.length||messages[messages.length-1].content!==msg){
+      messages.push({role:'user',content:msg});
+    }
+    var sysMsg=TC_SYS+(tcUserName?'\n\nThe user\'s name is '+tcUserName+' and their email is '+tcUserEmail+'. Address them by first name.':'');
+    try{
+      var res=await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:300,system:sysMsg,messages:messages})
+      });
+      var data=await res.json();
+      var reply=data.content&&data.content[0]?data.content[0].text:'';
+      tcRemoveTyping();
+      if(reply)tcStream(reply);
+      else tcAddBot('Sorry, I\'m having a moment! Please email us at <a href="mailto:hello@tradecontext.ai"><strong>hello@tradecontext.ai</strong></a> and we\'ll help right away.');
+    }catch(e){
+      tcRemoveTyping();
+      tcAddBot(tcFallback(msg));
+    }
+  }
+
+  function tcFallback(q){
+    var n=tcUserName?tcUserName.split(' ')[0]:'there';
+    var ql=q.toLowerCase();
+    if(ql.includes('price')||ql.includes('cost')||ql.includes('plan')||ql.includes('how much'))
+      return 'Great question, '+n+'! <strong>Pro</strong> is £39.95/month (£407.49/year, 15% off) and <strong>Elite</strong> is £49.95/month (£509.49/year, 15% off). No free trial — card required from day one, but you can cancel anytime.';
+    if(ql.includes('trial')||ql.includes('free'))
+      return 'Hi '+n+'! There\'s no free trial — we\'re a premium platform paid from day one. You do get a <strong>2-minute free preview</strong> on the Dashboard and News Bias Feed so you can see the platform before subscribing.';
+    if(ql.includes('journal'))
+      return 'The <strong>AI Trading Journal</strong> is an Elite plan exclusive, '+n+'. It includes trade logging, a calendar heatmap, 6 analytics reports, playbooks, a notebook and an AI coach powered by Claude that analyses your performance.';
+    if(ql.includes('broker')||ql.includes('mt4')||ql.includes('mt5'))
+      return 'We support <strong>MT4, MT5, OANDA, Binance, Interactive Brokers and Coinbase</strong> on the Pro plan. Full live trade sync is coming with our backend update — you\'ll be the first to know, '+n+'!';
+    if(ql.includes('news')||ql.includes('bias'))
+      return 'The <strong>Live News Bias Feed</strong> scores breaking news as bullish or bearish in real time across US, EU, UK, Asia and Middle East. Each story gets an AI deep dive powered by Claude.';
+    if(ql.includes('funded')||ql.includes('ftmo')||ql.includes('prop'))
+      return 'The <strong>Funded Account Tracker</strong> is Elite only, '+n+'. We support FTMO, The5%ers, TopStep, MyForexFunds, True Forex Funds and Instant Funding — tracking rules, drawdown limits and daily progress.';
+    if(ql.includes('cancel')||ql.includes('refund'))
+      return 'You can cancel anytime from your account settings — no questions asked, '+n+'. For billing queries please email <a href="mailto:hello@tradecontext.ai"><strong>hello@tradecontext.ai</strong></a>.';
+    if(ql.includes('contact')||ql.includes('support'))
+      return 'You can reach us at <a href="mailto:hello@tradecontext.ai"><strong>hello@tradecontext.ai</strong></a>, '+n+'. We typically respond within a few hours during UK business hours.';
+    return 'Thanks for reaching out, '+n+'! For the most accurate answer please email <a href="mailto:hello@tradecontext.ai"><strong>hello@tradecontext.ai</strong></a> and our team will get back to you quickly. You can also explore the platform with a <strong>2-minute free preview</strong> on the Dashboard!';
+  }
+})();
+</script>
+
+</body>
+</html>

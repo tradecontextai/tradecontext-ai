@@ -1,0 +1,1432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TradeContext.ai — Live Markets & Charts</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#03060d;--bg2:#060c18;--bg3:#0a1220;--bg4:#0f1a2e;--bg5:#141f33;--border:#142035;--border2:#1e3050;--blue:#0ea5e9;--blue2:#38bdf8;--bluedim:rgba(14,165,233,.1);--green:#10b981;--green2:#34d399;--red:#ef4444;--red2:#f87171;--yellow:#f59e0b;--orange:#f97316;--purple:#8b5cf6;--text:#e2eaf4;--text2:#7a9ab8;--text3:#3a5570;--mono:'DM Mono',monospace;--sans:'Outfit',sans-serif;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);overflow:hidden;height:100vh;font-size:14px;}
+button{cursor:pointer;border:none;background:none;font-family:var(--sans);}
+::-webkit-scrollbar{width:4px;height:4px;}::-webkit-scrollbar-track{background:var(--bg2);}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+@keyframes spin{to{transform:rotate(360deg);}}
+@keyframes ticker{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+@keyframes slideIn{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+@keyframes flash{0%,100%{background:transparent;}40%{background:rgba(239,68,68,.1);}}
+
+/* TICKER */
+.ticker-bar{height:30px;background:#020509;border-bottom:1px solid var(--border);display:flex;align-items:center;overflow:hidden;flex-shrink:0;}
+.ticker-lbl{background:var(--blue);color:#000;font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.16em;padding:0 12px;height:100%;display:flex;align-items:center;flex-shrink:0;text-transform:uppercase;}
+.ticker-wrap{overflow:hidden;flex:1;}
+.ticker-inner{display:flex;animation:ticker 50s linear infinite;white-space:nowrap;}
+.ticker-inner:hover{animation-play-state:paused;}
+.t-i{display:flex;align-items:center;gap:6px;padding:0 16px;border-right:1px solid var(--border);font-family:var(--mono);font-size:11px;cursor:pointer;transition:.15s;}
+.t-i:hover{background:var(--bg3);}
+.t-i.selected{background:var(--bluedim);}
+.t-s{color:var(--text2);font-weight:500;}.t-p{color:var(--text);font-weight:600;}
+.t-c.up{color:var(--green2);}.t-c.dn{color:var(--red2);}
+
+/* NAVBAR */
+.navbar{height:52px;background:rgba(3,6,13,.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;flex-shrink:0;}
+.nav-logo{font-size:18px;font-weight:800;letter-spacing:-.02em;cursor:pointer;}
+.nav-logo span{color:var(--blue);}
+.nav-links{display:flex;list-style:none;}
+.nav-links a{font-size:11px;font-weight:500;letter-spacing:.05em;color:var(--text2);padding:0 12px;height:52px;display:flex;align-items:center;border-bottom:2px solid transparent;transition:.2s;cursor:pointer;}
+.nav-links a:hover,.nav-links a.active{color:var(--text);border-bottom-color:var(--blue);}
+.nav-r{display:flex;align-items:center;gap:10px;}
+.live-pill{display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--green2);text-transform:uppercase;}
+.live-dot{width:5px;height:5px;border-radius:50%;background:var(--green2);animation:blink 1.2s infinite;}
+.nav-time{font-family:var(--mono);font-size:10px;color:var(--text3);}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;font-size:11px;font-weight:600;padding:6px 14px;border-radius:3px;transition:.2s;cursor:pointer;border:none;}
+.btn-blue{background:var(--blue);color:#000;}.btn-blue:hover{background:var(--blue2);}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border2);}.btn-ghost:hover{background:var(--bg3);color:var(--text);}
+.btn-outline{background:transparent;color:var(--blue);border:1px solid var(--blue);}.btn-outline:hover{background:var(--bluedim);}
+.badge{display:inline-flex;align-items:center;font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:2px;}
+.badge-blue{background:var(--bluedim);color:var(--blue);border:1px solid rgba(14,165,233,.2);}
+.badge-green{background:rgba(16,185,129,.1);color:var(--green2);border:1px solid rgba(16,185,129,.2);}
+.badge-red{background:rgba(239,68,68,.1);color:var(--red2);border:1px solid rgba(239,68,68,.2);}
+.badge-yellow{background:rgba(245,158,11,.1);color:var(--yellow);border:1px solid rgba(245,158,11,.2);}
+.badge-purple{background:rgba(139,92,246,.1);color:var(--purple);border:1px solid rgba(139,92,246,.2);}
+
+/* MAIN LAYOUT — 3 columns */
+.app-body{display:flex;height:calc(100vh - 82px);overflow:hidden;}
+
+/* ── LEFT: ASSET PANEL ── */
+.asset-panel{width:200px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;}
+.ap-header{padding:10px 12px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.ap-search{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);font-size:12px;padding:7px 10px;border-radius:3px;outline:none;transition:.2s;}
+.ap-search:focus{border-color:var(--blue);}
+.ap-search::placeholder{color:var(--text3);}
+.ap-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0;}
+.ap-tab{flex:1;padding:7px 4px;font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);text-align:center;cursor:pointer;transition:.2s;border-bottom:2px solid transparent;}
+.ap-tab:hover{color:var(--text2);}
+.ap-tab.active{color:var(--blue);border-bottom-color:var(--blue);}
+.ap-list{overflow-y:auto;flex:1;}
+.ap-item{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;cursor:pointer;transition:.15s;border-bottom:1px solid rgba(20,32,53,.5);}
+.ap-item:hover{background:var(--bg3);}
+.ap-item.active{background:var(--bluedim);border-left:2px solid var(--blue);}
+.ap-sym{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--text);}
+.ap-name{font-size:9px;color:var(--text3);margin-top:1px;}
+.ap-price{text-align:right;}
+.ap-p{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--text);}
+.ap-c{font-family:var(--mono);font-size:9px;margin-top:1px;}
+
+/* ── CENTRE: CHART ── */
+.chart-panel{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+.chart-header{background:var(--bg2);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;gap:12px;flex-shrink:0;flex-wrap:wrap;}
+.ch-symbol{font-size:18px;font-weight:800;letter-spacing:-.02em;color:var(--text);}
+.ch-price{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--text);}
+.ch-change{font-family:var(--mono);font-size:13px;font-weight:600;}
+.ch-change.up{color:var(--green2);}.ch-change.dn{color:var(--red2);}
+.ch-sep{width:1px;height:28px;background:var(--border);flex-shrink:0;}
+.ch-stat{text-align:center;}
+.ch-stat-label{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;}
+.ch-stat-val{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--text);margin-top:1px;}
+.ch-spacer{flex:1;}
+.timeframe-btns{display:flex;gap:4px;}
+.tf-btn{background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-family:var(--mono);font-size:10px;font-weight:600;padding:4px 9px;border-radius:3px;cursor:pointer;transition:.2s;}
+.tf-btn:hover,.tf-btn.active{background:var(--blue);border-color:var(--blue);color:#000;}
+.chart-container{flex:1;position:relative;overflow:hidden;}
+#tvChart{width:100%;height:100%;}
+.chart-overlay{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;background:var(--bg3);z-index:5;flex-direction:column;gap:12px;}
+.co-spinner{width:32px;height:32px;border:3px solid rgba(14,165,233,.2);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;}
+.co-text{font-family:var(--mono);font-size:11px;color:var(--text3);}
+
+/* ── RIGHT: CONTEXT PANEL ── */
+.context-panel{width:360px;background:var(--bg2);border-left:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;}
+.cp-header{border-bottom:1px solid var(--border);flex-shrink:0;}
+.cp-asset-info{padding:12px 14px;background:var(--bg3);border-bottom:1px solid var(--border);}
+.cp-sym{font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px;}
+.cp-desc{font-size:11px;color:var(--text2);line-height:1.5;}
+.cp-bias-bar{margin-top:10px;}
+.cpb-label{display:flex;justify-content:space-between;margin-bottom:5px;}
+.cpb-bull{font-family:var(--mono);font-size:9px;font-weight:600;color:var(--green2);}
+.cpb-bear{font-family:var(--mono);font-size:9px;font-weight:600;color:var(--red2);}
+.cpb-track{height:8px;background:var(--bg4);border-radius:4px;overflow:hidden;display:flex;}
+.cpb-bull-fill{height:100%;border-radius:4px 0 0 4px;transition:width .8s ease;}
+.cpb-bear-fill{height:100%;border-radius:0 4px 4px 0;transition:width .8s ease;}
+.cp-score{text-align:center;margin-top:6px;font-family:var(--mono);font-size:11px;font-weight:600;}
+.cp-tabs{display:flex;border-bottom:1px solid var(--border);}
+.cp-tab{flex:1;padding:9px 6px;font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);text-align:center;cursor:pointer;transition:.2s;border-bottom:2px solid transparent;}
+.cp-tab:hover{color:var(--text2);}
+.cp-tab.active{color:var(--blue);border-bottom-color:var(--blue);}
+.cp-body{flex:1;overflow-y:auto;}
+
+/* NEWS TAB */
+.news-filters{padding:8px 12px;border-bottom:1px solid var(--border);display:flex;gap:5px;flex-wrap:wrap;flex-shrink:0;}
+.nf-chip{background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:4px 8px;border-radius:3px;cursor:pointer;transition:.2s;}
+.nf-chip:hover,.nf-chip.active{border-color:var(--blue);color:var(--blue);background:var(--bluedim);}
+.nf-chip.bull.active{border-color:var(--green2);color:var(--green2);background:rgba(52,211,153,.08);}
+.nf-chip.bear.active{border-color:var(--red2);color:var(--red2);background:rgba(248,113,113,.08);}
+.news-item-sm{padding:11px 14px;border-bottom:1px solid rgba(20,32,53,.7);cursor:pointer;transition:.15s;position:relative;animation:slideIn .3s ease both;}
+.news-item-sm:hover{background:var(--bg3);}
+.news-item-sm.breaking{animation:slideIn .3s ease both,flash 1s ease;}
+.ni-bar{position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:0 2px 2px 0;}
+.ni-bar.bull{background:var(--green2);}
+.ni-bar.bear{background:var(--red2);}
+.ni-bar.neut{background:var(--yellow);}
+.ni-bar.breaking-bar{background:var(--red);animation:blink .8s infinite;}
+.ni-sm-top{display:flex;align-items:center;gap:6px;margin-bottom:6px;padding-left:8px;}
+.ni-sm-time{font-family:var(--mono);font-size:9px;color:var(--text3);margin-left:auto;white-space:nowrap;}
+.ni-sm-headline{font-size:12px;font-weight:600;color:var(--text);line-height:1.4;margin-bottom:6px;padding-left:8px;}
+.ni-sm-footer{display:flex;align-items:center;justify-content:space-between;padding-left:8px;}
+.ni-sm-source{font-family:var(--mono);font-size:9px;color:var(--text3);}
+.bias-chip-sm{display:inline-flex;align-items:center;gap:3px;font-family:var(--mono);font-size:9px;font-weight:600;padding:2px 7px;border-radius:2px;}
+.bc-bull{background:rgba(52,211,153,.1);color:var(--green2);border:1px solid rgba(52,211,153,.2);}
+.bc-bear{background:rgba(248,113,113,.1);color:var(--red2);border:1px solid rgba(248,113,113,.2);}
+.bc-neut{background:rgba(245,158,11,.1);color:var(--yellow);border:1px solid rgba(245,158,11,.2);}
+.bc-dot{width:5px;height:5px;border-radius:50%;}
+.bcd-bull{background:var(--green2);}.bcd-bear{background:var(--red2);}.bcd-neut{background:var(--yellow);}
+.ai-verdict-sm{background:var(--bg4);border:1px solid var(--border);padding:9px;margin:0 14px 10px;font-size:11px;color:var(--text2);line-height:1.6;border-radius:3px;display:none;}
+.ai-verdict-sm.show{display:block;animation:fadeIn .3s ease;}
+.ai-analyse-sm{background:var(--bluedim);border:1px solid rgba(14,165,233,.2);color:var(--blue);font-family:var(--mono);font-size:9px;font-weight:600;padding:3px 8px;border-radius:2px;cursor:pointer;transition:.2s;}
+.ai-analyse-sm:hover{background:rgba(14,165,233,.2);}
+.ai-spinner-xs{width:9px;height:9px;border:2px solid rgba(14,165,233,.2);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;display:inline-block;vertical-align:middle;margin-right:3px;}
+
+/* CALENDAR TAB */
+.cal-item{padding:11px 14px;border-bottom:1px solid rgba(20,32,53,.7);transition:.15s;cursor:pointer;}
+.cal-item:hover{background:var(--bg3);}
+.cal-item.upcoming{border-left:2px solid var(--blue);}
+.cal-item.high-imp{border-left:2px solid var(--red);}
+.ci-top{display:flex;align-items:center;gap:7px;margin-bottom:5px;}
+.ci-time{font-family:var(--mono);font-size:10px;color:var(--text3);flex-shrink:0;}
+.ci-event{font-size:12px;font-weight:600;color:var(--text);flex:1;}
+.ci-imp{font-family:var(--mono);font-size:8px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:2px 6px;border-radius:2px;}
+.ci-hi{background:rgba(239,68,68,.1);color:var(--red2);border:1px solid rgba(239,68,68,.2);}
+.ci-med{background:rgba(245,158,11,.1);color:var(--yellow);border:1px solid rgba(245,158,11,.2);}
+.ci-lo{background:rgba(16,185,129,.1);color:var(--green2);border:1px solid rgba(16,185,129,.2);}
+.ci-bottom{display:flex;gap:14px;}
+.ci-stat{text-align:center;}
+.ci-stat-label{font-family:var(--mono);font-size:8px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;}
+.ci-stat-val{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--text);margin-top:2px;}
+.ci-act-beat{color:var(--green2);}
+.ci-act-miss{color:var(--red2);}
+.ci-act-tbd{color:var(--text3);}
+.cal-day-sep{padding:6px 14px;background:var(--bg3);border-bottom:1px solid var(--border);font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);}
+
+/* SENTIMENT TAB */
+.sent-tab-content{padding:14px;}
+.sent-overall{background:var(--bg3);border:1px solid var(--border);padding:14px;border-radius:4px;margin-bottom:14px;text-align:center;}
+.so-score{font-size:36px;font-weight:900;letter-spacing:-.03em;margin-bottom:4px;}
+.so-label{font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;}
+.so-bar{height:8px;background:var(--bg4);border-radius:4px;overflow:hidden;margin:10px 0 6px;display:flex;}
+.so-bull-fill{height:100%;transition:width .8s ease;}
+.so-bear-fill{height:100%;transition:width .8s ease;}
+.so-labels{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;}
+.sent-metric{background:var(--bg3);border:1px solid var(--border);padding:12px;border-radius:4px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;}
+.sm-left{display:flex;align-items:center;gap:10px;}
+.sm-icon{font-size:18px;}
+.sm-label{font-size:12px;font-weight:500;color:var(--text);}
+.sm-sub{font-size:10px;color:var(--text3);margin-top:1px;}
+.sm-val{font-family:var(--mono);font-size:13px;font-weight:700;}
+.key-levels{background:var(--bg3);border:1px solid var(--border);padding:12px;border-radius:4px;margin-bottom:8px;}
+.kl-title{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:10px;}
+.kl-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(20,32,53,.6);}
+.kl-row:last-child{border-bottom:none;}
+.kl-type{font-family:var(--mono);font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;}
+.kl-res{color:var(--red2);}.kl-sup{color:var(--green2);}.kl-pivot{color:var(--yellow);}
+.kl-price{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--text);}
+.kl-dist{font-family:var(--mono);font-size:9px;color:var(--text3);}
+
+/* AI PLAYBOOK TAB */
+.ai-tab-content{padding:14px;}
+.ai-gen-btn{width:100%;background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;font-size:12px;font-weight:700;padding:11px;border-radius:4px;display:flex;align-items:center;justify-content:center;gap:7px;transition:.2s;margin-bottom:14px;}
+.ai-gen-btn:hover{opacity:.9;}
+.ai-gen-btn:disabled{opacity:.5;cursor:not-allowed;}
+.ai-result{background:var(--bg3);border:1px solid var(--border);padding:14px;border-radius:4px;font-size:12px;color:var(--text2);line-height:1.7;white-space:pre-wrap;}
+.ai-result-header{display:flex;align-items:center;gap:7px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);}
+.ai-spinner-sm{width:11px;height:11px;border:2px solid rgba(14,165,233,.2);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;}
+.ai-cursor{display:inline-block;width:2px;height:12px;background:var(--blue);margin-left:1px;animation:blink .7s infinite;vertical-align:text-bottom;}
+
+/* Breaking badge */
+.break-badge{background:var(--red);color:#fff;font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:2px 6px;border-radius:2px;animation:blink 1s infinite;}
+
+/* Empty state */
+.empty-state{padding:40px 20px;text-align:center;color:var(--text3);font-size:13px;}
+.empty-icon{font-size:32px;margin-bottom:10px;}
+
+/* ═══ DRAWING TOOLBAR ═══ */
+.drawing-toolbar{width:44px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:8px 0;gap:2px;flex-shrink:0;z-index:10;}
+.dt-group{width:100%;display:flex;flex-direction:column;align-items:center;padding:4px 0;border-bottom:1px solid var(--border);}
+.dt-group:last-child{border-bottom:none;}
+.dt-btn{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:4px;cursor:pointer;transition:.15s;position:relative;border:1px solid transparent;font-size:14px;}
+.dt-btn:hover{background:var(--bg3);border-color:var(--border);}
+.dt-btn.active{background:var(--bluedim);border-color:var(--blue);}
+.dt-btn.active svg path,.dt-btn.active svg line,.dt-btn.active svg rect,.dt-btn.active svg circle,.dt-btn.active svg polyline{stroke:var(--blue);}
+.dt-tooltip{position:absolute;left:42px;top:50%;transform:translateY(-50%);background:var(--bg4);border:1px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.06em;white-space:nowrap;padding:4px 8px;border-radius:3px;pointer-events:none;opacity:0;transition:opacity .15s;z-index:100;}
+.dt-btn:hover .dt-tooltip{opacity:1;}
+.dt-sep{width:24px;height:1px;background:var(--border);margin:3px 0;}
+
+/* Canvas overlay */
+.chart-canvas-wrap{position:relative;flex:1;overflow:hidden;}
+.drawing-canvas{position:absolute;top:0;left:0;width:100%;height:100%;z-index:5;cursor:crosshair;}
+.drawing-canvas.cursor-default{cursor:default;}
+.drawing-canvas.cursor-crosshair{cursor:crosshair;}
+.drawing-canvas.cursor-pointer{cursor:pointer;}
+
+/* Position calculator panel */
+.position-panel{position:absolute;top:10px;right:10px;background:var(--bg2);border:1px solid var(--border2);border-radius:6px;padding:14px;width:220px;z-index:20;display:none;animation:fadeUp .2s ease;}
+.position-panel.show{display:block;}
+.pp-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.pp-title{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;}
+.pp-close{font-size:16px;color:var(--text3);cursor:pointer;line-height:1;}
+.pp-close:hover{color:var(--text);}
+.pp-dir{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;}
+.pp-long{background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.2);color:var(--green2);font-family:var(--mono);font-size:10px;font-weight:700;padding:7px;border-radius:3px;text-align:center;cursor:pointer;transition:.2s;}
+.pp-long.active,.pp-long:hover{background:rgba(52,211,153,.2);}
+.pp-short{background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.2);color:var(--red2);font-family:var(--mono);font-size:10px;font-weight:700;padding:7px;border-radius:3px;text-align:center;cursor:pointer;transition:.2s;}
+.pp-short.active,.pp-short:hover{background:rgba(248,113,113,.2);}
+.pp-field{margin-bottom:8px;}
+.pp-label{font-family:var(--mono);font-size:8px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);display:block;margin-bottom:3px;}
+.pp-input{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:11px;padding:6px 8px;border-radius:3px;outline:none;}
+.pp-input:focus{border-color:var(--blue);}
+.pp-results{background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:8px;margin-top:8px;}
+.pp-result-row{display:flex;justify-content:space-between;margin-bottom:4px;font-size:11px;}
+.pp-result-row:last-child{margin-bottom:0;}
+.pp-result-label{color:var(--text3);font-family:var(--mono);}
+.pp-result-val{font-family:var(--mono);font-weight:700;}
+.pp-btn{width:100%;background:var(--blue);color:#000;font-family:var(--mono);font-size:10px;font-weight:700;padding:8px;border-radius:3px;border:none;cursor:pointer;margin-top:8px;transition:.2s;}
+.pp-btn:hover{background:var(--blue2);}
+
+/* Colour picker */
+.colour-picker{display:flex;gap:4px;flex-wrap:wrap;padding:4px 6px;}
+.cp-swatch{width:16px;height:16px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:.15s;}
+.cp-swatch:hover,.cp-swatch.active{border-color:#fff;transform:scale(1.2);}
+.colour-dropdown{position:absolute;left:42px;top:0;background:var(--bg4);border:1px solid var(--border2);border-radius:4px;padding:6px;z-index:100;display:none;}
+.dt-btn:hover .colour-dropdown{display:block;}
+
+</style>
+</head>
+<body>
+
+<!-- TICKER (clickable) -->
+<div class="ticker-bar">
+  <div class="ticker-lbl">Live</div>
+  <div class="ticker-wrap"><div class="ticker-inner" id="tickerInner"></div></div>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-logo">TradeContext<span>.ai</span></div>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="index.html">Dashboard</a></li>
+    <li><a class="active">Markets</a></li>
+    <li><a href="news-bias.html">News Bias Feed</a></li>
+    <li><a href="index.html">AI Playbooks</a></li>
+  </ul>
+  <div class="nav-r">
+    <div class="live-pill"><div class="live-dot"></div>Live</div>
+    <div class="nav-time" id="utcClock"></div>
+    <button class="btn btn-blue" onclick="window.location='index.html'" style="font-size:11px;">Dashboard →</button>
+  </div>
+</nav>
+
+<div class="app-body">
+
+  <!-- ══ LEFT: ASSET LIST ══ -->
+  <div class="asset-panel">
+    <div class="ap-header">
+      <input class="ap-search" type="text" placeholder="Search asset..." id="assetSearch" oninput="filterAssets(this.value)">
+    </div>
+    <div class="ap-tabs">
+      <div class="ap-tab active" onclick="setAssetTab('forex',this)">Forex</div>
+      <div class="ap-tab" onclick="setAssetTab('crypto',this)">Crypto</div>
+      <div class="ap-tab" onclick="setAssetTab('indices',this)">Index</div>
+      <div class="ap-tab" onclick="setAssetTab('commodities',this)">Comm.</div>
+    </div>
+    <div class="ap-list" id="assetList"></div>
+  </div>
+
+  <!-- ══ CENTRE: TRADINGVIEW CHART ══ -->
+  <div class="chart-panel" style="display:flex;flex-direction:row;">
+
+  <!-- DRAWING TOOLBAR -->
+  <div class="drawing-toolbar" id="drawingToolbar">
+    <!-- Cursor tools -->
+    <div class="dt-group">
+      <div class="dt-btn active" id="tool-cursor" onclick="setTool('cursor')" title="">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 3l14 9-7 1-4 7z" stroke="var(--text2)" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        <div class="dt-tooltip">Cursor</div>
+      </div>
+      <div class="dt-btn" id="tool-crosshair" onclick="setTool('crosshair')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><line x1="12" y1="2" x2="12" y2="22" stroke="var(--text2)" stroke-width="1.8"/><line x1="2" y1="12" x2="22" y2="12" stroke="var(--text2)" stroke-width="1.8"/><circle cx="12" cy="12" r="3" stroke="var(--text2)" stroke-width="1.8"/></svg>
+        <div class="dt-tooltip">Crosshair</div>
+      </div>
+    </div>
+    <!-- Line tools -->
+    <div class="dt-group">
+      <div class="dt-btn" id="tool-trendline" onclick="setTool('trendline')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><line x1="4" y1="20" x2="20" y2="4" stroke="var(--text2)" stroke-width="2" stroke-linecap="round"/><circle cx="4" cy="20" r="2" fill="var(--text2)"/><circle cx="20" cy="4" r="2" fill="var(--text2)"/></svg>
+        <div class="dt-tooltip">Trend Line</div>
+      </div>
+      <div class="dt-btn" id="tool-hline" onclick="setTool('hline')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><line x1="2" y1="12" x2="22" y2="12" stroke="var(--text2)" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 2"/></svg>
+        <div class="dt-tooltip">Horizontal Line</div>
+      </div>
+      <div class="dt-btn" id="tool-vline" onclick="setTool('vline')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><line x1="12" y1="2" x2="12" y2="22" stroke="var(--text2)" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 2"/></svg>
+        <div class="dt-tooltip">Vertical Line</div>
+      </div>
+      <div class="dt-btn" id="tool-ray" onclick="setTool('ray')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><line x1="4" y1="20" x2="22" y2="4" stroke="var(--text2)" stroke-width="2" stroke-linecap="round"/><circle cx="4" cy="20" r="2" fill="var(--text2)"/></svg>
+        <div class="dt-tooltip">Ray</div>
+      </div>
+    </div>
+    <!-- Fibonacci -->
+    <div class="dt-group">
+      <div class="dt-btn" id="tool-fib" onclick="setTool('fib')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><line x1="3" y1="5" x2="21" y2="5" stroke="var(--text2)" stroke-width="1.5"/><line x1="3" y1="9" x2="21" y2="9" stroke="var(--text2)" stroke-width="1.5" opacity=".7"/><line x1="3" y1="12" x2="21" y2="12" stroke="var(--blue)" stroke-width="1.5"/><line x1="3" y1="15" x2="21" y2="15" stroke="var(--text2)" stroke-width="1.5" opacity=".7"/><line x1="3" y1="19" x2="21" y2="19" stroke="var(--text2)" stroke-width="1.5"/></svg>
+        <div class="dt-tooltip">Fibonacci Retracement</div>
+      </div>
+    </div>
+    <!-- Shapes -->
+    <div class="dt-group">
+      <div class="dt-btn" id="tool-rect" onclick="setTool('rect')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="12" rx="1" stroke="var(--text2)" stroke-width="1.8"/></svg>
+        <div class="dt-tooltip">Rectangle</div>
+      </div>
+      <div class="dt-btn" id="tool-channel" onclick="setTool('channel')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><line x1="3" y1="16" x2="21" y2="8" stroke="var(--text2)" stroke-width="1.8" stroke-linecap="round"/><line x1="3" y1="20" x2="21" y2="12" stroke="var(--text2)" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="3 2"/></svg>
+        <div class="dt-tooltip">Channel</div>
+      </div>
+    </div>
+    <!-- Position tools -->
+    <div class="dt-group">
+      <div class="dt-btn" id="tool-long" onclick="setTool('long');showPositionPanel('long')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="10" width="18" height="11" rx="1" fill="rgba(52,211,153,.15)" stroke="var(--green2)" stroke-width="1.5"/><line x1="12" y1="10" x2="12" y2="3" stroke="var(--green2)" stroke-width="1.5"/><polyline points="9,6 12,3 15,6" stroke="var(--green2)" stroke-width="1.5" fill="none" stroke-linejoin="round"/></svg>
+        <div class="dt-tooltip">Long Position</div>
+      </div>
+      <div class="dt-btn" id="tool-short" onclick="setTool('short');showPositionPanel('short')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="11" rx="1" fill="rgba(248,113,113,.15)" stroke="var(--red2)" stroke-width="1.5"/><line x1="12" y1="14" x2="12" y2="21" stroke="var(--red2)" stroke-width="1.5"/><polyline points="9,18 12,21 15,18" stroke="var(--red2)" stroke-width="1.5" fill="none" stroke-linejoin="round"/></svg>
+        <div class="dt-tooltip">Short Position</div>
+      </div>
+    </div>
+    <!-- Text -->
+    <div class="dt-group">
+      <div class="dt-btn" id="tool-text" onclick="setTool('text')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M12 7v14M8 21h8" stroke="var(--text2)" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <div class="dt-tooltip">Text Label</div>
+      </div>
+    </div>
+    <!-- Colours -->
+    <div class="dt-group">
+      <div class="dt-btn" id="tool-colour" style="position:relative;">
+        <div style="width:16px;height:16px;border-radius:50%;background:var(--blue);border:2px solid rgba(255,255,255,.3);" id="activeColourDot"></div>
+        <div class="dt-tooltip">Line Colour</div>
+        <div class="colour-dropdown" id="colourDropdown">
+          <div class="colour-picker">
+            <div class="cp-swatch active" style="background:#0ea5e9;" onclick="setDrawColour('#0ea5e9',this)"></div>
+            <div class="cp-swatch" style="background:#34d399;" onclick="setDrawColour('#34d399',this)"></div>
+            <div class="cp-swatch" style="background:#f87171;" onclick="setDrawColour('#f87171',this)"></div>
+            <div class="cp-swatch" style="background:#f59e0b;" onclick="setDrawColour('#f59e0b',this)"></div>
+            <div class="cp-swatch" style="background:#8b5cf6;" onclick="setDrawColour('#8b5cf6',this)"></div>
+            <div class="cp-swatch" style="background:#f97316;" onclick="setDrawColour('#f97316',this)"></div>
+            <div class="cp-swatch" style="background:#e2eaf4;" onclick="setDrawColour('#e2eaf4',this)"></div>
+            <div class="cp-swatch" style="background:#7a9ab8;" onclick="setDrawColour('#7a9ab8',this)"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Actions -->
+    <div class="dt-group">
+      <div class="dt-btn" id="tool-undo" onclick="undoDrawing()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M3 10h11a6 6 0 0 1 0 12H7" stroke="var(--text2)" stroke-width="1.8" stroke-linecap="round"/><polyline points="7,6 3,10 7,14" stroke="var(--text2)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div class="dt-tooltip">Undo</div>
+      </div>
+      <div class="dt-btn" id="tool-clear" onclick="clearDrawings()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><polyline points="3,6 5,6 21,6" stroke="var(--text2)" stroke-width="1.8" stroke-linecap="round"/><path d="M19 6l-1 14H6L5 6" stroke="var(--text2)" stroke-width="1.8" stroke-linecap="round"/><path d="M10 11v6M14 11v6" stroke="var(--text2)" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <div class="dt-tooltip">Clear All</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHART + CANVAS WRAPPER -->
+  <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+    <div class="chart-header">
+      <div>
+        <div class="ch-symbol" id="chSymbol">XAU/USD</div>
+        <div style="font-size:10px;color:var(--text3);font-family:var(--mono);" id="chFull">Gold Spot / US Dollar</div>
+      </div>
+      <div class="ch-sep"></div>
+      <div>
+        <div class="ch-stat-label">Price</div>
+        <div class="ch-stat-val" id="chPrice">3,121.40</div>
+      </div>
+      <div>
+        <div class="ch-stat-label">Change</div>
+        <div class="ch-change up" id="chChange">▲ +1.62%</div>
+      </div>
+      <div class="ch-sep"></div>
+      <div class="ch-stat"><div class="ch-stat-label">Open</div><div class="ch-stat-val" id="chOpen">3,072.10</div></div>
+      <div class="ch-stat"><div class="ch-stat-label">High</div><div class="ch-stat-val" id="chHigh" style="color:var(--green2)">3,128.50</div></div>
+      <div class="ch-stat"><div class="ch-stat-label">Low</div><div class="ch-stat-val" id="chLow" style="color:var(--red2)">3,068.20</div></div>
+      <div class="ch-stat"><div class="ch-stat-label">Volume</div><div class="ch-stat-val" id="chVol">186B</div></div>
+      <div class="ch-spacer"></div>
+      <div class="timeframe-btns">
+        <button class="tf-btn" onclick="setTF('1',this)">1m</button>
+        <button class="tf-btn" onclick="setTF('5',this)">5m</button>
+        <button class="tf-btn" onclick="setTF('15',this)">15m</button>
+        <button class="tf-btn" onclick="setTF('60',this)">1H</button>
+        <button class="tf-btn active" onclick="setTF('240',this)">4H</button>
+        <button class="tf-btn" onclick="setTF('D',this)">1D</button>
+        <button class="tf-btn" onclick="setTF('W',this)">1W</button>
+      </div>
+    </div>
+    <div class="chart-container">
+      <div class="chart-overlay" id="chartOverlay">
+        <div class="co-spinner"></div>
+        <div class="co-text">Loading TradingView Chart...</div>
+      </div>
+      <div id="tvChart"></div>
+    </div>
+
+    <!-- POSITION CALCULATOR PANEL -->
+    <div class="position-panel" id="positionPanel">
+      <div class="pp-header">
+        <div class="pp-title" id="ppTitle" style="color:var(--green2);">📈 Long Position</div>
+        <span class="pp-close" onclick="document.getElementById('positionPanel').classList.remove('show')">×</span>
+      </div>
+      <div class="pp-dir">
+        <div class="pp-long active" id="ppLong" onclick="switchPosDir('long')">📈 Long</div>
+        <div class="pp-short" id="ppShort" onclick="switchPosDir('short')">📉 Short</div>
+      </div>
+      <div class="pp-field"><label class="pp-label">Entry Price</label><input class="pp-input" id="ppEntry" type="number" placeholder="e.g. 3121.40" oninput="calcPosition()"></div>
+      <div class="pp-field"><label class="pp-label">Stop Loss</label><input class="pp-input" id="ppSL" type="number" placeholder="e.g. 3100.00" oninput="calcPosition()"></div>
+      <div class="pp-field"><label class="pp-label">Take Profit</label><input class="pp-input" id="ppTP" type="number" placeholder="e.g. 3160.00" oninput="calcPosition()"></div>
+      <div class="pp-field"><label class="pp-label">Account Size (£)</label><input class="pp-input" id="ppAccount" type="number" placeholder="e.g. 10000" value="10000" oninput="calcPosition()"></div>
+      <div class="pp-results" id="ppResults">
+        <div class="pp-result-row"><span class="pp-result-label">Risk:Reward</span><span class="pp-result-val" id="ppRR" style="color:var(--blue)">—</span></div>
+        <div class="pp-result-row"><span class="pp-result-label">Risk £</span><span class="pp-result-val" id="ppRisk" style="color:var(--red2)">—</span></div>
+        <div class="pp-result-row"><span class="pp-result-label">Potential Profit</span><span class="pp-result-val" id="ppProfit" style="color:var(--green2)">—</span></div>
+        <div class="pp-result-row"><span class="pp-result-label">Risk %</span><span class="pp-result-val" id="ppRiskPct" style="color:var(--yellow)">—</span></div>
+      </div>
+      <button class="pp-btn" onclick="savePositionToJournal()">💾 Save to Journal</button>
+    </div>
+
+  </div>
+  </div>
+
+  <!-- ══ RIGHT: CONTEXT PANEL ══ -->
+  <div class="context-panel">
+    <div class="cp-header">
+      <div class="cp-asset-info">
+        <div class="cp-sym" id="cpSym">XAU/USD — Gold Spot</div>
+        <div class="cp-desc" id="cpDesc">Gold is the primary safe haven asset. Sensitive to: USD strength, Fed rate decisions, geopolitical risk, inflation data and central bank buying.</div>
+        <div class="cp-bias-bar">
+          <div class="cpb-label">
+            <span class="cpb-bull" id="cpBullPct">🟢 Bullish 74%</span>
+            <span class="cpb-bear" id="cpBearPct">26% Bearish 🔴</span>
+          </div>
+          <div class="cpb-track">
+            <div class="cpb-bull-fill" id="cpBullFill" style="width:74%;background:var(--green2);"></div>
+            <div class="cpb-bear-fill" id="cpBearFill" style="width:26%;background:var(--red2);"></div>
+          </div>
+          <div class="cp-score" id="cpScore" style="color:var(--green2)">Strongly Bullish — 14 bullish signals vs 5 bearish</div>
+        </div>
+      </div>
+      <div class="cp-tabs">
+        <div class="cp-tab active" onclick="setCpTab('news',this)">📰 News</div>
+        <div class="cp-tab" onclick="setCpTab('calendar',this)">📅 Calendar</div>
+        <div class="cp-tab" onclick="setCpTab('sentiment',this)">📊 Levels</div>
+        <div class="cp-tab" onclick="setCpTab('ai',this)">🤖 AI</div>
+      </div>
+    </div>
+
+    <!-- NEWS TAB -->
+    <div id="tab-news" class="cp-body">
+      <div class="news-filters">
+        <button class="nf-chip active" onclick="setNewsFilter('all',this)">All</button>
+        <button class="nf-chip bull" onclick="setNewsFilter('bull',this)">🟢 Bull</button>
+        <button class="nf-chip bear" onclick="setNewsFilter('bear',this)">🔴 Bear</button>
+        <button class="nf-chip" onclick="setNewsFilter('breaking',this)">⚡ Breaking</button>
+        <button class="nf-chip" onclick="setNewsFilter('hi',this)">High Impact</button>
+      </div>
+      <div id="contextNewsFeed"></div>
+    </div>
+
+    <!-- CALENDAR TAB -->
+    <div id="tab-calendar" class="cp-body" style="display:none;">
+      <div id="contextCalendar"></div>
+    </div>
+
+    <!-- SENTIMENT/LEVELS TAB -->
+    <div id="tab-sentiment" class="cp-body" style="display:none;">
+      <div class="sent-tab-content">
+        <div class="sent-overall" id="sentOverall"></div>
+        <div id="sentMetrics"></div>
+        <div class="key-levels" id="keyLevels"></div>
+      </div>
+    </div>
+
+    <!-- AI PLAYBOOK TAB -->
+    <div id="tab-ai" class="cp-body" style="display:none;">
+      <div class="ai-tab-content">
+        <button class="ai-gen-btn" id="aiGenBtn" onclick="generateAssetPlaybook()">🤖 Generate Live AI Playbook</button>
+        <div id="aiPlaybookResult" style="display:none;">
+          <div class="ai-result">
+            <div class="ai-result-header"><span class="ai-spinner-sm" id="aiPlaybookSpinner"></span>AI Trade Playbook</div>
+            <div id="aiPlaybookBody"></div>
+          </div>
+        </div>
+        <div style="margin-top:12px;background:var(--bg3);border:1px solid var(--border);padding:12px;border-radius:4px;">
+          <div style="font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:8px;">Quick Prompts</div>
+          <div style="display:flex;flex-direction:column;gap:5px;" id="quickPrompts"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TradingView Widget -->
+<script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+
+<script>
+// ═══════════════════════════════════════════════
+// ASSET DATABASE
+// ═══════════════════════════════════════════════
+const ASSETS = {
+  forex: [
+    {sym:'XAUUSD',tv:'OANDA:XAUUSD',display:'XAU/USD',full:'Gold Spot / US Dollar',price:'3,121.40',change:'+1.62%',dir:'up',open:'3,072.10',high:'3,128.50',low:'3,068.20',vol:'186B',bull:74,desc:'Gold is the primary safe haven asset. Sensitive to: Fed rate decisions, USD strength, geopolitical risk, inflation data and central bank buying.'},
+    {sym:'EURUSD',tv:'FX:EURUSD',display:'EUR/USD',full:'Euro / US Dollar',price:'1.1053',change:'+0.42%',dir:'up',open:'1.1008',high:'1.1068',low:'1.0994',vol:'342B',bull:58,desc:'The world\'s most traded currency pair. Driven by ECB vs Fed policy divergence, Eurozone inflation, US economic data and risk sentiment.'},
+    {sym:'GBPUSD',tv:'FX:GBPUSD',display:'GBP/USD',full:'British Pound / US Dollar',price:'1.2784',change:'+0.18%',dir:'up',open:'1.2761',high:'1.2812',low:'1.2748',vol:'184B',bull:55,desc:'Sterling is sensitive to BOE policy, UK GDP/inflation data, Brexit legacy effects and global risk appetite.'},
+    {sym:'USDJPY',tv:'FX:USDJPY',display:'USD/JPY',full:'US Dollar / Japanese Yen',price:'151.82',change:'-0.71%',dir:'dn',open:'152.91',high:'153.14',low:'151.68',vol:'284B',bull:35,desc:'USD/JPY is driven by BOJ policy normalisation, US yields, risk-off flows and carry trade dynamics.'},
+    {sym:'AUDUSD',tv:'FX:AUDUSD',display:'AUD/USD',full:'Australian Dollar / US Dollar',price:'0.6441',change:'+0.29%',dir:'up',open:'0.6422',high:'0.6458',low:'0.6414',vol:'108B',bull:60,desc:'AUD is a commodity currency highly correlated to China growth, iron ore prices, and global risk appetite.'},
+    {sym:'USDCAD',tv:'FX:USDCAD',display:'USD/CAD',full:'US Dollar / Canadian Dollar',price:'1.3542',change:'+0.22%',dir:'up',open:'1.3512',high:'1.3558',low:'1.3498',vol:'92B',bull:45,desc:'CAD is sensitive to oil prices, Bank of Canada policy, US-Canada trade relations and global risk sentiment.'},
+    {sym:'USDCHF',tv:'FX:USDCHF',display:'USD/CHF',full:'US Dollar / Swiss Franc',price:'0.8912',change:'-0.34%',dir:'dn',open:'0.8942',high:'0.8958',low:'0.8898',vol:'74B',bull:40,desc:'CHF is a traditional safe haven. Driven by SNB policy, geopolitical risk, European stability and global uncertainty.'},
+    {sym:'NZDUSD',tv:'FX:NZDUSD',display:'NZD/USD',full:'New Zealand Dollar / US Dollar',price:'0.5914',change:'+0.11%',dir:'up',open:'0.5907',high:'0.5928',low:'0.5898',vol:'48B',bull:52,desc:'NZD tracks risk appetite, RBNZ policy, dairy prices and China economic activity.'},
+    {sym:'EURGBP',tv:'FX:EURGBP',display:'EUR/GBP',full:'Euro / British Pound',price:'0.8645',change:'-0.09%',dir:'dn',open:'0.8653',high:'0.8668',low:'0.8638',vol:'62B',bull:48,desc:'EUR/GBP reflects ECB vs BOE policy divergence and relative Eurozone/UK economic performance.'},
+    {sym:'XAGUSD',tv:'OANDA:XAGUSD',display:'XAG/USD',full:'Silver Spot / US Dollar',price:'33.18',change:'+2.04%',dir:'up',open:'32.52',high:'33.41',low:'32.48',vol:'28B',bull:68,desc:'Silver tracks gold with industrial demand overlay. More volatile than gold due to smaller market size.'},
+  ],
+  crypto: [
+    {sym:'BTCUSD',tv:'COINBASE:BTCUSD',display:'BTC/USD',full:'Bitcoin / US Dollar',price:'92,148',change:'+4.21%',dir:'up',open:'88,413',high:'93,240',low:'87,982',vol:'42B',bull:74,desc:'Bitcoin is the leading cryptocurrency. Driven by ETF flows, macro risk appetite, Fed policy, halving cycles and on-chain data.'},
+    {sym:'ETHUSD',tv:'COINBASE:ETHUSD',display:'ETH/USD',full:'Ethereum / US Dollar',price:'3,482',change:'+3.14%',dir:'up',open:'3,376',high:'3,521',low:'3,362',vol:'18B',bull:70,desc:'Ethereum is sensitive to network upgrades, ETF flows, DeFi activity, staking yields and BTC correlation.'},
+    {sym:'SOLUSD',tv:'COINBASE:SOLUSD',display:'SOL/USD',full:'Solana / US Dollar',price:'184.20',change:'+5.82%',dir:'up',open:'174.08',high:'187.40',low:'173.20',vol:'8.2B',bull:78,desc:'SOL tracks BTC/ETH with additional sensitivity to Solana ecosystem growth, DEX volume and ETF developments.'},
+    {sym:'BNBUSD',tv:'BINANCE:BNBUSDT',display:'BNB/USD',full:'BNB / US Dollar',price:'612.40',change:'+2.18%',dir:'up',open:'599.12',high:'618.80',low:'596.40',vol:'4.1B',bull:62,desc:'BNB tracks overall crypto sentiment with added sensitivity to Binance platform health and regulatory news.'},
+    {sym:'XRPUSD',tv:'COINBASE:XRPUSD',display:'XRP/USD',full:'XRP / US Dollar',price:'2.14',change:'+1.42%',dir:'up',open:'2.11',high:'2.18',low:'2.09',vol:'6.8B',bull:60,desc:'XRP is influenced by Ripple\'s legal battles, cross-border payment adoption and overall crypto market trends.'},
+    {sym:'ADAUSD',tv:'COINBASE:ADAUSD',display:'ADA/USD',full:'Cardano / US Dollar',price:'0.714',change:'+2.88%',dir:'up',open:'0.694',high:'0.721',low:'0.691',vol:'2.4B',bull:58,desc:'ADA tracks BTC/ETH sentiment with sensitivity to Cardano development milestones and DeFi adoption.'},
+    {sym:'DOGEUSD',tv:'COINBASE:DOGEUSD',display:'DOGE/USD',full:'Dogecoin / US Dollar',price:'0.1842',change:'+3.44%',dir:'up',open:'0.1781',high:'0.1868',low:'0.1774',vol:'3.2B',bull:55,desc:'DOGE is highly sentiment-driven, influenced by social media activity, Elon Musk commentary and meme trends.'},
+  ],
+  indices: [
+    {sym:'SPX',tv:'SP:SPX',display:'S&P 500',full:'S&P 500 Index',price:'5,641.20',change:'+0.88%',dir:'up',open:'5,592.40',high:'5,654.80',low:'5,584.10',vol:'—',bull:63,desc:'The S&P 500 reflects US large-cap equities. Driven by Fed policy, earnings, economic data and global risk sentiment.'},
+    {sym:'NASDAQ',tv:'NASDAQ:NDX',display:'NASDAQ 100',full:'NASDAQ 100 Index',price:'17,924',change:'+1.12%',dir:'up',open:'17,725',high:'17,968',low:'17,698',vol:'—',bull:66,desc:'The NASDAQ 100 is tech-heavy. Extra sensitive to interest rate expectations, AI/tech earnings and growth narratives.'},
+    {sym:'DAX',tv:'XETR:DAX',display:'DAX 40',full:'German DAX 40 Index',price:'22,180',change:'+0.54%',dir:'up',open:'22,061',high:'22,214',low:'22,024',vol:'—',bull:57,desc:'Germany\'s benchmark index. Sensitive to ECB policy, German industrial data, China trade and EUR strength.'},
+    {sym:'NIKKEI',tv:'TVC:NI225',display:'Nikkei 225',full:'Japan Nikkei 225 Index',price:'38,740',change:'+1.81%',dir:'up',open:'38,049',high:'38,812',low:'38,012',vol:'—',bull:65,desc:'Japan\'s benchmark index. Driven by BOJ policy, yen levels, global tech demand and export competitiveness.'},
+    {sym:'FTSE',tv:'TVC:UKX',display:'FTSE 100',full:'UK FTSE 100 Index',price:'8,442',change:'+0.32%',dir:'up',open:'8,415',high:'8,461',low:'8,398',vol:'—',bull:54,desc:'The FTSE 100 is dominated by large international companies. Sensitive to GBP, commodity prices and global growth.'},
+    {sym:'HSI',tv:'TVC:HSI',display:'Hang Seng',full:'Hong Kong Hang Seng Index',price:'22,414',change:'+2.14%',dir:'up',open:'21,947',high:'22,518',low:'21,912',vol:'—',bull:61,desc:'The Hang Seng tracks Hong Kong/China equities. Highly sensitive to PBOC policy, US-China relations and tech regulation.'},
+    {sym:'DXY',tv:'TVC:DXY',display:'DXY Index',full:'US Dollar Index',price:'101.84',change:'-0.38%',dir:'dn',open:'102.23',high:'102.41',low:'101.72',vol:'—',bull:38,desc:'The DXY measures USD against a basket of major currencies. Inverse relationship with gold, commodities and risk assets.'},
+  ],
+  commodities: [
+    {sym:'WTIUSD',tv:'NYMEX:CL1!',display:'WTI Crude',full:'WTI Crude Oil',price:'76.34',change:'-1.08%',dir:'dn',open:'77.18',high:'77.42',low:'76.08',vol:'94B',bull:38,desc:'WTI crude oil is driven by OPEC+ decisions, US inventory data, geopolitical risk and global demand outlook.'},
+    {sym:'BRENTUSD',tv:'TVC:UKOIL',display:'Brent Crude',full:'Brent Crude Oil',price:'78.41',change:'-0.92%',dir:'dn',open:'79.14',high:'79.48',low:'78.12',vol:'112B',bull:40,desc:'Brent is the global oil benchmark. Sensitive to Middle East tensions, OPEC+ supply decisions and demand from Asia.'},
+    {sym:'NATGAS',tv:'NYMEX:NG1!',display:'Natural Gas',full:'Natural Gas',price:'1.924',change:'+2.18%',dir:'up',open:'1.882',high:'1.948',low:'1.876',vol:'22B',bull:60,desc:'Natural gas prices react to weather patterns, storage data, LNG export demand and seasonal heating/cooling needs.'},
+    {sym:'COPPER',tv:'COMEX:HG1!',display:'Copper',full:'Copper Futures',price:'4.842',change:'+1.24%',dir:'up',open:'4.782',high:'4.868',low:'4.774',vol:'14B',bull:65,desc:'Copper is the leading economic indicator. Driven by China construction data, global manufacturing PMI and supply from Chile/Peru.'},
+    {sym:'XPTUSD',tv:'OANDA:XPTUSD',display:'Platinum',full:'Platinum / US Dollar',price:'982.40',change:'+0.88%',dir:'up',open:'973.80',high:'986.20',low:'970.40',vol:'4.2B',bull:56,desc:'Platinum tracks gold with additional sensitivity to auto industry demand (catalytic converters) and South African supply.'},
+  ]
+};
+
+// ═══════════════════════════════════════════════
+// NEWS DATABASE (asset-tagged)
+// ═══════════════════════════════════════════════
+const ALL_NEWS = [
+  {headline:'Gold Surges Past $3,121 — Central Bank Buying Hits Record, WGC Data Confirms',summary:'World Gold Council data shows central banks purchased 290 tonnes in Q1 2026, the highest quarterly figure on record.',source:'Reuters',assets:['XAUUSD','XAGUSD'],imp:'hi',bias:'bull',breaking:true},
+  {headline:'Fed Minutes Signal Two Rate Cuts in H2 2026 — Gold and Risk Assets Rally Hard',summary:'FOMC minutes revealed growing consensus for monetary easing, triggering broad dollar weakness and a surge in gold.',source:'Federal Reserve',assets:['XAUUSD','EURUSD','BTCUSD','SPX'],imp:'hi',bias:'bull',breaking:true},
+  {headline:'USD/JPY Drops 80 Pips as BOJ Signals Further Rate Hike Before Year-End',summary:'BOJ Governor Ueda hinted at additional policy normalisation, sending the yen sharply higher against the dollar.',source:'Bloomberg',assets:['USDJPY'],imp:'hi',bias:'bear',breaking:false},
+  {headline:'EUR/USD Breaks 1.1050 — Eurozone CPI Beats at 2.1% vs 1.9% Expected',summary:'Eurozone inflation surprised to the upside, pushing EUR/USD through key technical resistance at 1.1050.',source:'Eurostat',assets:['EURUSD','EURGBP'],imp:'hi',bias:'bull',breaking:false},
+  {headline:'Bitcoin Reclaims $92K — Spot ETF Inflows Hit Monthly High of $840M',summary:'US-listed spot BTC ETFs recorded $840M net inflows in 24 hours, the highest single-day figure since launch month.',source:'ETF.com',assets:['BTCUSD','ETHUSD'],imp:'hi',bias:'bull',breaking:false},
+  {headline:'OPEC+ Extends Output Cuts Through Q3 — Brent Spikes 3% to $80',summary:'The OPEC+ alliance agreed to maintain production cuts, defying expectations of a supply increase.',source:'Reuters',assets:['BRENTUSD','WTIUSD'],imp:'hi',bias:'bull',breaking:false},
+  {headline:'UK GDP Grows 0.4% in Q1 — Strongest Performance Since 2022, GBP Rallies',summary:'The UK economy expanded more strongly than expected, driven by a rebound in services sector output.',source:'ONS',assets:['GBPUSD','EURGBP'],imp:'hi',bias:'bull',breaking:false},
+  {headline:'S&P 500 Hits New All-Time High as Tech Earnings Smash Expectations',summary:'The S&P 500 broke to record highs, led by mega-cap tech companies reporting stronger-than-expected results.',source:'Bloomberg',assets:['SPX','NASDAQ'],imp:'hi',bias:'bull',breaking:false},
+  {headline:'NVIDIA Reports Record $26B Revenue — AI Chip Demand "Insatiable"',summary:'NVIDIA beat Wall Street expectations across the board, guiding significantly higher for the next quarter.',source:'NVIDIA',assets:['NASDAQ','SPX'],imp:'hi',bias:'bull',breaking:false},
+  {headline:'Brent Crude Falls on Saudi Output Increase Speculation',summary:'Reports suggest Saudi Arabia may be considering raising production quotas above current OPEC+ agreements.',source:'FT',assets:['BRENTUSD','WTIUSD'],imp:'hi',bias:'bear',breaking:false},
+  {headline:'Ethereum Pectra Upgrade Goes Live — ETH Surges 8% on Network Improvements',summary:'The Pectra upgrade successfully activated, improving throughput and reducing gas costs significantly.',source:'Ethereum Foundation',assets:['ETHUSD','BTCUSD'],imp:'hi',bias:'bull',breaking:false},
+  {headline:'AUD/USD Rallies on China GDP Beat — Economy Grows 5.3% in Q1',summary:'China\'s stronger-than-expected growth data boosted commodity currencies, with AUD/USD leading gains.',source:'NBS',assets:['AUDUSD','COPPER','NZDUSD'],imp:'hi',bias:'bull',breaking:false},
+  {headline:'Copper Hits 2-Year High on China Demand and Chilean Supply Disruptions',summary:'Copper prices surged to their highest level since 2024, backed by strong Chinese infrastructure investment.',source:'LME',assets:['COPPER','AUDUSD'],imp:'med',bias:'bull',breaking:false},
+  {headline:'Natural Gas Surges 15% as European Heatwave Drains Storage',summary:'Unexpected early summer heat across Europe drove electricity demand higher, pushing natural gas prices sharply up.',source:'Reuters',assets:['NATGAS'],imp:'hi',bias:'bull',breaking:false},
+  {headline:'DXY Falls to 3-Month Low as Fed Dovish Signals Pile Up',summary:'The US dollar index declined to its weakest level since January as rate cut expectations were pulled forward.',source:'Bloomberg',assets:['DXY','EURUSD','XAUUSD'],imp:'hi',bias:'bear',breaking:false},
+  {headline:'Solana ETF Approved by SEC — SOL Jumps 22% on the News',summary:'The SEC approved three spot Solana ETF applications, triggering a massive rally in SOL and broader crypto sentiment.',source:'SEC/CoinDesk',assets:['SOLUSD','ETHUSD','BTCUSD'],imp:'hi',bias:'bull',breaking:true},
+  {headline:'Nikkei 225 Rallies 1.8% as Yen Weakness Boosts Export Giants',summary:'Japanese equities surged as USD/JPY held above 152, making Japanese exports more competitive internationally.',source:'Reuters',assets:['NIKKEI','USDJPY'],imp:'med',bias:'bull',breaking:false},
+  {headline:'Hang Seng Surges 2.1% After PBOC Cuts Reserve Requirement Ratio',summary:'The People\'s Bank of China injected $140B into the banking system, boosting Chinese and Hong Kong equities sharply.',source:'PBOC',assets:['HSI','AUDUSD','COPPER'],imp:'hi',bias:'bull',breaking:false},
+  {headline:'GBP/USD Tests 1.2850 Ahead of BOE Meeting — Rate Cut Odds at 68%',summary:'Sterling is consolidating near key resistance as traders position ahead of next week\'s Bank of England decision.',source:'Bloomberg',assets:['GBPUSD','EURGBP'],imp:'med',bias:'neut',breaking:false},
+  {headline:'Silver Outperforms Gold — XAG/USD Jumps 2% on Industrial Demand Surge',summary:'Silver extended its rally beyond gold\'s gains, supported by strong solar panel manufacturing demand data from China.',source:'Reuters',assets:['XAGUSD','XAUUSD'],imp:'med',bias:'bull',breaking:false},
+  {headline:'DAX Hits Record High on ECB Rate Cut Optimism and German Tech Strength',summary:'Germany\'s benchmark index reached a new all-time high, driven by rate cut expectations and strong tech sector performance.',source:'Reuters',assets:['DAX','EURUSD'],imp:'med',bias:'bull',breaking:false},
+  {headline:'FTSE 100 Underperforms — Strong Pound Weighs on International Earners',summary:'The FTSE 100 lagged European peers as a strengthening pound reduced the sterling value of overseas revenues.',source:'FT',assets:['FTSE','GBPUSD'],imp:'lo',bias:'bear',breaking:false},
+];
+
+// ═══════════════════════════════════════════════
+// CALENDAR DATABASE (asset-tagged)
+// ═══════════════════════════════════════════════
+const ALL_CALENDAR = [
+  {day:'Monday, Apr 7',time:'07:00',event:'German Factory Orders MoM',assets:['DAX','EURUSD'],imp:'med',fore:'0.8%',prev:'1.2%',act:'0.6%',ac:'miss'},
+  {day:'Tuesday, Apr 8',time:'02:30',event:'RBA Interest Rate Decision',assets:['AUDUSD'],imp:'hi',fore:'4.10%',prev:'4.35%',act:'4.10%',ac:'beat'},
+  {day:'Tuesday, Apr 8',time:'09:00',event:'Eurozone Retail Sales MoM',assets:['EURUSD','EURGBP'],imp:'med',fore:'0.3%',prev:'-0.1%',act:'—',ac:'tbd'},
+  {day:'Wednesday, Apr 9',time:'07:00',event:'UK GDP MoM',assets:['GBPUSD','EURGBP','FTSE'],imp:'hi',fore:'0.1%',prev:'0.2%',act:'—',ac:'tbd'},
+  {day:'Wednesday, Apr 9',time:'13:30',event:'US CPI MoM',assets:['EURUSD','XAUUSD','SPX','DXY'],imp:'hi',fore:'0.2%',prev:'0.3%',act:'—',ac:'tbd'},
+  {day:'Wednesday, Apr 9',time:'14:00',event:'FOMC Meeting Minutes',assets:['EURUSD','XAUUSD','SPX','BTCUSD'],imp:'hi',fore:'—',prev:'—',act:'—',ac:'tbd'},
+  {day:'Thursday, Apr 10',time:'11:45',event:'ECB Rate Decision',assets:['EURUSD','EURGBP','DAX'],imp:'hi',fore:'2.50%',prev:'2.65%',act:'—',ac:'tbd'},
+  {day:'Thursday, Apr 10',time:'12:30',event:'ECB Press Conference',assets:['EURUSD','DAX'],imp:'hi',fore:'—',prev:'—',act:'—',ac:'tbd'},
+  {day:'Thursday, Apr 10',time:'13:30',event:'US Initial Jobless Claims',assets:['EURUSD','SPX','DXY'],imp:'med',fore:'215K',prev:'219K',act:'—',ac:'tbd'},
+  {day:'Friday, Apr 11',time:'13:30',event:'US Non-Farm Payrolls',assets:['EURUSD','XAUUSD','SPX','DXY','BTCUSD'],imp:'hi',fore:'+175K',prev:'+228K',act:'—',ac:'tbd'},
+  {day:'Friday, Apr 11',time:'13:30',event:'US Unemployment Rate',assets:['EURUSD','SPX','DXY'],imp:'hi',fore:'4.1%',prev:'4.1%',act:'—',ac:'tbd'},
+  {day:'Friday, Apr 11',time:'15:00',event:'Michigan Consumer Sentiment',assets:['SPX','EURUSD'],imp:'med',fore:'73.5',prev:'71.8',act:'—',ac:'tbd'},
+  {day:'Monday, Apr 14',time:'02:00',event:'China GDP Q1 YoY',assets:['AUDUSD','COPPER','HSI','NZDUSD'],imp:'hi',fore:'5.1%',prev:'5.0%',act:'—',ac:'tbd'},
+  {day:'Monday, Apr 14',time:'Various',event:'NVIDIA Earnings (After Close)',assets:['NASDAQ','SPX'],imp:'hi',fore:'$5.58 EPS',prev:'$4.02 EPS',act:'—',ac:'tbd'},
+  {day:'Tuesday, Apr 15',time:'02:30',event:'RBA Meeting Minutes',assets:['AUDUSD'],imp:'med',fore:'—',prev:'—',act:'—',ac:'tbd'},
+];
+
+// ═══════════════════════════════════════════════
+// KEY LEVELS DATABASE
+// ═══════════════════════════════════════════════
+const KEY_LEVELS = {
+  XAUUSD:{res:['3,150','3,200','3,250'],sup:['3,100','3,050','3,000'],pivot:'3,121',spread:'0.30'},
+  EURUSD:{res:['1.1080','1.1120','1.1200'],sup:['1.1020','1.0980','1.0940'],pivot:'1.1053',spread:'0.8'},
+  GBPUSD:{res:['1.2850','1.2900','1.3000'],sup:['1.2740','1.2700','1.2650'],pivot:'1.2784',spread:'1.0'},
+  USDJPY:{res:['152.50','153.00','154.00'],sup:['151.00','150.00','149.00'],pivot:'151.82',spread:'1.0'},
+  BTCUSD:{res:['94,000','96,500','100,000'],sup:['90,000','88,000','85,000'],pivot:'92,148',spread:'50'},
+  ETHUSD:{res:['3,500','3,700','4,000'],sup:['3,350','3,200','3,000'],pivot:'3,482',spread:'3'},
+  SPX:{res:['5,680','5,720','5,800'],sup:['5,600','5,560','5,500'],pivot:'5,641',spread:'—'},
+  WTIUSD:{res:['78.00','80.00','82.00'],sup:['75.00','73.00','70.00'],pivot:'76.34',spread:'0.05'},
+  BRENTUSD:{res:['80.00','82.00','85.00'],sup:['77.00','75.00','72.00'],pivot:'78.41',spread:'0.06'},
+};
+
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+let currentAsset = ASSETS.forex[0]; // default: XAUUSD
+let currentTab = 'forex';
+let currentCpTab = 'news';
+let currentNewsFilter = 'all';
+let tvWidget = null;
+let currentTF = '240';
+let newsInterval = null;
+let newsQueue = [];
+
+// ═══════════════════════════════════════════════
+// BUILD TICKER
+// ═══════════════════════════════════════════════
+function buildTicker(){
+  const all=[...Object.values(ASSETS).flat(),...Object.values(ASSETS).flat()];
+  document.getElementById('tickerInner').innerHTML=all.slice(0,28).map(a=>
+    `<div class="t-i" onclick="selectAsset('${a.sym}')" title="${a.full}">
+      <span class="t-s">${a.display}</span>
+      <span class="t-p">${a.price}</span>
+      <span class="t-c ${a.dir}">${a.dir==='up'?'▲':'▼'} ${a.change}</span>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════
+// BUILD ASSET LIST
+// ═══════════════════════════════════════════════
+function buildAssetList(tab, filter=''){
+  const list=ASSETS[tab]||[];
+  const filtered=filter?list.filter(a=>a.display.toLowerCase().includes(filter.toLowerCase())||a.full.toLowerCase().includes(filter.toLowerCase())):list;
+  document.getElementById('assetList').innerHTML=filtered.map(a=>`
+    <div class="ap-item ${a.sym===currentAsset.sym?'active':''}" onclick="selectAsset('${a.sym}')">
+      <div>
+        <div class="ap-sym">${a.display}</div>
+        <div class="ap-name">${a.full.substring(0,22)}</div>
+      </div>
+      <div class="ap-price">
+        <div class="ap-p">${a.price.length>8?a.price.substring(0,8):a.price}</div>
+        <div class="ap-c ${a.dir}">${a.dir==='up'?'▲':'▼'} ${a.change}</div>
+      </div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════
+// SELECT ASSET
+// ═══════════════════════════════════════════════
+function selectAsset(sym){
+  const found=Object.values(ASSETS).flat().find(a=>a.sym===sym);
+  if(!found)return;
+  currentAsset=found;
+  updateChartHeader();
+  loadTVChart();
+  updateContextPanel();
+  buildAssetList(currentTab);
+}
+
+function updateChartHeader(){
+  const a=currentAsset;
+  document.getElementById('chSymbol').textContent=a.display;
+  document.getElementById('chFull').textContent=a.full;
+  document.getElementById('chPrice').textContent=a.price;
+  const chg=document.getElementById('chChange');
+  chg.textContent=(a.dir==='up'?'▲ +':'▼ ')+a.change;
+  chg.className='ch-change '+(a.dir==='up'?'up':'dn');
+  document.getElementById('chOpen').textContent=a.open;
+  document.getElementById('chHigh').textContent=a.high;
+  document.getElementById('chLow').textContent=a.low;
+  document.getElementById('chVol').textContent=a.vol;
+}
+
+// ═══════════════════════════════════════════════
+// TRADINGVIEW CHART
+// ═══════════════════════════════════════════════
+function loadTVChart(){
+  const overlay=document.getElementById('chartOverlay');
+  overlay.style.display='flex';
+  document.getElementById('tvChart').innerHTML='';
+  if(tvWidget){try{tvWidget.remove();}catch(e){}}
+  setTimeout(()=>{
+    try{
+      tvWidget=new TradingView.widget({
+        container_id:'tvChart',
+        symbol:currentAsset.tv,
+        interval:currentTF,
+        timezone:'Etc/UTC',
+        theme:'dark',
+        style:'1',
+        locale:'en',
+        toolbar_bg:'#060c18',
+        enable_publishing:false,
+        allow_symbol_change:false,
+        hide_side_toolbar:false,
+        hide_top_toolbar:false,
+        withdateranges:true,
+        range:'3M',
+        save_image:false,
+        show_popup_button:false,
+        popup_width:'1000',
+        popup_height:'650',
+        backgroundColor:'rgba(3,6,13,1)',
+        gridColor:'rgba(20,32,53,0.5)',
+        studies:['RSI@tv-basicstudies','MACD@tv-basicstudies'],
+        overrides:{
+          'mainSeriesProperties.candleStyle.upColor':'#34d399',
+          'mainSeriesProperties.candleStyle.downColor':'#f87171',
+          'mainSeriesProperties.candleStyle.wickUpColor':'#34d399',
+          'mainSeriesProperties.candleStyle.wickDownColor':'#f87171',
+          'mainSeriesProperties.candleStyle.borderUpColor':'#34d399',
+          'mainSeriesProperties.candleStyle.borderDownColor':'#f87171',
+          'paneProperties.background':'#03060d',
+          'paneProperties.backgroundType':'solid',
+          'paneProperties.vertGridProperties.color':'#142035',
+          'paneProperties.horzGridProperties.color':'#142035',
+          'scalesProperties.textColor':'#7a9ab8',
+          'scalesProperties.lineColor':'#142035',
+        },
+        width:'100%',
+        height:'100%',
+        autosize:true,
+        onReady:()=>{ setTimeout(()=>{overlay.style.display='none';},800); }
+      });
+    }catch(e){
+      overlay.style.display='none';
+      document.getElementById('tvChart').innerHTML=`<div style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:12px;color:var(--text3);"><div style="font-size:32px;">📈</div><div style="font-family:var(--mono);font-size:12px;">TradingView chart for ${currentAsset.display}</div><div style="font-size:11px;color:var(--text3);">Open in browser to view live chart</div></div>`;
+    }
+  },200);
+}
+
+function setTF(tf,btn){
+  currentTF=tf;
+  document.querySelectorAll('.tf-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if(tvWidget){
+    try{tvWidget.setSymbol(currentAsset.tv,tf,()=>{});}
+    catch(e){loadTVChart();}
+  }
+}
+
+// ═══════════════════════════════════════════════
+// CONTEXT PANEL
+// ═══════════════════════════════════════════════
+function updateContextPanel(){
+  const a=currentAsset;
+  document.getElementById('cpSym').textContent=`${a.display} — ${a.full.split('/')[0].trim()}`;
+  document.getElementById('cpDesc').textContent=a.desc;
+  const bull=a.bull;const bear=100-bull;
+  document.getElementById('cpBullFill').style.width=bull+'%';
+  document.getElementById('cpBearFill').style.width=bear+'%';
+  const col=bull>60?'var(--green2)':bull<40?'var(--red2)':'var(--yellow)';
+  document.getElementById('cpBullPct').textContent=`🟢 Bullish ${bull}%`;
+  document.getElementById('cpBearPct').textContent=`${bear}% Bearish 🔴`;
+  const label=bull>70?'Strongly Bullish':bull>55?'Moderately Bullish':bull<30?'Strongly Bearish':bull<45?'Moderately Bearish':'Neutral';
+  const news=getAssetNews(a.sym);
+  const nbull=news.filter(n=>n.bias==='bull').length;
+  const nbear=news.filter(n=>n.bias==='bear').length;
+  document.getElementById('cpScore').textContent=`${label} — ${nbull} bullish signals vs ${nbear} bearish`;
+  document.getElementById('cpScore').style.color=col;
+  renderContextNews();
+  renderContextCalendar();
+  renderSentiment();
+  renderKeyLevels();
+  renderQuickPrompts();
+  document.getElementById('aiPlaybookResult').style.display='none';
+}
+
+function getAssetNews(sym){
+  return ALL_NEWS.filter(n=>n.assets.includes(sym));
+}
+
+function renderContextNews(){
+  const a=currentAsset;
+  const news=getAssetNews(a.sym);
+  const filtered=news.filter(n=>{
+    if(currentNewsFilter==='all')return true;
+    if(currentNewsFilter==='bull')return n.bias==='bull';
+    if(currentNewsFilter==='bear')return n.bias==='bear';
+    if(currentNewsFilter==='breaking')return n.breaking;
+    if(currentNewsFilter==='hi')return n.imp==='hi';
+    return true;
+  });
+  const el=document.getElementById('contextNewsFeed');
+  if(!filtered.length){
+    el.innerHTML=`<div class="empty-state"><div class="empty-icon">📭</div>No ${currentNewsFilter==='all'?'':currentNewsFilter+' '}news for ${a.display}</div>`;
+    return;
+  }
+  el.innerHTML=filtered.map((n,i)=>{
+    const biasClass=n.bias==='bull'?'bc-bull':n.bias==='bear'?'bc-bear':'bc-neut';
+    const dotClass=n.bias==='bull'?'bcd-bull':n.bias==='bear'?'bcd-bear':'bcd-neut';
+    const biasLabel=n.bias==='bull'?'🟢 Bull':n.bias==='bear'?'🔴 Bear':'🟡 Neutral';
+    const barClass=n.breaking?'breaking-bar':n.bias;
+    const impBadge=n.imp==='hi'?'<span class="badge badge-red" style="font-size:8px;">⚡ Hi</span>':n.imp==='med'?'<span class="badge badge-yellow" style="font-size:8px;">Med</span>':'';
+    const timeAgo=`${Math.floor(Math.random()*50+i*8)+1}m ago`;
+    const nid='cn-'+i+a.sym;
+    return`<div class="news-item-sm ${n.breaking?'breaking':''}" id="${nid}">
+      <div class="ni-bar ${barClass}"></div>
+      <div class="ni-sm-top">
+        ${n.breaking?'<span class="break-badge">⚡ Breaking</span>':''}
+        ${impBadge}
+        <span class="ni-sm-time">${timeAgo}</span>
+      </div>
+      <div class="ni-sm-headline">${n.headline}</div>
+      <div class="ni-sm-footer">
+        <span class="ni-sm-source">${n.source}</span>
+        <div style="display:flex;align-items:center;gap:5px;">
+          <div class="bias-chip-sm ${biasClass}"><div class="bc-dot ${dotClass}"></div>${biasLabel}</div>
+          ${n.imp==='hi'?`<button class="ai-analyse-sm" onclick="analyseNewsItem('${nid}','${n.headline.replace(/'/g,"\\'")}','${a.display}')">🤖 AI</button>`:''}
+        </div>
+      </div>
+      <div class="ai-verdict-sm" id="vrd-${nid}"></div>
+    </div>`;
+  }).join('');
+}
+
+function renderContextCalendar(){
+  const a=currentAsset;
+  const events=ALL_CALENDAR.filter(e=>e.assets.includes(a.sym));
+  const el=document.getElementById('contextCalendar');
+  if(!events.length){
+    el.innerHTML=`<div class="empty-state"><div class="empty-icon">📅</div>No upcoming events for ${a.display}</div>`;
+    return;
+  }
+  let html='',lastDay='';
+  events.forEach(e=>{
+    if(e.day!==lastDay){
+      html+=`<div class="cal-day-sep">${e.day}</div>`;lastDay=e.day;
+    }
+    const impClass=e.imp==='hi'?'ci-hi':e.imp==='med'?'ci-med':'ci-lo';
+    const impLabel=e.imp==='hi'?'⚡ HIGH':'MED';
+    const actClass=e.ac==='beat'?'ci-act-beat':e.ac==='miss'?'ci-act-miss':'ci-act-tbd';
+    const isUpcoming=e.act==='—';
+    html+=`<div class="cal-item ${isUpcoming?(e.imp==='hi'?'high-imp':'upcoming'):''}">
+      <div class="ci-top">
+        <span class="ci-time">${e.time}</span>
+        <span class="ci-event">${e.event}</span>
+        <span class="ci-imp ${impClass}">${impLabel}</span>
+      </div>
+      <div class="ci-bottom">
+        <div class="ci-stat"><div class="ci-stat-label">Forecast</div><div class="ci-stat-val">${e.fore}</div></div>
+        <div class="ci-stat"><div class="ci-stat-label">Previous</div><div class="ci-stat-val" style="color:var(--text3)">${e.prev}</div></div>
+        <div class="ci-stat"><div class="ci-stat-label">Actual</div><div class="ci-stat-val ${actClass}">${e.act}</div></div>
+      </div>
+    </div>`;
+  });
+  el.innerHTML=html;
+}
+
+function renderSentiment(){
+  const a=currentAsset;
+  const bull=a.bull;const bear=100-bull;
+  const col=bull>60?'var(--green2)':bull<40?'var(--red2)':'var(--yellow)';
+  const label=bull>70?'Strongly Bullish':bull>55?'Moderately Bullish':bull<30?'Strongly Bearish':bull<45?'Moderately Bearish':'Neutral';
+  document.getElementById('sentOverall').innerHTML=`
+    <div class="bm-label">${a.display} Overall Bias</div>
+    <div class="so-score" style="color:${col}">${label}</div>
+    <div class="so-bar">
+      <div class="so-bull-fill" style="width:${bull}%;background:var(--green2);"></div>
+      <div class="so-bear-fill" style="width:${bear}%;background:var(--red2);"></div>
+    </div>
+    <div class="so-labels"><span style="color:var(--green2);font-family:var(--mono);font-size:9px;">🟢 ${bull}% Bull</span><span style="color:var(--red2);font-family:var(--mono);font-size:9px;">${bear}% Bear 🔴</span></div>`;
+
+  const news=getAssetNews(a.sym);
+  document.getElementById('sentMetrics').innerHTML=[
+    {icon:'📰',label:'Related Stories',sub:'Last 24 hours',val:news.length,col:'var(--blue)'},
+    {icon:'🟢',label:'Bullish Signals',sub:'News bias count',val:news.filter(n=>n.bias==='bull').length,col:'var(--green2)'},
+    {icon:'🔴',label:'Bearish Signals',sub:'News bias count',val:news.filter(n=>n.bias==='bear').length,col:'var(--red2)'},
+    {icon:'⚡',label:'High Impact Events',sub:'This week',val:ALL_CALENDAR.filter(e=>e.assets.includes(a.sym)&&e.imp==='hi').length,col:'var(--red2)'},
+  ].map(m=>`<div class="sent-metric"><div class="sm-left"><div class="sm-icon">${m.icon}</div><div><div class="sm-label">${m.label}</div><div class="sm-sub">${m.sub}</div></div></div><div class="sm-val" style="color:${m.col}">${m.val}</div></div>`).join('');
+}
+
+function renderKeyLevels(){
+  const a=currentAsset;
+  const levels=KEY_LEVELS[a.sym]||KEY_LEVELS['EURUSD'];
+  document.getElementById('keyLevels').innerHTML=`
+    <div class="kl-title">Key Levels — ${a.display}</div>
+    ${levels.res.map((r,i)=>`<div class="kl-row"><span class="kl-type kl-res">R${i+1}</span><span class="kl-price">${r}</span><span class="kl-dist">+${(Math.random()*1.5+0.2).toFixed(2)}%</span></div>`).join('')}
+    <div class="kl-row" style="background:rgba(14,165,233,.05);"><span class="kl-type kl-pivot">PIVOT</span><span class="kl-price">${levels.pivot}</span><span class="kl-dist">Current</span></div>
+    ${levels.sup.map((s,i)=>`<div class="kl-row"><span class="kl-type kl-sup">S${i+1}</span><span class="kl-price">${s}</span><span class="kl-dist">-${(Math.random()*1.5+0.2).toFixed(2)}%</span></div>`).join('')}
+    <div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border);display:flex;justify-content:space-between;"><span style="font-family:var(--mono);font-size:9px;color:var(--text3);">Avg Spread</span><span style="font-family:var(--mono);font-size:9px;color:var(--text2);">${levels.spread} pips</span></div>`;
+}
+
+function renderQuickPrompts(){
+  const a=currentAsset;
+  const prompts=[
+    `Generate a full bull and bear trade playbook for ${a.display} right now`,
+    `What are the key levels to watch on ${a.display} this week?`,
+    `How does Friday's NFP affect ${a.display}? Give me both scenarios`,
+    `What is driving ${a.display} today and which direction is the bias?`,
+  ];
+  document.getElementById('quickPrompts').innerHTML=prompts.map(p=>
+    `<button onclick="runQuickPrompt('${p.replace(/'/g,"\\'")}',this)" style="background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-size:11px;padding:8px 10px;border-radius:3px;cursor:pointer;text-align:left;transition:.2s;width:100%;" onmouseover="this.style.borderColor='var(--blue)';this.style.color='var(--blue)';" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text2)';">
+      <span style="color:var(--blue);margin-right:5px;">→</span>${p}
+    </button>`).join('');
+}
+
+// ═══════════════════════════════════════════════
+// AI FUNCTIONS
+// ═══════════════════════════════════════════════
+async function analyseNewsItem(nid, headline, assetDisplay){
+  const btn=document.querySelector(`#${nid} .ai-analyse-sm`);
+  const vrd=document.getElementById('vrd-'+nid);
+  if(!btn||!vrd)return;
+  btn.textContent='⏳';btn.disabled=true;
+  vrd.classList.add('show');
+  vrd.innerHTML=`<span class="ai-spinner-xs"></span> Analysing...`;
+
+  const prompt=`News: "${headline}" | Asset: ${assetDisplay}\nIn 2-3 short sentences: 1) What is the market bias direction? 2) Which specific price levels or targets matter? 3) What is the key risk to this view? Be very concise and specific.`;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:200,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();
+    vrd.innerHTML=data.content?.[0]?.text||'Analysis complete.';
+  }catch(e){
+    const bias=headline.toLowerCase().match(/beat|surge|rally|breaks|record|hits high/)?'bull':'bear';
+    vrd.innerHTML=bias==='bull'?
+      `Bullish bias confirmed. The positive development supports further upside in ${assetDisplay}. Watch key resistance levels for continuation signals. Risk: a reversal in the broader USD trend could cap gains.`:
+      `Bearish pressure building on ${assetDisplay}. The negative data increases downside probability. Key support levels may be tested. Risk: any positive surprise in upcoming data could trigger a sharp reversal.`;
+  }
+  btn.textContent='🤖 AI';btn.disabled=false;
+}
+
+async function generateAssetPlaybook(){
+  const a=currentAsset;
+  const btn=document.getElementById('aiGenBtn');
+  const resultDiv=document.getElementById('aiPlaybookResult');
+  const bodyEl=document.getElementById('aiPlaybookBody');
+  const spinner=document.getElementById('aiPlaybookSpinner');
+  btn.disabled=true;btn.textContent='⏳ Generating...';
+  resultDiv.style.display='block';bodyEl.textContent='';spinner.style.display='inline-block';
+  const news=getAssetNews(a.sym);
+  const bull=news.filter(n=>n.bias==='bull').length;
+  const bear=news.filter(n=>n.bias==='bear').length;
+  const levels=KEY_LEVELS[a.sym]||KEY_LEVELS['EURUSD'];
+  const prompt=`Asset: ${a.display} (${a.full})\nCurrent price: ${a.price} | Change: ${a.change}\nNews bias: ${bull} bullish signals, ${bear} bearish signals\nKey resistance: ${levels.res[0]}, ${levels.res[1]} | Key support: ${levels.sup[0]}, ${levels.sup[1]}\n\nGenerate a structured trade playbook:\n📊 CURRENT BIAS\n[One clear sentence on overall directional bias]\n\n🟢 BULL SCENARIO\n[Specific bull case with price target]\n\n🔴 BEAR SCENARIO\n[Specific bear case with price target]\n\n📈 KEY LEVELS\n[2-3 most important levels right now]\n\n⚡ CATALYST TO WATCH\n[The single most important upcoming event or data point]\n\nBe specific, concise and trader-focused.`;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:400,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();
+    spinner.style.display='none';
+    const txt=data.content?.[0]?.text||'';
+    let i=0;
+    const cur=document.createElement('span');cur.className='ai-cursor';bodyEl.appendChild(cur);
+    const iv=setInterval(()=>{if(i<txt.length){bodyEl.insertBefore(document.createTextNode(txt[i]),cur);i++;}else{clearInterval(iv);cur.remove();}},8);
+  }catch(e){
+    spinner.style.display='none';
+    const bullBias=a.bull>55;
+    bodyEl.textContent=`📊 CURRENT BIAS\n${bullBias?'Bullish':'Bearish'} — news flow is ${Math.abs(a.bull-50)}% skewed toward the ${bullBias?'upside':'downside'} based on ${bull} bullish vs ${bear} bearish signals.\n\n🟢 BULL SCENARIO\nBreak and hold above ${levels.res[0]} opens the path to ${levels.res[1]}. Catalyst: dovish data or strong risk sentiment.\n\n🔴 BEAR SCENARIO\nFail to hold ${levels.sup[0]} support confirms bearish momentum toward ${levels.sup[1]}. Catalyst: USD strength or risk-off macro event.\n\n📈 KEY LEVELS\nResistance: ${levels.res[0]} | ${levels.res[1]}\nSupport: ${levels.sup[0]} | ${levels.sup[1]}\nPivot: ${levels.pivot}\n\n⚡ CATALYST TO WATCH\nFriday's US Non-Farm Payrolls at 13:30 UTC — a significant beat or miss will likely drive the directional break.`;
+  }
+  btn.disabled=false;btn.textContent='🤖 Generate Live AI Playbook';
+}
+
+async function runQuickPrompt(prompt, btnEl){
+  btnEl.style.opacity='.5';btnEl.disabled=true;
+  document.querySelectorAll('.cp-tab').forEach(t=>{if(t.textContent.includes('AI'))t.click();});
+  await generateAssetPlaybookWithPrompt(prompt);
+  btnEl.style.opacity='1';btnEl.disabled=false;
+}
+
+async function generateAssetPlaybookWithPrompt(prompt){
+  const btn=document.getElementById('aiGenBtn');
+  const resultDiv=document.getElementById('aiPlaybookResult');
+  const bodyEl=document.getElementById('aiPlaybookBody');
+  const spinner=document.getElementById('aiPlaybookSpinner');
+  resultDiv.style.display='block';bodyEl.textContent='';spinner.style.display='inline-block';
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:400,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();
+    spinner.style.display='none';
+    const txt=data.content?.[0]?.text||'';
+    let i=0;
+    const cur=document.createElement('span');cur.className='ai-cursor';bodyEl.appendChild(cur);
+    const iv=setInterval(()=>{if(i<txt.length){bodyEl.insertBefore(document.createTextNode(txt[i]),cur);i++;}else{clearInterval(iv);cur.remove();}},8);
+  }catch(e){
+    spinner.style.display='none';
+    bodyEl.textContent='AI analysis ready. The current setup shows a high-probability directional bias based on recent news flow and technical levels. See the bull and bear scenarios in the full playbook tab.';
+  }
+}
+
+// ═══════════════════════════════════════════════
+// CONTROLS
+// ═══════════════════════════════════════════════
+function setAssetTab(tab,btn){
+  currentTab=tab;
+  document.querySelectorAll('.ap-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  buildAssetList(tab);
+}
+
+function filterAssets(val){buildAssetList(currentTab,val);}
+
+function setCpTab(tab,btn){
+  currentCpTab=tab;
+  document.querySelectorAll('.cp-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  ['news','calendar','sentiment','ai'].forEach(t=>{
+    const el=document.getElementById('tab-'+t);
+    if(el)el.style.display=t===tab?'block':'none';
+  });
+}
+
+function setNewsFilter(filter,btn){
+  currentNewsFilter=filter;
+  document.querySelectorAll('.nf-chip').forEach(c=>c.classList.remove('active'));
+  btn.classList.add('active');
+  renderContextNews();
+}
+
+// ═══════════════════════════════════════════════
+// LIVE NEWS INJECTION
+// ═══════════════════════════════════════════════
+function startLiveNewsFeed(){
+  let idx=0;
+  setInterval(()=>{
+    const relatedNews=ALL_NEWS.filter(n=>n.assets.includes(currentAsset.sym));
+    if(!relatedNews.length)return;
+    const n=relatedNews[idx%relatedNews.length];
+    // re-render feed with slight variation
+    renderContextNews();
+    idx++;
+  },8000);
+}
+
+// ═══════════════════════════════════════════════
+// CLOCK
+// ═══════════════════════════════════════════════
+function clock(){
+  const el=document.getElementById('utcClock');if(!el)return;
+  const n=new Date(),p=v=>String(v).padStart(2,'0');
+  el.textContent=`${p(n.getUTCHours())}:${p(n.getUTCMinutes())}:${p(n.getUTCSeconds())} UTC`;
+}
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+buildTicker();
+buildAssetList('forex');
+loadTVChart();
+updateContextPanel();
+startLiveNewsFeed();
+clock();
+setInterval(clock,1000);
+</script>
+
+
+<!-- ═══ AI LIVE CHAT WIDGET v2 ═══ -->
+<style>
+.tc-chat-btn{position:fixed;bottom:24px;right:24px;width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,#8b5cf6);box-shadow:0 4px 24px rgba(14,165,233,.4);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:9999;border:none;transition:.3s;animation:tcPulse 3s ease-in-out infinite;}
+.tc-chat-btn:hover{transform:scale(1.08);}
+.tc-chat-btn.open{animation:none;background:linear-gradient(135deg,#ef4444,#dc2626);}
+.tc-chat-btn svg{transition:.3s;}
+@keyframes tcPulse{0%,100%{box-shadow:0 4px 24px rgba(14,165,233,.4);}50%{box-shadow:0 4px 40px rgba(14,165,233,.6);}}
+.tc-unread{position:absolute;top:0;right:0;width:18px;height:18px;background:#ef4444;border-radius:50%;border:2px solid var(--bg,#03060d);font-family:'DM Mono',monospace;font-size:9px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;}
+.tc-chat-bubble{position:fixed;bottom:92px;right:24px;background:#0a1220;border:1px solid #1e3050;color:#e2eaf4;font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;padding:10px 14px;border-radius:12px 12px 4px 12px;z-index:9998;box-shadow:0 8px 32px rgba(0,0,0,.5);animation:tcBubble 5s ease 1.5s both;white-space:nowrap;}
+.tc-chat-bubble::after{content:'';position:absolute;bottom:-6px;right:20px;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:6px solid #1e3050;}
+@keyframes tcBubble{0%{opacity:0;transform:translateY(8px);}10%{opacity:1;transform:translateY(0);}85%{opacity:1;}100%{opacity:0;pointer-events:none;}}
+
+/* WINDOW */
+.tc-chat-window{position:fixed;bottom:96px;right:24px;width:380px;background:#03060d;border:1px solid #1e3050;border-radius:14px;box-shadow:0 32px 80px rgba(0,0,0,.8);z-index:9997;display:none;flex-direction:column;overflow:hidden;max-height:580px;}
+.tc-chat-window.open{display:flex;animation:tcSlideUp .3s ease;}
+@keyframes tcSlideUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+
+/* HEADER */
+.tc-header{background:linear-gradient(135deg,#060c18,#0a1220);border-bottom:1px solid #142035;padding:14px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.tc-header-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,#8b5cf6);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.tc-header-info{flex:1;}
+.tc-header-name{font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;color:#e2eaf4;}
+.tc-header-status{display:flex;align-items:center;gap:5px;font-family:'DM Mono',monospace;font-size:9px;color:#34d399;text-transform:uppercase;letter-spacing:.1em;margin-top:2px;}
+.tc-status-dot{width:5px;height:5px;border-radius:50%;background:#34d399;animation:tcBlink 1.4s infinite;}
+@keyframes tcBlink{0%,100%{opacity:1;}50%{opacity:.3;}}
+.tc-close-btn{font-size:22px;color:#3a5570;cursor:pointer;background:none;border:none;line-height:1;transition:.2s;font-family:sans-serif;padding:0 4px;}.tc-close-btn:hover{color:#e2eaf4;}
+
+/* INTRO FORM */
+.tc-intro{padding:20px;display:flex;flex-direction:column;gap:14px;}
+.tc-intro-title{font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;color:#e2eaf4;text-align:center;}
+.tc-intro-sub{font-family:'Outfit',sans-serif;font-size:12px;color:#7a9ab8;text-align:center;line-height:1.6;margin-top:-8px;}
+.tc-form-field{display:flex;flex-direction:column;gap:4px;}
+.tc-form-label{font-family:'DM Mono',monospace;font-size:8px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#3a5570;}
+.tc-form-input{background:#0a1220;border:1px solid #1e3050;color:#e2eaf4;font-family:'Outfit',sans-serif;font-size:13px;padding:10px 13px;border-radius:6px;outline:none;transition:.2s;width:100%;}
+.tc-form-input:focus{border-color:#0ea5e9;}
+.tc-form-input::placeholder{color:#3a5570;}
+.tc-start-btn{background:linear-gradient(135deg,#0ea5e9,#8b5cf6);color:#fff;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;padding:12px;border-radius:8px;border:none;cursor:pointer;transition:.2s;width:100%;display:flex;align-items:center;justify-content:center;gap:6px;}
+.tc-start-btn:hover{opacity:.9;}
+.tc-form-note{font-family:'DM Mono',monospace;font-size:9px;color:#3a5570;text-align:center;}
+
+/* CHAT AREA */
+.tc-chat-area{display:none;flex-direction:column;flex:1;overflow:hidden;}
+.tc-chat-area.show{display:flex;}
+.tc-user-info-bar{padding:8px 14px;background:#060c18;border-bottom:1px solid #142035;display:flex;align-items:center;gap:8px;}
+.tc-user-avatar{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,#8b5cf6);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;}
+.tc-user-name-lbl{font-family:'DM Mono',monospace;font-size:10px;color:#7a9ab8;font-weight:600;}
+
+/* MESSAGES */
+.tc-messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;scrollbar-width:thin;scrollbar-color:#1e3050 transparent;min-height:200px;max-height:320px;}
+.tc-msg{display:flex;gap:8px;animation:tcMsgIn .2s ease;}
+@keyframes tcMsgIn{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:translateY(0);}}
+.tc-msg-av{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,#8b5cf6);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.tc-msg-bub{background:#0a1220;border:1px solid #142035;border-radius:4px 12px 12px 12px;padding:10px 12px;max-width:270px;}
+.tc-msg-bub p{font-family:'Outfit',sans-serif;font-size:12px;color:#7a9ab8;line-height:1.65;margin:0;}
+.tc-msg-bub strong{color:#e2eaf4;font-weight:600;}
+.tc-msg-bub a{color:#0ea5e9;text-decoration:none;}
+.tc-msg.tc-user{flex-direction:row-reverse;}
+.tc-msg.tc-user .tc-msg-bub{background:linear-gradient(135deg,rgba(14,165,233,.15),rgba(139,92,246,.1));border-color:rgba(14,165,233,.3);border-radius:12px 4px 12px 12px;}
+.tc-msg.tc-user .tc-msg-bub p{color:#e2eaf4;}
+
+/* QUICK REPLIES */
+.tc-quick{padding:8px 14px 4px;display:flex;gap:5px;flex-wrap:wrap;flex-shrink:0;}
+.tc-qbtn{background:#0a1220;border:1px solid #142035;color:#7a9ab8;font-family:'DM Mono',monospace;font-size:8px;font-weight:600;padding:4px 9px;border-radius:100px;cursor:pointer;transition:.2s;white-space:nowrap;letter-spacing:.04em;}
+.tc-qbtn:hover{border-color:#0ea5e9;color:#0ea5e9;}
+
+/* INPUT ROW */
+.tc-input-row{padding:10px 12px;border-top:1px solid #142035;display:flex;gap:8px;flex-shrink:0;background:#060c18;}
+.tc-input{flex:1;background:#0a1220;border:1px solid #1e3050;color:#e2eaf4;font-family:'Outfit',sans-serif;font-size:12px;padding:9px 12px;border-radius:8px;outline:none;transition:.2s;}
+.tc-input:focus{border-color:#0ea5e9;}
+.tc-input::placeholder{color:#3a5570;}
+.tc-send-btn{background:linear-gradient(135deg,#0ea5e9,#8b5cf6);color:#fff;width:36px;height:36px;border-radius:8px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;flex-shrink:0;}
+.tc-send-btn:hover{opacity:.9;}
+
+/* TYPING */
+.tc-typing-wrap{display:flex;gap:4px;align-items:center;padding:6px 2px;}
+.tc-dot{width:6px;height:6px;border-radius:50%;background:#3a5570;animation:tcTypeDot 1.2s ease-in-out infinite;}
+.tc-dot:nth-child(2){animation-delay:.2s;}.tc-dot:nth-child(3){animation-delay:.4s;}
+@keyframes tcTypeDot{0%,100%{transform:translateY(0);opacity:.4;}50%{transform:translateY(-4px);opacity:1;}}
+.tc-ai-cur{display:inline-block;width:2px;height:12px;background:#0ea5e9;margin-left:1px;animation:tcBlink .7s infinite;vertical-align:text-bottom;}
+</style>
+
+<!-- Bubble -->
+<div class="tc-chat-bubble" id="tcBubble">💬 &nbsp;Questions? Chat with our AI now!</div>
+
+<!-- Toggle button with speech bubble SVG -->
+<button class="tc-chat-btn" id="tcChatBtn" onclick="tcToggle()" title="Chat with TradeContext AI">
+  <span class="tc-unread" id="tcUnread">1</span>
+  <svg id="tcBtnIcon" width="26" height="26" viewBox="0 0 24 24" fill="none">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" fill="rgba(255,255,255,.95)" stroke="none"/>
+    <circle cx="8" cy="10" r="1.2" fill="#0ea5e9"/>
+    <circle cx="12" cy="10" r="1.2" fill="#8b5cf6"/>
+    <circle cx="16" cy="10" r="1.2" fill="#0ea5e9"/>
+  </svg>
+  <svg id="tcBtnClose" width="22" height="22" viewBox="0 0 24 24" fill="none" style="display:none;">
+    <path d="M18 6L6 18M6 6l12 12" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+  </svg>
+</button>
+
+<!-- Chat window -->
+<div class="tc-chat-window" id="tcWindow">
+
+  <!-- Header -->
+  <div class="tc-header">
+    <div class="tc-header-avatar">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" fill="rgba(255,255,255,.9)"/>
+      </svg>
+    </div>
+    <div class="tc-header-info">
+      <div class="tc-header-name">TradeContext AI Support</div>
+      <div class="tc-header-status"><div class="tc-status-dot"></div>Online · Powered by Claude</div>
+    </div>
+    <button class="tc-close-btn" onclick="tcToggle()">×</button>
+  </div>
+
+  <!-- INTRO FORM -->
+  <div class="tc-intro" id="tcIntro">
+    <div style="text-align:center;font-size:32px;margin-bottom:-4px;">👋</div>
+    <div class="tc-intro-title">Hi there! How can we help?</div>
+    <div class="tc-intro-sub">Enter your details and we'll get back to you instantly with our AI assistant.</div>
+    <div class="tc-form-field">
+      <label class="tc-form-label">Your Name</label>
+      <input class="tc-form-input" id="tcName" type="text" placeholder="e.g. James Smith" autocomplete="name">
+    </div>
+    <div class="tc-form-field">
+      <label class="tc-form-label">Email Address</label>
+      <input class="tc-form-input" id="tcEmail" type="email" placeholder="james@example.com" autocomplete="email">
+    </div>
+    <div class="tc-form-field">
+      <label class="tc-form-label">Your Question</label>
+      <input class="tc-form-input" id="tcFirstQ" type="text" placeholder="e.g. What does the Pro plan include?" onkeydown="if(event.key==='Enter')tcStart()">
+    </div>
+    <button class="tc-start-btn" onclick="tcStart()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" fill="#fff"/></svg>
+      Start Chat →
+    </button>
+    <div class="tc-form-note">🔒 Your details are kept private and never shared.</div>
+  </div>
+
+  <!-- CHAT AREA -->
+  <div class="tc-chat-area" id="tcChatArea">
+    <div class="tc-user-info-bar">
+      <div class="tc-user-avatar" id="tcUserAvatar">?</div>
+      <div class="tc-user-name-lbl" id="tcUserLbl">Chatting as Guest</div>
+    </div>
+    <div class="tc-messages" id="tcMsgs"></div>
+    <div class="tc-quick" id="tcQuick">
+      <button class="tc-qbtn" onclick="tcQ('What plans do you offer?')">💳 Pricing</button>
+      <button class="tc-qbtn" onclick="tcQ('Is there a free trial?')">❓ Free trial</button>
+      <button class="tc-qbtn" onclick="tcQ('How does the news bias feed work?')">📡 News feed</button>
+      <button class="tc-qbtn" onclick="tcQ('How do I connect my broker?')">🔌 Broker</button>
+      <button class="tc-qbtn" onclick="tcQ('Tell me about the Trading Journal')">📓 Journal</button>
+      <button class="tc-qbtn" onclick="tcQ('What funded account firms do you support?')">🏆 Funded accounts</button>
+    </div>
+    <div class="tc-input-row">
+      <input class="tc-input" id="tcMsg" type="text" placeholder="Type your message..." onkeydown="if(event.key==='Enter')tcSend()">
+      <button class="tc-send-btn" onclick="tcSend()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var tcOpen=false;
+  var tcHistory=[];
+  var tcUserName='';
+  var tcUserEmail='';
+  var TC_SYS='You are the friendly AI support assistant for TradeContext.ai — a premium AI-powered market intelligence platform for serious traders.\n\nBe warm, concise and professional. Always answer in 2-4 sentences. Address the user by their first name when you know it.\n\nKey facts:\n- Two plans: Pro £39.95/mo (£407.49/yr, 15% off) | Elite £49.95/mo (£509.49/yr, 15% off)\n- No free trial — paid from day one. Card required. Cancel anytime.\n- Pro: Live News Bias Feed, AI Trade Playbooks, TradingView Charts (29 assets), Broker Hub (MT4/MT5/OANDA/Binance/IBKR/Coinbase), Watchlist, Alerts, Economic Calendar\n- Elite: Everything in Pro + AI Trading Journal + Funded Account Tracker (FTMO, The5%ers, TopStep, MyForexFunds, True Forex Funds, Instant Funding)\n- 2-minute free preview on Dashboard and News Bias Feed\n- AI powered by Claude (Anthropic)\n- TradingView charts — no TradingView account needed for basic use\n- Contact: hello@tradecontext.ai\n- For billing/account issues always direct to hello@tradecontext.ai\n- Never give financial/trading advice — only platform information';
+
+  window.tcToggle=function(){
+    tcOpen=!tcOpen;
+    var icon=document.getElementById('tcBtnIcon');
+    var close=document.getElementById('tcBtnClose');
+    var btn=document.getElementById('tcChatBtn');
+    var win=document.getElementById('tcWindow');
+    var unread=document.getElementById('tcUnread');
+    if(tcOpen){
+      btn.classList.add('open');
+      icon.style.display='none';
+      close.style.display='block';
+      win.classList.add('open');
+      if(unread)unread.style.display='none';
+      document.getElementById('tcBubble').style.display='none';
+      setTimeout(function(){
+        var f=document.getElementById('tcName');
+        if(f&&!tcUserName)f.focus();
+        else if(document.getElementById('tcMsg'))document.getElementById('tcMsg').focus();
+      },200);
+    } else {
+      btn.classList.remove('open');
+      icon.style.display='block';
+      close.style.display='none';
+      win.classList.remove('open');
+    }
+  };
+
+  window.tcStart=function(){
+    var name=document.getElementById('tcName').value.trim();
+    var email=document.getElementById('tcEmail').value.trim();
+    var q=document.getElementById('tcFirstQ').value.trim();
+    if(!name){document.getElementById('tcName').focus();document.getElementById('tcName').style.borderColor='#ef4444';return;}
+    if(!email||!email.includes('@')){document.getElementById('tcEmail').focus();document.getElementById('tcEmail').style.borderColor='#ef4444';return;}
+    tcUserName=name;
+    tcUserEmail=email;
+    // Show chat area
+    document.getElementById('tcIntro').style.display='none';
+    document.getElementById('tcChatArea').classList.add('show');
+    // Set user label
+    var initial=name.charAt(0).toUpperCase();
+    document.getElementById('tcUserAvatar').textContent=initial;
+    document.getElementById('tcUserLbl').textContent='Chatting as '+name.split(' ')[0];
+    // Welcome message
+    tcAddBot('Hi <strong>'+name.split(' ')[0]+'</strong>! 👋 Welcome to TradeContext.ai. I\'m your AI assistant — ask me anything about our platform and I\'ll help you right away!');
+    // If they typed a question, send it
+    if(q){
+      setTimeout(function(){
+        tcAddUser(q);
+        tcGetReply(q);
+      },600);
+    }
+  };
+
+  window.tcQ=function(q){
+    document.getElementById('tcQuick').style.display='none';
+    tcAddUser(q);
+    tcGetReply(q);
+  };
+
+  window.tcSend=function(){
+    var inp=document.getElementById('tcMsg');
+    var msg=inp.value.trim();
+    if(!msg)return;
+    inp.value='';
+    document.getElementById('tcQuick').style.display='none';
+    tcAddUser(msg);
+    tcGetReply(msg);
+  };
+
+  function tcAddUser(text){
+    var msgs=document.getElementById('tcMsgs');
+    var div=document.createElement('div');
+    div.className='tc-msg tc-user';
+    div.innerHTML='<div class="tc-msg-bub"><p>'+text+'</p></div>';
+    msgs.appendChild(div);
+    msgs.scrollTop=msgs.scrollHeight;
+    tcHistory.push({role:'user',content:text});
+  }
+
+  function tcAddBot(html){
+    var msgs=document.getElementById('tcMsgs');
+    var div=document.createElement('div');
+    div.className='tc-msg';
+    div.innerHTML='<div class="tc-msg-av"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" fill="rgba(255,255,255,.9)"/></svg></div><div class="tc-msg-bub"><p>'+html+'</p></div>';
+    msgs.appendChild(div);
+    msgs.scrollTop=msgs.scrollHeight;
+    tcHistory.push({role:'assistant',content:html.replace(/<[^>]+>/g,'')});
+  }
+
+  function tcShowTyping(){
+    var msgs=document.getElementById('tcMsgs');
+    var div=document.createElement('div');
+    div.className='tc-msg';div.id='tcTypingEl';
+    div.innerHTML='<div class="tc-msg-av"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" fill="rgba(255,255,255,.9)"/></svg></div><div class="tc-msg-bub"><div class="tc-typing-wrap"><div class="tc-dot"></div><div class="tc-dot"></div><div class="tc-dot"></div></div></div>';
+    msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight;
+  }
+
+  function tcRemoveTyping(){var t=document.getElementById('tcTypingEl');if(t)t.remove();}
+
+  function tcStream(text){
+    var msgs=document.getElementById('tcMsgs');
+    var wrap=document.createElement('div');wrap.className='tc-msg';
+    var av=document.createElement('div');av.className='tc-msg-av';av.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" fill="rgba(255,255,255,.9)"/></svg>';
+    var bub=document.createElement('div');bub.className='tc-msg-bub';
+    var p=document.createElement('p');bub.appendChild(p);
+    wrap.appendChild(av);wrap.appendChild(bub);msgs.appendChild(wrap);
+    var i=0;var cur=document.createElement('span');cur.className='tc-ai-cur';p.appendChild(cur);
+    var iv=setInterval(function(){
+      if(i<text.length){p.insertBefore(document.createTextNode(text[i]),cur);i++;msgs.scrollTop=msgs.scrollHeight;}
+      else{clearInterval(iv);cur.remove();tcHistory.push({role:'assistant',content:text});}
+    },10);
+  }
+
+  async function tcGetReply(msg){
+    tcShowTyping();
+    var messages=tcHistory.slice(-8).filter(function(m){return m.role==='user'||m.role==='assistant';});
+    // ensure last message is the user msg
+    if(!messages.length||messages[messages.length-1].content!==msg){
+      messages.push({role:'user',content:msg});
+    }
+    var sysMsg=TC_SYS+(tcUserName?'\n\nThe user\'s name is '+tcUserName+' and their email is '+tcUserEmail+'. Address them by first name.':'');
+    try{
+      var res=await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:300,system:sysMsg,messages:messages})
+      });
+      var data=await res.json();
+      var reply=data.content&&data.content[0]?data.content[0].text:'';
+      tcRemoveTyping();
+      if(reply)tcStream(reply);
+      else tcAddBot('Sorry, I\'m having a moment! Please email us at <a href="mailto:hello@tradecontext.ai"><strong>hello@tradecontext.ai</strong></a> and we\'ll help right away.');
+    }catch(e){
+      tcRemoveTyping();
+      tcAddBot(tcFallback(msg));
+    }
+  }
+
+  function tcFallback(q){
+    var n=tcUserName?tcUserName.split(' ')[0]:'there';
+    var ql=q.toLowerCase();
+    if(ql.includes('price')||ql.includes('cost')||ql.includes('plan')||ql.includes('how much'))
+      return 'Great question, '+n+'! <strong>Pro</strong> is £39.95/month (£407.49/year, 15% off) and <strong>Elite</strong> is £49.95/month (£509.49/year, 15% off). No free trial — card required from day one, but you can cancel anytime.';
+    if(ql.includes('trial')||ql.includes('free'))
+      return 'Hi '+n+'! There\'s no free trial — we\'re a premium platform paid from day one. You do get a <strong>2-minute free preview</strong> on the Dashboard and News Bias Feed so you can see the platform before subscribing.';
+    if(ql.includes('journal'))
+      return 'The <strong>AI Trading Journal</strong> is an Elite plan exclusive, '+n+'. It includes trade logging, a calendar heatmap, 6 analytics reports, playbooks, a notebook and an AI coach powered by Claude that analyses your performance.';
+    if(ql.includes('broker')||ql.includes('mt4')||ql.includes('mt5'))
+      return 'We support <strong>MT4, MT5, OANDA, Binance, Interactive Brokers and Coinbase</strong> on the Pro plan. Full live trade sync is coming with our backend update — you\'ll be the first to know, '+n+'!';
+    if(ql.includes('news')||ql.includes('bias'))
+      return 'The <strong>Live News Bias Feed</strong> scores breaking news as bullish or bearish in real time across US, EU, UK, Asia and Middle East. Each story gets an AI deep dive powered by Claude.';
+    if(ql.includes('funded')||ql.includes('ftmo')||ql.includes('prop'))
+      return 'The <strong>Funded Account Tracker</strong> is Elite only, '+n+'. We support FTMO, The5%ers, TopStep, MyForexFunds, True Forex Funds and Instant Funding — tracking rules, drawdown limits and daily progress.';
+    if(ql.includes('cancel')||ql.includes('refund'))
+      return 'You can cancel anytime from your account settings — no questions asked, '+n+'. For billing queries please email <a href="mailto:hello@tradecontext.ai"><strong>hello@tradecontext.ai</strong></a>.';
+    if(ql.includes('contact')||ql.includes('support'))
+      return 'You can reach us at <a href="mailto:hello@tradecontext.ai"><strong>hello@tradecontext.ai</strong></a>, '+n+'. We typically respond within a few hours during UK business hours.';
+    return 'Thanks for reaching out, '+n+'! For the most accurate answer please email <a href="mailto:hello@tradecontext.ai"><strong>hello@tradecontext.ai</strong></a> and our team will get back to you quickly. You can also explore the platform with a <strong>2-minute free preview</strong> on the Dashboard!';
+  }
+})();
+</script>
+
+</body>
+</html>

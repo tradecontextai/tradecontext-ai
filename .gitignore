@@ -1,0 +1,48 @@
+# ════════════ TradeContext.ai — repo-wide gitignore ════════════
+
+# Node / npm
+node_modules/
+**/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json.bak
+
+# Build artefacts
+dist/
+build/
+out/
+.next/
+.cache/
+coverage/
+
+# Environment / secrets — NEVER commit these
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+
+# Prisma
+**/prisma/migrations/dev.db*
+
+# IDE / editor
+.idea/
+.vscode/
+*.swp
+*.swo
+.history/
+
+# OS
+.DS_Store
+Thumbs.db
+*.log
+
+# Claude Code — user-local overrides (skills + project settings ARE committed)
+.claude/settings.local.json
+.claude/.tmp/
+
+# Temp files
+*.tmp
+.tmp/
