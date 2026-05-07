@@ -354,42 +354,47 @@ body{overflow-x:hidden;overflow-y:auto;}
 .macro-pulse-panel{background:linear-gradient(135deg,var(--bg2),var(--bg3) 50%,var(--bg2));position:relative;overflow:hidden;}
 .macro-pulse-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad-prem);}
 /* Macro Pulse: top row (Currency Strength · Risk Therm · Mood) + bottom row (World Map) */
-/* Macro Pulse: 4 cards in one row — equal heights, World Pulse on the right */
-.macro-pulse-grid{display:grid;grid-template-columns:1fr 0.85fr 1fr 1.7fr;gap:1px;background:var(--border);align-items:stretch;}
-.macro-pulse-grid > .mp-card{display:flex;flex-direction:column;min-height:0;}
-.macro-pulse-grid > .mp-card > *:not(.mp-card-h){flex:0 0 auto;}
-.macro-pulse-grid > .mp-card.world-map-card > .world-map-wrap{flex:1;min-height:280px;}
-@media (max-width:1280px){.macro-pulse-grid{grid-template-columns:1fr 1fr;}}
-@media (max-width:780px){.macro-pulse-grid{grid-template-columns:1fr;}}
+/* Macro Pulse: 2-column — left widget stack, right World Map full-height */
+.macro-pulse-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:1px;background:var(--border);align-items:stretch;}
+@media (max-width:1100px){.macro-pulse-grid{grid-template-columns:1fr;}}
+.mp-left-stack{display:grid;grid-template-columns:1fr 1fr;grid-template-areas:"sess sess" "ccy risk" "mood fg" "vol vol";gap:1px;background:var(--border);}
+@media (max-width:780px){.mp-left-stack{grid-template-columns:1fr;grid-template-areas:"sess" "ccy" "risk" "mood" "fg" "vol";}}
+.mp-left-stack > .mp-card{display:flex;flex-direction:column;min-height:0;background:var(--bg2);}
+.mp-left-stack > .sess-card{grid-area:sess;}
+.mp-left-stack > .vol-card{grid-area:vol;}
+.macro-pulse-grid > .mp-card.world-map-card{display:flex;flex-direction:column;min-height:0;}
+.macro-pulse-grid > .mp-card.world-map-card > .world-map-wrap{flex:1;min-height:520px;}
 .macro-pulse-grid-bottom{display:none;}
 
-/* ─── Macro Pulse: top WOW row (Sessions Clock · Fear&Greed · Vol Pulse) ─── */
-.mp-wow-row{display:grid;grid-template-columns:1.4fr 1fr 1.1fr;gap:1px;background:var(--border);align-items:stretch;border-bottom:1px solid var(--border);}
-@media (max-width:1280px){.mp-wow-row{grid-template-columns:1fr 1fr;}}
-@media (max-width:780px){.mp-wow-row{grid-template-columns:1fr;}}
-.mp-wow-row > .mp-card{display:flex;flex-direction:column;}
+.ccy-callout{font-family:var(--mono);font-size:10px;color:var(--text2);text-align:center;margin-top:10px;padding:6px 8px;background:var(--bg3);border-radius:5px;font-weight:600;line-height:1.5;}
+.ccy-callout strong{color:var(--text);}
 
-/* Trading Sessions Clock */
-.sess-clock{padding:6px 4px 0;display:flex;flex-direction:column;gap:8px;}
-.sess-bar{position:relative;height:34px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
-.sess-bar .sess-block{position:absolute;top:2px;bottom:2px;border-radius:4px;font-family:var(--mono);font-size:8.5px;font-weight:800;letter-spacing:.06em;color:#fff;display:flex;align-items:center;justify-content:center;text-transform:uppercase;opacity:.85;transition:.2s;cursor:default;}
-.sess-bar .sess-block.sydney{background:linear-gradient(135deg,#a78bfa,#8b5cf6);}
-.sess-bar .sess-block.tokyo{background:linear-gradient(135deg,#f87171,#ef4444);}
-.sess-bar .sess-block.london{background:linear-gradient(135deg,#34d399,#10b981);}
-.sess-bar .sess-block.ny{background:linear-gradient(135deg,#0ea5e9,#0284c7);}
-.sess-bar .sess-block:hover{opacity:1;transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.4);}
-.sess-bar .sess-overlap{position:absolute;top:2px;bottom:2px;background:repeating-linear-gradient(135deg,rgba(245,158,11,.55) 0 4px,rgba(245,158,11,.85) 4px 8px);border-radius:3px;pointer-events:none;mix-blend-mode:screen;}
-.sess-bar .sess-now{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--yellow);box-shadow:0 0 8px var(--yellow);z-index:5;animation:nowPulse 2s ease-in-out infinite;}
-.sess-bar .sess-now::before{content:'NOW';position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:7.5px;font-weight:900;color:var(--yellow);letter-spacing:.12em;}
+/* ─── Trading Sessions — clean list, single row, minimal ─── */
+.sess-list{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
+.sess-row{display:flex;flex-direction:column;align-items:flex-start;padding:9px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;transition:.2s;}
+.sess-row.open{background:linear-gradient(135deg,rgba(52,211,153,.10),rgba(52,211,153,.02));border-color:rgba(52,211,153,.35);box-shadow:0 0 14px rgba(52,211,153,.10);}
+.sess-row.opening{background:linear-gradient(135deg,rgba(245,158,11,.10),rgba(245,158,11,.02));border-color:rgba(245,158,11,.35);}
+.sess-row .sr-top{display:flex;align-items:center;gap:6px;width:100%;}
+.sess-row .sr-flag{font-size:14px;line-height:1;}
+.sess-row .sr-name{font-family:var(--sans);font-size:11.5px;font-weight:800;color:var(--text);letter-spacing:.02em;}
+.sess-row .sr-dot{width:6px;height:6px;border-radius:50%;background:var(--text3);margin-left:auto;}
+.sess-row.open .sr-dot{background:var(--green2);box-shadow:0 0 6px var(--green2);animation:nowPulse 2s ease-in-out infinite;}
+.sess-row.opening .sr-dot{background:var(--yellow);box-shadow:0 0 6px var(--yellow);}
+.sess-row .sr-status{font-family:var(--mono);font-size:8.5px;font-weight:700;color:var(--text2);margin-top:5px;letter-spacing:.04em;text-transform:uppercase;line-height:1.3;}
+.sess-row.open .sr-status{color:var(--green2);}
+.sess-row.opening .sr-status{color:var(--yellow);}
+.sess-row .sr-time{font-family:var(--mono);font-size:9px;color:var(--text3);margin-top:2px;font-weight:600;}
 @keyframes nowPulse{0%,100%{opacity:.85;}50%{opacity:1;}}
-.sess-axis{display:flex;justify-content:space-between;font-family:var(--mono);font-size:8px;color:var(--text3);font-weight:700;padding:0 2px;letter-spacing:.05em;}
-.sess-status-row{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;}
-.sess-pill{padding:5px 6px;background:var(--bg3);border:1px solid var(--border);border-radius:5px;font-family:var(--mono);font-size:8.5px;font-weight:800;text-align:center;color:var(--text3);transition:.2s;}
-.sess-pill.open{background:rgba(52,211,153,.12);border-color:rgba(52,211,153,.4);color:var(--green2);box-shadow:0 0 10px rgba(52,211,153,.2);}
-.sess-pill.opening{background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.4);color:var(--yellow);}
-.sess-pill .sp-name{font-size:9px;}
-.sess-pill .sp-status{font-size:7.5px;opacity:.85;display:block;margin-top:1px;font-weight:700;letter-spacing:.06em;}
-.sess-overlap-info{font-family:var(--mono);font-size:9px;color:var(--text2);text-align:center;padding:4px 6px;background:rgba(245,158,11,.08);border:1px dashed rgba(245,158,11,.3);border-radius:4px;font-weight:600;}
+
+/* Slim 24h tape with NOW dot, no labels inside, no overlap stripes — just a clean indicator */
+.sess-now-bar{position:relative;height:5px;margin-top:10px;background:var(--bg3);border-radius:3px;overflow:visible;}
+.sess-now-track{position:absolute;inset:0;background:linear-gradient(90deg,
+  rgba(167,139,250,.45) 0% 29.2%,
+  rgba(248,113,113,.45) 0% 37.5%,
+  rgba(52,211,153,.45) 33.3% 70.8%,
+  rgba(14,165,233,.45) 54.2% 91.7%);background-size:100% 100%;border-radius:3px;opacity:.6;}
+.sess-now-dot{position:absolute;top:50%;width:11px;height:11px;border-radius:50%;background:var(--yellow);transform:translate(-50%,-50%);box-shadow:0 0 0 2px var(--bg2),0 0 12px var(--yellow);transition:left .6s var(--ease-out-quart);z-index:2;}
+.sess-overlap-info{font-family:var(--mono);font-size:9.5px;color:var(--text2);text-align:center;padding:7px 10px;background:rgba(245,158,11,.08);border:1px dashed rgba(245,158,11,.3);border-radius:5px;font-weight:600;margin-top:10px;letter-spacing:.02em;}
 .sess-overlap-info strong{color:var(--yellow);}
 
 /* Fear & Greed gauge */
@@ -434,7 +439,7 @@ body{overflow-x:hidden;overflow-y:auto;}
 
 /* World Map widget — animated, premium feel */
 .world-map-card{background:var(--bg2);padding:18px 20px;}
-.world-map-wrap{position:relative;width:100%;background:radial-gradient(ellipse at center,rgba(14,165,233,.07) 0%,rgba(139,92,246,.03) 40%,var(--bg) 80%);border:1px solid var(--border);border-radius:8px;overflow:hidden;height:380px;}
+.world-map-wrap{position:relative;width:100%;background:radial-gradient(ellipse at center,rgba(14,165,233,.07) 0%,rgba(139,92,246,.03) 40%,var(--bg) 80%);border:1px solid var(--border);border-radius:8px;overflow:hidden;min-height:520px;}
 /* Animated aurora sweep across the map background */
 .world-map-wrap::before{content:'';position:absolute;inset:0;background:linear-gradient(120deg,transparent 30%,rgba(14,165,233,.06) 50%,transparent 70%);background-size:200% 100%;animation:auroraSweep 12s linear infinite;pointer-events:none;}
 @keyframes auroraSweep{0%{background-position:100% 0;}100%{background-position:-100% 0;}}
@@ -1378,109 +1383,106 @@ body{overflow-x:hidden;overflow-y:auto;}
           <span style="font-family:var(--mono);font-size:10px;color:var(--text3);">Updates every 10s · what most platforms hide</span>
         </div>
 
-        <!-- ─── WOW row: Sessions Clock · Fear & Greed · Volatility Pulse ─── -->
-        <div class="mp-wow-row">
-          <!-- Sessions Clock -->
-          <div class="mp-card">
-            <div class="mp-card-h">
-              <div class="mp-card-title">🕐 Trading Sessions Clock</div>
-              <div class="mp-card-sub">Liquidity windows · overlap zones = peak volatility</div>
-            </div>
-            <div class="sess-clock">
-              <div class="sess-bar" id="sessBar"></div>
-              <div class="sess-axis">
-                <span>00 UTC</span><span>06</span><span>12</span><span>18</span><span>24</span>
+        <div class="macro-pulse-grid">
+          <!-- LEFT side: stacked widget grid -->
+          <div class="mp-left-stack">
+            <!-- Sessions Clock (compact, top of stack) -->
+            <div class="mp-card sess-card">
+              <div class="mp-card-h">
+                <div class="mp-card-title">🕐 Trading Sessions</div>
+                <div class="mp-card-sub" id="sessSubtitle">Liquidity windows · overlaps = peak volatility</div>
               </div>
-              <div class="sess-status-row" id="sessStatusRow"></div>
+              <div class="sess-list" id="sessList"></div>
+              <div class="sess-now-bar" aria-hidden="true">
+                <div class="sess-now-track" id="sessNowTrack"></div>
+                <div class="sess-now-dot" id="sessNowDot"></div>
+              </div>
               <div class="sess-overlap-info" id="sessOverlapInfo">—</div>
             </div>
-          </div>
 
-          <!-- Fear & Greed Gauge -->
-          <div class="mp-card">
-            <div class="mp-card-h">
-              <div class="mp-card-title">😱 Fear &amp; Greed</div>
-              <div class="mp-card-sub">Market emotion index · 0 (panic) → 100 (euphoria)</div>
-            </div>
-            <div class="fg-gauge">
-              <svg class="fg-svg" viewBox="0 0 200 115" preserveAspectRatio="xMidYMid meet">
-                <defs>
-                  <linearGradient id="fgGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stop-color="#dc2626"/>
-                    <stop offset="25%" stop-color="#f87171"/>
-                    <stop offset="50%" stop-color="#f59e0b"/>
-                    <stop offset="75%" stop-color="#34d399"/>
-                    <stop offset="100%" stop-color="#10b981"/>
-                  </linearGradient>
-                </defs>
-                <!-- semicircle arc 0..180° from (20,100) to (180,100) -->
-                <path class="fg-arc-bg" stroke="url(#fgGrad)" d="M 20 100 A 80 80 0 0 1 180 100"/>
-                <line class="fg-needle" id="fgNeedle" x1="100" y1="100" x2="100" y2="28"/>
-                <circle class="fg-hub" cx="100" cy="100" r="6"/>
-              </svg>
-              <div class="fg-tickrow">
-                <span>0</span><span>25</span><span>50</span><span>75</span><span>100</span>
+            <!-- Currency Strength + Risk Therm (side-by-side) -->
+            <div class="mp-card">
+              <div class="mp-card-h">
+                <div class="mp-card-title">💪 Currency Strength</div>
+                <div class="mp-card-sub" id="ccySubtitle">Live drift · since you opened · Yahoo prices</div>
               </div>
-              <div class="fg-readout">
-                <div class="fg-val" id="fgVal">—</div>
-                <div class="fg-lbl" id="fgLbl">Calculating…</div>
+              <div class="ccy-strength" id="ccyStrength"></div>
+              <div class="ccy-callout" id="ccyCallout">—</div>
+            </div>
+
+            <div class="mp-card">
+              <div class="mp-card-h">
+                <div class="mp-card-title">🌡️ Risk Sentiment</div>
+                <div class="mp-card-sub" id="riskSubtitle">News-weighted aggregate mood</div>
               </div>
-              <div class="fg-context" id="fgContext">Aggregates news bias, risk-on/off, and price drift.</div>
-            </div>
-          </div>
-
-          <!-- Volatility Pulse -->
-          <div class="mp-card">
-            <div class="mp-card-h">
-              <div class="mp-card-title">⚡ Volatility Pulse</div>
-              <div class="mp-card-sub">Biggest movers right now · session % change</div>
-            </div>
-            <div class="vol-pulse" id="volPulse"></div>
-            <div class="vol-foot" id="volPulseFoot">↑ Sorted by absolute % move since you opened</div>
-          </div>
-        </div>
-
-        <div class="macro-pulse-grid">
-          <!-- Currency Strength Meter -->
-          <div class="mp-card">
-            <div class="mp-card-h">
-              <div class="mp-card-title">💪 Currency Strength</div>
-              <div class="mp-card-sub">Since you opened the page · live drift</div>
-            </div>
-            <div class="ccy-strength" id="ccyStrength"></div>
-          </div>
-
-          <!-- Risk-On / Risk-Off Thermometer -->
-          <div class="mp-card">
-            <div class="mp-card-h">
-              <div class="mp-card-title">🌡️ Risk Sentiment</div>
-              <div class="mp-card-sub">Aggregate market mood</div>
-            </div>
-            <div class="risk-thermometer" id="riskTherm">
-              <div class="rt-track">
-                <div class="rt-fill" id="rtFill" style="height:50%;"></div>
-                <div class="rt-tick" style="bottom:80%;"><span>Risk-On</span></div>
-                <div class="rt-tick" style="bottom:50%;"><span>Neutral</span></div>
-                <div class="rt-tick" style="bottom:20%;"><span>Risk-Off</span></div>
-              </div>
-              <div class="rt-readout">
-                <div class="rt-val" id="rtVal">—</div>
-                <div class="rt-lbl" id="rtLbl">Calculating…</div>
+              <div class="risk-thermometer" id="riskTherm">
+                <div class="rt-track">
+                  <div class="rt-fill" id="rtFill" style="height:50%;"></div>
+                  <div class="rt-tick" style="bottom:80%;"><span>Risk-On</span></div>
+                  <div class="rt-tick" style="bottom:50%;"><span>Neutral</span></div>
+                  <div class="rt-tick" style="bottom:20%;"><span>Risk-Off</span></div>
+                </div>
+                <div class="rt-readout">
+                  <div class="rt-val" id="rtVal">—</div>
+                  <div class="rt-lbl" id="rtLbl">Calculating…</div>
+                  <div class="rt-context" id="rtContext" style="font-family:var(--mono);font-size:9px;color:var(--text3);margin-top:6px;line-height:1.4;">—</div>
+                </div>
               </div>
             </div>
-          </div>
 
-          <!-- AI Market Mood -->
-          <div class="mp-card">
-            <div class="mp-card-h">
-              <div class="mp-card-title">🧠 AI Market Mood</div>
-              <div class="mp-card-sub">Live news sentiment heatmap</div>
+            <!-- Mood Heatmap + Fear & Greed -->
+            <div class="mp-card">
+              <div class="mp-card-h">
+                <div class="mp-card-title">🧠 Market Mood</div>
+                <div class="mp-card-sub">News-derived bias by asset class</div>
+              </div>
+              <div class="mood-grid" id="moodGrid"></div>
+              <div class="mood-summary" id="moodSummary" style="font-family:var(--mono);font-size:10px;color:var(--text2);text-align:center;margin-top:10px;line-height:1.5;">Awaiting data…</div>
             </div>
-            <div class="mood-grid" id="moodGrid"></div>
-            <div class="mood-summary" id="moodSummary" style="font-family:var(--mono);font-size:10px;color:var(--text2);text-align:center;margin-top:10px;line-height:1.5;">Awaiting data…</div>
+
+            <div class="mp-card">
+              <div class="mp-card-h">
+                <div class="mp-card-title">😱 Fear &amp; Greed</div>
+                <div class="mp-card-sub">0 = panic · 50 = neutral · 100 = euphoria</div>
+              </div>
+              <div class="fg-gauge">
+                <svg class="fg-svg" viewBox="0 0 200 115" preserveAspectRatio="xMidYMid meet">
+                  <defs>
+                    <linearGradient id="fgGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stop-color="#dc2626"/>
+                      <stop offset="25%" stop-color="#f87171"/>
+                      <stop offset="50%" stop-color="#f59e0b"/>
+                      <stop offset="75%" stop-color="#34d399"/>
+                      <stop offset="100%" stop-color="#10b981"/>
+                    </linearGradient>
+                  </defs>
+                  <path class="fg-arc-bg" stroke="url(#fgGrad)" d="M 20 100 A 80 80 0 0 1 180 100"/>
+                  <line class="fg-needle" id="fgNeedle" x1="100" y1="100" x2="100" y2="28"/>
+                  <circle class="fg-hub" cx="100" cy="100" r="6"/>
+                </svg>
+                <div class="fg-tickrow">
+                  <span>0</span><span>25</span><span>50</span><span>75</span><span>100</span>
+                </div>
+                <div class="fg-readout">
+                  <div class="fg-val" id="fgVal">—</div>
+                  <div class="fg-lbl" id="fgLbl">Calculating…</div>
+                </div>
+                <div class="fg-context" id="fgContext">Aggregates news bias, risk-on/off, currency drift.</div>
+              </div>
+            </div>
+
+            <!-- Volatility Pulse (full width on left bottom) -->
+            <div class="mp-card vol-card">
+              <div class="mp-card-h">
+                <div class="mp-card-title">⚡ Volatility Pulse</div>
+                <div class="mp-card-sub" id="volSubtitle">Biggest movers · live · Yahoo + Binance</div>
+              </div>
+              <div class="vol-pulse" id="volPulse"></div>
+              <div class="vol-foot" id="volPulseFoot">↑ Live % move since session open · refreshes every 30s</div>
+            </div>
           </div>
 
-          <!-- World Pulse Map — moved INTO the macro grid as the right-most column -->
+          <!-- RIGHT side: World Pulse Map (full height) -->
           <div class="mp-card world-map-card">
             <div class="mp-card-h">
               <div class="mp-card-title">🌍 World Pulse</div>
@@ -2361,6 +2363,54 @@ function startLivePricePolling(){
 }
 window.addEventListener('load',function(){setTimeout(startLivePricePolling,800);});
 
+// ════════════ LIVE MACRO SNAPSHOT ════════════
+// Bulk-fetches real prices for every symbol in _TD (forex majors, gold, oil,
+// indices, BTC/ETH) every 30s and writes them back into _TD so Currency
+// Strength + Volatility Pulse use real Yahoo/Binance/Finnhub data instead of
+// the random walk simulator. Also exposes _macroSnapshot for richer subtitles.
+var _macroSnapshot={lastTs:0,sources:{},liveCount:0};
+async function fetchMacroSnapshot(){
+  try{
+    var symbols=_TD.map(function(t){return t.s;});
+    var r=await fetch(TC_API+'/api/price/bulk',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({symbols:symbols})
+    });
+    if(!r.ok)return;
+    var d=await r.json();
+    var ticks=d.ticks||{};
+    var live=0,sources={};
+    _TD.forEach(function(t){
+      // Backend may key by upper-case label; try both
+      var tick=ticks[t.s]||ticks[t.s.toUpperCase()];
+      if(tick&&tick.price&&tick.source!=='unsupported'){
+        // Initialise prevClose baseline once so % drift uses *today's* open,
+        // not the moment the user landed (matches what Vol Pulse / strength expect).
+        if(tick.prevClose&&!t._prevClose)t._prevClose=tick.prevClose;
+        t.p=tick.price;
+        t.live=true;
+        live++;
+        sources[tick.source]=(sources[tick.source]||0)+1;
+      }
+    });
+    _macroSnapshot={lastTs:Date.now(),sources:sources,liveCount:live};
+    // Re-render the dependent widgets so they reflect the new prices instantly
+    if(typeof renderCcyStrength==='function')renderCcyStrength();
+    if(typeof renderVolatilityPulse==='function')renderVolatilityPulse();
+    var ccySub=document.getElementById('ccySubtitle');
+    var volSub=document.getElementById('volSubtitle');
+    var srcStr=Object.keys(sources).map(function(k){return sources[k]+'×'+k;}).join(' · ')||'no live source';
+    if(ccySub)ccySub.textContent='Live · '+live+'/'+_TD.length+' real prices · '+srcStr;
+    if(volSub)volSub.textContent='Live · biggest movers vs prev close · '+srcStr;
+  }catch(e){console.warn('[live] macro snapshot failed',e);}
+}
+function startMacroSnapshotPolling(){
+  fetchMacroSnapshot();
+  setInterval(fetchMacroSnapshot,30000);
+}
+window.addEventListener('load',function(){setTimeout(startMacroSnapshotPolling,1200);});
+
 // ════════════ AI STRATEGY SIDEBAR (S/R, Breakout, Trend, Fib, SMC + bias opinions) ════════════
 var STRAT_DATA={
   'XAU/USD':{
@@ -2910,8 +2960,13 @@ function ccyStrengthFor(ccy){
   var deltas=[];
   pairs.forEach(function(cfg){
     var t=_TD.find(function(x){return x.s===cfg.p;});
-    if(!t||!_ccyBaseline[cfg.p])return;
-    var raw=((t.p-_ccyBaseline[cfg.p])/_ccyBaseline[cfg.p])*100;
+    if(!t)return;
+    // Prefer prevClose (today's open) when backend provides it — that's the
+    // standard "% change today" reference point. Fall back to the in-memory
+    // baseline captured when the user first loaded the page.
+    var base=t._prevClose||_ccyBaseline[cfg.p];
+    if(!base)return;
+    var raw=((t.p-base)/base)*100;
     deltas.push(cfg.inv?-raw:raw);
   });
   if(!deltas.length)return 0;
@@ -2920,7 +2975,6 @@ function ccyStrengthFor(ccy){
 
 function renderCcyStrength(){
   var el=document.getElementById('ccyStrength');if(!el)return;
-  // Compute strength % for each currency, then normalise to ±1 scale for bar width
   var rows=CCY_LIST.map(function(c){return {ccy:c,pct:ccyStrengthFor(c)};});
   var maxAbs=Math.max(0.05,Math.max.apply(null,rows.map(function(r){return Math.abs(r.pct);})));
   rows.sort(function(a,b){return b.pct-a.pct;});
@@ -2937,6 +2991,16 @@ function renderCcyStrength(){
       +'<div class="c-pct '+dir+'">'+sign+r.pct.toFixed(2)+'%</div>'
     +'</div>';
   }).join('');
+  // Strongest vs weakest callout — actionable: gives the user the leading FX pair
+  var callout=document.getElementById('ccyCallout');
+  if(callout&&rows.length>=2){
+    var top=rows[0], bot=rows[rows.length-1];
+    if(Math.abs(top.pct)<0.02&&Math.abs(bot.pct)<0.02){
+      callout.textContent='No meaningful divergence yet — flat session';
+    }else{
+      callout.innerHTML='Strongest <strong style="color:var(--green2);">'+top.ccy+'</strong> ('+(top.pct>=0?'+':'')+top.pct.toFixed(2)+'%) · Weakest <strong style="color:var(--red2);">'+bot.ccy+'</strong> ('+(bot.pct>=0?'+':'')+bot.pct.toFixed(2)+'%) → watch <strong>'+top.ccy+'/'+bot.ccy+'</strong>';
+    }
+  }
 }
 
 // Risk Thermometer: aggregate from LIVE_NEWS bias + impact
@@ -2969,10 +3033,22 @@ function renderRiskTherm(){
   var fillEl=document.getElementById('rtFill');
   var valEl=document.getElementById('rtVal');
   var lblEl=document.getElementById('rtLbl');
+  var ctxEl=document.getElementById('rtContext');
   if(!fillEl||!valEl||!lblEl)return;
   fillEl.style.height=risk.score+'%';
   valEl.textContent=risk.score;
   lblEl.textContent=risk.label;
+  if(ctxEl){
+    // Show what's actually driving the score so traders learn the why
+    var recent=(LIVE_NEWS||[]).slice(0,30);
+    var bull=recent.filter(function(n){return n.tag&&n.tag.cls==='bull';}).length;
+    var bear=recent.filter(function(n){return n.tag&&n.tag.cls==='bear';}).length;
+    var hi=recent.filter(function(n){return n.impact==='high';}).length;
+    if(recent.length===0){ctxEl.textContent='Awaiting news flow…';}
+    else{
+      ctxEl.innerHTML=recent.length+' stories · <span style="color:var(--green2);">'+bull+' bull</span> · <span style="color:var(--red2);">'+bear+' bear</span> · '+hi+' high-impact';
+    }
+  }
 }
 
 // AI Mood Heatmap — sentiment by asset class derived from news affected markets
@@ -3530,75 +3606,88 @@ function refreshMacroPulse(){
   renderVolatilityPulse();
 }
 
-// ════════════ TRADING SESSIONS CLOCK ════════════
-// Visual 24h bar showing London/NY/Tokyo/Sydney sessions with overlap zones.
-// Overlaps = peak liquidity (e.g. London/NY 13-17 UTC = highest volatility window).
+// ════════════ TRADING SESSIONS — clean list ════════════
+// Four sessions stacked as cards with status + countdown. Slim 24h tape underneath
+// shows the NOW dot drifting across so traders can eyeball where the day is.
+var SESS_META={
+  sydney:{flag:'🇦🇺',name:'Sydney'},
+  tokyo:{flag:'🇯🇵',name:'Tokyo'},
+  london:{flag:'🇬🇧',name:'London'},
+  ny:{flag:'🇺🇸',name:'New York'}
+};
 function renderSessionsClock(){
-  var bar=document.getElementById('sessBar');
-  var statusRow=document.getElementById('sessStatusRow');
+  var list=document.getElementById('sessList');
+  var dot=document.getElementById('sessNowDot');
   var info=document.getElementById('sessOverlapInfo');
-  if(!bar||!statusRow||!info)return;
-  var W=100; // % width
-  var html='';
-  // Render each session as a positioned block on the 24h bar
-  SESS.forEach(function(s){
-    if(s.openUTC<s.closeUTC){
-      var left=(s.openUTC/24)*W, w=((s.closeUTC-s.openUTC)/24)*W;
-      html+='<div class="sess-block '+s.id+'" style="left:'+left+'%;width:'+w+'%;" title="'+s.id.toUpperCase()+' '+s.openUTC+'-'+s.closeUTC+' UTC">'+s.id.toUpperCase()+'</div>';
+  var sub=document.getElementById('sessSubtitle');
+  if(!list||!info||!dot)return;
+  var now=new Date(), nowH=now.getUTCHours()+now.getUTCMinutes()/60;
+
+  // Build session rows
+  var openNow=[];
+  list.innerHTML=SESS.map(function(s){
+    var open=isSessionOpen(s,now);
+    var hrs=hoursLeft(s,now);
+    var meta=SESS_META[s.id]||{flag:'🌐',name:s.id};
+    var cls=open?'open':(hrs<=1?'opening':'');
+    var statusTxt, timeTxt;
+    if(open){
+      statusTxt='OPEN';
+      var closeLocal=fmtLocalTime(utcHourToLocalDate(s.closeUTC));
+      timeTxt=hrs.toFixed(1)+'h left · closes '+closeLocal;
+      openNow.push(meta.name);
+    }else if(hrs<=1){
+      statusTxt='OPENING';
+      timeTxt='in '+Math.round(hrs*60)+' min';
     }else{
-      // Wraps midnight (Sydney 22-7) — split into two blocks
-      var leftA=(s.openUTC/24)*W, wA=((24-s.openUTC)/24)*W;
-      var wB=(s.closeUTC/24)*W;
-      html+='<div class="sess-block '+s.id+'" style="left:'+leftA+'%;width:'+wA+'%;" title="'+s.id.toUpperCase()+'">'+s.id.toUpperCase()+'</div>';
-      html+='<div class="sess-block '+s.id+'" style="left:0;width:'+wB+'%;"></div>';
+      statusTxt='CLOSED';
+      var openLocal=fmtLocalTime(utcHourToLocalDate(s.openUTC));
+      timeTxt='opens '+openLocal+' · '+hrs.toFixed(1)+'h';
     }
-  });
-  // Overlaps: pairwise intersect highlight
+    return '<div class="sess-row '+cls+'">'
+      +'<div class="sr-top"><span class="sr-flag">'+meta.flag+'</span><span class="sr-name">'+meta.name+'</span><span class="sr-dot"></span></div>'
+      +'<div class="sr-status">'+statusTxt+'</div>'
+      +'<div class="sr-time">'+timeTxt+'</div>'
+    +'</div>';
+  }).join('');
+
+  // NOW dot on the 24h tape
+  dot.style.left=((nowH/24)*100).toFixed(2)+'%';
+
+  // Compute overlaps to surface the LIVE one
   function range(s){return s.openUTC<s.closeUTC?[[s.openUTC,s.closeUTC]]:[[s.openUTC,24],[0,s.closeUTC]];}
   var allRanges=[];
   SESS.forEach(function(s){range(s).forEach(function(r){allRanges.push({id:s.id,r:r});});});
-  var overlaps=[];
-  for(var i=0;i<allRanges.length;i++){
+  var activeOverlap=null;
+  for(var i=0;i<allRanges.length&&!activeOverlap;i++){
     for(var j=i+1;j<allRanges.length;j++){
       if(allRanges[i].id===allRanges[j].id)continue;
       var lo=Math.max(allRanges[i].r[0],allRanges[j].r[0]);
       var hi=Math.min(allRanges[i].r[1],allRanges[j].r[1]);
-      if(hi>lo+0.01)overlaps.push({a:allRanges[i].id,b:allRanges[j].id,lo:lo,hi:hi});
+      if(nowH>=lo&&nowH<hi){
+        activeOverlap={a:allRanges[i].id,b:allRanges[j].id,hrsLeft:(hi-nowH).toFixed(1)};
+        break;
+      }
     }
   }
-  overlaps.forEach(function(o){
-    var left=(o.lo/24)*W, w=((o.hi-o.lo)/24)*W;
-    html+='<div class="sess-overlap" style="left:'+left+'%;width:'+w+'%;" title="'+o.a+'+'+o.b+' overlap"></div>';
-  });
-  // NOW marker
-  var now=new Date(), nowH=now.getUTCHours()+now.getUTCMinutes()/60;
-  html+='<div class="sess-now" style="left:'+((nowH/24)*W)+'%;"></div>';
-  bar.innerHTML=html;
 
-  // Status pills row + which sessions are currently open
-  var openNow=[];
-  var statusHtml=SESS.map(function(s){
-    var open=isSessionOpen(s,now);
-    var hrs=hoursLeft(s,now);
-    var name=s.id==='ny'?'NY':s.id.charAt(0).toUpperCase()+s.id.slice(1);
-    var cls=open?'open':(hrs<=1?'opening':'');
-    var status=open?(hrs.toFixed(1)+'h left'):(hrs<=1?'opens '+(Math.round(hrs*60))+'m':'opens '+hrs.toFixed(1)+'h');
-    if(open)openNow.push(name);
-    return '<div class="sess-pill '+cls+'"><div class="sp-name">'+name+'</div><div class="sp-status">'+status+'</div></div>';
-  }).join('');
-  statusRow.innerHTML=statusHtml;
-
-  // Live overlap info (most powerful: London+NY 13-17 UTC)
-  var activeOverlap=overlaps.find(function(o){return nowH>=o.lo&&nowH<o.hi;});
   if(activeOverlap){
-    var pair=activeOverlap.a.toUpperCase()+'+'+activeOverlap.b.toUpperCase();
-    info.innerHTML='🔥 <strong>'+pair+'</strong> overlap LIVE · peak liquidity window';
+    var pair=(SESS_META[activeOverlap.a].name).toUpperCase()+' + '+(SESS_META[activeOverlap.b].name).toUpperCase();
+    var fact=(activeOverlap.a==='london'&&activeOverlap.b==='ny')||(activeOverlap.a==='ny'&&activeOverlap.b==='london')
+      ? '~70% of daily FX volume happens here'
+      : 'peak liquidity · tighter spreads';
+    info.innerHTML='🔥 <strong>'+pair+'</strong> overlap LIVE — '+activeOverlap.hrsLeft+'h left · '+fact;
   }else if(openNow.length>=2){
-    info.textContent=openNow.join(' + ')+' open · '+openNow.length+' centres active';
+    info.innerHTML=openNow.join(' + ')+' open · '+openNow.length+' centres active · stable liquidity';
   }else if(openNow.length===1){
-    info.textContent=openNow[0]+' session · single-centre liquidity';
+    info.innerHTML='<strong>'+openNow[0]+'</strong> session · single-centre liquidity';
   }else{
-    info.textContent='Off-hours · thin liquidity, wider spreads';
+    info.innerHTML='⚪ Off-hours · thin liquidity, wider spreads · trade with caution';
+  }
+
+  if(sub){
+    var nowUTC=now.toISOString().slice(11,16)+' UTC';
+    sub.textContent=nowUTC+' · liquidity windows · overlaps = peak volatility';
   }
 }
 
@@ -3661,22 +3750,21 @@ function renderFearGreed(){
   }
 }
 
-// ════════════ VOLATILITY PULSE — top movers right now ════════════
-// Uses _TD ticker prices vs their starting baseline to surface the biggest movers.
-// Click any row to load that symbol on the chart.
+// ════════════ VOLATILITY PULSE — top movers vs prev close ════════════
+// Once macro snapshot lands, t._prevClose is the real previous-day close from
+// Yahoo/Binance/Finnhub. Until then we fall back to the in-page baseline.
 var _volBaseline=null;
 function renderVolatilityPulse(){
   var el=document.getElementById('volPulse');
   if(!el||typeof _TD==='undefined'||!_TD.length)return;
-  // Snapshot baseline on first render
   if(!_volBaseline){
     _volBaseline={};
     _TD.forEach(function(t){_volBaseline[t.s]=t.p;});
   }
   var rows=_TD.map(function(t){
-    var base=_volBaseline[t.s]||t.p;
+    var base=t._prevClose||_volBaseline[t.s]||t.p;
     var pct=base?((t.p-base)/base)*100:0;
-    return {sym:t.s,pct:pct,price:t.p};
+    return {sym:t.s,pct:pct,price:t.p,live:!!t._prevClose,d:t.d};
   });
   rows.sort(function(a,b){return Math.abs(b.pct)-Math.abs(a.pct);});
   var top=rows.slice(0,6);
@@ -3685,8 +3773,10 @@ function renderVolatilityPulse(){
   el.innerHTML=top.map(function(r){
     var dir=r.pct>=0?'up':'down';
     var sign=r.pct>=0?'+':'';
-    var w=(Math.abs(r.pct)/maxAbs)*50; // each side of centerline = 50%
-    return '<div class="vol-row '+dir+'" title="'+r.sym+' · '+sign+r.pct.toFixed(2)+'% since you opened">'
+    var w=(Math.abs(r.pct)/maxAbs)*50;
+    var price=r.price.toLocaleString('en-GB',{minimumFractionDigits:r.d,maximumFractionDigits:r.d});
+    var ttl=r.sym+' · '+price+' · '+sign+r.pct.toFixed(2)+'% '+(r.live?'(vs prev close)':'(since opened)');
+    return '<div class="vol-row '+dir+'" title="'+ttl+'">'
       +'<div class="vol-sym">'+r.sym+'</div>'
       +'<div class="vol-bar-track"><div class="vol-bar-fill" style="width:'+w.toFixed(1)+'%;"></div></div>'
       +'<div class="vol-pct">'+sign+r.pct.toFixed(2)+'%</div>'
