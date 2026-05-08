@@ -722,6 +722,8 @@ body{overflow-x:hidden;overflow-y:auto;}
 .wp-tv-channel{flex:1;min-width:140px;background:var(--bg3);border:1px solid var(--border);color:var(--text);font-family:var(--sans);font-size:12px;font-weight:700;padding:8px 10px;border-radius:6px;outline:none;cursor:pointer;}
 .wp-tv-channel:focus{border-color:var(--blue);box-shadow:0 0 0 2px rgba(14,165,233,.12);}
 .wp-tv-note{font-family:var(--mono);font-size:9.5px;color:var(--text3);font-weight:600;letter-spacing:.04em;}
+.wp-tv-yt{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--text2);text-decoration:none;padding:6px 9px;border:1px solid var(--border);border-radius:5px;letter-spacing:.04em;transition:.15s;}
+.wp-tv-yt:hover{border-color:var(--red2);color:var(--red2);background:rgba(239,68,68,.06);}
 .wp-tv-frame-wrap{position:relative;flex:1;min-height:260px;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--bg);}
 .wp-tv-frame-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block;z-index:2;}
 .wp-tv-fallback{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;padding:24px;color:var(--text2);font-family:var(--sans);font-size:13px;line-height:1.5;z-index:1;}
@@ -2087,21 +2089,26 @@ body{overflow-x:hidden;overflow-y:auto;}
             <div class="wp-tv-pane" id="wpTvPane">
               <div class="wp-tv-bar">
                 <select class="wp-tv-channel" id="wpTvChannel" onchange="setTvChannel(this.value)">
-                  <option value="yahoo">📈 Yahoo Finance Live</option>
-                  <option value="cnbc">🇺🇸 CNBC</option>
-                  <option value="dw">🌍 DW News</option>
-                  <option value="reuters">📰 Reuters</option>
-                  <option value="france24">🇪🇺 France 24 English</option>
-                  <option value="aljazeera">🌐 Al Jazeera English</option>
+                  <optgroup label="Always live (24/7)">
+                    <option value="dw">🌍 DW News English · 24/7</option>
+                    <option value="aljazeera">🌐 Al Jazeera English · 24/7</option>
+                    <option value="france24">🇪🇺 France 24 English · 24/7</option>
+                    <option value="bloombergQT">📈 Bloomberg Quicktake · 24/7</option>
+                  </optgroup>
+                  <optgroup label="Market-hours only">
+                    <option value="yahoo">📈 Yahoo Finance Live · NY hours</option>
+                    <option value="cnbc">🇺🇸 CNBC · NY hours</option>
+                    <option value="reuters">📰 Reuters · variable</option>
+                  </optgroup>
                 </select>
-                <span class="wp-tv-note">Free YouTube live · auto-muted</span>
+                <a class="wp-tv-yt" id="wpTvYtLink" href="#" target="_blank" rel="noopener" title="Open this channel on YouTube">↗ YouTube</a>
               </div>
               <div class="wp-tv-frame-wrap">
                 <iframe id="wpTvFrame" src="" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
                 <div class="wp-tv-fallback" id="wpTvFallback">
                   <span style="font-size:24px;">📺</span>
-                  <div>If this channel isn't live right now, pick another from the dropdown.</div>
-                  <div style="margin-top:6px;font-family:var(--mono);font-size:9.5px;color:var(--text3);">Streams provided by their respective broadcasters via YouTube. We don't host or rebroadcast.</div>
+                  <div><strong style="color:var(--text);">Stream offline?</strong> Some channels (Yahoo Finance, CNBC) only broadcast during US market hours. Pick a 24/7 channel from the dropdown — DW News or Al Jazeera always work.</div>
+                  <div style="margin-top:8px;font-family:var(--mono);font-size:9.5px;color:var(--text3);">Streams via YouTube embeds · we don't host or rebroadcast.</div>
                 </div>
               </div>
             </div>
@@ -3856,23 +3863,33 @@ function ccyStrengthFor(ccy){
 // it picks up whatever's live on that channel right now, or shows a
 // 'no stream' frame if nothing's broadcasting. The iframe stays mounted
 // so flipping back to the map and back to TV doesn't reload the stream.
+// 24/7 channels carry a `videoId` — a stable live-stream URL slug we
+// embed directly. Market-hours channels carry only `channelId` and use
+// YouTube's `live_stream?channel=` endpoint (which falls back to "Video
+// unavailable" off-hours — that's why we put them under a separate
+// optgroup and recommend the 24/7 set as the default).
 var TV_CHANNELS={
-  yahoo:    {id:'UCEAZeUIeJs0IjQiqTCdVSIg', title:'Yahoo Finance Live', sub:'Markets · earnings · 9-4 ET'},
-  cnbc:     {id:'UCvJJ_dzjViJCoLf5uKUTwoA', title:'CNBC',                sub:'US markets · breaking · 24/7'},
-  dw:       {id:'UCknLrEdhRCp1aegoMqRaCZg', title:'DW News',             sub:'European news + business · 24/7'},
-  reuters:  {id:'UChqUTb7kYRX8-EiaN3XFrSQ', title:'Reuters',             sub:'Global newswire · macro flow'},
-  france24: {id:'UCQfwfsi5VrQ8yKZ-UWmAEFg', title:'France 24 English',   sub:'EU + macro · 24/7'},
-  aljazeera:{id:'UCNye-wNBqNL5ZzHSJj3l8Bg', title:'Al Jazeera English',  sub:'Global · MENA focus · 24/7'},
+  dw:         {channelId:'UCknLrEdhRCp1aegoMqRaCZg', videoId:'tQ0yjYUFKAE', alwaysOn:true,  ytUrl:'https://www.youtube.com/@dwnews/live'},
+  aljazeera:  {channelId:'UCNye-wNBqNL5ZzHSJj3l8Bg', videoId:'gCNeDWCI0vo', alwaysOn:true,  ytUrl:'https://www.youtube.com/@aljazeeraenglish/live'},
+  france24:   {channelId:'UCQfwfsi5VrQ8yKZ-UWmAEFg', videoId:'Ata9cSC2WpM', alwaysOn:true,  ytUrl:'https://www.youtube.com/@FRANCE24English/live'},
+  bloombergQT:{channelId:'UC0p5jTq6Xx_DosDFxVXnWaQ', videoId:'iEpJwprxDdk', alwaysOn:true,  ytUrl:'https://www.youtube.com/@BloombergQuicktake/live'},
+  yahoo:      {channelId:'UCEAZeUIeJs0IjQiqTCdVSIg', alwaysOn:false, ytUrl:'https://www.youtube.com/@YahooFinance/live'},
+  cnbc:       {channelId:'UCvJJ_dzjViJCoLf5uKUTwoA', alwaysOn:false, ytUrl:'https://www.youtube.com/@CNBC/live'},
+  reuters:    {channelId:'UChqUTb7kYRX8-EiaN3XFrSQ', alwaysOn:false, ytUrl:'https://www.youtube.com/@Reuters/live'},
 };
-function _ytLiveSrc(chId){
+function _ytSrcFor(ch){
   // autoplay=1 + mute=1 lets browsers actually start the stream
   // playsinline keeps it inline on iOS instead of fullscreen-hijacking
-  return 'https://www.youtube.com/embed/live_stream?channel='+encodeURIComponent(chId)
-    +'&autoplay=1&mute=1&playsinline=1&modestbranding=1&rel=0';
+  var common='autoplay=1&mute=1&playsinline=1&modestbranding=1&rel=0';
+  if(ch.videoId){
+    return 'https://www.youtube.com/embed/'+encodeURIComponent(ch.videoId)+'?'+common;
+  }
+  return 'https://www.youtube.com/embed/live_stream?channel='+encodeURIComponent(ch.channelId)+'&'+common;
 }
 window.setTvChannel=function(key){
   var ch=TV_CHANNELS[key];if(!ch)return;
-  var f=document.getElementById('wpTvFrame');if(f)f.src=_ytLiveSrc(ch.id);
+  var f=document.getElementById('wpTvFrame');if(f)f.src=_ytSrcFor(ch);
+  var link=document.getElementById('wpTvYtLink');if(link)link.href=ch.ytUrl;
   try{localStorage.setItem('tc_tv_channel',key);}catch(_){}
 };
 window.setWorldPane=function(which,btn){
@@ -3888,8 +3905,11 @@ window.setWorldPane=function(which,btn){
     // Lazy-load the iframe on first activation
     var f=document.getElementById('wpTvFrame');
     if(f&&!f.src){
-      var saved='yahoo';
-      try{saved=localStorage.getItem('tc_tv_channel')||'yahoo';}catch(_){}
+      // Default to a 24/7 broadcaster so the embed isn't dark when the user
+      // first opens the TV pane outside US market hours.
+      var saved='dw';
+      try{saved=localStorage.getItem('tc_tv_channel')||'dw';}catch(_){}
+      if(!TV_CHANNELS[saved])saved='dw';
       var sel=document.getElementById('wpTvChannel');if(sel)sel.value=saved;
       setTvChannel(saved);
     }
