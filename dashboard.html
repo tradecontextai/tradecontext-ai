@@ -473,7 +473,7 @@ body{overflow-x:hidden;overflow-y:auto;}
 .mp-left-stack > .sess-card{grid-area:sess;}
 .mp-left-stack > .vol-card{grid-area:vol;}
 .macro-pulse-grid > .mp-card.world-map-card{display:flex;flex-direction:column;min-height:0;}
-.macro-pulse-grid > .mp-card.world-map-card > .world-map-wrap{flex:1;min-height:340px;}
+.macro-pulse-grid > .mp-card.world-map-card > .world-map-wrap{flex:1;min-height:260px;}
 .macro-pulse-grid-bottom{display:none;}
 
 .ccy-callout{font-family:var(--mono);font-size:10px;color:var(--text2);text-align:center;margin-top:10px;padding:6px 8px;background:var(--bg3);border-radius:5px;font-weight:600;line-height:1.5;}
@@ -523,12 +523,12 @@ body{overflow-x:hidden;overflow-y:auto;}
 
 /* Fear & Greed gauge */
 .fg-gauge{position:relative;display:flex;flex-direction:column;align-items:center;padding:6px 0 4px;}
-.fg-svg{width:100%;max-width:200px;height:115px;display:block;}
+.fg-svg{width:100%;max-width:170px;height:96px;display:block;}
 .fg-arc-bg{fill:none;stroke-width:14;stroke-linecap:round;}
 .fg-needle{stroke:var(--text);stroke-width:2.5;stroke-linecap:round;transition:transform .8s cubic-bezier(.22,.61,.36,1);transform-origin:100px 100px;}
 .fg-hub{fill:var(--text);stroke:var(--bg);stroke-width:2;}
-.fg-readout{margin-top:-22px;text-align:center;display:flex;flex-direction:column;gap:2px;align-items:center;}
-.fg-val{font-family:var(--sans);font-size:30px;font-weight:900;line-height:1;letter-spacing:-.02em;}
+.fg-readout{margin-top:-18px;text-align:center;display:flex;flex-direction:column;gap:2px;align-items:center;}
+.fg-val{font-family:var(--sans);font-size:24px;font-weight:900;line-height:1;letter-spacing:-.02em;}
 .fg-lbl{font-family:var(--mono);font-size:9.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;}
 .fg-extreme-fear{color:#dc2626;}
 .fg-fear{color:#f87171;}
@@ -562,8 +562,8 @@ body{overflow-x:hidden;overflow-y:auto;}
 .world-map-svg .zoom-layer{transition:transform .15s linear;}
 
 /* World Map widget — animated, premium feel */
-.world-map-card{background:var(--bg2);padding:18px 20px;}
-.world-map-wrap{position:relative;width:100%;background:radial-gradient(ellipse at center,rgba(14,165,233,.07) 0%,rgba(139,92,246,.03) 40%,var(--bg) 80%);border:1px solid var(--border);border-radius:8px;overflow:hidden;min-height:340px;}
+.world-map-card{background:var(--bg2);padding:14px 16px;}
+.world-map-wrap{position:relative;width:100%;background:radial-gradient(ellipse at center,rgba(14,165,233,.07) 0%,rgba(139,92,246,.03) 40%,var(--bg) 80%);border:1px solid var(--border);border-radius:8px;overflow:hidden;min-height:260px;}
 /* Animated aurora sweep across the map background */
 .world-map-wrap::before{content:'';position:absolute;inset:0;background:linear-gradient(120deg,transparent 30%,rgba(14,165,233,.06) 50%,transparent 70%);background-size:200% 100%;animation:auroraSweep 12s linear infinite;pointer-events:none;}
 @keyframes auroraSweep{0%{background-position:100% 0;}100%{background-position:-100% 0;}}
@@ -679,13 +679,13 @@ body{overflow-x:hidden;overflow-y:auto;}
 .cs-btn-primary:hover{background:var(--blue2);border-color:var(--blue2);}
 .cs-btn-ghost{background:transparent;border-color:var(--border);color:var(--text2);}
 .cs-btn-ghost:hover{border-color:var(--text2);color:var(--text);}
-.mp-card{background:var(--bg2);padding:18px 20px;display:flex;flex-direction:column;}
-.mp-card-h{margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+.mp-card{background:var(--bg2);padding:13px 16px;display:flex;flex-direction:column;}
+.mp-card-h{margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);}
 .mp-card-title{font-family:var(--sans);font-size:14px;font-weight:800;color:var(--text);letter-spacing:-.01em;}
 .mp-card-sub{font-family:var(--mono);font-size:9px;color:var(--text3);margin-top:3px;font-weight:600;letter-spacing:.06em;}
 
 /* Currency Strength bars */
-.ccy-strength{display:flex;flex-direction:column;gap:7px;}
+.ccy-strength{display:flex;flex-direction:column;gap:5px;}
 .ccy-row{display:grid;grid-template-columns:48px 1fr 50px;align-items:center;gap:10px;}
 .ccy-row .c-sym{font-family:var(--mono);font-size:11px;font-weight:800;color:var(--text);}
 .ccy-row .c-bar-wrap{position:relative;height:10px;background:var(--bg);border-radius:5px;overflow:hidden;border:1px solid var(--border);}
@@ -698,7 +698,7 @@ body{overflow-x:hidden;overflow-y:auto;}
 .ccy-row .c-pct.dn{color:var(--red2);}
 
 /* Risk Thermometer */
-.risk-thermometer{display:flex;align-items:stretch;gap:14px;height:200px;justify-content:center;}
+.risk-thermometer{display:flex;align-items:stretch;gap:14px;height:150px;justify-content:center;}
 .rt-track{position:relative;width:30px;background:linear-gradient(180deg,rgba(52,211,153,.18),rgba(245,158,11,.14) 50%,rgba(248,113,113,.18));border:1px solid var(--border);border-radius:16px;overflow:hidden;}
 .rt-fill{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(180deg,var(--green2),var(--yellow) 50%,var(--red2));transition:height .8s cubic-bezier(.4,0,.2,1);}
 .rt-tick{position:absolute;left:35px;font-family:var(--mono);font-size:8px;font-weight:700;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;}
