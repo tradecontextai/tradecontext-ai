@@ -1041,10 +1041,33 @@ body{overflow-x:hidden;overflow-y:auto;}
 .cal-wrap::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;border:2px solid var(--bg2);}
 .cal-wrap::-webkit-scrollbar-thumb:hover{background:var(--blue);}
 .cal-wrap::-webkit-scrollbar-track{background:var(--bg2);}
-.cal-row{display:grid;grid-template-columns:60px 36px 26px 1fr 60px 60px;align-items:center;padding:11px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:.15s;}
+.cal-row{display:grid;grid-template-columns:54px 36px 26px 1fr 16px;align-items:center;padding:10px 14px 8px;border-bottom:1px solid var(--border);cursor:pointer;transition:.15s;}
 .cal-row:hover{background:var(--bluedim);}
 .cal-row.upcoming{border-left:3px solid var(--blue);background:rgba(14,165,233,.04);}
 .cal-row.high-imp{border-left:3px solid var(--red2);}
+.cal-row .cal-chev{font-family:var(--mono);font-size:11px;color:var(--text3);text-align:center;transition:transform .2s;line-height:1;}
+.cal-row.expanded .cal-chev{transform:rotate(180deg);color:var(--blue);}
+/* Numeric trio under the headline row — Prev / Fcst / Actual always visible */
+.cal-numbers{grid-column:1 / -1;display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:8px;font-family:var(--mono);font-size:10px;}
+.cal-num{padding:5px 8px;background:var(--bg3);border:1px solid var(--border);border-radius:5px;display:flex;flex-direction:column;gap:2px;align-items:flex-start;}
+.cal-num .cal-num-lbl{font-size:8.5px;font-weight:800;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;}
+.cal-num .cal-num-val{font-size:11.5px;font-weight:800;color:var(--text);}
+.cal-num.actual.beat{background:rgba(52,211,153,.10);border-color:rgba(52,211,153,.35);}
+.cal-num.actual.beat .cal-num-val{color:var(--green2);}
+.cal-num.actual.miss{background:rgba(248,113,113,.10);border-color:rgba(248,113,113,.35);}
+.cal-num.actual.miss .cal-num-val{color:var(--red2);}
+.cal-num.actual.match{background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.3);}
+.cal-num.actual.match .cal-num-val{color:var(--yellow);}
+/* Expansion panel — bull vs bear interpretation */
+.cal-impact{grid-column:1 / -1;margin-top:10px;display:none;font-family:var(--sans);}
+.cal-row.expanded .cal-impact{display:flex;flex-direction:column;gap:6px;animation:fadeUp .22s var(--ease-out-quart);}
+.cal-impact-head{font-family:var(--mono);font-size:9px;font-weight:800;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px;}
+.cal-impact-row{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border-radius:6px;font-size:11.5px;line-height:1.5;color:var(--text);}
+.cal-impact-row.bull{background:rgba(52,211,153,.08);border-left:2px solid var(--green2);}
+.cal-impact-row.bear{background:rgba(248,113,113,.08);border-left:2px solid var(--red2);}
+.cal-impact-row.live{background:linear-gradient(135deg,rgba(14,165,233,.10),rgba(139,92,246,.05));border-left:2px solid var(--blue);font-weight:700;}
+.cal-impact-row .ci-ic{font-size:14px;flex-shrink:0;}
+.cal-impact-row .ci-txt strong{color:var(--text);}
 .cal-time{font-family:var(--mono);font-size:11px;color:var(--text2);font-weight:700;}
 .cal-time.next{color:var(--blue);}
 .cal-time.high{color:var(--red2);}
@@ -1055,7 +1078,7 @@ body{overflow-x:hidden;overflow-y:auto;}
 .cal-dots.h2 span:nth-child(1),.cal-dots.h2 span:nth-child(2){background:var(--yellow);}
 .cal-dots.h1 span:first-child{background:var(--text3);}
 .cal-event{font-family:var(--sans);font-size:12px;color:var(--text);font-weight:500;}
-.cal-fcst,.cal-prev{font-family:var(--mono);font-size:10px;color:var(--text2);text-align:right;font-weight:600;}
+.cal-fcst,.cal-prev{font-family:var(--mono);font-size:10px;color:var(--text2);text-align:right;font-weight:600;display:none;}
 .cal-filter-btn,.cal-range-btn{font-family:var(--mono);font-size:9px;font-weight:700;background:var(--bg2);border:1px solid var(--border);color:var(--text2);padding:4px 10px;border-radius:100px;cursor:pointer;transition:.15s;letter-spacing:.04em;text-transform:uppercase;}
 .cal-filter-btn:hover,.cal-range-btn:hover{border-color:var(--blue);color:var(--blue);}
 .cal-filter-btn.active,.cal-range-btn.active{background:var(--bluedim2);border-color:var(--blue);color:var(--blue);}
@@ -4540,6 +4563,103 @@ function fmtNum(v,unit){
   return s+(unit||'');
 }
 
+// ════════════ ECONOMIC EVENT INTERPRETER ════════════
+// Maps an event name + currency to "what does above/below forecast mean?".
+// Two layers:
+//  1. classifyEvent() — figures out the directional rule from keywords
+//  2. interpretEvent() — turns the rule into bull/bear sentences for the
+//     given currency. If actual has printed, also produces a verdict line.
+//
+// Rules come from how rates desks read each release. They're heuristics,
+// not gospel — but they're the same heuristics seasoned macro traders
+// use as their first read on every print.
+function classifyCalendarEvent(name){
+  var n=(name||'').toLowerCase();
+  // Inflation / prices — higher print is hawkish-leaning → bullish currency
+  if(/cpi|inflation|core.*price|ppi|pce|hicp/.test(n))
+    return {kind:'inflation', aboveBias:'bull', belowBias:'bear',
+      aboveWhy:'Hot inflation makes a near-term rate hike (or "higher for longer") more likely. Tighter policy = currency demand up.',
+      belowWhy:'Cooler inflation tilts the central bank dovish — cuts on the table sooner. Currency typically softens.'};
+  // Rate decision — direction depends on the move itself
+  if(/interest rate|rate decision|policy rate|funds rate|bank rate|deposit rate|repo rate|cash rate|refi rate|ocr/.test(n))
+    return {kind:'rate', aboveBias:'bull', belowBias:'bear',
+      aboveWhy:'A higher-than-expected rate (hike or hawkish hold) tightens policy → currency strengthens, equities/risk wobble.',
+      belowWhy:'A lower-than-expected rate (cut or dovish hold) eases policy → currency weakens, equities/risk catch a bid.'};
+  // Jobs - employment growth
+  if(/non.?farm|nfp|employment change|payroll|jobs added|adp/.test(n))
+    return {kind:'jobs_growth', aboveBias:'bull', belowBias:'bear',
+      aboveWhy:'Stronger jobs growth = healthier economy + Fed/CB confidence to stay restrictive. Currency bid.',
+      belowWhy:'Weak jobs growth signals a slowing economy → cuts brought forward. Currency offered.'};
+  // Unemployment / claims — inverted: higher = bad for currency
+  if(/unemployment rate|jobless claims|continuing claims|employment rate/.test(n))
+    return {kind:'unemployment', aboveBias:'bear', belowBias:'bull',
+      aboveWhy:'Higher unemployment / claims = labour market cooling = central bank dovish bias. Currency softens, bonds rally.',
+      belowWhy:'Lower unemployment / fewer claims = tight labour market = pressure to keep rates high. Currency stronger.'};
+  // Growth — GDP / Industrial Production / Retail Sales / Construction
+  if(/gdp|gross domestic|industrial production|manufacturing production|retail sales|durable goods|construction|capex|business investment|trade balance/.test(n))
+    return {kind:'growth', aboveBias:'bull', belowBias:'bear',
+      aboveWhy:'Faster growth = central bank can stay restrictive without crashing the economy → currency stronger, equities supported.',
+      belowWhy:'Slower growth = recession risk on the radar → easing bets pulled forward, currency softer, equities pressure.'};
+  // PMI / sentiment / confidence
+  if(/pmi|ism|sentix|zew|ifo|consumer confidence|consumer sentiment|business climate|business confidence|economic sentiment/.test(n))
+    return {kind:'sentiment', aboveBias:'bull', belowBias:'bear',
+      aboveWhy:'Above-forecast PMI / sentiment shows real-economy momentum — central bank stays cautious-hawkish. Currency bid.',
+      belowWhy:'Soft PMI / sentiment is a leading recession signal → market prices in earlier easing. Currency softer.'};
+  // FOMC / minutes / speeches — direction is all in the tone, not the number
+  if(/fomc|minutes|powell|lagarde|bailey|kuroda|ueda|speech|press conference|testimony|monetary policy/.test(n))
+    return {kind:'central_bank_speak', aboveBias:'bull', belowBias:'bear',
+      aboveWhy:'A hawkish lean (talk of more hikes, slower cuts, persistent inflation focus) → currency bid, risk-off.',
+      belowWhy:'A dovish lean (cuts mentioned, growth concerns front-and-centre) → currency offered, risk-on.'};
+  // Housing
+  if(/housing starts|building permits|home sales|mortgage|house price/.test(n))
+    return {kind:'housing', aboveBias:'bull', belowBias:'bear',
+      aboveWhy:'Stronger housing data = consumer balance sheets healthy = central bank stays the course. Currency mildly bid.',
+      belowWhy:'Weaker housing = rate-sensitive sector buckling = case for cuts builds. Currency mildly offered.'};
+  // Inventories / oil — neutral default but lean by signal
+  if(/oil inventor|api crude|crude oil|natural gas storage/.test(n))
+    return {kind:'oil', aboveBias:'bear', belowBias:'bull',
+      aboveWhy:'Bigger inventory build = softer demand = oil price down. WTI/Brent/USDCAD impact most.',
+      belowWhy:'Bigger inventory draw = tighter supply / firmer demand = oil price up. CAD/NOK/MXN typically firm.'};
+  // Default — generic "higher reading is usually risk-positive"
+  return {kind:'generic', aboveBias:'bull', belowBias:'bear',
+    aboveWhy:'A higher-than-forecast reading is usually read as a stronger underlying economy → currency bid.',
+    belowWhy:'A weaker-than-forecast reading is usually read as a softer underlying economy → currency offered.'};
+}
+
+// Render the bull/bear interpretation block for the row.
+function interpretCalendarEvent(e){
+  var cls=classifyCalendarEvent(e.event);
+  var ccy=e.currency||'currency';
+  var aboveLbl=cls.aboveBias==='bull'?'Bullish '+ccy:'Bearish '+ccy;
+  var belowLbl=cls.belowBias==='bull'?'Bullish '+ccy:'Bearish '+ccy;
+  var html='<div class="cal-impact-head">If actual prints…</div>';
+  // Live verdict only when the print is in
+  if(e.actual!==null&&e.actual!==undefined&&e.estimate!==null&&e.estimate!==undefined){
+    var beat=e.actual>e.estimate, miss=e.actual<e.estimate, match=Math.abs(e.actual-e.estimate)<1e-9;
+    var verdict, ic;
+    if(match){
+      verdict='In line with forecast — limited fresh directional impulse for '+ccy+'.';ic='⚖️';
+    }else if(beat){
+      verdict=(cls.aboveBias==='bull'?'Beat → BULLISH ':'Beat → BEARISH ')+ccy+'. '+cls.aboveWhy;
+      ic=cls.aboveBias==='bull'?'🟢':'🔴';
+    }else{
+      verdict=(cls.belowBias==='bull'?'Miss → BULLISH ':'Miss → BEARISH ')+ccy+'. '+cls.belowWhy;
+      ic=cls.belowBias==='bull'?'🟢':'🔴';
+    }
+    html+='<div class="cal-impact-row live"><span class="ci-ic">'+ic+'</span><span class="ci-txt">'+verdict+'</span></div>';
+  }
+  html+='<div class="cal-impact-row '+cls.aboveBias+'"><span class="ci-ic">▲</span><span class="ci-txt"><strong>Above forecast → '+aboveLbl+'.</strong> '+cls.aboveWhy+'</span></div>';
+  html+='<div class="cal-impact-row '+cls.belowBias+'"><span class="ci-ic">▼</span><span class="ci-txt"><strong>Below forecast → '+belowLbl+'.</strong> '+cls.belowWhy+'</span></div>';
+  return html;
+}
+
+// Click toggles the expanded interpretation panel
+window.toggleCalRow=function(idx){
+  var row=document.querySelector('.cal-row[data-cal-idx="'+idx+'"]');
+  if(!row)return;
+  row.classList.toggle('expanded');
+};
+
 function renderCalendar(){
   var wrap=document.getElementById('calWrap');if(!wrap)return;
   // First impact filter
@@ -4578,6 +4698,7 @@ function renderCalendar(){
   var now=new Date();
   var firstUpcoming=true;
   var html='';
+  var idxCounter=0;
   Object.keys(byDate).sort().forEach(function(date){
     html+='<div style="padding:7px 14px;background:var(--bg3);border-bottom:1px solid var(--border);font-family:var(--mono);font-size:9px;font-weight:800;color:var(--blue);letter-spacing:.12em;text-transform:uppercase;">'+fmtCalDate(date)+'</div>';
     byDate[date].forEach(function(e){
@@ -4590,21 +4711,29 @@ function renderCalendar(){
       var rowCls='cal-row';
       if(e.impact==='high')rowCls+=' high-imp';
       if(isUpcoming&&firstUpcoming===false&&nextBadge)rowCls+=' upcoming';
-      var actualDisplay='';
-      if(e.actual!==null){
-        var beat=e.estimate!==null&&e.actual>e.estimate;
-        var miss=e.estimate!==null&&e.actual<e.estimate;
-        actualDisplay='<div class="cal-actual '+(beat?'beat':miss?'miss':'')+'">'+fmtNum(e.actual,e.unit)+'</div>';
-      }else{
-        actualDisplay='<div class="cal-fcst">'+fmtNum(e.estimate,e.unit)+'</div>';
+
+      // Always show all 3 numeric columns: Previous · Forecast · Actual
+      var actualCls='cal-num actual';
+      if(e.actual!==null&&e.actual!==undefined&&e.estimate!==null&&e.estimate!==undefined){
+        if(Math.abs(e.actual-e.estimate)<1e-9)actualCls+=' match';
+        else if(e.actual>e.estimate)actualCls+=' beat';
+        else actualCls+=' miss';
       }
-      html+='<div class="'+rowCls+'">'
+      var numbers='<div class="cal-numbers">'
+        +'<div class="cal-num"><span class="cal-num-lbl">Previous</span><span class="cal-num-val">'+fmtNum(e.previous,e.unit)+'</span></div>'
+        +'<div class="cal-num"><span class="cal-num-lbl">Forecast</span><span class="cal-num-val">'+fmtNum(e.estimate,e.unit)+'</span></div>'
+        +'<div class="'+actualCls+'"><span class="cal-num-lbl">Actual</span><span class="cal-num-val">'+fmtNum(e.actual,e.unit)+'</span></div>'
+      +'</div>';
+
+      var idx=idxCounter++;
+      html+='<div class="'+rowCls+'" data-cal-idx="'+idx+'" onclick="toggleCalRow('+idx+')">'
         +'<div class="cal-time'+(isUpcoming&&nextBadge?' next':'')+(e.impact==='high'?' high':'')+'">'+fmtCalTime(e.time)+'</div>'
         +'<div class="cal-ccy">'+e.currency+'</div>'
         +impactDots(e.impact)
         +'<div class="cal-event">'+e.event+nextBadge+'</div>'
-        +actualDisplay
-        +'<div class="cal-prev">'+fmtNum(e.previous,e.unit)+'</div>'
+        +'<div class="cal-chev">▾</div>'
+        +numbers
+        +'<div class="cal-impact">'+interpretCalendarEvent(e)+'</div>'
       +'</div>';
     });
   });
