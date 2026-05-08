@@ -3914,22 +3914,21 @@ function openBrokerSite(id,surface){
   if(!b){toast({kind:'red',icon:'⚠️',title:'Broker not found',duration:3000});return;}
   setPreferredBroker(id);
   closeBrokerDropdown();
-  // Open the tab immediately so popup blockers don't kick in. We rewrite its
-  // location once we get the tracked URL back from the backend.
-  var win=window.open('about:blank','_blank','noopener,noreferrer');
-  fetch(TC_API+'/api/brokers/click',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    credentials:'include',
-    body:JSON.stringify({brokerId:id,symbol:(window._activeSymLabel||null),surface:surface||'dropdown'})
-  }).then(function(r){return r.json();}).then(function(d){
-    var url=(d&&d.url)||b.url;
-    if(win&&!win.closed)win.location=url;
-    else window.open(url,'_blank','noopener,noreferrer');
-  }).catch(function(){
-    // Backend down — still send the user through with the plain URL
-    if(win&&!win.closed)win.location=b.url;
-  });
+  // Use a tracked URL when the backend gave us one (b.outboundUrl is set by
+  // /api/brokers/directory when an affiliate code is configured for the
+  // broker). Otherwise open the plain broker URL — works even if the API
+  // is offline. Click is logged fire-and-forget so analytics never block UX.
+  var url=b.outboundUrl||b.url;
+  window.open(url,'_blank','noopener,noreferrer');
+  try{
+    fetch(TC_API+'/api/brokers/click',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      credentials:'include',
+      keepalive:true,
+      body:JSON.stringify({brokerId:id,symbol:(window._activeSymLabel||null),surface:surface||'dropdown'})
+    }).catch(function(){/* logging is best-effort */});
+  }catch(_){}
   toast({
     kind:'blue',
     icon:'↗',
