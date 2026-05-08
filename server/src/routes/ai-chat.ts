@@ -105,15 +105,37 @@ aiChatRouter.post('/chat', optionalAuth, async (req, res, next) => {
 
     // ──── Call Claude ────
     const userMessage = `Live context:\n${contextBlock}\n\nUser asks: ${message}`;
-    const response = await anthropic.messages.create({
-      model: MODEL,
-      max_tokens: 600,
-      system: [{ type: 'text', text: SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } }],
-      messages: [
-        ...history.map((h) => ({ role: h.role as 'user' | 'assistant', content: h.content })),
-        { role: 'user', content: userMessage },
-      ],
-    });
+    let response;
+    try {
+      response = await anthropic.messages.create({
+        model: MODEL,
+        max_tokens: 600,
+        system: [{ type: 'text', text: SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } }],
+        messages: [
+          ...history.map((h) => ({ role: h.role as 'user' | 'assistant', content: h.content })),
+          { role: 'user', content: userMessage },
+        ],
+      });
+    } catch (err) {
+      // Translate the most common Claude-side failures into structured 503s
+      // so the frontend can render a useful UI (top-up CTA, retry hint) instead
+      // of a generic 500.
+      const msg = err instanceof Error ? err.message : String(err);
+      if (/credit balance is too low|insufficient_quota/i.test(msg)) {
+        throw new HttpError(
+          503,
+          'Anthropic API credits exhausted. Top up at console.anthropic.com/settings/billing.',
+          'CLAUDE_NO_CREDITS',
+        );
+      }
+      if (/rate.?limit|429/i.test(msg)) {
+        throw new HttpError(503, 'AI is rate-limited right now — try again in a moment.', 'CLAUDE_RATE_LIMIT');
+      }
+      if (/overloaded|529/i.test(msg)) {
+        throw new HttpError(503, 'AI service is overloaded — try again in a moment.', 'CLAUDE_OVERLOADED');
+      }
+      throw err;
+    }
 
     const block = response.content.find((b) => b.type === 'text');
     const text = block && block.type === 'text' ? block.text.trim() : '';

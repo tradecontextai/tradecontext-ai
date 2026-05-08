@@ -5446,15 +5446,36 @@ window.aiChatSend=function(){
   }).then(function(r){return r.json().then(function(d){return {ok:r.ok,data:d};});}).then(function(res){
     typing.remove();send.disabled=false;
     if(!res.ok){
+      var code=res.data&&res.data.error&&res.data.error.code;
+      if(code==='CLAUDE_NO_CREDITS'){
+        // Render a richer "credits exhausted" card with a top-up button
+        var body=document.getElementById('aichatBody');
+        var b=document.createElement('div');
+        b.className='ac-bubble assistant';
+        b.innerHTML='<div style="font-size:24px;margin-bottom:6px;">💳</div>'
+          +'<strong>Anthropic credits exhausted</strong><br>'
+          +'<span style="font-size:12px;color:var(--text2);">AI chat needs Anthropic API credits to run. Once you top up the balance, the chat resumes automatically — no restart needed.</span><br>'
+          +'<a href="https://console.anthropic.com/settings/billing" target="_blank" rel="noopener" style="display:inline-block;margin-top:10px;padding:8px 14px;background:var(--blue);color:#fff;font-family:var(--mono);font-size:10px;font-weight:800;border-radius:6px;text-decoration:none;letter-spacing:.06em;text-transform:uppercase;">↗ Top up Anthropic</a>'
+          +'<em>Educational tool — not personal financial advice.</em>';
+        body.appendChild(b);body.scrollTop=body.scrollHeight;
+        return;
+      }
+      if(code==='CLAUDE_RATE_LIMIT'||code==='CLAUDE_OVERLOADED'){
+        aiChatBubble('assistant','The AI is busy right now — give it 10–20 seconds and try again.\n\n*Educational tool — not personal financial advice.*');
+        return;
+      }
+      if(code==='CLAUDE_DISABLED'){
+        aiChatBubble('assistant','AI chat is offline — Anthropic API not configured on this server.\n\n*Educational tool — not personal financial advice.*');
+        return;
+      }
       var errMsg=(res.data&&res.data.error&&res.data.error.message)||'Couldn\'t reach the AI right now.';
-      if(res.data&&res.data.error&&res.data.error.code==='CLAUDE_DISABLED'){errMsg='AI chat is offline — Anthropic API not configured on this server.';}
-      aiChatBubble('assistant',errMsg+'\n\n*Educational analysis only — not personal financial advice.*');
+      aiChatBubble('assistant',errMsg+'\n\n*Educational tool — not personal financial advice.*');
       return;
     }
     aiChatBubble('assistant',res.data.message);
   }).catch(function(){
     typing.remove();send.disabled=false;
-    aiChatBubble('assistant','Network hiccup — couldn\'t reach the AI. Try again in a moment.\n\n*Educational analysis only — not personal financial advice.*');
+    aiChatBubble('assistant','Network hiccup — couldn\'t reach the AI. Try again in a moment.\n\n*Educational tool — not personal financial advice.*');
   });
 };
 // Reset history pane when the user switches symbol
