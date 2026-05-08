@@ -1428,9 +1428,106 @@ body{overflow-x:hidden;overflow-y:auto;}
   .chart-grid{grid-template-columns:1fr;}
   .trade-panel{grid-template-columns:1fr;}
 }
+
+/* ═══════════════════ WOW FEATURES (May 2026) ═══════════════════ */
+/* Easing vars from the ui-animations skill — one truth source for all premium motion */
+:root{
+  --ease-out-quart:cubic-bezier(.25,1,.5,1);
+  --ease-out-expo:cubic-bezier(.16,1,.3,1);
+  --ease-out-back:cubic-bezier(.34,1.56,.64,1);
+  --ease-spring:cubic-bezier(.5,1.4,.5,1);
+}
+
+/* ─── Command Palette (⌘K) ─── */
+.cmd-bg{position:fixed;inset:0;background:rgba(3,6,13,.78);backdrop-filter:blur(10px);z-index:9998;display:none;align-items:flex-start;justify-content:center;padding-top:14vh;}
+.cmd-bg.open{display:flex;animation:cmdBgIn .18s var(--ease-out-quart);}
+@keyframes cmdBgIn{from{opacity:0;}to{opacity:1;}}
+.cmd-card{width:600px;max-width:92vw;background:var(--bg2);border:1px solid var(--border2);border-radius:14px;box-shadow:0 28px 80px rgba(0,0,0,.7);overflow:hidden;transform:scale(.96) translateY(-8px);transform-origin:top center;animation:cmdCardIn .22s var(--ease-out-expo) forwards;}
+@keyframes cmdCardIn{to{transform:scale(1) translateY(0);}}
+.cmd-input-wrap{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--border);}
+.cmd-input-wrap svg{width:18px;height:18px;flex-shrink:0;color:var(--text3);}
+.cmd-input{flex:1;background:none;border:none;color:var(--text);font-family:var(--sans);font-size:16px;font-weight:500;outline:none;}
+.cmd-input::placeholder{color:var(--text3);}
+.cmd-kbd{font-family:var(--mono);font-size:9.5px;color:var(--text3);font-weight:700;letter-spacing:.04em;padding:3px 7px;background:var(--bg3);border:1px solid var(--border);border-radius:4px;}
+.cmd-list{max-height:54vh;overflow-y:auto;padding:6px;scrollbar-width:thin;scrollbar-color:var(--border2) transparent;}
+.cmd-list::-webkit-scrollbar{width:6px;}
+.cmd-list::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+.cmd-group-h{font-family:var(--mono);font-size:9px;font-weight:800;color:var(--text3);letter-spacing:.14em;text-transform:uppercase;padding:10px 12px 6px;}
+.cmd-item{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:10px 12px;border-radius:7px;cursor:pointer;font-family:var(--sans);transition:background .15s var(--ease-out-quart);}
+.cmd-item:hover,.cmd-item.active{background:var(--bg3);}
+.cmd-item.active{box-shadow:inset 0 0 0 1px rgba(14,165,233,.4);}
+.cmd-item .ci-ic{width:28px;height:28px;border-radius:6px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:14px;}
+.cmd-item.active .ci-ic{background:var(--bluedim);}
+.cmd-item .ci-name{font-size:13.5px;font-weight:700;color:var(--text);}
+.cmd-item .ci-sub{font-family:var(--mono);font-size:9.5px;color:var(--text3);font-weight:600;letter-spacing:.04em;margin-top:2px;}
+.cmd-item .ci-meta{font-family:var(--mono);font-size:9.5px;color:var(--text3);font-weight:700;letter-spacing:.04em;}
+.cmd-foot{padding:9px 14px;background:var(--bg3);border-top:1px solid var(--border);display:flex;align-items:center;gap:14px;font-family:var(--mono);font-size:9.5px;color:var(--text3);font-weight:600;letter-spacing:.04em;}
+.cmd-foot kbd{font-family:var(--mono);font-size:9.5px;color:var(--text2);background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:1px 5px;font-weight:700;}
+.cmd-empty{padding:30px 16px;text-align:center;color:var(--text3);font-family:var(--mono);font-size:11px;}
+
+/* ─── Focus Mode (F key) ─── */
+body.focus-mode .navbar,
+body.focus-mode .top-strip,
+body.focus-mode .kpi-strip,
+body.focus-mode .news-side-col,
+body.focus-mode .trade-cal-grid,
+body.focus-mode .three-col-row,
+body.focus-mode .panel.macro-pulse-panel,
+body.focus-mode #faqSection,
+body.focus-mode .footer{display:none !important;}
+body.focus-mode .ai-strip{display:none !important;}
+body.focus-mode .chart-grid{grid-template-columns:1fr !important;}
+body.focus-mode .col-main{padding:0 !important;}
+body.focus-mode .chart-container{height:calc(100vh - 60px) !important;}
+body.focus-mode .page-wrap{padding:8px !important;}
+body.focus-mode #fmExitHint{display:flex !important;}
+body.focus-mode .aichat-panel{height:calc(100vh - 130px);}
+#fmExitHint{position:fixed;top:12px;right:12px;display:none;align-items:center;gap:8px;padding:8px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:100px;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--text2);letter-spacing:.04em;z-index:9999;animation:fmHintIn .25s var(--ease-out-expo);}
+@keyframes fmHintIn{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
+#fmExitHint kbd{font-family:var(--mono);background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:1px 6px;color:var(--text);font-weight:800;}
+.focus-fab{position:fixed;top:80px;right:18px;z-index:60;width:36px;height:36px;border-radius:50%;background:var(--bg2);border:1px solid var(--border);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:.15s var(--ease-out-quart);}
+.focus-fab:hover{border-color:var(--blue);color:var(--blue);transform:scale(1.06);}
+
+/* ─── Magnetic KPI hover (Emil signature) ─── */
+.kpi-card{transition:transform .35s var(--ease-out-expo),border-color .2s,box-shadow .25s var(--ease-out-quart);will-change:transform;}
+.kpi-card.magnet{transform:translate(var(--mx,0),var(--my,0)) translateY(-2px);}
+
+/* ─── Skeleton shimmer ─── */
+.skel{position:relative;background:linear-gradient(90deg,var(--bg3) 0%,var(--bg2) 40%,var(--bg3) 80%);background-size:240% 100%;animation:skelShimmer 1.4s linear infinite;border-radius:5px;color:transparent !important;display:inline-block;min-width:60px;min-height:1em;}
+@keyframes skelShimmer{0%{background-position:240% 0;}100%{background-position:-240% 0;}}
+
+/* ─── TTS narrator toggle ─── */
+.tts-toggle{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:100px;font-family:var(--mono);font-size:9.5px;font-weight:700;color:var(--text3);cursor:pointer;letter-spacing:.04em;transition:.15s var(--ease-out-quart);}
+.tts-toggle:hover{border-color:var(--blue);color:var(--blue);}
+.tts-toggle.on{background:rgba(14,165,233,.12);border-color:var(--blue);color:var(--blue);box-shadow:0 0 12px rgba(14,165,233,.25);}
+.tts-toggle.on .tts-dot{background:var(--blue);box-shadow:0 0 6px var(--blue);animation:ttsPulse 1.4s ease-in-out infinite;}
+.tts-dot{width:6px;height:6px;border-radius:50%;background:var(--text3);}
+@keyframes ttsPulse{0%,100%{opacity:.6;}50%{opacity:1;}}
 </style>
 </head>
 <body>
+
+<!-- ═══════ COMMAND PALETTE (⌘K / Ctrl+K) ═══════ -->
+<div class="cmd-bg" id="cmdBg" role="dialog" aria-labelledby="cmdInput" onclick="if(event.target===this)closeCmd()">
+  <div class="cmd-card">
+    <div class="cmd-input-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" class="cmd-input" id="cmdInput" placeholder="Search symbols, AI features, pages…" autocomplete="off" spellcheck="false">
+      <span class="cmd-kbd">esc</span>
+    </div>
+    <div class="cmd-list" id="cmdList"></div>
+    <div class="cmd-foot">
+      <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+      <span><kbd>↵</kbd> open</span>
+      <span><kbd>esc</kbd> close</span>
+      <span style="margin-left:auto;">⌘K to reopen</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ FOCUS MODE EXIT HINT ═══════ -->
+<div id="fmExitHint">🎯 Focus Mode · press <kbd>F</kbd> or <kbd>Esc</kbd> to exit</div>
+<button class="focus-fab" onclick="toggleFocus()" title="Focus Mode (F)">🎯</button>
 
 <!-- ═══════ COOKIE CONSENT BANNER ═══════ -->
 <div class="cookie-banner" id="cookieBanner" role="dialog" aria-labelledby="cookieTitle">
@@ -1787,9 +1884,12 @@ body{overflow-x:hidden;overflow-y:auto;}
           <!-- ═══ RIGHT: News Bias Feed ═══ -->
           <div class="news-side-col" id="newsSideCol">
             <div class="news-side-head">
-              <div class="news-side-eyebrow">
+              <div class="news-side-eyebrow" style="display:flex;align-items:center;gap:7px;">
                 <span class="ns-pulse"></span>
-                📡 LIVE FEED · AI-SCORED · 24/7
+                <span>📡 LIVE FEED · AI-SCORED · 24/7</span>
+                <button class="tts-toggle" id="ttsToggle" onclick="toggleTts()" title="Read breaking news aloud (browser TTS)" style="margin-left:auto;">
+                  <span class="tts-dot"></span><span id="ttsLabel">🔊 Voice</span>
+                </button>
               </div>
               <div class="news-side-title">News Bias <span style="background:var(--grad-prem);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Intelligence</span></div>
               <div class="news-side-subtitle">Every headline scored. Every market move predicted. Real-time.</div>
@@ -6550,6 +6650,267 @@ window.TC_PAYWALL_ENABLED = false;
     setExempt(true);unlock();
     toast&&toast({kind:'green',icon:'✅',title:'Welcome to TradeContext.ai',desc:'Your subscription is active. Enjoy.',duration:7000});
   }
+})();
+
+/* ════════════════════════════════════════════════════════════════════
+   WOW FEATURES (May 2026) — applied via the ui-animations skill rules.
+   Hard rule respected: we never animate live data values (prices, P&L,
+   stops, sizes). Animation is restricted to chrome / decoration only.
+   ════════════════════════════════════════════════════════════════════ */
+
+// ─── 1. Command Palette (⌘K / Ctrl+K) ───
+(function commandPalette(){
+  // Build a flat searchable index. Add new entries here as features ship.
+  function getCommands(){
+    var cmds=[
+      {g:'Navigate',ic:'🏠',name:'Home',sub:'Landing page',action:function(){location.href='home.html';}},
+      {g:'Navigate',ic:'📊',name:'Dashboard',sub:'Main trading view',action:function(){location.href='dashboard.html';}},
+      {g:'Navigate',ic:'📡',name:'News Bias',sub:'Live AI news scoring feed',action:function(){location.href='news-bias.html';}},
+      {g:'Navigate',ic:'📓',name:'AI Journal',sub:'Trade journal + AI mistake tagger',action:function(){location.href='journal.html';}},
+      {g:'Navigate',ic:'📊',name:'Track Record',sub:'Public AI bias hit rate',action:function(){location.href='track-record.html';}},
+      {g:'Navigate',ic:'🏆',name:'Leaderboard',sub:'Top traders by 90-day R',action:function(){location.href='leaderboard.html';}},
+      {g:'Navigate',ic:'🎯',name:'Prop Firm Tools',sub:'FTMO/TopStep risk co-pilot',action:function(){location.href='prop-firm.html';}},
+      {g:'Navigate',ic:'📰',name:'Blog',sub:'Daily AI market wraps',action:function(){location.href='blog.html';}},
+      {g:'Navigate',ic:'💳',name:'Pricing',sub:'$39.95/mo · $399/yr · $799 lifetime',action:function(){location.href='pricing.html';}},
+      {g:'AI Tools',ic:'🧠',name:'Open AI Trading Analyst',sub:'Ask Claude about the active chart',action:function(){if(typeof aiChatToggle==='function')aiChatToggle();}},
+      {g:'AI Tools',ic:'🤖',name:'Refresh AI Bias',sub:'Force re-generate fundamental + technical reads',action:function(){if(typeof refreshAiBias==='function')refreshAiBias(true);}},
+      {g:'AI Tools',ic:'⚔️',name:'View Geopolitical Risk',sub:'Scroll to live conflict-keyword score',action:function(){var el=document.getElementById('geoCard');if(el)el.scrollIntoView({behavior:'smooth',block:'center'});}},
+      {g:'Tools',ic:'🎯',name:'Toggle Focus Mode',sub:'Hide everything except chart + AI chat (F)',action:function(){toggleFocus();}},
+      {g:'Tools',ic:'🌒',name:'Toggle Theme',sub:'Light / Dark',action:function(){if(typeof toggleTheme==='function')toggleTheme();}},
+      {g:'Tools',ic:'🔊',name:'Toggle News Voice (TTS)',sub:'Read breaking news aloud',action:function(){toggleTts();}},
+      {g:'Tools',ic:'📺',name:'Open Live Markets TV',sub:'Switch World Pulse to live finance broadcasters',action:function(){if(typeof setWorldPane==='function')setWorldPane('tv',document.querySelector('.wp-tab[data-pane=tv]'));}},
+      {g:'Tools',ic:'🌍',name:'Show World Pulse Map',sub:'Switch World Pulse back to map view',action:function(){if(typeof setWorldPane==='function')setWorldPane('map',document.querySelector('.wp-tab[data-pane=map]'));}},
+    ];
+    // Add active symbols from _TD as quick switches
+    if(typeof _TD!=='undefined'){
+      _TD.forEach(function(t){
+        cmds.push({g:'Symbols',ic:'📈',name:t.s,sub:'Switch chart to '+t.s,action:function(){
+          // Try setSym if a TV mapping exists; else just write _activeSymLabel
+          if(typeof setSym==='function'&&t.tv){setSym(t.tv,t.s);}
+          else{window._activeSymLabel=t.s;var el=document.getElementById('symLabel');if(el)el.textContent=t.s;}
+          var sym=document.getElementById('aichatSym');if(sym)sym.textContent=t.s;
+        }});
+      });
+    }
+    return cmds;
+  }
+  var COMMANDS=getCommands();
+  var activeIdx=0, filtered=COMMANDS.slice();
+  var bg=document.getElementById('cmdBg');
+  var input=document.getElementById('cmdInput');
+  var list=document.getElementById('cmdList');
+
+  function render(){
+    if(!filtered.length){list.innerHTML='<div class="cmd-empty">No matches. Try "ai", "tv", "focus", or a symbol.</div>';return;}
+    var html='', currentGroup=null;
+    filtered.forEach(function(c,i){
+      if(c.g!==currentGroup){html+='<div class="cmd-group-h">'+c.g+'</div>';currentGroup=c.g;}
+      html+='<div class="cmd-item'+(i===activeIdx?' active':'')+'" data-i="'+i+'">'
+        +'<div class="ci-ic">'+c.ic+'</div>'
+        +'<div><div class="ci-name">'+c.name+'</div><div class="ci-sub">'+c.sub+'</div></div>'
+        +'<div class="ci-meta">↵</div>'
+      +'</div>';
+    });
+    list.innerHTML=html;
+    list.querySelectorAll('.cmd-item').forEach(function(el){
+      el.addEventListener('mouseenter',function(){activeIdx=parseInt(el.dataset.i,10);render();});
+      el.addEventListener('click',function(){runActive();});
+    });
+    // Scroll active into view
+    var act=list.querySelector('.cmd-item.active');
+    if(act)act.scrollIntoView({block:'nearest'});
+  }
+  function applyQuery(q){
+    q=(q||'').toLowerCase().trim();
+    if(!q){filtered=COMMANDS.slice();}
+    else{
+      // Simple fuzzy: split query into words; every word must appear (in order or any order) in name+sub+group
+      var words=q.split(/\s+/);
+      filtered=COMMANDS.filter(function(c){
+        var hay=(c.name+' '+c.sub+' '+c.g).toLowerCase();
+        return words.every(function(w){return hay.indexOf(w)>=0;});
+      });
+    }
+    activeIdx=0;render();
+  }
+  function runActive(){
+    var c=filtered[activeIdx];
+    if(!c)return;
+    closeCmd();
+    setTimeout(function(){c.action();},80);
+  }
+  window.openCmd=function(){
+    COMMANDS=getCommands(); // re-index in case symbols updated
+    bg.classList.add('open');
+    input.value='';applyQuery('');
+    setTimeout(function(){input.focus();},50);
+  };
+  window.closeCmd=function(){bg.classList.remove('open');};
+  document.addEventListener('keydown',function(e){
+    var meta=e.metaKey||e.ctrlKey;
+    if(meta&&e.key.toLowerCase()==='k'){e.preventDefault();bg.classList.contains('open')?closeCmd():openCmd();return;}
+    if(!bg.classList.contains('open'))return;
+    if(e.key==='Escape'){e.preventDefault();closeCmd();}
+    else if(e.key==='ArrowDown'){e.preventDefault();activeIdx=Math.min(filtered.length-1,activeIdx+1);render();}
+    else if(e.key==='ArrowUp'){e.preventDefault();activeIdx=Math.max(0,activeIdx-1);render();}
+    else if(e.key==='Enter'){e.preventDefault();runActive();}
+  });
+  input.addEventListener('input',function(){applyQuery(input.value);});
+})();
+
+// ─── 2. Focus Mode (F key) ───
+window.toggleFocus=function(){
+  document.body.classList.toggle('focus-mode');
+};
+document.addEventListener('keydown',function(e){
+  // Ignore F when typing in inputs / textareas / contenteditable
+  var t=e.target,tag=(t&&t.tagName||'').toLowerCase();
+  if(tag==='input'||tag==='textarea'||t&&t.isContentEditable)return;
+  if(e.key==='f'||e.key==='F'){e.preventDefault();toggleFocus();}
+  if(e.key==='Escape'&&document.body.classList.contains('focus-mode')){
+    document.body.classList.remove('focus-mode');
+  }
+});
+
+// ─── 3. KPI count-up on first load ONLY ───
+// Animation runs once on initial paint. Live updates after that snap normally
+// — never spring-interpolate market data per the ui-animations hard rule.
+(function kpiCountUp(){
+  function parseNum(s){
+    if(!s)return null;
+    var raw=String(s).replace(/[,$£€¥%+]/g,'').trim();
+    var n=parseFloat(raw);
+    return isNaN(n)?null:n;
+  }
+  function fmtBack(orig,n){
+    var prefix='', suffix='';
+    var m=String(orig).match(/^([^\d\-+]*)/);if(m)prefix=m[1];
+    var m2=String(orig).match(/([^\d.,\-+]*)$/);if(m2)suffix=m2[1];
+    var hasDecimal=/\./.test(String(orig));
+    var hasComma=/,/.test(String(orig));
+    var rounded=hasDecimal?n.toFixed(2):Math.round(n);
+    var s=hasComma?Number(rounded).toLocaleString('en-GB',{minimumFractionDigits:hasDecimal?2:0,maximumFractionDigits:hasDecimal?2:0}):String(rounded);
+    return prefix+s+suffix;
+  }
+  function animateOnce(el){
+    var orig=el.textContent.trim();
+    var target=parseNum(orig);
+    if(target===null||orig==='—')return;
+    var start=performance.now(), DUR=900;
+    function step(t){
+      var p=Math.min(1,(t-start)/DUR);
+      // ease-out-expo from skill — dramatic deceleration
+      var eased=p===1?1:1-Math.pow(2,-10*p);
+      el.textContent=fmtBack(orig,target*eased);
+      if(p<1)requestAnimationFrame(step);
+      else el.textContent=orig; // restore exact original to avoid float drift
+    }
+    requestAnimationFrame(step);
+  }
+  function run(){
+    document.querySelectorAll('.kpi-value').forEach(animateOnce);
+  }
+  // Fire after KPI values are written by their respective renderers — stagger by class
+  setTimeout(run,400);
+})();
+
+// ─── 4. TTS breaking-news narrator ───
+(function tts(){
+  var KEY='tc_tts_on';
+  var supported='speechSynthesis' in window;
+  var on=supported&&localStorage.getItem(KEY)==='1';
+  function paint(){
+    var btn=document.getElementById('ttsToggle');
+    var lbl=document.getElementById('ttsLabel');
+    if(!btn)return;
+    btn.classList.toggle('on',on);
+    if(lbl)lbl.textContent=on?'🔊 Voice ON':'🔊 Voice';
+  }
+  window.toggleTts=function(){
+    if(!supported){toast&&toast({kind:'red',icon:'⚠️',title:'Voice unsupported',desc:'Your browser doesn\'t support the SpeechSynthesis API.',duration:5000});return;}
+    on=!on;
+    localStorage.setItem(KEY,on?'1':'0');
+    if(on){
+      // First-press demo — speak a tiny confirmation so user gets immediate feedback
+      var u=new SpeechSynthesisUtterance('Voice on. I\'ll read breaking news headlines aloud.');
+      u.rate=1.05;u.volume=0.85;
+      try{speechSynthesis.speak(u);}catch(_){}
+    }else{
+      try{speechSynthesis.cancel();}catch(_){}
+    }
+    paint();
+  };
+  window.ttsSpeakBreaking=function(headline){
+    if(!on||!supported||!headline)return;
+    try{
+      speechSynthesis.cancel();
+      var u=new SpeechSynthesisUtterance('Breaking. '+headline);
+      u.rate=1.05;u.volume=0.9;
+      speechSynthesis.speak(u);
+    }catch(_){}
+  };
+  paint();
+})();
+// Wire breaking-news WS hook into TTS as a side-effect: monkey-patch the
+// existing flashTabTitle so we trigger TTS whenever it fires (which already
+// fires only on breaking stories from the WS).
+(function(){
+  var origFlash=window.flashTabTitle;
+  window.flashTabTitle=function(text){
+    if(typeof origFlash==='function')origFlash(text);
+    if(typeof ttsSpeakBreaking==='function'&&typeof text==='string'){
+      // Strip the leading ⚡ if present and pass to TTS
+      ttsSpeakBreaking(text.replace(/^[⚡\s]+/,''));
+    }
+  };
+})();
+
+// ─── 5. Magnetic KPI hover (Emil Kowalski signature) ───
+// Card subtly leans toward cursor — translate by a few px max so live numbers
+// stay readable. Disabled below 980px so it doesn't fire on touch.
+(function magnet(){
+  if(window.matchMedia('(max-width:980px)').matches)return;
+  document.querySelectorAll('.kpi-card').forEach(function(card){
+    card.addEventListener('mousemove',function(e){
+      var r=card.getBoundingClientRect();
+      var x=(e.clientX-r.left-r.width/2)/r.width;
+      var y=(e.clientY-r.top-r.height/2)/r.height;
+      var maxOffset=4;
+      card.style.setProperty('--mx',(x*maxOffset).toFixed(2)+'px');
+      card.style.setProperty('--my',(y*maxOffset).toFixed(2)+'px');
+      card.classList.add('magnet');
+    });
+    card.addEventListener('mouseleave',function(){
+      card.style.setProperty('--mx','0px');
+      card.style.setProperty('--my','0px');
+      card.classList.remove('magnet');
+    });
+  });
+})();
+
+// ─── 6. Skeleton shimmer for loading states ───
+// Replaces "Loading…" / "Calculating…" / "—" placeholder text in slow-load
+// regions with a shimmering bar. Only applies before first real value lands.
+(function skel(){
+  var sel='[data-skel],.kpi-value';
+  var watched=[];
+  document.querySelectorAll(sel).forEach(function(el){
+    var t=(el.textContent||'').trim();
+    if(t==='—'||/^calculating|^loading/i.test(t)){
+      el.classList.add('skel');
+      watched.push(el);
+    }
+  });
+  // Polling watcher — when content changes to something real, drop skeleton class
+  setInterval(function(){
+    watched.forEach(function(el){
+      if(!el.classList.contains('skel'))return;
+      var t=(el.textContent||'').trim();
+      if(t&&t!=='—'&&!/^calculating|^loading/i.test(t)){
+        el.classList.remove('skel');
+      }
+    });
+  },500);
 })();
 </script>
 </body>
