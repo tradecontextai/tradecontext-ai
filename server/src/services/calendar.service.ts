@@ -50,6 +50,28 @@ const COUNTRY_TO_CCY: Record<string, string> = {
 function ccy(country: string): string {
   return COUNTRY_TO_CCY[country] || country.slice(0, 3).toUpperCase();
 }
+
+// Finnhub returns wall-clock UTC strings. Convert to a true ISO-8601 instant
+// so `new Date(...)` resolves to the same moment regardless of where the
+// browser is running. Already-zoned strings are returned unchanged.
+function toIsoUtc(t: string): string {
+  if (!t) return t;
+  // If the string already carries a zone (Z, +HH:MM, -HH:MM), trust it.
+  if (/(Z|[+-]\d{2}:?\d{2})$/.test(t)) {
+    const d = new Date(t);
+    return isNaN(d.getTime()) ? t : d.toISOString();
+  }
+  // "YYYY-MM-DD HH:MM:SS" → treat as UTC by swapping space for "T" and
+  // appending "Z". Date.UTC parsing handles the rest.
+  const m = t.match(/^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})(?::(\d{2}))?$/);
+  if (!m) {
+    const d = new Date(t + 'Z');
+    return isNaN(d.getTime()) ? t : d.toISOString();
+  }
+  const [, y, mo, da, hh, mm, ss = '00'] = m;
+  const utcMs = Date.UTC(+y, +mo - 1, +da, +hh, +mm, +ss);
+  return new Date(utcMs).toISOString();
+}
 function normaliseImpact(i: string): Impact {
   const v = (i || '').toLowerCase();
   if (v.startsWith('h')) return 'high';
@@ -90,7 +112,11 @@ export async function fetchCalendar(opts?: {
     const data = (await res.json()) as { economicCalendar?: FinnhubEcoItem[] };
     const items = data.economicCalendar || [];
     const events: CalendarEvent[] = items.map((i) => ({
-      time: i.time,
+      // Finnhub returns "2026-05-08 13:30:00" — wall clock UTC with no zone
+      // marker. Browsers parse that as LOCAL, which silently shifts every
+      // release by the user's offset. Coerce to proper ISO-8601 UTC so the
+      // frontend always has an unambiguous instant to format.
+      time: toIsoUtc(i.time),
       country: i.country,
       currency: ccy(i.country),
       event: i.event,

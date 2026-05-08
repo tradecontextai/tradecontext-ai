@@ -2661,7 +2661,23 @@ function updateClock(){
 setInterval(updateClock,1000);updateClock();
 (function(){
   var el=document.getElementById('calDateLabel');
-  if(el)el.textContent=new Date().toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+  if(!el)return;
+  // Show today's date + the user's IANA timezone + abbreviated zone code
+  // (e.g. "Thu 8 May · Europe/London (BST)") so it's clear which clock the
+  // calendar times are being shown in.
+  function tzAbbr(){
+    try{
+      var p=new Intl.DateTimeFormat('en-GB',{timeZoneName:'short'}).formatToParts(new Date());
+      var tz=p.find(function(x){return x.type==='timeZoneName';});
+      return tz?tz.value:'';
+    }catch(_){return '';}
+  }
+  function paint(){
+    var d=new Date().toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+    el.textContent=d+' · '+(typeof _userTz!=='undefined'?_userTz:'')+' ('+tzAbbr()+')';
+  }
+  paint();
+  setInterval(paint,60000); // refresh in case of DST flip mid-session
 })();
 
 // ════════════ MARKET SESSIONS ════════════
@@ -5006,13 +5022,38 @@ var _calFilter='all';
 var _calRange='today'; // 'today' | 'week' — default to "today only" for cleaner first impression
 var _calData=[];
 
+// Defensive parser — backend now returns proper ISO UTC, but if a legacy
+// payload comes through as "2026-05-08 13:30:00" (no zone) we still treat
+// it as UTC instead of letting the browser silently localise it.
+function parseCalDate(iso){
+  if(!iso)return new Date(NaN);
+  var s=String(iso);
+  if(/(Z|[+-]\d{2}:?\d{2})$/.test(s))return new Date(s);
+  var m=s.match(/^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})(?::(\d{2}))?$/);
+  if(!m)return new Date(s+'Z');
+  return new Date(Date.UTC(+m[1],+m[2]-1,+m[3],+m[4],+m[5],+(m[6]||0)));
+}
 function fmtCalTime(iso){
-  var d=new Date(iso);
-  return d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',hour12:false});
+  return parseCalDate(iso).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',hour12:false});
 }
 function fmtCalDate(iso){
-  var d=new Date(iso);
-  return d.toLocaleDateString([],{weekday:'short',day:'numeric',month:'short'});
+  // iso here is the local YYYY-MM-DD bucket key, not the raw event time
+  if(/^\d{4}-\d{2}-\d{2}$/.test(String(iso))){
+    var p=String(iso).split('-');
+    var d=new Date(+p[0],+p[1]-1,+p[2]);
+    return d.toLocaleDateString([],{weekday:'short',day:'numeric',month:'short'});
+  }
+  return parseCalDate(iso).toLocaleDateString([],{weekday:'short',day:'numeric',month:'short'});
+}
+// User's IANA timezone, e.g. "Europe/London" — surfaced in the panel header
+// so it's obvious which clock the times are shown in.
+var _userTz=(function(){try{return Intl.DateTimeFormat().resolvedOptions().timeZone||'UTC';}catch(_){return 'UTC';}})();
+function localDateKey(iso){
+  // YYYY-MM-DD in the user's local time — used to group/filter "today"
+  var d=parseCalDate(iso);
+  if(isNaN(d.getTime()))return '';
+  var y=d.getFullYear(), m=d.getMonth()+1, da=d.getDate();
+  return y+'-'+(m<10?'0':'')+m+'-'+(da<10?'0':'')+da;
 }
 function impactDots(impact){
   if(impact==='high')return '<div class="cal-dots h3"><span></span><span></span><span></span></div>';
@@ -5132,8 +5173,12 @@ function renderCalendar(){
   // First impact filter
   var byImpact=_calFilter==='all'?_calData:_calData.filter(function(e){return e.impact===_calFilter;});
   // Then range filter — Today only or full week
-  var todayStr=new Date().toISOString().slice(0,10);
-  var todayEvents=byImpact.filter(function(e){return e.time.slice(0,10)===todayStr;});
+  // Use the user's LOCAL date — a 23:30 UTC release on Tuesday is still
+  // "tomorrow morning" for someone in Tokyo (08:30 Wednesday) but is "today"
+  // for someone in NY (19:30 Tuesday). We group/filter by the viewer's clock.
+  var nowLocal=new Date();
+  var todayStr=nowLocal.getFullYear()+'-'+String(nowLocal.getMonth()+1).padStart(2,'0')+'-'+String(nowLocal.getDate()).padStart(2,'0');
+  var todayEvents=byImpact.filter(function(e){return localDateKey(e.time)===todayStr;});
   var filtered=_calRange==='today'?todayEvents:byImpact;
   var moreCount=byImpact.length-todayEvents.length;
 
@@ -5175,7 +5220,7 @@ function renderCalendar(){
   // Group by date
   var byDate={};
   filtered.forEach(function(e){
-    var k=e.time.slice(0,10);
+    var k=localDateKey(e.time);
     (byDate[k]=byDate[k]||[]).push(e);
   });
   var now=new Date();
