@@ -574,6 +574,26 @@ body{overflow-x:hidden;overflow-y:auto;}
 .wm-zoom-ctrls button:hover{background:var(--blue);color:#fff;border-color:var(--blue);transform:scale(1.06);}
 .wm-zoom-ctrls button:active{transform:scale(.94);}
 .wm-zoom-hint{position:absolute;bottom:8px;left:8px;font-family:var(--mono);font-size:8.5px;color:var(--text3);background:rgba(11,18,32,.7);border:1px solid var(--border);padding:4px 8px;border-radius:4px;letter-spacing:.04em;font-weight:600;backdrop-filter:blur(4px);z-index:6;pointer-events:none;}
+/* Layer toggles — top-left of map */
+.wm-layers{position:absolute;top:8px;left:8px;display:flex;gap:4px;z-index:6;flex-wrap:wrap;max-width:60%;}
+.wm-layer-btn{padding:5px 9px;background:rgba(11,18,32,.78);border:1px solid var(--border);color:var(--text3);font-family:var(--mono);font-size:9px;font-weight:700;cursor:pointer;border-radius:4px;letter-spacing:.04em;backdrop-filter:blur(6px);transition:.15s;}
+.wm-layer-btn:hover{border-color:var(--blue);color:var(--text);}
+.wm-layer-btn.active{background:rgba(14,165,233,.18);border-color:var(--blue);color:var(--blue);}
+/* Day/night terminator path */
+.world-night{fill:url(#wm-night-grad);pointer-events:none;}
+/* News shockwave — pulsing ring radiating from a city when its currency hits the news */
+.world-shock{fill:none;stroke-width:1.4;animation:shockOut 1.6s cubic-bezier(.22,.61,.36,1) forwards;pointer-events:none;}
+.world-shock.bull{stroke:var(--green2);}
+.world-shock.bear{stroke:var(--red2);}
+.world-shock.neut{stroke:var(--yellow);}
+@keyframes shockOut{0%{r:4;opacity:.95;stroke-width:2.2;}80%{opacity:.4;}100%{r:48;opacity:0;stroke-width:.4;}}
+/* Click-feedback ring on a city */
+.world-city.clicked circle.dot{filter:drop-shadow(0 0 14px var(--blue));}
+.world-city circle.click-ring{fill:none;stroke:var(--blue);stroke-width:2;opacity:0;animation:cityClick .55s cubic-bezier(.22,.61,.36,1) forwards;}
+@keyframes cityClick{0%{r:4;opacity:.85;}100%{r:24;opacity:0;}}
+/* "Active symbol" highlight: a soft halo around the city whose primary symbol is on the chart */
+.world-city.active circle.dot{stroke:var(--blue);stroke-width:2.5;filter:drop-shadow(0 0 10px var(--blue));}
+.world-city.active text.label{fill:var(--blue);font-weight:800;}
 .world-map-svg .zoom-layer{transition:transform .15s linear;}
 
 /* World Map widget — animated, premium feel */
@@ -655,6 +675,11 @@ body{overflow-x:hidden;overflow-y:auto;}
 .wt-status.open{background:rgba(52,211,153,.12);color:var(--green2);border:1px solid rgba(52,211,153,.3);}
 .wt-status.closed{background:rgba(122,154,184,.08);color:var(--text2);border:1px solid var(--border);}
 .wt-status.opening{background:rgba(245,158,11,.1);color:var(--yellow);border:1px solid rgba(245,158,11,.3);}
+.wt-row .val.open{color:var(--green2);}
+.wt-row .val.closed{color:var(--text2);}
+.wt-row .val.opening{color:var(--yellow);}
+.wt-cta{margin-top:8px;padding:7px 9px;background:linear-gradient(135deg,rgba(14,165,233,.12),rgba(139,92,246,.08));border:1px dashed rgba(14,165,233,.4);border-radius:6px;font-family:var(--mono);font-size:9.5px;color:var(--blue);font-weight:700;letter-spacing:.04em;text-align:center;}
+.wt-cta strong{color:var(--text);}
 
 .world-map-legend{display:flex;gap:14px;padding:10px 4px 0;font-family:var(--mono);font-size:9px;font-weight:600;color:var(--text3);letter-spacing:.06em;}
 .world-map-legend .lg{display:inline-flex;align-items:center;gap:5px;}
@@ -1868,11 +1893,17 @@ body{overflow-x:hidden;overflow-y:auto;}
                   <pattern id="wm-grid" width="50" height="50" patternUnits="userSpaceOnUse">
                     <circle cx="1" cy="1" r="0.6" fill="rgba(14,165,233,.1)"/>
                   </pattern>
+                  <linearGradient id="wm-night-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="rgba(7,12,28,.55)"/>
+                    <stop offset="100%" stop-color="rgba(2,4,12,.65)"/>
+                  </linearGradient>
                 </defs>
                 <rect width="1000" height="500" fill="url(#wm-grid)"/>
                 <g class="zoom-layer" id="worldZoomLayer">
                   <g id="worldCountries"></g>
+                  <g id="worldNight"></g>
                   <g id="worldCities"></g>
+                  <g id="worldShocks"></g>
                 </g>
               </svg>
               <div class="wm-zoom-ctrls">
@@ -1880,7 +1911,13 @@ body{overflow-x:hidden;overflow-y:auto;}
                 <button id="wmZoomOut" title="Zoom out">−</button>
                 <button id="wmZoomReset" title="Reset">⟳</button>
               </div>
-              <div class="wm-zoom-hint">scroll to zoom · drag to pan</div>
+              <!-- Layer toggles — premium pill row top-left -->
+              <div class="wm-layers">
+                <button class="wm-layer-btn active" data-layer="night" title="Toggle day/night terminator">🌒 Day/Night</button>
+                <button class="wm-layer-btn active" data-layer="arcs" title="Toggle session-flow arcs">🔥 Heat arcs</button>
+                <button class="wm-layer-btn active" data-layer="labels" title="Toggle city labels">🏷 Labels</button>
+              </div>
+              <div class="wm-zoom-hint">scroll to zoom · drag to pan · click any city</div>
               <div class="world-tooltip" id="worldTooltip"></div>
             </div>
             <div class="world-map-legend">
@@ -3655,19 +3692,19 @@ function renderMoodGrid(){
 // Each city tagged with the FX session whose hours determine its trading volume.
 // Real lat/long for each financial centre — D3 projection converts these to SVG coords
 var WORLD_CITIES=[
-  {id:'newyork',  name:'New York',    lon:-74.00, lat:40.71, ccy:'USD',session:'ny'},
-  {id:'toronto',  name:'Toronto',     lon:-79.38, lat:43.65, ccy:'CAD',session:'ny'},
-  {id:'london',   name:'London',      lon:-0.13,  lat:51.51, ccy:'GBP',session:'london'},
-  {id:'frankfurt',name:'Frankfurt',   lon:8.68,   lat:50.11, ccy:'EUR',session:'london'},
-  {id:'zurich',   name:'Zurich',      lon:8.55,   lat:47.38, ccy:'CHF',session:'london'},
-  {id:'tokyo',    name:'Tokyo',       lon:139.69, lat:35.69, ccy:'JPY',session:'tokyo'},
-  {id:'shanghai', name:'Shanghai',    lon:121.47, lat:31.23, ccy:'CNY',session:'tokyo'},
-  {id:'hongkong', name:'Hong Kong',   lon:114.17, lat:22.32, ccy:'CNY',session:'tokyo'},
-  {id:'singapore',name:'Singapore',   lon:103.85, lat:1.35,  ccy:'CNY',session:'tokyo'},
-  {id:'sydney',   name:'Sydney',      lon:151.21, lat:-33.87,ccy:'AUD',session:'sydney'},
-  {id:'auckland', name:'Auckland',    lon:174.76, lat:-36.85,ccy:'NZD',session:'sydney'},
-  {id:'dubai',    name:'Dubai',       lon:55.27,  lat:25.20, ccy:'USD',session:'london'},
-  {id:'mumbai',   name:'Mumbai',      lon:72.83,  lat:19.08, ccy:'INR',session:'tokyo'}
+  {id:'newyork',  name:'New York',    lon:-74.00, lat:40.71, ccy:'USD',session:'ny',     sym:'SPX',     symLabel:'S&P 500',  tv:'TVC:SPX',          tz:'America/New_York'},
+  {id:'toronto',  name:'Toronto',     lon:-79.38, lat:43.65, ccy:'CAD',session:'ny',     sym:'USDCAD',  symLabel:'USD/CAD',  tv:'OANDA:USDCAD',     tz:'America/Toronto'},
+  {id:'london',   name:'London',      lon:-0.13,  lat:51.51, ccy:'GBP',session:'london', sym:'GBPUSD',  symLabel:'GBP/USD',  tv:'OANDA:GBPUSD',     tz:'Europe/London'},
+  {id:'frankfurt',name:'Frankfurt',   lon:8.68,   lat:50.11, ccy:'EUR',session:'london', sym:'EURUSD',  symLabel:'EUR/USD',  tv:'OANDA:EURUSD',     tz:'Europe/Berlin'},
+  {id:'zurich',   name:'Zurich',      lon:8.55,   lat:47.38, ccy:'CHF',session:'london', sym:'USDCHF',  symLabel:'USD/CHF',  tv:'OANDA:USDCHF',     tz:'Europe/Zurich'},
+  {id:'tokyo',    name:'Tokyo',       lon:139.69, lat:35.69, ccy:'JPY',session:'tokyo',  sym:'USDJPY',  symLabel:'USD/JPY',  tv:'OANDA:USDJPY',     tz:'Asia/Tokyo'},
+  {id:'shanghai', name:'Shanghai',    lon:121.47, lat:31.23, ccy:'CNY',session:'tokyo',  sym:'USDCNH',  symLabel:'USD/CNH',  tv:'OANDA:USDCNH',     tz:'Asia/Shanghai'},
+  {id:'hongkong', name:'Hong Kong',   lon:114.17, lat:22.32, ccy:'CNY',session:'tokyo',  sym:'HK33',    symLabel:'Hang Seng',tv:'TVC:HSI',          tz:'Asia/Hong_Kong'},
+  {id:'singapore',name:'Singapore',   lon:103.85, lat:1.35,  ccy:'CNY',session:'tokyo',  sym:'XAUUSD',  symLabel:'XAU/USD',  tv:'OANDA:XAUUSD',     tz:'Asia/Singapore'},
+  {id:'sydney',   name:'Sydney',      lon:151.21, lat:-33.87,ccy:'AUD',session:'sydney', sym:'AUDUSD',  symLabel:'AUD/USD',  tv:'OANDA:AUDUSD',     tz:'Australia/Sydney'},
+  {id:'auckland', name:'Auckland',    lon:174.76, lat:-36.85,ccy:'NZD',session:'sydney', sym:'NZDUSD',  symLabel:'NZD/USD',  tv:'OANDA:NZDUSD',     tz:'Pacific/Auckland'},
+  {id:'dubai',    name:'Dubai',       lon:55.27,  lat:25.20, ccy:'USD',session:'london', sym:'USOIL',   symLabel:'WTI Oil',  tv:'TVC:USOIL',        tz:'Asia/Dubai'},
+  {id:'mumbai',   name:'Mumbai',      lon:72.83,  lat:19.08, ccy:'INR',session:'tokyo',  sym:'USDINR',  symLabel:'USD/INR',  tv:'FX_IDC:USDINR',    tz:'Asia/Kolkata'}
 ];
 
 // Project a city's lat/long to SVG coords using the D3 projection (set up after world map loads)
@@ -4207,7 +4244,8 @@ function renderWorldMap(){
     var dotR=w>=5?6:w>=2?5:4;
     var sessLbl=fac>=1?'OPEN':fac>=0.5?'OPENS SOON':'CLOSED';
     // Bigger invisible hit-target for hover so tiny dots are still easy to hit
-    html+='<g class="world-city '+cls+'" data-city="'+c.id+'" data-session="'+sessLbl+'" style="cursor:pointer;">'
+    var activeCls=(c.symLabel===window._activeSymLabel)?' active':'';
+    html+='<g class="world-city '+cls+activeCls+'" data-city="'+c.id+'" data-session="'+sessLbl+'" style="cursor:pointer;" onclick="handleCityClick(\''+c.id+'\')">'
       +'<circle cx="'+pt.x+'" cy="'+pt.y+'" r="14" fill="transparent"/>'
       +pulse
       +'<circle class="dot" cx="'+pt.x+'" cy="'+pt.y+'" r="'+dotR+'"/>'
@@ -4522,13 +4560,149 @@ async function loadRealWorldMap(){
     });
     countriesG.innerHTML=html;
     console.log('[live] World map rendered with',countries.features.length,'countries');
-    // Re-render cities now that we have the projection
+    // Re-render cities + terminator now that we have the projection
     renderWorldMap();
+    renderDayNightTerminator();
   }catch(e){
     console.warn('Failed to load world map data:',e);
   }
 }
 window.addEventListener('load',function(){setTimeout(loadRealWorldMap,500);});
+
+// ════════════ DAY/NIGHT TERMINATOR ════════════
+// Computes the sun's subsolar point (where the sun is directly overhead) for
+// the current UTC time, then draws the antipodal great-circle as a dim
+// overlay so the user can see at a glance which financial centres are
+// physically in daylight. Updates every 60 seconds.
+function _solarPosition(date){
+  // Approximate subsolar lon/lat — accurate to within ~0.5° which is plenty
+  // for a 1000×500 SVG. Source: standard NOAA solar-position approximation.
+  var n=date;
+  var jd=n.getTime()/86400000+2440587.5;        // Julian day
+  var d=jd-2451545.0;                            // days since J2000
+  var g=(357.529+0.98560028*d)%360;              // mean anomaly
+  var q=(280.459+0.98564736*d)%360;              // mean longitude
+  var L=(q+1.915*Math.sin(g*Math.PI/180)+0.020*Math.sin(2*g*Math.PI/180))%360; // ecliptic longitude
+  var e=23.439-0.00000036*d;                     // obliquity
+  var Lr=L*Math.PI/180, er=e*Math.PI/180;
+  var ra=Math.atan2(Math.cos(er)*Math.sin(Lr),Math.cos(Lr))*180/Math.PI;
+  var dec=Math.asin(Math.sin(er)*Math.sin(Lr))*180/Math.PI;
+  // Greenwich Mean Sidereal Time (deg) — gives the longitude of the meridian
+  // currently aligned with the vernal equinox direction.
+  var gmst=(18.697374558+24.06570982441908*d)%24;
+  if(gmst<0)gmst+=24;
+  var subLon=ra-gmst*15;
+  while(subLon>180)subLon-=360;
+  while(subLon<-180)subLon+=360;
+  return {lon:subLon,lat:dec};
+}
+function renderDayNightTerminator(){
+  if(typeof d3==='undefined'||!_worldProjection)return;
+  var nightG=document.getElementById('worldNight');
+  if(!nightG)return;
+  var sun=_solarPosition(new Date());
+  // Antipode of subsolar point = centre of night hemisphere
+  var antiLon=sun.lon+180; if(antiLon>180)antiLon-=360;
+  var antiLat=-sun.lat;
+  // d3.geoCircle of radius 90° centred on antipode = night hemisphere
+  var nightFeature=d3.geoCircle().center([antiLon,antiLat]).radius(90).precision(2)();
+  var pathGen=d3.geoPath(_worldProjection);
+  var d=pathGen(nightFeature);
+  nightG.innerHTML=d?'<path class="world-night" d="'+d+'"/>':'';
+}
+setInterval(renderDayNightTerminator,60000);
+
+// ════════════ NEWS SHOCKWAVE ════════════
+// When a new story arrives in LIVE_NEWS we look up which financial centres
+// match the affected currencies and ripple a coloured pulse out from each.
+// Bias-coloured: green=bull, red=bear, yellow=neutral.
+function spawnNewsShock(currency,bias){
+  var shocksG=document.getElementById('worldShocks');
+  if(!shocksG)return;
+  var hits=WORLD_CITIES.filter(function(c){return c.ccy===currency;});
+  hits.forEach(function(c){
+    var pt=projectCity(c);
+    var cls='world-shock '+(bias==='bull'?'bull':bias==='bear'?'bear':'neut');
+    // Two staggered rings for a more layered "broadcast" feel
+    [0,180].forEach(function(delay){
+      var circ=document.createElementNS('http://www.w3.org/2000/svg','circle');
+      circ.setAttribute('cx',pt.x);circ.setAttribute('cy',pt.y);circ.setAttribute('r','4');
+      circ.setAttribute('class',cls);
+      circ.style.animationDelay=delay+'ms';
+      shocksG.appendChild(circ);
+      setTimeout(function(){circ.remove();},1700+delay);
+    });
+  });
+}
+// Hook into LIVE_NEWS — fire a shock whenever a fresh story slips in.
+(function(){
+  var seen=new Set();
+  setInterval(function(){
+    if(typeof LIVE_NEWS==='undefined'||!LIVE_NEWS)return;
+    LIVE_NEWS.slice(0,3).forEach(function(n){
+      if(!n||!n.id||seen.has(n.id))return;
+      seen.add(n.id);
+      // Don't shock the very first batch (page load) — only fresh arrivals
+      if(seen.size>10){
+        var bias=n.bias||'neutral';
+        var ccys=['USD','EUR','GBP','JPY','CHF','CAD','AUD','NZD','CNY'];
+        ccys.forEach(function(c){
+          var hit=(n.markets||[]).some(function(m){return (m.sym||'').toUpperCase().includes(c);})
+                || (n.affectedAssets||[]).some(function(s){return (s||'').toUpperCase().includes(c);});
+          if(hit)spawnNewsShock(c,bias);
+        });
+      }
+    });
+  },4000);
+})();
+
+// ════════════ CLICK A CITY → LOAD ITS PRIMARY SYMBOL ════════════
+// Hooks the existing setSym() function so clicking Tokyo loads USD/JPY,
+// London loads GBP/USD etc. Also visually flags the city as "active".
+window.handleCityClick=function(cityId){
+  var c=WORLD_CITIES.find(function(x){return x.id===cityId;});
+  if(!c)return;
+  // Click-feedback ring (CSS handles the animation)
+  var g=document.querySelector('.world-city[data-city="'+cityId+'"]');
+  if(g){
+    var pt=projectCity(c);
+    var ring=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    ring.setAttribute('class','click-ring');
+    ring.setAttribute('cx',pt.x);ring.setAttribute('cy',pt.y);ring.setAttribute('r','4');
+    g.appendChild(ring);
+    setTimeout(function(){ring.remove();},600);
+    // Highlight active state — clear others first
+    document.querySelectorAll('.world-city.active').forEach(function(el){el.classList.remove('active');});
+    g.classList.add('active');
+  }
+  // Switch the chart symbol if setSym is wired up
+  if(typeof setSym==='function'){
+    setSym(c.tv,c.symLabel,null,null,'up',null);
+  }else{
+    window._activeSymLabel=c.symLabel;
+  }
+  toast&&toast({kind:'blue',icon:'🌍',title:'Loaded '+c.symLabel,desc:c.name+' is the primary market for this asset · session: '+c.session.toUpperCase(),duration:4500});
+};
+
+// ════════════ LAYER TOGGLES ════════════
+// The three pill buttons (Day/Night, Heat arcs, Labels) toggle visibility
+// of their corresponding layers. State is local-only — no persistence.
+(function setupLayerToggles(){
+  document.querySelectorAll('.wm-layer-btn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      btn.classList.toggle('active');
+      var layer=btn.dataset.layer;
+      var on=btn.classList.contains('active');
+      if(layer==='night'){
+        var n=document.getElementById('worldNight');if(n)n.style.display=on?'':'none';
+      }else if(layer==='arcs'){
+        document.querySelectorAll('.world-arc').forEach(function(a){a.style.display=on?'':'none';});
+      }else if(layer==='labels'){
+        document.querySelectorAll('.world-map-svg text.label, .world-map-svg text.signal-cnt').forEach(function(t){t.style.display=on?'':'none';});
+      }
+    });
+  });
+})();
 
 // ════════════ WORLD MAP HOVER TOOLTIP ════════════
 // Show city info bubble when hovering over a marker. Uses delegated mouseover
@@ -4562,15 +4736,41 @@ window.addEventListener('load',function(){setTimeout(loadRealWorldMap,500);});
     var heatLbl=heatCls==='hot'?'🔴 HOT':heatCls==='warm'?'🟡 WARM':heatCls==='calm'?'🟢 CALM':'⚪ QUIET';
     var sessLbl=fac>=1?'open':fac>=0.5?'opening':'closed';
     var sessTxt=fac>=1?'🟢 MARKET OPEN':fac>=0.5?'🟡 OPENS SOON':'⚪ MARKET CLOSED';
+    // Session countdown — minutes to next open / close
+    var countdown='—';
+    try{
+      var sessObj=(typeof SESS!=='undefined')?SESS.find(function(x){return x.id===city.session;}):null;
+      if(sessObj){
+        var hrs=hoursLeft(sessObj,new Date());
+        var mins=Math.round(hrs*60);
+        countdown=fac>=1?'closes in '+(mins>=60?Math.floor(mins/60)+'h '+mins%60+'m':mins+'m')
+                        :'opens in '+(mins>=60?Math.floor(mins/60)+'h '+mins%60+'m':mins+'m');
+      }
+    }catch(_){}
+    // Local time at the city
+    var localTime='—';
+    try{localTime=new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',timeZone:city.tz});}catch(_){}
+    // Day or night per the terminator?
+    var sun=(typeof _solarPosition==='function')?_solarPosition(new Date()):null;
+    var daylight='?';
+    if(sun){
+      // Great-circle angular distance from city to subsolar point — < 90° = day
+      var d2r=Math.PI/180;
+      var ang=Math.acos(Math.sin(city.lat*d2r)*Math.sin(sun.lat*d2r)
+        +Math.cos(city.lat*d2r)*Math.cos(sun.lat*d2r)*Math.cos((city.lon-sun.lon)*d2r))*180/Math.PI;
+      daylight=ang<90?'☀️ Day':'🌙 Night';
+    }
     tip.innerHTML='<div class="wt-header">'
       +'<span class="wt-flag">'+(FLAGS[city.id]||'🌐')+'</span>'
       +'<div style="flex:1;"><div class="wt-name">'+city.name+'</div></div>'
       +'<span class="wt-ccy">'+city.ccy+'</span>'
       +'</div>'
+      +'<div class="wt-row"><span class="lbl">Local time</span><span class="val">'+localTime+' · '+daylight+'</span></div>'
+      +'<div class="wt-row"><span class="lbl">Session</span><span class="val '+sessLbl+'">'+sessTxt+'</span></div>'
+      +'<div class="wt-row"><span class="lbl">Countdown</span><span class="val">'+countdown+'</span></div>'
       +'<div class="wt-row"><span class="lbl">News signals</span><span class="val '+heatCls+'">'+sigs+'</span></div>'
-      +'<div class="wt-row"><span class="lbl">Heat (session-weighted)</span><span class="val '+heatCls+'">'+heatLbl+'</span></div>'
-      +'<div class="wt-row"><span class="lbl">Session factor</span><span class="val">'+(fac*100).toFixed(0)+'%</span></div>'
-      +'<div class="wt-status '+sessLbl+'">'+sessTxt+'</div>';
+      +'<div class="wt-row"><span class="lbl">Heat</span><span class="val '+heatCls+'">'+heatLbl+'</span></div>'
+      +(city.symLabel?'<div class="wt-cta">→ Click to load <strong>'+city.symLabel+'</strong> on chart</div>':'');
     // position:fixed → coords relative to viewport, not parent
     tip.style.left=evt.clientX+'px';
     tip.style.top=evt.clientY+'px';
