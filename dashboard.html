@@ -511,11 +511,64 @@ body{overflow-x:hidden;overflow-y:auto;}
 /* Macro Pulse: 2-column — left widget stack, right World Map full-height */
 .macro-pulse-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:1px;background:var(--border);align-items:stretch;}
 @media (max-width:1100px){.macro-pulse-grid{grid-template-columns:1fr;}}
-.mp-left-stack{display:grid;grid-template-columns:1fr 1fr;grid-template-areas:"sess sess" "ccy risk" "mood fg" "vol vol";gap:1px;background:var(--border);}
-@media (max-width:780px){.mp-left-stack{grid-template-columns:1fr;grid-template-areas:"sess" "ccy" "risk" "mood" "fg" "vol";}}
+.mp-left-stack{display:grid;grid-template-columns:1fr 1fr;grid-template-areas:"sess sess" "ccy risk" "mood fg" "vol geo";gap:1px;background:var(--border);}
+@media (max-width:780px){.mp-left-stack{grid-template-columns:1fr;grid-template-areas:"sess" "ccy" "risk" "mood" "fg" "vol" "geo";}}
 .mp-left-stack > .mp-card{display:flex;flex-direction:column;min-height:0;background:var(--bg2);}
 .mp-left-stack > .sess-card{grid-area:sess;}
 .mp-left-stack > .vol-card{grid-area:vol;}
+.mp-left-stack > .geo-mp-card{grid-area:geo;}
+
+/* ═══════ GEOPOLITICAL RISK METER (Macro Pulse left stack) ═══════ */
+.geo-mp-card{position:relative;}
+.geo-mp-card .geo-pulse{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--red2);box-shadow:0 0 8px rgba(248,113,113,.7);animation:geoPulseTick 1.4s ease-in-out infinite;}
+@keyframes geoPulseTick{0%,100%{opacity:.7;transform:scale(.9);}50%{opacity:1;transform:scale(1.1);}}
+.geo-mp-card .geo-body{display:flex;flex-direction:column;gap:10px;}
+.geo-gauge-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;}
+.geo-gauge{width:100%;max-width:200px;height:108px;display:block;}
+.geo-arc-bg{fill:none;stroke-width:14;stroke-linecap:round;}
+.geo-arc-fill{fill:none;stroke-width:14;stroke-linecap:round;transition:stroke-dashoffset .9s var(--ease-out-quart),stroke .6s ease;stroke:var(--text3);}
+.geo-tick-row{display:flex;justify-content:space-between;width:100%;max-width:200px;font-family:var(--mono);font-size:8px;color:var(--text3);font-weight:700;letter-spacing:.06em;margin-top:-2px;}
+.geo-readout{margin-top:-22px;text-align:center;}
+.geo-score{font-family:var(--sans);font-size:34px;font-weight:900;line-height:1;letter-spacing:-.025em;color:var(--text);}
+.geo-level{font-family:var(--mono);font-size:9.5px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;margin-top:3px;color:var(--text3);}
+/* Severity tints — applied to .geo-mp-card by JS */
+.geo-mp-card.lvl-low      .geo-arc-fill{stroke:var(--green2);}
+.geo-mp-card.lvl-low      .geo-score,.geo-mp-card.lvl-low      .geo-level{color:var(--green2);}
+.geo-mp-card.lvl-elevated .geo-arc-fill{stroke:var(--yellow);}
+.geo-mp-card.lvl-elevated .geo-score,.geo-mp-card.lvl-elevated .geo-level{color:var(--yellow);}
+.geo-mp-card.lvl-high     .geo-arc-fill{stroke:var(--orange,#f97316);}
+.geo-mp-card.lvl-high     .geo-score,.geo-mp-card.lvl-high     .geo-level{color:var(--orange,#f97316);}
+.geo-mp-card.lvl-severe   .geo-arc-fill{stroke:var(--red2);}
+.geo-mp-card.lvl-severe   .geo-score,.geo-mp-card.lvl-severe   .geo-level{color:var(--red2);}
+.geo-mp-card.lvl-severe::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(135deg,var(--red),var(--orange,#f97316));animation:geoTopPulse 2s ease-in-out infinite;}
+@keyframes geoTopPulse{0%,100%{opacity:.6;}50%{opacity:1;}}
+/* Hotspots (3 mini bars) */
+.geo-hotspots{display:flex;flex-direction:column;gap:4px;}
+.geo-hotspots .hotspot{display:grid;grid-template-columns:auto 1fr 50px;align-items:center;gap:8px;padding:6px 8px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;font-family:var(--sans);transition:.15s;}
+.geo-hotspots .hotspot:hover{border-color:var(--border2);}
+.geo-hotspots .hs-flag{font-size:14px;line-height:1;}
+.geo-hotspots .hs-name{font-size:11px;font-weight:700;color:var(--text);}
+.geo-hotspots .hs-sub{font-family:var(--mono);font-size:8.5px;color:var(--text3);font-weight:600;margin-top:1px;}
+.geo-hotspots .hs-bar-wrap{justify-self:end;width:50px;}
+.geo-hotspots .hs-bar-track{height:4px;background:var(--bg);border-radius:3px;overflow:hidden;}
+.geo-hotspots .hs-bar-fill{height:100%;border-radius:3px;transition:width .8s var(--ease-out-quart);}
+.geo-hotspots .hs-fill-low{background:linear-gradient(90deg,var(--green2),var(--yellow));}
+.geo-hotspots .hs-fill-mid{background:linear-gradient(90deg,var(--yellow),var(--orange,#f97316));}
+.geo-hotspots .hs-fill-hi{background:linear-gradient(90deg,var(--orange,#f97316),var(--red2));}
+.geo-hotspots .hs-pct{font-family:var(--mono);font-size:8.5px;color:var(--text2);font-weight:700;text-align:right;margin-top:2px;}
+/* Driver chips */
+.geo-mp-card .driver-row{display:flex;flex-wrap:wrap;gap:5px;}
+.geo-mp-card .driver-row:empty{display:none;}
+.geo-mp-card .driver{padding:3px 8px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.3);border-radius:100px;font-family:var(--mono);font-size:9.5px;font-weight:700;color:var(--red2);letter-spacing:.04em;display:inline-flex;align-items:center;gap:5px;}
+.geo-mp-card .driver .ct{background:rgba(239,68,68,.2);padding:0 5px;border-radius:8px;font-size:8.5px;font-weight:800;}
+.geo-context{font-family:var(--sans);font-size:11px;color:var(--text2);text-align:left;line-height:1.5;padding:7px 10px;background:rgba(14,165,233,.04);border-left:2px solid var(--blue);border-radius:0 5px 5px 0;}
+.geo-context strong{color:var(--text);}
+/* Foot ribbon */
+.geo-foot{margin-top:6px;padding:8px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;font-family:var(--mono);font-size:9.5px;color:var(--text2);display:flex;align-items:center;gap:8px;line-height:1.4;}
+.geo-foot .foot-icon{font-size:12px;flex-shrink:0;}
+.geo-foot .foot-time{color:var(--text3);font-weight:700;flex-shrink:0;}
+.geo-foot .foot-text{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text2);}
+.geo-foot .foot-impact{color:var(--red2);font-weight:800;flex-shrink:0;}
 .macro-pulse-grid > .mp-card.world-map-card{display:flex;flex-direction:column;min-height:0;}
 .macro-pulse-grid > .mp-card.world-map-card > .world-map-wrap{flex:1;min-height:260px;}
 .macro-pulse-grid-bottom{display:none;}
@@ -1947,7 +2000,7 @@ body{overflow-x:hidden;overflow-y:auto;}
               </div>
             </div>
 
-            <!-- Volatility Pulse (full width on left bottom) -->
+            <!-- Volatility Pulse (now half-width, sits next to Geo Risk) -->
             <div class="mp-card vol-card">
               <div class="mp-card-h">
                 <div class="mp-card-title">⚡ Volatility Pulse</div>
@@ -1955,6 +2008,39 @@ body{overflow-x:hidden;overflow-y:auto;}
               </div>
               <div class="vol-pulse" id="volPulse"></div>
               <div class="vol-foot" id="volPulseFoot">↑ Live % move since session open · refreshes every 30s</div>
+            </div>
+
+            <!-- Geopolitical Risk Meter — scans last 24h news for conflict keywords -->
+            <div class="mp-card geo-mp-card lvl-low" id="geoCard">
+              <div class="mp-card-h">
+                <div class="mp-card-title" style="display:flex;align-items:center;gap:8px;">
+                  <span class="geo-pulse" aria-hidden="true"></span>
+                  <span>⚔️ Geopolitical Risk</span>
+                </div>
+                <div class="mp-card-sub" id="geoSub">Live · 24h news scan · 50+ keywords</div>
+              </div>
+              <div class="geo-body">
+                <div class="geo-gauge-wrap">
+                  <svg class="geo-gauge" viewBox="0 0 240 140" preserveAspectRatio="xMidYMid meet">
+                    <path class="geo-arc-bg" stroke="rgba(255,255,255,.06)" d="M 28 120 A 92 92 0 0 1 212 120"/>
+                    <path class="geo-arc-fill" id="geoArc" stroke-dasharray="289" stroke-dashoffset="289" d="M 28 120 A 92 92 0 0 1 212 120"/>
+                  </svg>
+                  <div class="geo-tick-row"><span>0</span><span>25</span><span>50</span><span>75</span><span>100</span></div>
+                  <div class="geo-readout">
+                    <div class="geo-score" id="geoScore">—</div>
+                    <div class="geo-level" id="geoLevel">Loading…</div>
+                  </div>
+                </div>
+                <div class="geo-hotspots" id="geoHotspots"></div>
+                <div class="driver-row" id="geoDrivers"></div>
+                <div class="geo-context" id="geoContext">Loading geopolitical risk feed…</div>
+              </div>
+              <div class="geo-foot" id="geoFoot" style="display:none;">
+                <span class="foot-icon">⚡</span>
+                <span class="foot-time" id="geoFootTime">—</span>
+                <span class="foot-text" id="geoFootText">—</span>
+                <span class="foot-impact" id="geoFootImpact">—</span>
+              </div>
             </div>
           </div>
 
@@ -4590,6 +4676,90 @@ var _volBaseline=null;
 // indicates which slot is on screen. Refreshes the underlying list
 // whenever the macro snapshot ticks.
 var _mvRotation={list:[],idx:0,timer:null};
+// ════════════ GEOPOLITICAL RISK METER ════════════
+// Fetches /api/geo-risk every 60s and renders the gauge + hotspot bars +
+// driver chips + latest contributing headline. Score is computed server-side
+// from the news DB, so this works even when Anthropic is down — the keyword
+// scan doesn't need Claude.
+var GEO_ARC_LEN=289;
+function geoLevelClass(l){return 'lvl-'+(l||'low');}
+function bucketSubText(id){
+  return ({
+    middle_east:'Iran · Hormuz · Israel',
+    eastern_europe:'Russia · Ukraine · NATO',
+    asia_pacific:'Taiwan · S. China Sea · DPRK',
+    other:'Sanctions · embargo · UN',
+  })[id]||'';
+}
+function fillClassFor(intensity){
+  if(intensity>=66)return 'hs-fill-hi';
+  if(intensity>=33)return 'hs-fill-mid';
+  return 'hs-fill-low';
+}
+function renderGeoRisk(d){
+  if(!d)return;
+  var card=document.getElementById('geoCard');if(!card)return;
+  card.classList.remove('lvl-low','lvl-elevated','lvl-high','lvl-severe');
+  card.classList.add(geoLevelClass(d.level));
+  // Score + arc
+  document.getElementById('geoScore').textContent=d.score;
+  document.getElementById('geoLevel').textContent=(d.level||'').toUpperCase();
+  var arc=document.getElementById('geoArc');
+  if(arc){
+    var pct=Math.max(0,Math.min(100,d.score))/100;
+    arc.setAttribute('stroke-dashoffset',(GEO_ARC_LEN*(1-pct)).toFixed(1));
+  }
+  // Hotspots
+  var hs=document.getElementById('geoHotspots');
+  if(hs){
+    hs.innerHTML=(d.hotspots||[]).map(function(h){
+      var fill=fillClassFor(h.intensity);
+      var sub=h.topKeywords&&h.topKeywords.length?h.topKeywords.slice(0,3).join(' · '):bucketSubText(h.id);
+      return '<div class="hotspot">'
+        +'<span class="hs-flag">'+(h.flag||'🌐')+'</span>'
+        +'<div><div class="hs-name">'+h.name+'</div><div class="hs-sub">'+sub+'</div></div>'
+        +'<div class="hs-bar-wrap"><div class="hs-bar-track"><div class="hs-bar-fill '+fill+'" style="width:'+h.intensity+'%"></div></div><div class="hs-pct">'+h.intensity+'</div></div>'
+      +'</div>';
+    }).join('');
+  }
+  // Drivers
+  var dr=document.getElementById('geoDrivers');
+  if(dr){
+    dr.innerHTML=(d.drivers||[]).map(function(x){
+      return '<span class="driver">'+x.keyword+' <span class="ct">'+x.hits+'</span></span>';
+    }).join('');
+  }
+  // Context line
+  var ctxEl=document.getElementById('geoContext');
+  if(ctxEl)ctxEl.innerHTML=d.context||'—';
+  // Footer ribbon
+  var foot=document.getElementById('geoFoot');
+  if(foot){
+    if(d.latestHeadline){
+      foot.style.display='';
+      var age=d.latestHeadline.ageMinutes;
+      var ageTxt=age<1?'just now':age<60?age+'m ago':Math.floor(age/60)+'h ago';
+      document.getElementById('geoFootTime').textContent=ageTxt;
+      document.getElementById('geoFootText').textContent='"'+d.latestHeadline.headline+'"';
+      document.getElementById('geoFootImpact').textContent='+'+d.latestHeadline.impactDelta;
+    }else{
+      foot.style.display='none';
+    }
+  }
+  // Subheading — show contributing-story count for transparency
+  var sub=document.getElementById('geoSub');
+  if(sub)sub.textContent='Live · '+d.windowHours+'h scan · '+d.totalStories+' contributing '+(d.totalStories===1?'story':'stories');
+}
+function fetchGeoRisk(){
+  fetch(TC_API+'/api/geo-risk').then(function(r){return r.ok?r.json():null;}).then(function(d){
+    if(d)renderGeoRisk(d);
+  }).catch(function(){});
+}
+window.addEventListener('load',function(){
+  setTimeout(fetchGeoRisk,800);
+  setInterval(fetchGeoRisk,60000); // every 60s — backend cache is 30s anyway
+});
+
 function renderTopMovers(){
   var el=document.getElementById('moversList');
   var dots=document.getElementById('mvDots');

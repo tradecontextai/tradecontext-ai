@@ -17,6 +17,7 @@ import { blogRouter } from './blog';
 import { profileRouter } from './profile';
 import { ideasRouter } from './ideas';
 import { tradingviewWebhookRouter } from './tradingview-webhook';
+import { geoRiskRouter } from './geo-risk';
 import { newsClientCount } from '../ws/news-broadcast';
 
 export const apiRouter = Router();
@@ -39,6 +40,7 @@ apiRouter.use('/blog', blogRouter);
 apiRouter.use('/profile', profileRouter);
 apiRouter.use('/ideas', ideasRouter);
 apiRouter.use('/webhook/tradingview', tradingviewWebhookRouter);
+apiRouter.use('/geo-risk', geoRiskRouter);
 
 apiRouter.get('/health', (_req, res) => {
   res.json({
