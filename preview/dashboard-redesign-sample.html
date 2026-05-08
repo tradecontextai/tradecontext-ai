@@ -4,7 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard Redesign — Amazing-tier preview</title>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<!-- Loading every candidate font once so the picker can flip without reload -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,800;1,9..144,400&family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&family=Manrope:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=DM+Mono:wght@400;500&family=IBM+Plex+Mono:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 /*
   TradeContext.ai — Dashboard Redesign Preview
@@ -415,6 +418,37 @@ body{
   letter-spacing:.04em;
 }
 .footer-note strong{color:var(--text);}
+
+/* ═══════════════════════════════════════════════════════════════
+   FONT PICKER (preview only)
+   ═══════════════════════════════════════════════════════════════ */
+.font-picker{
+  position:fixed;top:84px;right:20px;z-index:90;
+  width:264px;background:rgba(6,12,24,.92);backdrop-filter:blur(20px) saturate(1.4);
+  -webkit-backdrop-filter:blur(20px) saturate(1.4);
+  border:1px solid rgba(255,255,255,.08);border-radius:14px;
+  box-shadow:0 22px 60px rgba(0,0,0,.5);
+  overflow:hidden;transition:.32s var(--ease-out-expo);
+}
+.font-picker.collapsed{width:auto;}
+.font-picker.collapsed .fp-options{display:none;}
+.font-picker .fp-h{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.06);}
+.font-picker.collapsed .fp-h{border-bottom:none;}
+.fp-eyebrow{font-family:var(--f-mono);font-size:9.5px;font-weight:800;color:var(--text-2);letter-spacing:.14em;text-transform:uppercase;}
+.fp-collapse{background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--text-2);font-size:14px;font-weight:700;width:24px;height:24px;border-radius:5px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;}
+.fp-options{padding:6px;display:flex;flex-direction:column;gap:3px;max-height:62vh;overflow-y:auto;}
+.fp-opt{
+  text-align:left;background:transparent;border:1px solid transparent;
+  padding:9px 12px;border-radius:8px;cursor:pointer;
+  transition:.15s var(--ease-out-quart);
+  display:block;width:100%;
+}
+.fp-opt:hover{background:rgba(255,255,255,.04);}
+.fp-opt.active{background:rgba(14,165,233,.10);border-color:rgba(14,165,233,.35);box-shadow:inset 0 0 0 1px rgba(14,165,233,.2);}
+.fp-name{font-size:14px;color:var(--text);line-height:1.2;margin-bottom:3px;}
+.fp-meta{font-family:var(--f-mono);font-size:8.5px;color:var(--text-3);font-weight:600;letter-spacing:.04em;text-transform:uppercase;}
+.fp-opt.active .fp-meta{color:var(--accent);}
+@media (max-width:900px){.font-picker{display:none;}}
 </style>
 </head>
 <body>
@@ -430,6 +464,54 @@ body{
     <a href="#hero">Hero</a>
     <a href="#kpi">KPIs</a>
     <a href="#bias">AI Bias</a>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════
+     FONT PICKER — flip live through curated type combinations
+     ════════════════════════════════════════════════════════════════ -->
+<div class="font-picker" id="fontPicker">
+  <div class="fp-h">
+    <span class="fp-eyebrow">🔤 Type stack</span>
+    <button class="fp-collapse" onclick="document.getElementById('fontPicker').classList.toggle('collapsed')">−</button>
+  </div>
+  <div class="fp-options">
+    <button class="fp-opt active" data-stack="editorial">
+      <div class="fp-name" style="font-family:'Fraunces',serif;font-style:italic;">Editorial</div>
+      <div class="fp-meta">Fraunces · Inter · JetBrains</div>
+    </button>
+    <button class="fp-opt" data-stack="linear">
+      <div class="fp-name" style="font-family:'Inter',sans-serif;font-weight:800;letter-spacing:-.03em;">Linear / Vercel</div>
+      <div class="fp-meta">Inter · Inter · JetBrains</div>
+    </button>
+    <button class="fp-opt" data-stack="current">
+      <div class="fp-name" style="font-family:'Outfit',sans-serif;font-weight:800;letter-spacing:-.025em;">Current Stack</div>
+      <div class="fp-meta">Outfit · Outfit · DM Mono</div>
+    </button>
+    <button class="fp-opt" data-stack="bloomberg">
+      <div class="fp-name" style="font-family:'Outfit',sans-serif;font-weight:700;">Terminal-Pro</div>
+      <div class="fp-meta">Outfit · Inter · Space Mono</div>
+    </button>
+    <button class="fp-opt" data-stack="stripe">
+      <div class="fp-name" style="font-family:'Inter',sans-serif;font-weight:700;">SaaS Standard</div>
+      <div class="fp-meta">Inter · Inter · IBM Plex Mono</div>
+    </button>
+    <button class="fp-opt" data-stack="manrope">
+      <div class="fp-name" style="font-family:'Manrope',sans-serif;font-weight:800;">All-Sans Modern</div>
+      <div class="fp-meta">Manrope · Plus Jakarta · DM Mono</div>
+    </button>
+    <button class="fp-opt" data-stack="grotesk">
+      <div class="fp-name" style="font-family:'Space Grotesk',sans-serif;font-weight:700;">Technical</div>
+      <div class="fp-meta">Space Grotesk · Inter · JetBrains</div>
+    </button>
+    <button class="fp-opt" data-stack="dm-serif">
+      <div class="fp-name" style="font-family:'DM Serif Display',serif;">Bold Editorial</div>
+      <div class="fp-meta">DM Serif · Inter · JetBrains</div>
+    </button>
+    <button class="fp-opt" data-stack="instrument">
+      <div class="fp-name" style="font-family:'Instrument Serif',serif;font-style:italic;">Instrument (orig)</div>
+      <div class="fp-meta">Instrument Serif · Inter · JetBrains</div>
+    </button>
   </div>
 </div>
 
@@ -668,6 +750,87 @@ body{
   Preview only · <strong>nothing in production has changed.</strong> Approve sections to wire individually into the live dashboard.<br>
   Skills applied: <strong>top-design</strong> · <strong>ui-ux-pro-max</strong> · <strong>refactoring-ui</strong> · <strong>microinteractions</strong> · <strong>web-typography</strong> · <strong>ui-animations</strong> · <strong>design-system</strong>
 </div>
+
+<script>
+// Font-picker — swaps the three CSS variables that drive the whole design
+// (--f-display / --f-sans / --f-mono). Each preset also tweaks the display
+// settings since some serifs need different weight + italic intent.
+var STACKS={
+  editorial:{
+    display:"'Fraunces',serif",sans:"'Inter',sans-serif",mono:"'JetBrains Mono',monospace",
+    italic:false, weight:600
+  },
+  linear:{
+    display:"'Inter',sans-serif",sans:"'Inter',sans-serif",mono:"'JetBrains Mono',monospace",
+    italic:false, weight:800, tight:true
+  },
+  current:{
+    display:"'Outfit',sans-serif",sans:"'Outfit',sans-serif",mono:"'DM Mono',monospace",
+    italic:false, weight:800, tight:true
+  },
+  bloomberg:{
+    display:"'Outfit',sans-serif",sans:"'Inter',sans-serif",mono:"'Space Mono',monospace",
+    italic:false, weight:700
+  },
+  stripe:{
+    display:"'Inter',sans-serif",sans:"'Inter',sans-serif",mono:"'IBM Plex Mono',monospace",
+    italic:false, weight:700, tight:true
+  },
+  manrope:{
+    display:"'Manrope',sans-serif",sans:"'Plus Jakarta Sans',sans-serif",mono:"'DM Mono',monospace",
+    italic:false, weight:800, tight:true
+  },
+  grotesk:{
+    display:"'Space Grotesk',sans-serif",sans:"'Inter',sans-serif",mono:"'JetBrains Mono',monospace",
+    italic:false, weight:700, tight:true
+  },
+  "dm-serif":{
+    display:"'DM Serif Display',serif",sans:"'Inter',sans-serif",mono:"'JetBrains Mono',monospace",
+    italic:false, weight:400
+  },
+  instrument:{
+    display:"'Instrument Serif',serif",sans:"'Inter',sans-serif",mono:"'JetBrains Mono',monospace",
+    italic:true, weight:400
+  }
+};
+var heroEm=document.querySelectorAll('.hero-title em');
+var heroTitle=document.querySelector('.hero-title');
+var kpiVals=document.querySelectorAll('.kpi-value');
+var biasNames=document.querySelectorAll('.bias-meta-l h3, .news-hero-title');
+var verdictBias=document.querySelectorAll('.v-bias');
+
+function applyStack(key){
+  var s=STACKS[key];if(!s)return;
+  document.documentElement.style.setProperty('--f-display',s.display);
+  document.documentElement.style.setProperty('--f-sans',s.sans);
+  document.documentElement.style.setProperty('--f-mono',s.mono);
+
+  // Headline-specific tweaks: serif vs sans need different weight + italic
+  heroTitle.style.fontWeight=s.weight;
+  heroTitle.style.letterSpacing=s.tight?'-.045em':'-.04em';
+  heroEm.forEach(function(el){
+    el.style.fontStyle=s.italic?'italic':'normal';
+  });
+  // KPI / bias / news titles use the display var too
+  kpiVals.forEach(function(el){el.style.fontWeight=s.weight;});
+  biasNames.forEach(function(el){el.style.fontWeight=s.weight;});
+  verdictBias.forEach(function(el){el.style.fontWeight=s.weight;});
+
+  // Picker active state
+  document.querySelectorAll('.fp-opt').forEach(function(b){
+    b.classList.toggle('active',b.dataset.stack===key);
+  });
+  // Save preference for next visit
+  try{localStorage.setItem('tc_preview_stack',key);}catch(_){}
+}
+document.querySelectorAll('.fp-opt').forEach(function(b){
+  b.addEventListener('click',function(){applyStack(b.dataset.stack);});
+});
+// Restore previous choice
+var saved='editorial';
+try{saved=localStorage.getItem('tc_preview_stack')||'editorial';}catch(_){}
+applyStack(saved);
+</script>
 
 </body>
 </html>
