@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leaderboard &amp; Trade Ideas — TradeContext.ai</title>
+<meta name="description" content="Public trade ideas with verified outcomes. The 50 best traders on TradeContext.ai by 90-day average R-multiple.">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=DM+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#03060d;--bg2:#060c18;--bg3:#0a1220;--border:#142035;--blue:#0ea5e9;--purple:#8b5cf6;--green:#10b981;--green2:#34d399;--yellow:#f59e0b;--red:#ef4444;--red2:#f87171;--text:#e2eaf4;--text2:#7a9ab8;--text3:#3a5570;--sans:'Outfit',sans-serif;--mono:'DM Mono',monospace;--grad-prem:linear-gradient(135deg,#0ea5e9,#8b5cf6);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;}
+.navbar{height:62px;background:rgba(3,6,13,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 40px;position:sticky;top:0;z-index:10;}
+.nav-logo{font-size:19px;font-weight:900;letter-spacing:-.02em;text-decoration:none;color:var(--text);}
+.nav-logo span{background:var(--grad-prem);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.nav-links{display:flex;gap:28px;font-family:var(--mono);font-size:11px;font-weight:600;}
+.nav-links a{color:var(--text2);text-decoration:none;letter-spacing:.04em;}
+.nav-links a:hover{color:var(--blue);}
+.nav-cta{padding:8px 18px;background:var(--grad-prem);color:#fff;font-family:var(--sans);font-size:12px;font-weight:800;border-radius:6px;text-decoration:none;letter-spacing:.04em;}
+.hero{padding:60px 40px 30px;text-align:center;max-width:920px;margin:0 auto;}
+.hero-title{font-size:46px;font-weight:900;letter-spacing:-.03em;margin-bottom:14px;line-height:1.05;}
+.hero-title span{background:var(--grad-prem);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero-sub{font-size:16px;color:var(--text2);max-width:680px;margin:0 auto;line-height:1.6;}
+.tabs{display:flex;justify-content:center;gap:6px;padding:24px 40px;}
+.tab{padding:9px 18px;background:var(--bg2);border:1px solid var(--border);font-family:var(--sans);font-size:13px;font-weight:700;color:var(--text2);border-radius:8px;cursor:pointer;letter-spacing:.02em;}
+.tab.active{background:var(--bg3);border-color:var(--blue);color:var(--blue);}
+.section{max-width:1080px;margin:0 auto;padding:0 40px 60px;}
+.lb-row{display:grid;grid-template-columns:36px 1fr 100px 120px 100px;gap:14px;align-items:center;padding:14px 18px;background:var(--bg2);border:1px solid var(--border);border-radius:9px;margin-bottom:6px;font-family:var(--sans);}
+.lb-row.head{background:transparent;border:none;font-family:var(--mono);font-size:10px;color:var(--text3);font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:6px 18px;}
+.lb-rank{font-family:var(--mono);font-size:14px;font-weight:900;color:var(--text2);}
+.lb-rank.top{color:var(--yellow);}
+.lb-handle{font-family:var(--mono);font-size:12.5px;font-weight:700;color:var(--text);}
+.lb-meta{font-family:var(--mono);font-size:11px;color:var(--text3);font-weight:600;}
+.lb-meta.win{color:var(--green2);}
+.lb-meta.loss{color:var(--red2);}
+.idea{padding:18px;background:var(--bg2);border:1px solid var(--border);border-radius:11px;margin-bottom:12px;}
+.idea-h{display:flex;align-items:center;gap:14px;margin-bottom:10px;}
+.idea-sym{font-family:var(--mono);font-size:13px;font-weight:800;color:var(--text);background:var(--bg3);padding:5px 11px;border-radius:5px;}
+.idea-side{font-family:var(--mono);font-size:10px;font-weight:800;padding:4px 9px;border-radius:4px;letter-spacing:.04em;text-transform:uppercase;}
+.idea-side.long{background:rgba(52,211,153,.16);color:var(--green2);border:1px solid rgba(52,211,153,.35);}
+.idea-side.short{background:rgba(248,113,113,.16);color:var(--red2);border:1px solid rgba(248,113,113,.35);}
+.idea-handle{margin-left:auto;font-family:var(--mono);font-size:10.5px;color:var(--text3);}
+.idea-rR{font-family:var(--mono);font-size:11px;color:var(--text2);font-weight:700;}
+.idea-thesis{font-size:13.5px;color:var(--text);line-height:1.55;margin-bottom:10px;}
+.idea-levels{display:flex;gap:14px;font-family:var(--mono);font-size:10.5px;color:var(--text3);font-weight:700;letter-spacing:.04em;}
+.idea-levels strong{color:var(--text);}
+.empty{padding:40px 20px;text-align:center;color:var(--text3);font-family:var(--mono);font-size:11.5px;}
+.cta{margin:40px auto;max-width:780px;padding:30px 40px;background:linear-gradient(135deg,rgba(14,165,233,.08),rgba(139,92,246,.05));border:1px solid var(--border);border-radius:12px;text-align:center;}
+.cta h3{font-size:22px;font-weight:900;margin-bottom:8px;}
+.cta p{font-size:13.5px;color:var(--text2);margin-bottom:18px;}
+.btn{display:inline-block;padding:11px 22px;background:var(--grad-prem);color:#fff;font-family:var(--sans);font-size:13px;font-weight:800;border-radius:8px;text-decoration:none;letter-spacing:.04em;}
+footer{padding:40px;text-align:center;font-family:var(--mono);font-size:10px;color:var(--text3);border-top:1px solid var(--border);}
+footer a{color:var(--text2);margin:0 10px;text-decoration:none;}
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <a class="nav-logo" href="home.html">TradeContext<span>.ai</span></a>
+  <div class="nav-links">
+    <a href="home.html">Home</a>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="pricing.html">Pricing</a>
+    <a href="track-record.html">Track Record</a>
+    <a href="leaderboard.html" style="color:var(--blue);">Leaderboard</a>
+    <a href="blog.html">Blog</a>
+  </div>
+  <a href="signup.html" class="nav-cta">Get Started</a>
+</nav>
+
+<section class="hero">
+  <h1 class="hero-title">Trade ideas with <span>verifiable edge</span></h1>
+  <p class="hero-sub">Members publish setups (entry, SL, TP, thesis). We track every outcome automatically. The leaderboard ranks by 90-day average R — no vibes, just settled trades.</p>
+</section>
+
+<div class="tabs">
+  <button class="tab active" data-tab="leaderboard" onclick="showTab('leaderboard')">🏆 Leaderboard</button>
+  <button class="tab" data-tab="ideas" onclick="showTab('ideas')">💡 Live ideas</button>
+</div>
+
+<section class="section" id="leaderboardTab">
+  <div class="lb-row head"><div>#</div><div>Trader</div><div>Ideas</div><div>Win rate</div><div>Avg R</div></div>
+  <div id="lbList"><div class="empty">Loading…</div></div>
+</section>
+
+<section class="section" id="ideasTab" style="display:none;">
+  <div id="ideasList"><div class="empty">Loading…</div></div>
+</section>
+
+<div class="cta">
+  <h3>Publish your first idea</h3>
+  <p>Subscribers can publish trade ideas right from the dashboard. Build a public track record.</p>
+  <a href="dashboard.html" class="btn">Open dashboard →</a>
+</div>
+
+<footer>
+  © 2026 TradeContext.ai ·
+  <a href="terms.html">Terms</a>
+  <a href="privacy.html">Privacy</a>
+  <a href="risk.html">Risk warning</a>
+  <a href="pricing.html">Pricing</a>
+  <a href="about.html">About</a>
+</footer>
+
+<script>
+var TC_API=(location.hostname==='localhost'||location.hostname==='127.0.0.1')?'http://localhost:3001':location.origin;
+function pct(n){if(n===null||n===undefined||isNaN(n))return '—';return (n*100).toFixed(1)+'%';}
+function showTab(t){
+  document.querySelectorAll('.tab').forEach(function(b){b.classList.toggle('active',b.dataset.tab===t);});
+  document.getElementById('leaderboardTab').style.display=t==='leaderboard'?'':'none';
+  document.getElementById('ideasTab').style.display=t==='ideas'?'':'none';
+}
+function loadLeaderboard(){
+  fetch(TC_API+'/api/ideas/leaderboard?windowDays=90')
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var list=d.leaderboard||[];
+      if(!list.length){document.getElementById('lbList').innerHTML='<div class="empty">No traders qualify yet (min 5 settled ideas). Be the first.</div>';return;}
+      document.getElementById('lbList').innerHTML=list.map(function(u,i){
+        var rankCls=i<3?'top':'';
+        var winCls=u.winRate>=.5?'win':'loss';
+        var rCls=u.avgR>=0?'win':'loss';
+        return '<div class="lb-row">'
+          +'<div class="lb-rank '+rankCls+'">#'+(i+1)+'</div>'
+          +'<div class="lb-handle">'+u.handle+'</div>'
+          +'<div class="lb-meta">'+u.ideas+'</div>'
+          +'<div class="lb-meta '+winCls+'">'+pct(u.winRate)+'</div>'
+          +'<div class="lb-meta '+rCls+'">'+(u.avgR>=0?'+':'')+u.avgR.toFixed(2)+'R</div>'
+        +'</div>';
+      }).join('');
+    }).catch(function(){
+      document.getElementById('lbList').innerHTML='<div class="empty">Couldn\'t reach the backend.</div>';
+    });
+}
+function loadIdeas(){
+  fetch(TC_API+'/api/ideas')
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var list=d.ideas||[];
+      if(!list.length){document.getElementById('ideasList').innerHTML='<div class="empty">No ideas yet — be the first to publish from the dashboard.</div>';return;}
+      document.getElementById('ideasList').innerHTML=list.map(function(i){
+        var dt=new Date(i.createdAt).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+        return '<div class="idea">'
+          +'<div class="idea-h"><div class="idea-sym">'+i.symbol+'</div>'
+          +'<div class="idea-side '+i.direction+'">'+i.direction.toUpperCase()+'</div>'
+          +'<div class="idea-rR">R:R '+(i.rR?'1:'+Number(i.rR).toFixed(2):'—')+'</div>'
+          +'<div class="idea-handle">'+i.userHandle+' · '+dt+'</div></div>'
+          +'<div class="idea-thesis">'+i.thesis+'</div>'
+          +'<div class="idea-levels">Entry <strong>'+i.entry+'</strong> · SL <strong>'+i.stopLoss+'</strong> · TP <strong>'+i.takeProfit+'</strong></div>'
+        +'</div>';
+      }).join('');
+    });
+}
+loadLeaderboard();loadIdeas();
+</script>
+</body>
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Track Record — TradeContext.ai</title>
+<meta name="description" content="Public hit-rate of TradeContext.ai's AI bias engine over the last 30/90/365 days. Every call logged, every outcome verified.">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=DM+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#03060d;--bg2:#060c18;--bg3:#0a1220;--border:#142035;--border2:#1f2e4a;--blue:#0ea5e9;--purple:#8b5cf6;--green:#10b981;--green2:#34d399;--yellow:#f59e0b;--red:#ef4444;--red2:#f87171;--text:#e2eaf4;--text2:#7a9ab8;--text3:#3a5570;--sans:'Outfit',sans-serif;--mono:'DM Mono',monospace;--grad-prem:linear-gradient(135deg,#0ea5e9,#8b5cf6);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;}
+.navbar{height:62px;background:rgba(3,6,13,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 40px;position:sticky;top:0;z-index:10;}
+.nav-logo{font-size:19px;font-weight:900;letter-spacing:-.02em;text-decoration:none;color:var(--text);}
+.nav-logo span{background:var(--grad-prem);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.nav-links{display:flex;gap:28px;font-family:var(--mono);font-size:11px;font-weight:600;}
+.nav-links a{color:var(--text2);text-decoration:none;letter-spacing:.04em;}
+.nav-links a:hover,.nav-links a.active{color:var(--blue);}
+.nav-cta{padding:8px 18px;background:var(--grad-prem);color:#fff;font-family:var(--sans);font-size:12px;font-weight:800;border-radius:6px;text-decoration:none;letter-spacing:.04em;}
+.hero{padding:60px 40px 30px;text-align:center;max-width:920px;margin:0 auto;}
+.hero-eyebrow{font-family:var(--mono);font-size:11px;font-weight:800;color:var(--green2);letter-spacing:.16em;text-transform:uppercase;margin-bottom:14px;}
+.hero-title{font-size:48px;font-weight:900;letter-spacing:-.03em;margin-bottom:14px;line-height:1.05;}
+.hero-title span{background:var(--grad-prem);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero-sub{font-size:16px;color:var(--text2);max-width:680px;margin:0 auto;line-height:1.6;}
+.window-pills{display:flex;justify-content:center;gap:8px;padding:24px 40px;}
+.win{padding:8px 16px;background:var(--bg2);border:1px solid var(--border);font-family:var(--mono);font-size:11px;font-weight:700;color:var(--text2);border-radius:100px;cursor:pointer;letter-spacing:.04em;text-transform:uppercase;transition:.15s;}
+.win:hover,.win.active{background:var(--bg3);border-color:var(--blue);color:var(--blue);}
+.headline-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;max-width:1180px;margin:0 auto;padding:0 40px 30px;}
+@media (max-width:880px){.headline-grid{grid-template-columns:1fr 1fr;}.hero-title{font-size:36px;}}
+.metric{padding:28px 22px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;text-align:center;position:relative;overflow:hidden;}
+.metric.featured{background:linear-gradient(180deg,rgba(52,211,153,.08),rgba(52,211,153,.02));border-color:rgba(52,211,153,.35);}
+.metric-num{font-size:42px;font-weight:900;letter-spacing:-.02em;line-height:1;margin-bottom:8px;color:var(--text);}
+.metric.featured .metric-num{color:var(--green2);}
+.metric-lbl{font-family:var(--mono);font-size:10.5px;color:var(--text3);font-weight:700;letter-spacing:.06em;text-transform:uppercase;}
+.metric-sub{font-family:var(--sans);font-size:11.5px;color:var(--text2);margin-top:6px;}
+.section{max-width:1180px;margin:0 auto;padding:30px 40px 40px;}
+.section h2{font-size:22px;font-weight:900;letter-spacing:-.02em;margin-bottom:14px;}
+.section .h-sub{font-size:13px;color:var(--text3);margin-bottom:18px;font-family:var(--mono);letter-spacing:.04em;}
+.split{display:grid;grid-template-columns:1.1fr 1fr;gap:18px;}
+@media (max-width:880px){.split{grid-template-columns:1fr;}}
+.card{padding:24px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;}
+.bar-row{display:grid;grid-template-columns:120px 1fr 56px;gap:10px;align-items:center;padding:7px 0;font-family:var(--mono);font-size:11px;}
+.bar-row .lbl{color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:.04em;}
+.bar-track{height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;}
+.bar-fill{height:100%;background:var(--grad-prem);border-radius:4px;transition:width .8s ease;}
+.bar-row .pct{text-align:right;font-weight:800;color:var(--text);}
+.bar-row.high .bar-fill{background:linear-gradient(90deg,var(--green2),var(--green));}
+.bar-row.low .bar-fill{background:linear-gradient(90deg,var(--yellow),var(--red2));}
+table.recent{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11.5px;}
+table.recent th,table.recent td{padding:9px 8px;border-bottom:1px solid var(--border);text-align:left;}
+table.recent th{font-size:9.5px;color:var(--text3);font-weight:800;letter-spacing:.06em;text-transform:uppercase;}
+table.recent td.win{color:var(--green2);font-weight:800;}
+table.recent td.loss{color:var(--red2);font-weight:800;}
+.empty{padding:40px 20px;text-align:center;color:var(--text3);font-family:var(--mono);font-size:11px;}
+.callout{max-width:880px;margin:60px auto;padding:30px 40px;background:linear-gradient(135deg,rgba(14,165,233,.08),rgba(139,92,246,.05));border:1px solid var(--border);border-radius:14px;text-align:center;}
+.callout h3{font-size:22px;font-weight:900;margin-bottom:10px;}
+.callout p{font-size:14px;color:var(--text2);margin-bottom:20px;}
+.btn{display:inline-block;padding:12px 26px;background:var(--grad-prem);color:#fff;font-family:var(--sans);font-size:13px;font-weight:800;border-radius:8px;text-decoration:none;letter-spacing:.04em;}
+footer{padding:40px;text-align:center;font-family:var(--mono);font-size:10px;color:var(--text3);border-top:1px solid var(--border);}
+footer a{color:var(--text2);margin:0 10px;text-decoration:none;}
+.method{max-width:780px;margin:40px auto;padding:24px 30px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;}
+.method h4{font-family:var(--sans);font-size:14px;font-weight:800;margin-bottom:10px;}
+.method p{font-size:13px;color:var(--text2);line-height:1.65;}
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <a class="nav-logo" href="home.html">TradeContext<span>.ai</span></a>
+  <div class="nav-links">
+    <a href="home.html">Home</a>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="pricing.html">Pricing</a>
+    <a href="track-record.html" class="active">Track Record</a>
+    <a href="blog.html">Blog</a>
+    <a href="about.html">About</a>
+  </div>
+  <a href="signup.html" class="nav-cta">Get Started</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-eyebrow">📊 Public · auto-verified · no cherry picking</div>
+  <h1 class="hero-title">AI Bias <span>Track Record</span></h1>
+  <p class="hero-sub">Every bias call our AI makes is logged with a price snapshot. We then check it 1h, 4h and 24h later against the actual market move. No editing, no curating — this is the real number.</p>
+</section>
+
+<div class="window-pills" id="windowPills">
+  <a href="#" class="win" data-w="30">30 days</a>
+  <a href="#" class="win active" data-w="90">90 days</a>
+  <a href="#" class="win" data-w="365">365 days</a>
+</div>
+
+<div class="headline-grid">
+  <div class="metric featured"><div class="metric-num" id="hitRate">—</div><div class="metric-lbl">24h hit rate</div><div class="metric-sub" id="hitSub">—</div></div>
+  <div class="metric"><div class="metric-num" id="totalCalls">—</div><div class="metric-lbl">Total calls</div><div class="metric-sub">in selected window</div></div>
+  <div class="metric"><div class="metric-num" id="bestSrc">—</div><div class="metric-lbl">Strongest engine</div><div class="metric-sub" id="bestSrcSub">—</div></div>
+  <div class="metric"><div class="metric-num" id="bestSym">—</div><div class="metric-lbl">Strongest symbol</div><div class="metric-sub" id="bestSymSub">—</div></div>
+</div>
+
+<section class="section">
+  <div class="split">
+    <div class="card">
+      <h2>By engine</h2>
+      <div class="h-sub">Fundamental · technical · day · swing</div>
+      <div id="bySource"><div class="empty">Loading…</div></div>
+    </div>
+    <div class="card">
+      <h2>By symbol</h2>
+      <div class="h-sub">Top 10 by call count</div>
+      <div id="bySymbol"><div class="empty">Loading…</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <h2>Recent calls</h2>
+  <div class="h-sub">Last 30 settled (24h elapsed)</div>
+  <div class="card">
+    <table class="recent" id="recentTable">
+      <thead><tr><th>When</th><th>Symbol</th><th>Engine</th><th>Bias</th><th>Outcome</th></tr></thead>
+      <tbody><tr><td colspan="5" class="empty">Loading…</td></tr></tbody>
+    </table>
+  </div>
+</section>
+
+<div class="method">
+  <h4>How we score</h4>
+  <p>For every bias the AI prints, we snapshot the live price at generation. 1h, 4h and 24h later we re-fetch the price and ask: did it move in the predicted direction? "Bullish" hits when price &gt; gen-price 24h later (vice-versa for bearish). "Neutral" calls are excluded from the hit rate (no direction to check). We never edit the dataset — every call is permanent the moment it's generated.</p>
+</div>
+
+<div class="callout">
+  <h3>The dashboard is yours for $39.95/month</h3>
+  <p>Get every bias call live, every news story scored, and the AI chat that explains the why.</p>
+  <a href="pricing.html" class="btn">See pricing →</a>
+</div>
+
+<footer>
+  © 2026 TradeContext.ai ·
+  <a href="terms.html">Terms</a>
+  <a href="privacy.html">Privacy</a>
+  <a href="risk.html">Risk warning</a>
+  <a href="pricing.html">Pricing</a>
+  <a href="about.html">About</a>
+</footer>
+
+<script>
+var TC_API=(location.hostname==='localhost'||location.hostname==='127.0.0.1')?'http://localhost:3001':location.origin;
+var _windowDays=90;
+
+function pct(n){if(n===null||n===undefined||isNaN(n))return '—';return (n*100).toFixed(1)+'%';}
+
+function render(d){
+  document.getElementById('totalCalls').textContent=d.total||0;
+  document.getElementById('hitRate').textContent=pct(d.hitRate);
+  document.getElementById('hitSub').textContent=(d.wins||0)+' / '+(d.total||0)+' calls hit';
+
+  var srcEl=document.getElementById('bySource');
+  if(!d.bySource||!d.bySource.length){srcEl.innerHTML='<div class="empty">No settled calls yet — check back after the AI has been running for ~24h.</div>';}
+  else{
+    var sorted=d.bySource.slice().sort(function(a,b){return (b.hitRate24h||0)-(a.hitRate24h||0);});
+    srcEl.innerHTML=sorted.map(function(s){
+      var hr=s.hitRate24h||0;
+      var cls=hr>=.55?'high':hr<.45?'low':'';
+      return '<div class="bar-row '+cls+'"><div class="lbl">'+s.source+'</div>'
+        +'<div class="bar-track"><div class="bar-fill" style="width:'+(hr*100).toFixed(0)+'%;"></div></div>'
+        +'<div class="pct">'+pct(s.hitRate24h)+'</div></div>';
+    }).join('');
+    var best=sorted[0];
+    if(best){document.getElementById('bestSrc').textContent=best.source;document.getElementById('bestSrcSub').textContent=pct(best.hitRate24h)+' · '+best.total+' calls';}
+  }
+
+  var symEl=document.getElementById('bySymbol');
+  if(!d.bySymbol||!d.bySymbol.length){symEl.innerHTML='<div class="empty">No symbol data yet.</div>';}
+  else{
+    symEl.innerHTML=d.bySymbol.slice(0,10).map(function(s){
+      var hr=s.hitRate||0;
+      var cls=hr>=.55?'high':hr<.45?'low':'';
+      return '<div class="bar-row '+cls+'"><div class="lbl">'+s.symbol+'</div>'
+        +'<div class="bar-track"><div class="bar-fill" style="width:'+(hr*100).toFixed(0)+'%;"></div></div>'
+        +'<div class="pct">'+pct(s.hitRate)+'</div></div>';
+    }).join('');
+    var topSym=d.bySymbol.slice().sort(function(a,b){return (b.hitRate||0)-(a.hitRate||0);})[0];
+    if(topSym){document.getElementById('bestSym').textContent=topSym.symbol;document.getElementById('bestSymSub').textContent=pct(topSym.hitRate)+' · '+topSym.total+' calls';}
+  }
+
+  var tb=document.querySelector('#recentTable tbody');
+  if(!d.recent||!d.recent.length){tb.innerHTML='<tr><td colspan="5" class="empty">No settled calls yet.</td></tr>';return;}
+  tb.innerHTML=d.recent.map(function(r){
+    var dt=new Date(r.generatedAt).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+    var oc=r.hit24h===true?'<td class="win">✓ HIT</td>':r.hit24h===false?'<td class="loss">✗ MISS</td>':'<td>—</td>';
+    return '<tr><td>'+dt+'</td><td>'+r.symbol+'</td><td>'+r.source+'</td><td>'+r.bias+'</td>'+oc+'</tr>';
+  }).join('');
+}
+
+function load(){
+  fetch(TC_API+'/api/track-record/summary?windowDays='+_windowDays)
+    .then(function(r){return r.json();})
+    .then(render)
+    .catch(function(){
+      document.getElementById('hitRate').textContent='—';
+      document.querySelector('#recentTable tbody').innerHTML='<tr><td colspan="5" class="empty">Couldn\'t reach the backend. Track record kicks in once the AI has been running for ~24h with backend connectivity.</td></tr>';
+    });
+}
+document.querySelectorAll('.win').forEach(function(el){
+  el.addEventListener('click',function(e){e.preventDefault();
+    document.querySelectorAll('.win').forEach(function(x){x.classList.remove('active');});
+    el.classList.add('active');_windowDays=parseInt(el.dataset.w,10);load();
+  });
+});
+load();
+</script>
+</body>
+</html>

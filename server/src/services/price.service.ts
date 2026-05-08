@@ -60,6 +60,9 @@ const STOCK_INDICES: Record<string, string> = {
   'FTSE 100': '^FTSE', 'DAX': '^GDAXI',
   'NIKKEI': '^N225', 'Nikkei': '^N225',
   'DXY': 'DX-Y.NYB',
+  // Volatility gauges — drive the new Macro Pulse "real fear" widget
+  'VIX': '^VIX',
+  'MOVE': '^MOVE',
 };
 const COMMODITIES: Record<string, string> = {
   'XAU/USD': 'GC=F', 'Gold': 'GC=F',

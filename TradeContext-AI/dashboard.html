@@ -201,6 +201,74 @@ body{overflow-x:hidden;overflow-y:auto;}
 /* Journal slot becomes the panel itself when reparented — keep height in sync */
 .three-col-row .panel{height:600px;max-height:600px;overflow:hidden;}
 .three-col-row .panel > .journal-hero,.three-col-row .panel > .kpi-grid-mini{flex-shrink:0;}
+/* ═══════ ONBOARDING WIZARD — first-load personalisation ═══════ */
+.ob-modal{position:fixed;inset:0;z-index:150;background:rgba(7,12,22,.78);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px;}
+.ob-modal.show{display:flex;animation:fadeUp .3s var(--ease-out-quart);}
+.ob-card{max-width:580px;width:100%;background:var(--bg2);border:1px solid var(--border2);border-radius:14px;padding:32px 32px 24px;box-shadow:0 28px 80px rgba(0,0,0,.7);position:relative;overflow:hidden;}
+.ob-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad-prem);}
+.ob-step{display:none;}
+.ob-step.active{display:block;animation:fadeUp .25s var(--ease-out-quart);}
+.ob-eyebrow{font-family:var(--mono);font-size:10.5px;font-weight:800;color:var(--blue);letter-spacing:.16em;text-transform:uppercase;margin-bottom:10px;}
+.ob-title{font-family:var(--sans);font-size:24px;font-weight:900;letter-spacing:-.02em;margin-bottom:6px;}
+.ob-sub{font-family:var(--sans);font-size:13px;color:var(--text2);margin-bottom:24px;line-height:1.55;}
+.ob-options{display:grid;gap:8px;}
+.ob-options.cols2{grid-template-columns:1fr 1fr;}
+.ob-options.cols3{grid-template-columns:1fr 1fr 1fr;}
+@media (max-width:520px){.ob-options.cols2,.ob-options.cols3{grid-template-columns:1fr;}}
+.ob-opt{padding:14px 16px;background:var(--bg3);border:1px solid var(--border);border-radius:9px;cursor:pointer;transition:.15s;font-family:var(--sans);font-size:13px;font-weight:700;color:var(--text);text-align:left;display:flex;align-items:center;gap:10px;}
+.ob-opt:hover{border-color:var(--blue);color:var(--blue);}
+.ob-opt.selected{border-color:var(--blue);background:rgba(14,165,233,.08);color:var(--blue);box-shadow:0 0 0 3px rgba(14,165,233,.15);}
+.ob-opt .ob-ic{font-size:20px;}
+.ob-input{width:100%;padding:13px 14px;background:var(--bg3);border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:14px;font-weight:700;border-radius:9px;outline:none;}
+.ob-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(14,165,233,.15);}
+.ob-progress{display:flex;gap:5px;margin-bottom:24px;}
+.ob-progress-dot{flex:1;height:4px;background:var(--bg3);border-radius:2px;}
+.ob-progress-dot.active{background:var(--grad-prem);}
+.ob-foot{display:flex;justify-content:space-between;align-items:center;margin-top:24px;padding-top:18px;border-top:1px solid var(--border);}
+.ob-skip{font-family:var(--mono);font-size:11px;color:var(--text3);text-decoration:none;background:none;border:none;cursor:pointer;letter-spacing:.04em;}
+.ob-skip:hover{color:var(--text2);}
+.ob-next{padding:11px 22px;background:var(--grad-prem);color:#fff;font-family:var(--sans);font-size:13px;font-weight:800;border:none;border-radius:8px;cursor:pointer;letter-spacing:.04em;transition:.15s;}
+.ob-next:hover{filter:brightness(1.1);transform:translateY(-1px);}
+.ob-next:disabled{opacity:.5;cursor:not-allowed;}
+
+/* ═══════ AI CHAT PER CHART — slide-out side panel ═══════ */
+.aichat-fab{position:fixed;right:24px;bottom:96px;width:54px;height:54px;border-radius:50%;background:var(--grad-prem);color:#fff;border:none;cursor:pointer;box-shadow:0 14px 30px rgba(14,165,233,.45);display:flex;align-items:center;justify-content:center;z-index:90;transition:.2s var(--ease-out-quart);font-size:22px;}
+.aichat-fab:hover{transform:translateY(-2px) scale(1.04);filter:brightness(1.08);}
+.aichat-fab .ac-pulse{position:absolute;inset:-4px;border-radius:50%;border:2px solid rgba(14,165,233,.6);animation:acRing 2.2s ease-out infinite;pointer-events:none;}
+@keyframes acRing{0%{transform:scale(.9);opacity:.85;}100%{transform:scale(1.45);opacity:0;}}
+.aichat-panel{position:fixed;top:0;right:-440px;width:420px;max-width:92vw;height:100vh;background:var(--bg2);border-left:1px solid var(--border2);box-shadow:-20px 0 60px rgba(0,0,0,.65);z-index:100;display:flex;flex-direction:column;transition:right .32s var(--ease-out-quart);}
+.aichat-panel.open{right:0;}
+.aichat-h{padding:16px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.aichat-h .ac-av{width:34px;height:34px;border-radius:50%;background:var(--grad-prem);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.aichat-h-title{font-family:var(--sans);font-size:14px;font-weight:800;color:var(--text);}
+.aichat-h-sym{font-family:var(--mono);font-size:10px;color:var(--text3);font-weight:700;letter-spacing:.04em;margin-top:2px;}
+.aichat-close{margin-left:auto;background:none;border:none;color:var(--text2);font-size:22px;cursor:pointer;line-height:1;padding:4px 8px;border-radius:6px;}
+.aichat-close:hover{background:var(--bg3);color:var(--text);}
+.aichat-body{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:14px;}
+.aichat-body::-webkit-scrollbar{width:6px;}
+.aichat-body::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+.ac-bubble{padding:12px 14px;border-radius:11px;font-family:var(--sans);font-size:13.5px;line-height:1.55;color:var(--text);max-width:88%;}
+.ac-bubble.user{align-self:flex-end;background:var(--bluedim);border:1px solid rgba(14,165,233,.3);}
+.ac-bubble.assistant{align-self:flex-start;background:var(--bg3);border:1px solid var(--border);position:relative;}
+.ac-bubble.assistant em{color:var(--text3);font-style:italic;font-size:11px;display:block;margin-top:8px;}
+.ac-typing{display:inline-flex;gap:4px;align-items:center;}
+.ac-typing span{width:6px;height:6px;border-radius:50%;background:var(--text3);animation:typingBounce 1.2s ease-in-out infinite;}
+.ac-typing span:nth-child(2){animation-delay:.15s;}
+.ac-typing span:nth-child(3){animation-delay:.3s;}
+@keyframes typingBounce{0%,80%,100%{transform:scale(.85);opacity:.5;}40%{transform:scale(1);opacity:1;}}
+.ac-empty{font-family:var(--sans);font-size:13px;color:var(--text3);text-align:center;padding:30px 16px;line-height:1.55;}
+.ac-empty strong{color:var(--text2);}
+.ac-suggest-row{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:14px;}
+.ac-suggest{padding:7px 12px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-family:var(--mono);font-size:10.5px;font-weight:700;border-radius:100px;cursor:pointer;letter-spacing:.02em;transition:.15s;}
+.ac-suggest:hover{border-color:var(--blue);color:var(--blue);}
+.aichat-foot{padding:12px 14px;border-top:1px solid var(--border);background:var(--bg);}
+.aichat-input-row{display:flex;align-items:flex-end;gap:8px;}
+.aichat-input{flex:1;background:var(--bg3);border:1px solid var(--border2);color:var(--text);font-family:var(--sans);font-size:13px;padding:10px 12px;border-radius:9px;resize:none;min-height:40px;max-height:120px;outline:none;transition:.15s;}
+.aichat-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(14,165,233,.15);}
+.aichat-send{padding:0 14px;height:40px;background:var(--grad-prem);color:#fff;border:none;border-radius:9px;font-family:var(--sans);font-size:13px;font-weight:800;cursor:pointer;letter-spacing:.04em;transition:.15s;}
+.aichat-send:hover{filter:brightness(1.1);}
+.aichat-send:disabled{opacity:.5;cursor:not-allowed;filter:grayscale(.4);}
+
 /* ═══════ PAYWALL — countdown strip + blocking modal ═══════ */
 .pw-strip{position:sticky;top:0;z-index:50;background:linear-gradient(90deg,rgba(14,165,233,.08),rgba(139,92,246,.06));border-bottom:1px solid var(--border);}
 .pw-strip-inner{display:flex;align-items:center;gap:14px;padding:7px 18px;font-family:var(--mono);font-size:11px;color:var(--text2);font-weight:700;letter-spacing:.04em;}
@@ -410,6 +478,20 @@ body{overflow-x:hidden;overflow-y:auto;}
 
 .ccy-callout{font-family:var(--mono);font-size:10px;color:var(--text2);text-align:center;margin-top:10px;padding:6px 8px;background:var(--bg3);border-radius:5px;font-weight:600;line-height:1.5;}
 .ccy-callout strong{color:var(--text);}
+
+/* Cross-asset vol gauges (VIX + DXY mini) — REAL signals, not news-derived */
+.vol-gauges{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;}
+.vg{padding:10px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;}
+.vg-h{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:6px;}
+.vg-name{font-family:var(--mono);font-size:9.5px;font-weight:800;color:var(--text2);letter-spacing:.06em;text-transform:uppercase;}
+.vg-val{font-family:var(--sans);font-size:18px;font-weight:900;color:var(--text);letter-spacing:-.01em;line-height:1;}
+.vg-bar{height:5px;background:var(--bg2);border-radius:3px;overflow:hidden;margin-bottom:5px;}
+.vg-bar-fill{height:100%;border-radius:3px;transition:width .8s cubic-bezier(.22,.61,.36,1);}
+.vg.vix .vg-bar-fill{background:linear-gradient(90deg,var(--green2),var(--yellow),var(--red2));}
+.vg.dxy .vg-bar-fill{background:linear-gradient(90deg,var(--red2),var(--text3),var(--green2));}
+.vg-zone{font-family:var(--mono);font-size:9px;color:var(--text3);font-weight:700;letter-spacing:.04em;}
+.vg-zone.fear{color:var(--red2);}
+.vg-zone.calm{color:var(--green2);}
 
 /* ─── Trading Sessions — clean list, single row, minimal ─── */
 .sess-list{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
@@ -1115,6 +1197,104 @@ body{overflow-x:hidden;overflow-y:auto;}
 </head>
 <body>
 
+<!-- ═══════ ONBOARDING WIZARD (first-load only) ═══════ -->
+<div class="ob-modal" id="obModal" role="dialog" aria-labelledby="obTitle">
+  <div class="ob-card">
+    <div class="ob-progress">
+      <div class="ob-progress-dot active" id="obDot1"></div>
+      <div class="ob-progress-dot" id="obDot2"></div>
+      <div class="ob-progress-dot" id="obDot3"></div>
+      <div class="ob-progress-dot" id="obDot4"></div>
+    </div>
+    <!-- Step 1: Style -->
+    <div class="ob-step active" data-step="1">
+      <div class="ob-eyebrow">⚡ 30 seconds · personalise your AI</div>
+      <div class="ob-title" id="obTitle">How do you trade?</div>
+      <div class="ob-sub">We'll tune the AI playbook + bias commentary to your style.</div>
+      <div class="ob-options cols2">
+        <button class="ob-opt" data-field="style" data-value="scalper"><span class="ob-ic">⚡</span><div><div>Scalper</div><div style="font-size:11px;color:var(--text3);font-weight:500;">seconds–minutes</div></div></button>
+        <button class="ob-opt" data-field="style" data-value="day-trader"><span class="ob-ic">📈</span><div><div>Day trader</div><div style="font-size:11px;color:var(--text3);font-weight:500;">flat by EOD</div></div></button>
+        <button class="ob-opt" data-field="style" data-value="swing"><span class="ob-ic">🌊</span><div><div>Swing</div><div style="font-size:11px;color:var(--text3);font-weight:500;">days–weeks</div></div></button>
+        <button class="ob-opt" data-field="style" data-value="position"><span class="ob-ic">🪜</span><div><div>Position</div><div style="font-size:11px;color:var(--text3);font-weight:500;">weeks–months</div></div></button>
+      </div>
+    </div>
+    <!-- Step 2: Account size + risk -->
+    <div class="ob-step" data-step="2">
+      <div class="ob-eyebrow">⚡ Step 2 of 4</div>
+      <div class="ob-title">Account size &amp; risk</div>
+      <div class="ob-sub">Used purely to size suggested SL/TP — never shared.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div><label style="font-family:var(--mono);font-size:10px;color:var(--text3);font-weight:700;letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:6px;">Account size ($)</label><input class="ob-input" id="obAccount" type="number" placeholder="10000"></div>
+        <div><label style="font-family:var(--mono);font-size:10px;color:var(--text3);font-weight:700;letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:6px;">Risk % per trade</label><input class="ob-input" id="obRisk" type="number" step="0.1" placeholder="0.5"></div>
+      </div>
+    </div>
+    <!-- Step 3: Goals -->
+    <div class="ob-step" data-step="3">
+      <div class="ob-eyebrow">⚡ Step 3 of 4</div>
+      <div class="ob-title">What's the goal?</div>
+      <div class="ob-sub">We'll surface the right tools first.</div>
+      <div class="ob-options cols2">
+        <button class="ob-opt" data-field="goals" data-value="pass-prop-firm"><span class="ob-ic">🎯</span><div>Pass a prop firm challenge</div></button>
+        <button class="ob-opt" data-field="goals" data-value="income"><span class="ob-ic">💸</span><div>Generate steady income</div></button>
+        <button class="ob-opt" data-field="goals" data-value="wealth"><span class="ob-ic">📈</span><div>Build long-term wealth</div></button>
+        <button class="ob-opt" data-field="goals" data-value="learn"><span class="ob-ic">🎓</span><div>Learn the markets</div></button>
+      </div>
+    </div>
+    <!-- Step 4: Prop firm (conditional / optional) -->
+    <div class="ob-step" data-step="4">
+      <div class="ob-eyebrow">⚡ Final step</div>
+      <div class="ob-title">Prop firm (optional)</div>
+      <div class="ob-sub">If you're running a challenge, we'll wire the drawdown gauges to it.</div>
+      <div class="ob-options cols3">
+        <button class="ob-opt" data-field="propFirm" data-value="ftmo">🟦 FTMO</button>
+        <button class="ob-opt" data-field="propFirm" data-value="topstep">🟧 TopStep</button>
+        <button class="ob-opt" data-field="propFirm" data-value="the5ers">🟪 The5%ers</button>
+        <button class="ob-opt" data-field="propFirm" data-value="fundednext">🟩 FundedNext</button>
+        <button class="ob-opt" data-field="propFirm" data-value="mff">🟨 MFF</button>
+        <button class="ob-opt" data-field="propFirm" data-value="">⏭ None / skip</button>
+      </div>
+    </div>
+    <div class="ob-foot">
+      <button class="ob-skip" onclick="obSkip()">Skip for now</button>
+      <button class="ob-next" id="obNext" onclick="obNext()">Continue →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ AI CHAT PER CHART ═══════ -->
+<button class="aichat-fab" id="aichatFab" onclick="aiChatToggle()" title="Ask AI about the active chart" aria-label="Open AI chat">
+  <span class="ac-pulse"></span>
+  💬
+</button>
+<aside class="aichat-panel" id="aichatPanel" role="dialog" aria-labelledby="aichatTitle">
+  <div class="aichat-h">
+    <div class="ac-av">🧠</div>
+    <div>
+      <div class="aichat-h-title" id="aichatTitle">AI Trading Analyst</div>
+      <div class="aichat-h-sym">Live context for <span id="aichatSym">XAU/USD</span></div>
+    </div>
+    <button class="aichat-close" onclick="aiChatToggle()" aria-label="Close">×</button>
+  </div>
+  <div class="aichat-body" id="aichatBody">
+    <div class="ac-empty" id="aichatEmpty">
+      <strong>Ask me anything about the chart.</strong><br>
+      I'll answer using live news + price context — never personal advice.
+      <div class="ac-suggest-row">
+        <button class="ac-suggest" onclick="aiChatAsk('Why is this moving right now?')">Why is this moving?</button>
+        <button class="ac-suggest" onclick="aiChatAsk('What\'s the next catalyst I should watch?')">Next catalyst</button>
+        <button class="ac-suggest" onclick="aiChatAsk('Summarise the bull and bear case in 4 bullets')">Bull vs bear</button>
+        <button class="ac-suggest" onclick="aiChatAsk('How does this fit the broader macro picture?')">Macro context</button>
+      </div>
+    </div>
+  </div>
+  <div class="aichat-foot">
+    <div class="aichat-input-row">
+      <textarea class="aichat-input" id="aichatInput" rows="1" placeholder="Ask about the active chart…" onkeydown="aiChatKey(event)"></textarea>
+      <button class="aichat-send" id="aichatSend" onclick="aiChatSend()">Send</button>
+    </div>
+  </div>
+</aside>
+
 <!-- ═══════ FREE-PREVIEW COUNTDOWN BAR (auto-hides after paywall lock) ═══════ -->
 <div class="pw-strip" id="pwStrip">
   <div class="pw-strip-inner">
@@ -1547,6 +1727,19 @@ body{overflow-x:hidden;overflow-y:auto;}
                   <div class="rt-val" id="rtVal">—</div>
                   <div class="rt-lbl" id="rtLbl">Calculating…</div>
                   <div class="rt-context" id="rtContext" style="font-family:var(--mono);font-size:9px;color:var(--text3);margin-top:6px;line-height:1.4;">—</div>
+                </div>
+              </div>
+              <!-- Real cross-asset vol gauges — VIX (equity fear) + DXY (USD demand) -->
+              <div class="vol-gauges">
+                <div class="vg vix">
+                  <div class="vg-h"><span class="vg-name">VIX</span><span class="vg-val" id="vgVixVal">—</span></div>
+                  <div class="vg-bar"><div class="vg-bar-fill" id="vgVixBar" style="width:30%"></div></div>
+                  <div class="vg-zone" id="vgVixZone">Equity vol · loading…</div>
+                </div>
+                <div class="vg dxy">
+                  <div class="vg-h"><span class="vg-name">DXY</span><span class="vg-val" id="vgDxyVal">—</span></div>
+                  <div class="vg-bar"><div class="vg-bar-fill" id="vgDxyBar" style="width:50%"></div></div>
+                  <div class="vg-zone" id="vgDxyZone">Dollar index · loading…</div>
                 </div>
               </div>
             </div>
@@ -2522,6 +2715,43 @@ window.addEventListener('load',function(){setTimeout(startLivePricePolling,800);
 // Strength + Volatility Pulse use real Yahoo/Binance/Finnhub data instead of
 // the random walk simulator. Also exposes _macroSnapshot for richer subtitles.
 var _macroSnapshot={lastTs:0,sources:{},liveCount:0};
+
+// Renders the VIX + DXY mini gauges in Macro Pulse. VIX < 15 = calm,
+// 15-20 = normal, 20-30 = stressed, > 30 = panic. DXY trend matters more
+// than absolute level — we color-code drift, not the price.
+function renderVolGauges(vix,dxy){
+  var vv=document.getElementById('vgVixVal');var vb=document.getElementById('vgVixBar');var vz=document.getElementById('vgVixZone');
+  if(vix&&vv){
+    vv.textContent=vix.price.toFixed(2);
+    var pct=Math.min(100,(vix.price/40)*100); // 0..40 → 0..100% bar
+    if(vb)vb.style.width=pct.toFixed(1)+'%';
+    var zone=vix.price<15?'calm':vix.price<20?'normal':vix.price<30?'stressed':'panic';
+    var zCls=zone==='calm'?'calm':zone==='panic'||zone==='stressed'?'fear':'';
+    if(vz){vz.className='vg-zone '+zCls;vz.textContent='Equity vol · '+zone.toUpperCase()+(vix.changePercent?' · '+(vix.changePercent>=0?'+':'')+vix.changePercent.toFixed(1)+'%':'');}
+  }
+  var dv=document.getElementById('vgDxyVal');var db=document.getElementById('vgDxyBar');var dz=document.getElementById('vgDxyZone');
+  if(dxy&&dv){
+    dv.textContent=dxy.price.toFixed(2);
+    // Map -2%..+2% drift to 0..100% bar (50% = flat)
+    var d=Math.max(-2,Math.min(2,dxy.changePercent||0));
+    if(db)db.style.width=(50+d*25).toFixed(1)+'%';
+    var dir=Math.abs(dxy.changePercent||0)<.1?'flat':(dxy.changePercent>0?'USD bid':'USD offered');
+    if(dz)dz.textContent='Dollar idx · '+dir+(dxy.changePercent?' · '+(dxy.changePercent>=0?'+':'')+dxy.changePercent.toFixed(2)+'%':'');
+  }
+}
+async function fetchVolGauges(){
+  try{
+    var r=await fetch(TC_API+'/api/price/bulk',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({symbols:['VIX','DXY']})
+    });
+    if(!r.ok)return;
+    var d=await r.json();var t=d.ticks||{};
+    renderVolGauges(t.VIX||t['^VIX'],t.DXY||t['DX-Y.NYB']);
+  }catch(e){/* swallow */}
+}
+window.addEventListener('load',function(){setTimeout(fetchVolGauges,1500);setInterval(fetchVolGauges,60000);});
+
 async function fetchMacroSnapshot(){
   try{
     var symbols=_TD.map(function(t){return t.s;});
@@ -4799,6 +5029,167 @@ document.addEventListener('click',function(e){
   }
   setInterval(tick,3000);
   setTimeout(tick,1000);
+})();
+
+// ════════════════════════════════════════════════════════════════════
+// ONBOARDING WIZARD — only fires once (until completed/skipped)
+// ════════════════════════════════════════════════════════════════════
+(function onboarding(){
+  var KEY='tc_onboarded';
+  if(localStorage.getItem(KEY)==='1')return;
+  var step=1, total=4, data={};
+  // Wait until paywall isn't blocking, then show after a tiny delay
+  setTimeout(function(){
+    var modal=document.getElementById('obModal');
+    if(modal)modal.classList.add('show');
+  },1800);
+
+  function refreshDots(){
+    for(var i=1;i<=total;i++){
+      var d=document.getElementById('obDot'+i);
+      if(d)d.classList.toggle('active',i<=step);
+    }
+  }
+  function showStep(n){
+    document.querySelectorAll('.ob-step').forEach(function(el){
+      el.classList.toggle('active',parseInt(el.dataset.step,10)===n);
+    });
+    step=n;refreshDots();
+    var nextBtn=document.getElementById('obNext');
+    if(nextBtn)nextBtn.textContent=n===total?'Finish ✓':'Continue →';
+  }
+  // Toggle option select
+  document.querySelectorAll('.ob-opt').forEach(function(b){
+    b.addEventListener('click',function(){
+      var field=b.dataset.field;
+      // Single-select per field — clear siblings
+      document.querySelectorAll('.ob-opt[data-field="'+field+'"]').forEach(function(s){s.classList.remove('selected');});
+      b.classList.add('selected');
+      data[field]=b.dataset.value;
+    });
+  });
+  window.obNext=function(){
+    if(step===2){
+      var acc=parseFloat(document.getElementById('obAccount').value);
+      var risk=parseFloat(document.getElementById('obRisk').value);
+      if(!isNaN(acc))data.accountSize=acc;
+      if(!isNaN(risk))data.riskPctPerTrade=risk;
+    }
+    if(step<total){showStep(step+1);return;}
+    // Final step → save
+    saveProfile();
+  };
+  window.obSkip=function(){
+    localStorage.setItem(KEY,'1');
+    var m=document.getElementById('obModal');if(m)m.classList.remove('show');
+  };
+  function saveProfile(){
+    var btn=document.getElementById('obNext');if(btn){btn.disabled=true;btn.textContent='Saving…';}
+    fetch(TC_API+'/api/profile',{
+      method:'PUT',
+      headers:{'Content-Type':'application/json'},
+      credentials:'include',
+      body:JSON.stringify(data)
+    }).finally(function(){
+      // Always close locally — even if save failed (anonymous user) we don't
+      // re-pester them every load. They can update from settings later.
+      localStorage.setItem(KEY,'1');
+      var m=document.getElementById('obModal');if(m)m.classList.remove('show');
+      toast&&toast({kind:'green',icon:'✨',title:'AI personalised',desc:'Bias + playbook tuned to your style.',duration:5000});
+    });
+  }
+})();
+
+// ════════════════════════════════════════════════════════════════════
+// AI CHAT PER CHART — calls /api/ai/chat with the active symbol
+// ════════════════════════════════════════════════════════════════════
+window.aiChatToggle=function(){
+  var p=document.getElementById('aichatPanel');
+  if(!p)return;
+  p.classList.toggle('open');
+  if(p.classList.contains('open')){
+    var symEl=document.getElementById('aichatSym');
+    if(symEl)symEl.textContent=(window._activeSymLabel||'XAU/USD');
+    setTimeout(function(){var i=document.getElementById('aichatInput');if(i)i.focus();},220);
+  }
+};
+window.aiChatAsk=function(prompt){
+  var i=document.getElementById('aichatInput');
+  if(i){i.value=prompt;}
+  aiChatSend();
+};
+window.aiChatKey=function(e){
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();aiChatSend();}
+};
+function aiChatBubble(role,content){
+  var body=document.getElementById('aichatBody');
+  var empty=document.getElementById('aichatEmpty');
+  if(empty)empty.style.display='none';
+  var b=document.createElement('div');
+  b.className='ac-bubble '+role;
+  // Convert *italics*, **bold** and newlines for the assistant role only
+  if(role==='assistant'){
+    var html=content
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+      .replace(/\*(.+?)\*/g,'<em>$1</em>')
+      .replace(/\n/g,'<br>');
+    b.innerHTML=html;
+  }else{
+    b.textContent=content;
+  }
+  body.appendChild(b);
+  body.scrollTop=body.scrollHeight;
+  return b;
+}
+window.aiChatSend=function(){
+  var i=document.getElementById('aichatInput');
+  var send=document.getElementById('aichatSend');
+  if(!i||!send)return;
+  var msg=i.value.trim();
+  if(!msg)return;
+  i.value='';send.disabled=true;
+  aiChatBubble('user',msg);
+  // Typing indicator
+  var typing=document.createElement('div');
+  typing.className='ac-bubble assistant';
+  typing.innerHTML='<span class="ac-typing"><span></span><span></span><span></span></span>';
+  document.getElementById('aichatBody').appendChild(typing);
+  document.getElementById('aichatBody').scrollTop=999999;
+  fetch(TC_API+'/api/ai/chat',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    credentials:'include',
+    body:JSON.stringify({symbol:(window._activeSymLabel||'XAU/USD'),message:msg})
+  }).then(function(r){return r.json().then(function(d){return {ok:r.ok,data:d};});}).then(function(res){
+    typing.remove();send.disabled=false;
+    if(!res.ok){
+      var errMsg=(res.data&&res.data.error&&res.data.error.message)||'Couldn\'t reach the AI right now.';
+      if(res.data&&res.data.error&&res.data.error.code==='CLAUDE_DISABLED'){errMsg='AI chat is offline — Anthropic API not configured on this server.';}
+      aiChatBubble('assistant',errMsg+'\n\n*Educational analysis only — not personal financial advice.*');
+      return;
+    }
+    aiChatBubble('assistant',res.data.message);
+  }).catch(function(){
+    typing.remove();send.disabled=false;
+    aiChatBubble('assistant','Network hiccup — couldn\'t reach the AI. Try again in a moment.\n\n*Educational analysis only — not personal financial advice.*');
+  });
+};
+// Reset history pane when the user switches symbol
+(function(){
+  var lastSym=null;
+  setInterval(function(){
+    var s=window._activeSymLabel||'XAU/USD';
+    if(s!==lastSym){
+      lastSym=s;
+      var symEl=document.getElementById('aichatSym');if(symEl)symEl.textContent=s;
+      var body=document.getElementById('aichatBody');var empty=document.getElementById('aichatEmpty');
+      if(body){
+        Array.prototype.slice.call(body.querySelectorAll('.ac-bubble')).forEach(function(b){b.remove();});
+        if(empty)empty.style.display='';
+      }
+    }
+  },800);
 })();
 
 // ════════════════════════════════════════════════════════════════════

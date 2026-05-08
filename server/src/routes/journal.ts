@@ -12,6 +12,7 @@ import {
   getTraderScore,
   getStats,
 } from '../services/journal.service';
+import { analyzeTradesForUser } from '../services/journal-ai.service';
 
 export const journalRouter = Router();
 
@@ -132,6 +133,16 @@ journalRouter.get('/stats', async (req, res, next) => {
   try {
     const stats = await getStats(req.user!.id);
     res.json({ stats });
+  } catch (e) {
+    next(e);
+  }
+});
+
+// ──────── AI mistake auto-tagger ────────
+journalRouter.post('/analyze', async (req, res, next) => {
+  try {
+    const report = await analyzeTradesForUser(req.user!.id);
+    res.json({ report });
   } catch (e) {
     next(e);
   }

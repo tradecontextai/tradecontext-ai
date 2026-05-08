@@ -10,7 +10,13 @@ import { brokerRouter } from './broker';
 import { watchlistRouter } from './watchlist';
 import { alertsRouter } from './alerts';
 import { aiBiasRouter } from './ai-bias';
+import { aiChatRouter } from './ai-chat';
 import { brokersDirectoryRouter } from './brokers-directory';
+import { trackRecordRouter } from './track-record';
+import { blogRouter } from './blog';
+import { profileRouter } from './profile';
+import { ideasRouter } from './ideas';
+import { tradingviewWebhookRouter } from './tradingview-webhook';
 import { newsClientCount } from '../ws/news-broadcast';
 
 export const apiRouter = Router();
@@ -26,7 +32,13 @@ apiRouter.use('/broker', brokerRouter);
 apiRouter.use('/watchlist', watchlistRouter);
 apiRouter.use('/alerts', alertsRouter);
 apiRouter.use('/ai', aiBiasRouter);
+apiRouter.use('/ai', aiChatRouter);            // /api/ai/chat
 apiRouter.use('/brokers', brokersDirectoryRouter);
+apiRouter.use('/track-record', trackRecordRouter);
+apiRouter.use('/blog', blogRouter);
+apiRouter.use('/profile', profileRouter);
+apiRouter.use('/ideas', ideasRouter);
+apiRouter.use('/webhook/tradingview', tradingviewWebhookRouter);
 
 apiRouter.get('/health', (_req, res) => {
   res.json({
