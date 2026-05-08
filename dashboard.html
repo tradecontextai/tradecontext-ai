@@ -4591,7 +4591,7 @@ function renderTopMovers(){
     return {sym:t.s,p:t.p,d:t.d,pct:pct};
   });
   rows.sort(function(a,b){return Math.abs(b.pct)-Math.abs(a.pct);});
-  _mvRotation.list=rows.slice(0,5);
+  _mvRotation.list=rows.slice(0,10);
   // Pre-render every slot — fade controlled by .show class
   el.innerHTML=_mvRotation.list.map(function(r,i){
     var dir=r.pct>=0?'up':'down';
@@ -4613,7 +4613,7 @@ function renderTopMovers(){
       if(!_mvRotation.list.length||document.hidden)return;
       _mvRotation.idx=(_mvRotation.idx+1)%_mvRotation.list.length;
       showMover(_mvRotation.idx);
-    },2500);
+    },5000);
   }
 }
 function showMover(i){
