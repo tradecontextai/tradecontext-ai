@@ -16,12 +16,19 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { optionalAuth } from '../middleware/auth';
 import { HttpError } from '../middleware/error';
+import { rateLimit } from '../middleware/rate-limit';
 import { anthropic, claudeAvailable } from '../services/claude.service';
 import { prisma } from '../config/db';
 import { getPrice } from '../services/price.service';
 import { log } from '../lib/logger';
 
 export const aiChatRouter = Router();
+
+// AI chat is the most expensive endpoint we have (1 Claude call per request).
+// Cap each IP to 6 questions/min (10s steady-state, burst of 6) — generous for
+// genuine use, deadly to abuse. Logged-in users get the same bucket; the AI
+// usage is what costs us, not the user identity.
+const chatLimiter = rateLimit({ ratePerSec: 0.1, burst: 6 });
 
 const MODEL = 'claude-sonnet-4-6';
 
@@ -43,7 +50,7 @@ const chatSchema = z.object({
   message: z.string().min(1).max(2000),
 });
 
-aiChatRouter.post('/chat', optionalAuth, async (req, res, next) => {
+aiChatRouter.post('/chat', chatLimiter, optionalAuth, async (req, res, next) => {
   try {
     if (!claudeAvailable() || !anthropic) {
       throw new HttpError(503, 'Claude not configured', 'CLAUDE_DISABLED');

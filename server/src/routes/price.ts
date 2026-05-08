@@ -1,8 +1,11 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import { getPrice, getPrices } from '../services/price.service';
+import { rateLimit } from '../middleware/rate-limit';
 
 export const priceRouter = Router();
+// Bulk endpoint is the most-likely scrape target. 30/min per IP, burst 30.
+const bulkLimiter = rateLimit({ ratePerSec: 0.5, burst: 30 });
 
 // ──────── GET /api/price/:symbol ────────
 // Public — used by the dashboard to show real prices next to the chart symbol pill.
@@ -23,7 +26,7 @@ const bulkSchema = z.object({
   symbols: z.array(z.string().min(1).max(40)).min(1).max(50),
 });
 
-priceRouter.post('/bulk', async (req, res, next) => {
+priceRouter.post('/bulk', bulkLimiter, async (req, res, next) => {
   try {
     const { symbols } = bulkSchema.parse(req.body);
     const ticks = await getPrices(symbols);

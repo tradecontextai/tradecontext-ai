@@ -11,6 +11,7 @@ import { attachNewsWs } from './ws/news-broadcast';
 import { attachAlertWs } from './ws/alert-broadcast';
 import { startNewsPoller, stopNewsPoller } from './jobs/news-poller';
 import { startAlertMonitor, stopAlertMonitor } from './jobs/alert-monitor';
+import { startCron } from './services/cron.service';
 import { log } from './lib/logger';
 
 const app = express();
@@ -20,9 +21,21 @@ app.post('/api/stripe/webhook', stripeWebhookHandler, stripeWebhookRoute);
 
 // ──────── Standard middleware ────────
 app.use(helmet({ contentSecurityPolicy: false })); // CSP disabled — frontend uses CDN scripts
+// CLIENT_URL accepts a comma-separated list of allowed origins so the same
+// backend can serve staging + prod + a custom domain without redeploys.
+const ALLOWED_ORIGINS = env.CLIENT_URL.split(',').map((s) => s.trim()).filter(Boolean);
 app.use(
   cors({
-    origin: env.CLIENT_URL,
+    origin: (origin, cb) => {
+      // Same-origin / curl / SSR requests have no Origin header — let them through.
+      if (!origin) return cb(null, true);
+      if (ALLOWED_ORIGINS.includes(origin) || ALLOWED_ORIGINS.includes('*')) return cb(null, true);
+      // In dev, also accept localhost on any port to make iteration painless.
+      if (env.NODE_ENV !== 'production' && /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
+        return cb(null, true);
+      }
+      cb(new Error('CORS: origin not allowed: ' + origin));
+    },
     credentials: true,
   }),
 );
@@ -55,6 +68,8 @@ server.listen(env.PORT, () => {
   startNewsPoller();
   // Start the alert monitor (cheap — does nothing when no alerts are active)
   startAlertMonitor();
+  // Start the recurring jobs (daily wrap + bias-outcome verifier)
+  startCron();
 });
 
 // ──────── Graceful shutdown ────────

@@ -144,6 +144,8 @@ html[data-theme="light"] .navbar{background:rgba(255,255,255,.96);}
 /* Fluid layout — adapts gracefully from desktop down to mobile */
 body{overflow-x:hidden;overflow-y:auto;}
 .page-wrap{max-width:none;margin:0 auto;padding:20px 28px 80px;width:99%;}
+@media (max-width:780px){.page-wrap{padding:14px 12px 40px;}}
+@media (max-width:780px){body{font-size:14px;}}
 .section-title{font-family:var(--sans);font-size:22px;font-weight:800;letter-spacing:-.02em;color:var(--text);margin-bottom:6px;display:flex;align-items:center;gap:10px;}
 .section-sub{font-family:var(--sans);font-size:13px;font-weight:400;color:var(--text2);margin-bottom:20px;}
 .section-block{margin-bottom:36px;}
@@ -184,7 +186,7 @@ body{overflow-x:hidden;overflow-y:auto;}
 .col-side{display:none;}  /* fully removed — calendar moved beside trade panel */
 @media (max-width:1280px){.dash-grid{grid-template-columns:1fr 320px;gap:16px;}}
 @media (max-width:1100px){.dash-grid{grid-template-columns:1fr;}}
-/* No mobile reflow — page-wrap min-width:1480px keeps two columns on every viewport (horizontal scroll on small screens). */
+/* Mobile reflow: full single-column stack < 780px, plus a few targeted overrides below. */
 .col-main,.col-side{display:flex;flex-direction:column;gap:20px;}
 .grid-2col{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
 .grid-2col>.panel{margin:0;}
@@ -201,6 +203,17 @@ body{overflow-x:hidden;overflow-y:auto;}
 /* Journal slot becomes the panel itself when reparented — keep height in sync */
 .three-col-row .panel{height:460px;max-height:460px;overflow:hidden;}
 .three-col-row .panel > .journal-hero,.three-col-row .panel > .kpi-grid-mini{flex-shrink:0;}
+/* ═══════ COOKIE CONSENT BANNER (GDPR / UK) ═══════ */
+.cookie-banner{position:fixed;left:18px;right:18px;bottom:18px;background:var(--bg2);border:1px solid var(--border2);border-radius:12px;padding:14px 18px;display:none;align-items:center;gap:14px;z-index:9997;box-shadow:0 18px 40px rgba(0,0,0,.55);font-family:var(--sans);max-width:760px;margin:0 auto;flex-wrap:wrap;}
+.cookie-banner.show{display:flex;animation:fadeUp .3s var(--ease-out-quart);}
+.cookie-banner .ck-txt{flex:1;min-width:240px;font-size:12.5px;color:var(--text2);line-height:1.55;}
+.cookie-banner .ck-txt strong{color:var(--text);}
+.cookie-banner .ck-txt a{color:var(--blue);text-decoration:none;}
+.cookie-banner .ck-actions{display:flex;gap:8px;flex-shrink:0;}
+.cookie-banner .ck-btn{padding:8px 14px;border-radius:7px;font-family:var(--sans);font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.02em;transition:.15s;border:1px solid var(--border);background:var(--bg3);color:var(--text2);}
+.cookie-banner .ck-btn:hover{border-color:var(--blue);color:var(--blue);}
+.cookie-banner .ck-btn.primary{background:var(--grad-prem);color:#fff;border-color:transparent;}
+
 /* ═══════ ONBOARDING WIZARD — first-load personalisation ═══════ */
 .ob-modal{position:fixed;inset:0;z-index:150;background:rgba(7,12,22,.78);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px;}
 .ob-modal.show{display:flex;animation:fadeUp .3s var(--ease-out-quart);}
@@ -946,6 +959,17 @@ body{overflow-x:hidden;overflow-y:auto;}
 .trade-cal-grid{align-items:stretch;}
 .trade-cal-grid > *{height:560px;max-height:560px;display:flex;flex-direction:column;overflow:hidden;}
 .trade-cal-grid > .panel > .cal-wrap{flex:1;min-height:0;}
+/* Mobile: drop the height-lock so each panel can grow naturally and stack */
+@media (max-width:780px){
+  .trade-cal-grid > *{height:auto;max-height:none;}
+  .three-col-row .panel,.three-col-panel{height:auto;max-height:none;}
+  .macro-pulse-grid > .mp-card.world-map-card > .world-map-wrap{min-height:240px;}
+  .pw-tiers{grid-template-columns:1fr;}
+  .ai-strip{grid-template-columns:1fr;}
+  .navbar,.nav-links{flex-wrap:wrap;}
+  /* Hide the chart-event overlay on tiny screens — it's noise without hover */
+  .chart-events{display:none;}
+}
 
 /* ═══════ AI BIAS PANEL — fundamental + technical + day/swing verdict ═══════ */
 .aib-panel{background:linear-gradient(135deg,var(--bg2),var(--bg3) 50%,var(--bg2));position:relative;overflow:hidden;}
@@ -1282,6 +1306,18 @@ body{overflow-x:hidden;overflow-y:auto;}
 </head>
 <body>
 
+<!-- ═══════ COOKIE CONSENT BANNER ═══════ -->
+<div class="cookie-banner" id="cookieBanner" role="dialog" aria-labelledby="cookieTitle">
+  <div class="ck-txt">
+    <strong id="cookieTitle">We use essential cookies only.</strong>
+    No third-party trackers, no analytics SDKs. Auth tokens (httpOnly), preferences, and the paywall timer live in cookies / localStorage so the dashboard works offline-first. <a href="privacy.html" target="_blank">Privacy policy →</a>
+  </div>
+  <div class="ck-actions">
+    <button class="ck-btn" onclick="cookieDecline()">Decline non-essential</button>
+    <button class="ck-btn primary" onclick="cookieAccept()">Accept all</button>
+  </div>
+</div>
+
 <!-- ═══════ ONBOARDING WIZARD (first-load only) ═══════ -->
 <div class="ob-modal" id="obModal" role="dialog" aria-labelledby="obTitle">
   <div class="ob-card">
@@ -1492,6 +1528,21 @@ body{overflow-x:hidden;overflow-y:auto;}
       <svg id="themeIconSun" width="16" height="16" viewBox="0 0 24 24" fill="none" style="display:none;"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
       <svg id="themeIconMoon" width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </button>
+    <!-- Auth state: shows Sign in for anon, avatar+menu for logged-in -->
+    <div id="navAuth" style="display:flex;align-items:center;gap:8px;margin-left:8px;">
+      <a id="navSignin" href="signup.html?mode=signin" style="display:inline-flex;align-items:center;padding:7px 14px;font-family:var(--mono);font-size:11px;font-weight:700;color:var(--text2);text-decoration:none;border:1px solid var(--border);border-radius:6px;letter-spacing:.04em;transition:.15s;">Sign in</a>
+      <a id="navSignup" href="signup.html" style="display:inline-flex;align-items:center;padding:7px 14px;font-family:var(--mono);font-size:11px;font-weight:800;color:#fff;background:var(--grad-prem);text-decoration:none;border-radius:6px;letter-spacing:.04em;">Get started →</a>
+      <div id="navUser" style="display:none;position:relative;">
+        <button id="navUserBtn" onclick="toggleUserMenu(event)" style="width:36px;height:36px;border-radius:50%;background:var(--grad-prem);border:none;cursor:pointer;color:#fff;font-family:var(--sans);font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;">?</button>
+        <div id="navUserMenu" style="display:none;position:absolute;top:calc(100% + 8px);right:0;min-width:220px;background:var(--bg2);border:1px solid var(--border2);border-radius:10px;box-shadow:0 14px 30px rgba(0,0,0,.55);padding:8px;z-index:600;font-family:var(--sans);">
+          <div id="navUserEmail" style="padding:9px 12px;font-size:12px;color:var(--text2);border-bottom:1px solid var(--border);margin-bottom:6px;">—</div>
+          <a href="journal.html" style="display:block;padding:8px 12px;font-size:13px;color:var(--text);text-decoration:none;border-radius:6px;">📓 Journal</a>
+          <a href="track-record.html" style="display:block;padding:8px 12px;font-size:13px;color:var(--text);text-decoration:none;border-radius:6px;">📊 Track Record</a>
+          <a href="#" onclick="event.preventDefault();window.open('/api/stripe/portal','_blank');" style="display:block;padding:8px 12px;font-size:13px;color:var(--text);text-decoration:none;border-radius:6px;">💳 Billing</a>
+          <a href="#" onclick="event.preventDefault();signOut();" style="display:block;padding:8px 12px;font-size:13px;color:var(--red2);text-decoration:none;border-radius:6px;border-top:1px solid var(--border);margin-top:6px;">↪ Sign out</a>
+        </div>
+      </div>
+    </div>
   </div>
 </nav>
 
@@ -2235,8 +2286,9 @@ body{overflow-x:hidden;overflow-y:auto;}
       <a href="risk.html">Risk</a>
     </div>
   </div>
-  <div class="footer-disclosure" style="max-width:1180px;margin:0 auto;padding:18px 40px 26px;font-family:var(--sans);font-size:11px;color:var(--text3);line-height:1.7;text-align:left;">
-    <strong style="color:var(--yellow);">Affiliate disclosure.</strong> TradeContext.ai earns a referral commission from some brokers listed in the "Open in [Broker]" dropdown when you open and fund an account through us. This <em>never</em> influences which brokers appear or where they rank — every broker shown is independently chosen because it's regulated by a recognised authority (FCA, ASIC, CFTC, MAS, BaFin, MAS, etc.). We are not a broker, never place trades for you, and never touch client funds. <strong style="color:var(--yellow);">Trading involves significant risk of loss</strong> and is not suitable for all investors — see <a href="risk.html" style="color:var(--blue);">risk warning</a>. AI-generated analysis is informational only and not personal financial advice.
+  <!-- Compliance footer — affiliate clause shown only when codes are configured -->
+  <div class="footer-disclosure" id="footerLegal" style="max-width:1180px;margin:0 auto;padding:18px 40px 26px;font-family:var(--sans);font-size:11px;color:var(--text3);line-height:1.7;text-align:left;">
+    <span id="footerAffClause" style="display:none;"><strong style="color:var(--yellow);">Affiliate disclosure.</strong> TradeContext.ai earns a referral commission from some brokers listed in the "Open in [Broker]" dropdown when you open and fund an account through us. This <em>never</em> influences which brokers appear or where they rank — every broker shown is independently chosen because it's regulated by a recognised authority (FCA, ASIC, CFTC, MAS, BaFin, etc.). </span>We are not a broker, never place trades for you, and never touch client funds. <strong style="color:var(--yellow);">Trading involves significant risk of loss</strong> and is not suitable for all investors — see <a href="risk.html" style="color:var(--blue);">risk warning</a>. AI-generated analysis is informational only and not personal financial advice.
   </div>
 </footer>
 
@@ -2264,7 +2316,7 @@ body{overflow-x:hidden;overflow-y:auto;}
 
 <!-- ═══════ SINGLE CHAT BUBBLE (toggles chooser) ═══════ -->
 <button class="tc-chat-btn" id="tcBtn" onclick="toggleChatChooser(event)" title="Chat options">
-  <span class="tc-unread" id="tcUnread">1</span>
+  <span class="tc-unread" id="tcUnread" style="display:none;">0</span>
   <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" fill="rgba(255,255,255,.95)"/>
     <circle cx="8" cy="10" r="1.2" fill="#0ea5e9"/><circle cx="12" cy="10" r="1.2" fill="#8b5cf6"/><circle cx="16" cy="10" r="1.2" fill="#0ea5e9"/>
@@ -2584,13 +2636,41 @@ setInterval(updateClock,1000);updateClock();
 })();
 
 // ════════════ MARKET SESSIONS ════════════
-// Sessions defined in UTC; rendered in user's local TZ.
-var SESS=[
-  {id:'sydney',openUTC:22,closeUTC:7, el:'sessSydney'},
-  {id:'tokyo', openUTC:0, closeUTC:9, el:'sessTokyo'},
-  {id:'london',openUTC:8, closeUTC:17,el:'sessLondon'},
-  {id:'ny',    openUTC:13,closeUTC:22,el:'sessNY'}
+// Sessions defined in *local* hours + IANA timezone, then resolved to UTC at
+// runtime so DST shifts (London BST in summer, NY EDT, Sydney AEDT) are
+// handled automatically. computeSessOffsetUTC() walks each session through
+// Intl.DateTimeFormat to discover today's UTC offset for that city, then
+// derives the open/close UTC hour pair. Refreshed each tick.
+var SESS_LOCAL=[
+  {id:'sydney',localOpen:8, localClose:17,tz:'Australia/Sydney',el:'sessSydney'},
+  {id:'tokyo', localOpen:9, localClose:18,tz:'Asia/Tokyo',     el:'sessTokyo'},
+  {id:'london',localOpen:8, localClose:17,tz:'Europe/London',  el:'sessLondon'},
+  {id:'ny',    localOpen:8, localClose:17,tz:'America/New_York',el:'sessNY'}
 ];
+function _tzOffsetHours(tz,date){
+  // Returns the UTC offset of `tz` at `date`, in hours (e.g. London BST=+1).
+  try{
+    var dtf=new Intl.DateTimeFormat('en-US',{timeZone:tz,hour12:false,
+      year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    var parts=dtf.formatToParts(date).reduce(function(a,p){a[p.type]=p.value;return a;},{});
+    var asUTC=Date.UTC(parts.year,parts.month-1,parts.day,parts.hour,parts.minute,parts.second);
+    return (asUTC-date.getTime())/3600000;
+  }catch(_){return 0;}
+}
+var SESS=SESS_LOCAL.map(function(s){
+  var off=_tzOffsetHours(s.tz,new Date());
+  var openUTC=(s.localOpen-off+24)%24;
+  var closeUTC=(s.localClose-off+24)%24;
+  return {id:s.id,openUTC:openUTC,closeUTC:closeUTC,tz:s.tz,el:s.el};
+});
+// Re-resolve every 30 minutes so DST flips on the right day automatically
+setInterval(function(){
+  SESS_LOCAL.forEach(function(s,i){
+    var off=_tzOffsetHours(s.tz,new Date());
+    SESS[i].openUTC=(s.localOpen-off+24)%24;
+    SESS[i].closeUTC=(s.localClose-off+24)%24;
+  });
+},30*60*1000);
 
 // Convert a UTC hour-of-day → today's Date in local TZ at that UTC hour
 function utcHourToLocalDate(utcH){
@@ -3191,8 +3271,21 @@ var NEWS=[
   ]}
 ];
 // ──────── LIVE BACKEND CONFIG ────────
-var TC_API='http://localhost:3001';
-var TC_WS='ws://localhost:3001/ws/news';
+// In dev (file:// or localhost) we hit the local backend on :3001.
+// In production we point at /api on whatever origin served the page so
+// the same bundle works across staging, prod, and any custom domain.
+// Override at deploy-time with window.TC_BACKEND_ORIGIN if you host the API
+// somewhere different from the static site (e.g. Railway behind api.tradecontext.ai).
+var TC_API=(function(){
+  if(window.TC_BACKEND_ORIGIN)return window.TC_BACKEND_ORIGIN;
+  var h=location.hostname;
+  if(!h||h==='localhost'||h==='127.0.0.1'||location.protocol==='file:')return 'http://localhost:3001';
+  return location.origin;
+})();
+var TC_WS=(function(){
+  var origin=TC_API.replace(/^http/i,'ws');
+  return origin+'/ws/news';
+})();
 var LIVE_NEWS=NEWS.slice();   // start with mock, replaced when API responds
 
 // Asset → icon+colour for the affected-markets pills
@@ -3485,9 +3578,13 @@ function subscribeLiveWs(){
           [0,1,2,3,4,5].forEach(buildNewsTab);
           renderChartEvents();
           updateBreakingKpi();
-          // Toast for breaking stories
-          if(msg.story.isBreaking&&typeof toast==='function'){
-            toast({kind:'red',icon:'⚡',title:'Breaking',desc:msg.story.headline.slice(0,120),duration:8000});
+          // Toast + tab-title flash + browser push for breaking stories
+          if(msg.story.isBreaking){
+            if(typeof toast==='function'){
+              toast({kind:'red',icon:'⚡',title:'Breaking',desc:msg.story.headline.slice(0,120),duration:8000});
+            }
+            if(typeof flashTabTitle==='function')flashTabTitle('⚡ '+msg.story.headline.slice(0,80));
+            if(typeof pushNotify==='function')pushNotify('⚡ Breaking · TradeContext.ai',msg.story.headline,msg.story.url);
           }
         }
       }catch(err){console.warn('[live] ws parse err',err);}
@@ -3566,6 +3663,15 @@ function ccyStrengthFor(ccy){
 
 function renderCcyStrength(){
   var el=document.getElementById('ccyStrength');if(!el)return;
+  // Avoid flashing meaningless mock-walker numbers before the live bulk
+  // fetch lands. Once any _TD entry has _prevClose (= we have a real
+  // baseline) we render normally.
+  var hasLive=(typeof _macroSnapshot!=='undefined'&&_macroSnapshot&&_macroSnapshot.lastTs)
+    ||(typeof _TD!=='undefined'&&_TD.some(function(t){return t._prevClose;}));
+  if(!hasLive){
+    el.innerHTML='<div style="padding:18px 6px;text-align:center;font-family:var(--mono);font-size:10px;color:var(--text3);"><span class="spinner" style="display:inline-block;width:14px;height:14px;border:2px solid var(--border2);border-top-color:var(--blue);border-radius:50%;animation:spin 1s linear infinite;vertical-align:middle;margin-right:6px;"></span>Waiting for live prices…</div>';
+    return;
+  }
   var rows=CCY_LIST.map(function(c){return {ccy:c,pct:ccyStrengthFor(c)};});
   var maxAbs=Math.max(0.05,Math.max.apply(null,rows.map(function(r){return Math.abs(r.pct);})));
   rows.sort(function(a,b){return b.pct-a.pct;});
@@ -4433,6 +4539,12 @@ var _volBaseline=null;
 function renderVolatilityPulse(){
   var el=document.getElementById('volPulse');
   if(!el||typeof _TD==='undefined'||!_TD.length)return;
+  // Same flash-prevention as Currency Strength — wait for real prevClose.
+  var hasLive=_macroSnapshot&&_macroSnapshot.lastTs;
+  if(!hasLive){
+    el.innerHTML='<div style="padding:14px 8px;text-align:center;font-family:var(--mono);font-size:10px;color:var(--text3);">Loading live movers…</div>';
+    return;
+  }
   if(!_volBaseline){
     _volBaseline={};
     _TD.forEach(function(t){_volBaseline[t.s]=t.p;});
@@ -4944,6 +5056,22 @@ function renderCalendar(){
   if(cnt){
     cnt.textContent=filtered.length+(_calRange==='today'?' today':' events')
       +(_calRange==='week'?' · week':'');
+  }
+
+  // Detect systematic null forecasts (Finnhub free tier limitation) and show
+  // a one-line caveat so users don't think we forgot to fetch the field.
+  var hasAnyForecast=filtered.some(function(e){return e.estimate!==null&&e.estimate!==undefined;});
+  var dataNoteEl=document.getElementById('calDataNote');
+  if(filtered.length>=4&&!hasAnyForecast){
+    if(!dataNoteEl){
+      dataNoteEl=document.createElement('div');
+      dataNoteEl.id='calDataNote';
+      dataNoteEl.style.cssText='padding:9px 14px;background:rgba(245,158,11,.08);border-bottom:1px solid rgba(245,158,11,.25);font-family:var(--mono);font-size:9.5px;color:var(--yellow);font-weight:600;letter-spacing:.04em;line-height:1.5;';
+      dataNoteEl.innerHTML='⚠️ Forecast/Actual fields are limited on the current calendar feed (Finnhub free tier). Premium tier or TradingEconomics adapter unlocks full data.';
+      wrap.parentElement&&wrap.parentElement.insertBefore(dataNoteEl,wrap);
+    }
+  }else if(dataNoteEl){
+    dataNoteEl.remove();
   }
 
   if(!filtered.length){
@@ -5508,6 +5636,118 @@ document.addEventListener('click',function(e){
 })();
 
 // ════════════════════════════════════════════════════════════════════
+// AFFILIATE DISCLOSURE — show the clause only when codes are configured.
+// Otherwise we'd misrepresent the relationship (UK ASA + FTC frown on this).
+// ════════════════════════════════════════════════════════════════════
+fetch(TC_API+'/api/brokers/affiliate-coverage').then(function(r){return r.ok?r.json():null;}).then(function(d){
+  if(d&&d.covered>0){
+    var el=document.getElementById('footerAffClause');if(el)el.style.display='inline';
+  }
+}).catch(function(){});
+
+// ════════════════════════════════════════════════════════════════════
+// HEADER AUTH STATE — fetch /api/auth/me, swap CTAs for avatar menu
+// ════════════════════════════════════════════════════════════════════
+(function(){
+  fetch(TC_API+'/api/auth/me',{credentials:'include'}).then(function(r){
+    return r.ok?r.json():null;
+  }).then(function(d){
+    if(!d||!d.user)return;
+    var u=d.user;
+    document.getElementById('navSignin').style.display='none';
+    document.getElementById('navSignup').style.display='none';
+    var box=document.getElementById('navUser');if(box)box.style.display='';
+    var btn=document.getElementById('navUserBtn');if(btn)btn.textContent=(u.email||'?').charAt(0).toUpperCase();
+    var em=document.getElementById('navUserEmail');if(em){
+      em.innerHTML='<div style="font-weight:800;color:var(--text);font-size:13px;">'+(u.email||'').split('@')[0]+'</div>'
+        +'<div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:2px;">Plan: <strong style="color:var(--blue);">'+(u.plan||'free').toUpperCase()+'</strong></div>';
+    }
+  }).catch(function(){});
+  window.toggleUserMenu=function(e){
+    e&&e.stopPropagation();
+    var m=document.getElementById('navUserMenu');if(!m)return;
+    var on=m.style.display!=='none'&&m.style.display!=='';
+    m.style.display=on?'none':'block';
+    if(!on){
+      setTimeout(function(){
+        document.addEventListener('click',function close(ev){
+          if(!ev.target.closest('#navUser')){m.style.display='none';document.removeEventListener('click',close);}
+        });
+      },0);
+    }
+  };
+  window.signOut=function(){
+    fetch(TC_API+'/api/auth/logout',{method:'POST',credentials:'include'}).finally(function(){
+      location.reload();
+    });
+  };
+})();
+
+// ════════════════════════════════════════════════════════════════════
+// COOKIE CONSENT — GDPR / UK PECR
+// ════════════════════════════════════════════════════════════════════
+(function(){
+  var KEY='tc_cookie_consent';
+  if(localStorage.getItem(KEY))return;
+  setTimeout(function(){
+    var el=document.getElementById('cookieBanner');if(el)el.classList.add('show');
+  },1200);
+  window.cookieAccept=function(){localStorage.setItem(KEY,'all');document.getElementById('cookieBanner').classList.remove('show');};
+  window.cookieDecline=function(){localStorage.setItem(KEY,'essential');document.getElementById('cookieBanner').classList.remove('show');};
+})();
+
+// ════════════════════════════════════════════════════════════════════
+// TAB-TITLE FLASH + BROWSER PUSH NOTIFICATIONS
+// ════════════════════════════════════════════════════════════════════
+// When a breaking story arrives while the tab is in the background, flash
+// the title bar (Slack-style) until the user re-focuses the tab. Also
+// surface a real browser notification — opt-in, asks once.
+(function(){
+  var origTitle=document.title;
+  var flashTimer=null;
+  var unread=0;
+  window.flashTabTitle=function(text){
+    if(!document.hidden){return;} // don't bother if user is looking at tab
+    unread+=1;
+    clearInterval(flashTimer);
+    var alt=true;
+    flashTimer=setInterval(function(){
+      document.title=alt?'('+unread+') ⚡ '+(text||'Breaking news'):origTitle;
+      alt=!alt;
+    },1200);
+  };
+  document.addEventListener('visibilitychange',function(){
+    if(!document.hidden){
+      clearInterval(flashTimer);
+      document.title=origTitle;
+      unread=0;
+    }
+  });
+  // Browser push — ask permission once on a user-gesture (any click). Storage
+  // key prevents repeat asks after deny.
+  var ASK_KEY='tc_push_asked';
+  function maybeAsk(){
+    if(!('Notification' in window))return;
+    if(Notification.permission!=='default')return;
+    if(localStorage.getItem(ASK_KEY))return;
+    document.addEventListener('click',function once(){
+      document.removeEventListener('click',once);
+      localStorage.setItem(ASK_KEY,'1');
+      try{Notification.requestPermission().catch(function(){});}catch(_){}
+    },{once:true,passive:true});
+  }
+  setTimeout(maybeAsk,5000);
+  window.pushNotify=function(title,body,url){
+    if(!('Notification' in window)||Notification.permission!=='granted')return;
+    try{
+      var n=new Notification(title,{body:body||'',icon:'/favicon.svg',tag:'tc-breaking'});
+      if(url)n.onclick=function(){window.focus();window.open(url,'_blank','noopener');n.close();};
+      setTimeout(function(){try{n.close();}catch(_){}},10000);
+    }catch(_){}
+  };
+})();
+
+// ════════════════════════════════════════════════════════════════════
 // ONBOARDING WIZARD — only fires once (until completed/skipped)
 // ════════════════════════════════════════════════════════════════════
 // Same launch flag as the paywall — hidden until you flip it on.
@@ -5567,19 +5807,30 @@ window.TC_ONBOARDING_ENABLED = false;
   };
   function saveProfile(){
     var btn=document.getElementById('obNext');if(btn){btn.disabled=true;btn.textContent='Saving…';}
+    // Always persist locally first — even anonymous users. The dashboard
+    // reads window.tcProfile when seeding chat / bias prompts, so anon
+    // personalisation works without an account.
+    try{localStorage.setItem('tc_profile',JSON.stringify(data));}catch(_){}
+    window.tcProfile=data;
+    // Then try the server. 401 (not signed in) = silent skip — local copy
+    // is enough until the user signs up, at which point /api/profile gets
+    // backfilled by the signup flow.
     fetch(TC_API+'/api/profile',{
       method:'PUT',
       headers:{'Content-Type':'application/json'},
       credentials:'include',
       body:JSON.stringify(data)
     }).finally(function(){
-      // Always close locally — even if save failed (anonymous user) we don't
-      // re-pester them every load. They can update from settings later.
       localStorage.setItem(KEY,'1');
       var m=document.getElementById('obModal');if(m)m.classList.remove('show');
       toast&&toast({kind:'green',icon:'✨',title:'AI personalised',desc:'Bias + playbook tuned to your style.',duration:5000});
     });
   }
+  // Hydrate window.tcProfile on every load so existing anon data is reusable
+  try{
+    var saved=localStorage.getItem('tc_profile');
+    if(saved)window.tcProfile=JSON.parse(saved);
+  }catch(_){}
 })();
 
 // ════════════════════════════════════════════════════════════════════
@@ -5673,14 +5924,38 @@ window.aiChatSend=function(){
       return;
     }
     aiChatBubble('assistant',res.data.message);
+    // Surface the news headlines the AI drew context from — lets users
+    // verify "where did that answer come from?" with one glance.
+    var ctx=res.data.contextNews||[];
+    if(ctx.length){
+      var body=document.getElementById('aichatBody');
+      var box=document.createElement('div');
+      box.style.cssText='align-self:flex-start;max-width:88%;font-family:var(--mono);font-size:9.5px;color:var(--text3);font-weight:600;letter-spacing:.04em;margin-top:-6px;padding:6px 10px;background:rgba(14,165,233,.05);border-left:2px solid rgba(14,165,233,.4);border-radius:0 6px 6px 0;line-height:1.55;';
+      box.innerHTML='📡 grounded in '+ctx.length+' news '+(ctx.length===1?'story':'stories')+': '
+        +ctx.slice(0,3).map(function(n){return '<span title="'+n.headline.replace(/"/g,'&quot;')+'" style="color:var(--text2);">"'+n.headline.slice(0,55).replace(/"/g,'&quot;')+(n.headline.length>55?'…':'')+'"</span>';}).join(' · ');
+      body.appendChild(box);body.scrollTop=body.scrollHeight;
+    }
   }).catch(function(){
     typing.remove();send.disabled=false;
     aiChatBubble('assistant','Network hiccup — couldn\'t reach the AI. Try again in a moment.\n\n*Educational tool — not personal financial advice.*');
   });
 };
-// Reset history pane when the user switches symbol
+// Re-hydrate the chat panel when the user switches symbol — pulls the last
+// 50 messages for that symbol (logged-in users only) so the conversation
+// resumes mid-thread instead of looking blank.
 (function(){
   var lastSym=null;
+  function hydrate(sym){
+    fetch(TC_API+'/api/ai/chat/history?symbol='+encodeURIComponent(sym),{credentials:'include'})
+      .then(function(r){return r.ok?r.json():{messages:[]};})
+      .then(function(d){
+        var msgs=(d&&d.messages)||[];
+        if(!msgs.length)return;
+        var empty=document.getElementById('aichatEmpty');if(empty)empty.style.display='none';
+        msgs.forEach(function(m){aiChatBubble(m.role==='user'?'user':'assistant',m.content);});
+      })
+      .catch(function(){});
+  }
   setInterval(function(){
     var s=window._activeSymLabel||'XAU/USD';
     if(s!==lastSym){
@@ -5691,6 +5966,7 @@ window.aiChatSend=function(){
         Array.prototype.slice.call(body.querySelectorAll('.ac-bubble')).forEach(function(b){b.remove();});
         if(empty)empty.style.display='';
       }
+      hydrate(s);
     }
   },800);
 })();

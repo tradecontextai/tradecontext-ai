@@ -239,6 +239,35 @@ export async function getBias(symbol: string, opts?: { force?: boolean }): Promi
     day: bias.dayTrade.bias,
     swing: bias.swingTrade.bias,
   });
+
+  // Snapshot every component bias as a BiasOutcome row so the cron verifier
+  // can later mark hit/miss vs actual price. Fire-and-forget — don't block
+  // the user's bias call on the price-fetch + DB insert.
+  void (async () => {
+    try {
+      const tick = await getPrice(symbol);
+      if (!tick.price || tick.source === 'unsupported') return;
+      const sources: Array<{ src: string; b: string; rationale?: string }> = [
+        { src: 'fundamental', b: bias.fundamental.bias, rationale: bias.fundamental.points.join(' · ') },
+        { src: 'technical', b: bias.technical.bias, rationale: bias.technical.points.join(' · ') },
+        { src: 'dayTrade', b: bias.dayTrade.bias, rationale: bias.dayTrade.rationale },
+        { src: 'swingTrade', b: bias.swingTrade.bias, rationale: bias.swingTrade.rationale },
+      ];
+      await prisma.biasOutcome.createMany({
+        data: sources.map((s) => ({
+          symbol: key,
+          bias: s.b,
+          source: s.src,
+          generatedAt: new Date(generatedAt),
+          priceAtGen: tick.price,
+          rationale: s.rationale ?? null,
+        })),
+      });
+    } catch (e) {
+      log.debug('AI Bias outcome snapshot failed', { err: (e as Error)?.message });
+    }
+  })();
+
   return { bias, generatedAt, cached: false };
 }
 

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loading post… — TradeContext.ai</title>
+<meta name="description" content="Daily AI-generated market wraps from TradeContext.ai.">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=DM+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#03060d;--bg2:#060c18;--bg3:#0a1220;--border:#142035;--blue:#0ea5e9;--purple:#8b5cf6;--green2:#34d399;--text:#e2eaf4;--text2:#7a9ab8;--text3:#3a5570;--sans:'Outfit',sans-serif;--mono:'DM Mono',monospace;--grad-prem:linear-gradient(135deg,#0ea5e9,#8b5cf6);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;}
+.navbar{height:62px;background:rgba(3,6,13,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 40px;position:sticky;top:0;z-index:10;}
+.nav-logo{font-size:19px;font-weight:900;letter-spacing:-.02em;text-decoration:none;color:var(--text);}
+.nav-logo span{background:var(--grad-prem);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.nav-links{display:flex;gap:28px;font-family:var(--mono);font-size:11px;font-weight:600;}
+.nav-links a{color:var(--text2);text-decoration:none;letter-spacing:.04em;}
+.nav-links a:hover{color:var(--blue);}
+.nav-cta{padding:8px 18px;background:var(--grad-prem);color:#fff;font-family:var(--sans);font-size:12px;font-weight:800;border-radius:6px;text-decoration:none;letter-spacing:.04em;}
+.crumb{max-width:780px;margin:30px auto 0;padding:0 40px;font-family:var(--mono);font-size:11px;color:var(--text3);}
+.crumb a{color:var(--text2);text-decoration:none;}
+.crumb a:hover{color:var(--blue);}
+article{max-width:780px;margin:20px auto 80px;padding:0 40px;}
+@media (max-width:680px){article{padding:0 22px;}}
+.post-eyebrow{font-family:var(--mono);font-size:10.5px;font-weight:800;color:var(--blue);letter-spacing:.16em;text-transform:uppercase;margin-bottom:14px;}
+.post-title{font-family:var(--sans);font-size:42px;font-weight:900;letter-spacing:-.025em;line-height:1.1;margin-bottom:14px;}
+.post-meta{font-family:var(--mono);font-size:11px;color:var(--text3);font-weight:600;letter-spacing:.04em;margin-bottom:40px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;}
+.post-meta .sym{padding:3px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--text2);font-size:10px;}
+.post-body{font-family:var(--sans);font-size:16px;line-height:1.75;color:var(--text2);}
+.post-body h2{color:var(--text);font-size:24px;font-weight:800;margin:36px 0 14px;letter-spacing:-.015em;}
+.post-body h3{color:var(--text);font-size:18px;font-weight:700;margin:24px 0 10px;}
+.post-body p{margin-bottom:16px;}
+.post-body strong{color:var(--text);font-weight:700;}
+.post-body em{color:var(--text3);font-style:italic;font-size:14px;}
+.post-body ul,.post-body ol{margin:16px 0 16px 28px;}
+.post-body li{margin-bottom:8px;}
+.post-body code{font-family:var(--mono);background:var(--bg2);padding:1px 6px;border-radius:3px;font-size:13px;color:var(--blue);}
+.post-body a{color:var(--blue);}
+.cta{margin:60px 0 0;padding:30px 36px;background:linear-gradient(135deg,rgba(14,165,233,.08),rgba(139,92,246,.05));border:1px solid var(--border);border-radius:14px;text-align:center;}
+.cta h3{font-size:22px;font-weight:900;margin-bottom:8px;}
+.cta p{font-size:13.5px;color:var(--text2);margin-bottom:18px;}
+.btn{display:inline-block;padding:11px 22px;background:var(--grad-prem);color:#fff;font-family:var(--sans);font-size:13px;font-weight:800;border-radius:8px;text-decoration:none;letter-spacing:.04em;}
+.empty{padding:80px 30px;text-align:center;color:var(--text3);font-family:var(--mono);font-size:13px;}
+footer{padding:40px;text-align:center;font-family:var(--mono);font-size:10px;color:var(--text3);border-top:1px solid var(--border);}
+footer a{color:var(--text2);margin:0 10px;text-decoration:none;}
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <a class="nav-logo" href="home.html">TradeContext<span>.ai</span></a>
+  <div class="nav-links">
+    <a href="home.html">Home</a>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="pricing.html">Pricing</a>
+    <a href="track-record.html">Track Record</a>
+    <a href="blog.html">Blog</a>
+    <a href="about.html">About</a>
+  </div>
+  <a href="signup.html" class="nav-cta">Get Started</a>
+</nav>
+
+<div class="crumb"><a href="blog.html">← Back to blog</a></div>
+
+<article id="postRoot">
+  <div class="empty">Loading post…</div>
+</article>
+
+<footer>
+  © 2026 TradeContext.ai · <a href="terms.html">Terms</a> · <a href="privacy.html">Privacy</a> · <a href="risk.html">Risk</a> · <a href="pricing.html">Pricing</a> · <a href="about.html">About</a>
+</footer>
+
+<script>
+var TC_API=(function(){
+  if(window.TC_BACKEND_ORIGIN)return window.TC_BACKEND_ORIGIN;
+  var h=location.hostname;
+  if(!h||h==='localhost'||h==='127.0.0.1'||location.protocol==='file:')return 'http://localhost:3001';
+  return location.origin;
+})();
+
+// Tiny markdown → HTML renderer (headings, bold, italics, lists, paragraphs).
+// Good enough for AI-generated wraps; avoids the marked.js dependency.
+function md2html(s){
+  s=s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  s=s.replace(/^### (.+)$/gm,'<h3>$1</h3>');
+  s=s.replace(/^## (.+)$/gm,'<h2>$1</h2>');
+  s=s.replace(/^# (.+)$/gm,'<h2>$1</h2>');
+  s=s.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
+  s=s.replace(/(?<!\w)\*([^*\n]+)\*(?!\w)/g,'<em>$1</em>');
+  s=s.replace(/`([^`]+)`/g,'<code>$1</code>');
+  s=s.replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" rel="noopener noreferrer">$1</a>');
+  // Bullets
+  s=s.replace(/(?:^|\n)([\-*] .+(?:\n[\-*] .+)*)/g,function(_,blk){
+    var lis=blk.split(/\n/).map(function(l){return '<li>'+l.replace(/^[\-*] /,'')+'</li>';}).join('');
+    return '\n<ul>'+lis+'</ul>';
+  });
+  // Paragraphs — split blank-line-separated chunks that aren't already block tags
+  s=s.split(/\n{2,}/).map(function(blk){
+    if(/^\s*<(h\d|ul|ol|li|blockquote|pre|p)/i.test(blk))return blk;
+    return '<p>'+blk.replace(/\n/g,'<br>')+'</p>';
+  }).join('\n');
+  return s;
+}
+
+function fmtDate(iso){
+  try{return new Date(iso).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});}catch(_){return '';}
+}
+
+function notFound(){
+  document.getElementById('postRoot').innerHTML='<div class="empty">Post not found. <a href="blog.html" style="color:var(--blue);">Browse all posts →</a></div>';
+  document.title='Not found · TradeContext.ai';
+}
+
+(function load(){
+  var slug=new URL(location.href).searchParams.get('slug');
+  if(!slug){notFound();return;}
+  fetch(TC_API+'/api/blog/post/'+encodeURIComponent(slug))
+    .then(function(r){return r.ok?r.json():null;})
+    .then(function(d){
+      if(!d||!d.post){notFound();return;}
+      var p=d.post;
+      document.title=p.title+' · TradeContext.ai';
+      var meta=document.querySelector('meta[name="description"]');if(meta)meta.setAttribute('content',p.description||'');
+      var symHtml=(p.symbols||[]).slice(0,6).map(function(s){return '<span class="sym">'+s+'</span>';}).join('');
+      document.getElementById('postRoot').innerHTML=
+         '<div class="post-eyebrow">'+(p.kind||'analysis').replace(/-/g,' ')+'</div>'
+        +'<h1 class="post-title">'+p.title+'</h1>'
+        +'<div class="post-meta"><span>'+fmtDate(p.publishedAt)+'</span>'+symHtml+'</div>'
+        +'<div class="post-body">'+md2html(p.body||'')+'</div>'
+        +'<div class="cta"><h3>Trade this with the AI dashboard</h3><p>Live news bias, AI chat per chart, 58 regulated brokers — for $39.95/mo.</p><a href="pricing.html" class="btn">See pricing →</a></div>';
+    })
+    .catch(function(){
+      document.getElementById('postRoot').innerHTML='<div class="empty">Couldn\'t load this post. The blog backend may be offline. <a href="blog.html" style="color:var(--blue);">Back to blog</a></div>';
+    });
+})();
+</script>
+</body>
+</html>
