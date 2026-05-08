@@ -152,9 +152,8 @@ body{overflow-x:hidden;overflow-y:auto;}
 
 /* ═══════════ KPI HERO STRIP — single row, no scroll ═══════════ */
 .kpi-strip{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px;margin-bottom:24px;}
-.kpi-strip .kpi-card.movers{grid-column:span 2;}
-@media (max-width:1280px){.kpi-strip{grid-template-columns:repeat(4,minmax(0,1fr));}.kpi-strip .kpi-card.movers{grid-column:span 2;}}
-@media (max-width:780px){.kpi-strip{grid-template-columns:repeat(2,minmax(0,1fr));}.kpi-strip .kpi-card.movers{grid-column:span 2;}}
+@media (max-width:1280px){.kpi-strip{grid-template-columns:repeat(4,minmax(0,1fr));}}
+@media (max-width:780px){.kpi-strip{grid-template-columns:repeat(2,minmax(0,1fr));}}
 .kpi-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:13px 14px;transition:transform .25s var(--ease-out-quart),border-color .2s,box-shadow .25s var(--ease-out-quart);position:relative;overflow:hidden;min-width:0;cursor:default;animation:kpiSlideIn .55s var(--ease-out-expo) both;}
 /* Staggered entrance — each KPI card delays slightly more than the last */
 .kpi-card:nth-child(1){animation-delay:.04s;}
@@ -176,21 +175,21 @@ body{overflow-x:hidden;overflow-y:auto;}
 .kpi-card.good{background:linear-gradient(135deg,var(--bg2),rgba(52,211,153,.05));border-color:rgba(52,211,153,.25);}
 .kpi-card.alert{background:linear-gradient(135deg,var(--bg2),rgba(239,68,68,.06));border-color:rgba(239,68,68,.3);cursor:pointer;}
 .kpi-card.alert:hover{border-color:rgba(239,68,68,.5);}
-/* Top movers card — denser layout, no big number, rows take all the space */
-.kpi-card.movers{padding:11px 12px 8px;background:linear-gradient(135deg,var(--bg2),rgba(14,165,233,.04) 60%,rgba(139,92,246,.05));border-color:rgba(14,165,233,.25);}
+/* Top movers card — same shape as Breaking, ticker rotates one mover at a time */
+.kpi-card.movers{background:linear-gradient(135deg,var(--bg2),rgba(14,165,233,.04) 60%,rgba(139,92,246,.05));border-color:rgba(14,165,233,.25);}
 .kpi-card.movers::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--grad-prem);}
-.kpi-card.movers .kpi-label{margin-bottom:7px;}
-.movers-list{display:flex;flex-direction:column;gap:3px;}
-.movers-list .mv-row{display:grid;grid-template-columns:1fr 56px 50px;align-items:center;gap:6px;padding:3px 0;font-family:var(--mono);font-size:10.5px;}
-.movers-list .mv-row .mv-sym{color:var(--text);font-weight:700;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.movers-list .mv-row .mv-px{color:var(--text2);font-weight:600;text-align:right;font-size:9.5px;white-space:nowrap;overflow:hidden;}
-.movers-list .mv-row .mv-pct{font-weight:800;text-align:right;font-size:11px;}
-.movers-list .mv-row.up .mv-pct{color:var(--green2);}
-.movers-list .mv-row.down .mv-pct{color:var(--red2);}
-.movers-list .mv-row.up .mv-arr{color:var(--green2);}
-.movers-list .mv-row.down .mv-arr{color:var(--red2);}
-.movers-list .mv-empty{font-family:var(--mono);font-size:10px;color:var(--text3);text-align:center;padding:14px 0;}
-.kpi-card.movers:hover .mv-row{background:transparent;}
+.movers-list{position:relative;height:34px;}
+.mv-slot{position:absolute;inset:0;display:flex;align-items:center;justify-content:space-between;gap:6px;font-family:var(--mono);opacity:0;transform:translateY(6px);transition:opacity .35s var(--ease-out-quart),transform .35s var(--ease-out-quart);pointer-events:none;}
+.mv-slot.show{opacity:1;transform:translateY(0);}
+.mv-slot .mv-sym{font-size:14px;font-weight:800;color:var(--text);letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mv-slot .mv-pct{font-size:14px;font-weight:900;letter-spacing:-.01em;text-align:right;flex-shrink:0;}
+.mv-slot.up .mv-pct{color:var(--green2);}
+.mv-slot.down .mv-pct{color:var(--red2);}
+.kpi-card.movers .mv-rank{font-family:var(--mono);font-size:9px;font-weight:800;color:var(--text3);letter-spacing:.04em;}
+.kpi-card.movers .mv-empty{font-family:var(--mono);font-size:10px;color:var(--text3);}
+.mv-dots{display:flex;gap:3px;margin-top:5px;justify-content:flex-start;}
+.mv-dots .mv-dot{width:5px;height:5px;border-radius:50%;background:var(--bg3);transition:.2s;}
+.mv-dots .mv-dot.active{background:var(--blue);box-shadow:0 0 5px var(--blue);width:14px;border-radius:3px;}
 .kpi-label{font-family:var(--mono);font-size:8.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);display:flex;align-items:center;gap:4px;margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .kpi-value{font-family:var(--mono);font-size:19px;font-weight:800;letter-spacing:-.02em;line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .kpi-sub{font-family:var(--mono);font-size:9.5px;color:var(--text3);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -1611,12 +1610,15 @@ body{overflow-x:hidden;overflow-y:auto;}
       <div class="kpi-value" style="font-size:13px;color:var(--red2);line-height:1.2;" id="kpiBreakingTitle">Awaiting feed…</div>
       <div class="kpi-sub" style="color:var(--red2);" id="kpiBreakingSub">—</div>
     </div>
-    <!-- Top 5 movers — populated from _TD (live bulk-fetch prices) -->
+    <!-- Top 5 movers — rotates one at a time (vs prev close, all asset classes) -->
     <div class="kpi-card movers" id="kpiMovers" title="Top 5 movers across all asset classes (vs prev close)">
-      <div class="kpi-label" style="background:var(--grad-prem);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">🚀 TOP MOVERS</div>
+      <div class="kpi-label" style="background:var(--grad-prem);-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:flex;justify-content:space-between;align-items:center;">
+        <span>🚀 TOP MOVERS</span><span class="mv-rank" id="mvRank">—</span>
+      </div>
       <div class="movers-list" id="moversList">
         <div class="mv-empty">Loading live prices…</div>
       </div>
+      <div class="mv-dots" id="mvDots"></div>
     </div>
   </div>
 
@@ -4564,17 +4566,23 @@ function renderFearGreed(){
 // Once macro snapshot lands, t._prevClose is the real previous-day close from
 // Yahoo/Binance/Finnhub. Until then we fall back to the in-page baseline.
 var _volBaseline=null;
-// ════════════ TOP 5 MOVERS (KPI strip) ════════════
-// Compact ranked list: biggest absolute % movers across all asset classes
-// in _TD (forex majors, gold, oil, indices, BTC, ETH). Uses prevClose when
-// the bulk fetch has landed; falls back to the in-page baseline so the
-// list is never empty after first load.
+// ════════════ TOP 5 MOVERS (KPI strip — rotating ticker) ════════════
+// Card sized like the Breaking card next to it. Cycles through the top 5
+// biggest absolute % movers one-at-a-time every ~2.5s with a fade-slide
+// transition. Active rank shown in the corner; row-of-dots underneath
+// indicates which slot is on screen. Refreshes the underlying list
+// whenever the macro snapshot ticks.
+var _mvRotation={list:[],idx:0,timer:null};
 function renderTopMovers(){
   var el=document.getElementById('moversList');
+  var dots=document.getElementById('mvDots');
+  var rankEl=document.getElementById('mvRank');
   if(!el||typeof _TD==='undefined'||!_TD.length)return;
   var hasLive=_macroSnapshot&&_macroSnapshot.lastTs;
   if(!hasLive){
     el.innerHTML='<div class="mv-empty">Loading live prices…</div>';
+    if(dots)dots.innerHTML='';
+    if(rankEl)rankEl.textContent='—';
     return;
   }
   var rows=_TD.map(function(t){
@@ -4583,18 +4591,40 @@ function renderTopMovers(){
     return {sym:t.s,p:t.p,d:t.d,pct:pct};
   });
   rows.sort(function(a,b){return Math.abs(b.pct)-Math.abs(a.pct);});
-  var top=rows.slice(0,5);
-  el.innerHTML=top.map(function(r){
+  _mvRotation.list=rows.slice(0,5);
+  // Pre-render every slot — fade controlled by .show class
+  el.innerHTML=_mvRotation.list.map(function(r,i){
     var dir=r.pct>=0?'up':'down';
     var sign=r.pct>=0?'+':'';
     var arr=r.pct>=0?'▲':'▼';
-    var px=r.p.toLocaleString('en-GB',{minimumFractionDigits:r.d,maximumFractionDigits:r.d});
-    return '<div class="mv-row '+dir+'" title="'+r.sym+' · '+px+' · '+sign+r.pct.toFixed(2)+'%">'
-      +'<div class="mv-sym">'+r.sym+'</div>'
-      +'<div class="mv-px">'+px+'</div>'
-      +'<div class="mv-pct"><span class="mv-arr">'+arr+'</span> '+sign+r.pct.toFixed(2)+'%</div>'
+    return '<div class="mv-slot '+dir+'" data-idx="'+i+'">'
+      +'<span class="mv-sym">'+r.sym+'</span>'
+      +'<span class="mv-pct">'+arr+' '+sign+r.pct.toFixed(2)+'%</span>'
     +'</div>';
   }).join('');
+  if(dots){
+    dots.innerHTML=_mvRotation.list.map(function(_,i){return '<span class="mv-dot" data-idx="'+i+'"></span>';}).join('');
+  }
+  // Cap idx if list shrank, then reflect current state without restarting timer
+  if(_mvRotation.idx>=_mvRotation.list.length)_mvRotation.idx=0;
+  showMover(_mvRotation.idx);
+  if(!_mvRotation.timer){
+    _mvRotation.timer=setInterval(function(){
+      if(!_mvRotation.list.length||document.hidden)return;
+      _mvRotation.idx=(_mvRotation.idx+1)%_mvRotation.list.length;
+      showMover(_mvRotation.idx);
+    },2500);
+  }
+}
+function showMover(i){
+  var rankEl=document.getElementById('mvRank');
+  if(rankEl)rankEl.textContent='#'+(i+1)+' of '+_mvRotation.list.length;
+  document.querySelectorAll('.mv-slot').forEach(function(el){
+    el.classList.toggle('show',parseInt(el.dataset.idx,10)===i);
+  });
+  document.querySelectorAll('.mv-dots .mv-dot').forEach(function(el){
+    el.classList.toggle('active',parseInt(el.dataset.idx,10)===i);
+  });
 }
 
 function renderVolatilityPulse(){
