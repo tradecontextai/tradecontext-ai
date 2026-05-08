@@ -511,12 +511,32 @@ body{overflow-x:hidden;overflow-y:auto;}
 /* Macro Pulse: 2-column — left widget stack, right World Map full-height */
 .macro-pulse-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:1px;background:var(--border);align-items:stretch;}
 @media (max-width:1100px){.macro-pulse-grid{grid-template-columns:1fr;}}
-.mp-left-stack{display:grid;grid-template-columns:1fr 1fr;grid-template-areas:"sess sess" "ccy risk" "mood fg" "vol geo";gap:1px;background:var(--border);}
-@media (max-width:780px){.mp-left-stack{grid-template-columns:1fr;grid-template-areas:"sess" "ccy" "risk" "mood" "fg" "vol" "geo";}}
+.mp-left-stack{display:grid;grid-template-columns:1fr 1fr;grid-template-areas:"sess sess" "ccy geo" "riskfg mood" "vol vol";gap:1px;background:var(--border);}
+@media (max-width:780px){.mp-left-stack{grid-template-columns:1fr;grid-template-areas:"sess" "ccy" "geo" "riskfg" "mood" "vol";}}
 .mp-left-stack > .mp-card{display:flex;flex-direction:column;min-height:0;background:var(--bg2);}
 .mp-left-stack > .sess-card{grid-area:sess;}
 .mp-left-stack > .vol-card{grid-area:vol;}
 .mp-left-stack > .geo-mp-card{grid-area:geo;}
+.mp-left-stack > .riskfg-card{grid-area:riskfg;}
+
+/* ─── Combined Risk + Fear&Greed table card ─── */
+.riskfg-card .rfg-table{width:100%;border-collapse:collapse;font-family:var(--sans);}
+.riskfg-card .rfg-table th{font-family:var(--mono);font-size:8.5px;font-weight:800;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;text-align:left;padding:5px 6px;border-bottom:1px solid var(--border);}
+.riskfg-card .rfg-table th:nth-child(2){width:90px;}
+.riskfg-card .rfg-table th:nth-child(3){width:90px;text-align:right;}
+.riskfg-card .rfg-row td{padding:7px 6px;border-bottom:1px solid var(--border);font-size:11.5px;color:var(--text);}
+.riskfg-card .rfg-row:last-child td{border-bottom:none;}
+.riskfg-card .rfg-name{font-weight:700;display:flex;align-items:center;gap:7px;white-space:nowrap;}
+.riskfg-card .rfg-name .rfg-ic{font-size:14px;line-height:1;}
+.riskfg-card .rfg-name .rfg-meta{font-family:var(--mono);font-size:9px;color:var(--text3);font-weight:600;letter-spacing:.04em;}
+.riskfg-card .rfg-val{font-family:var(--mono);font-weight:800;font-size:13px;color:var(--text);display:flex;flex-direction:column;gap:3px;}
+.riskfg-card .rfg-bar{height:4px;background:var(--bg3);border-radius:3px;overflow:hidden;width:100%;}
+.riskfg-card .rfg-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--red2),var(--yellow),var(--green2));transition:width .8s var(--ease-out-quart);}
+.riskfg-card .rfg-bar-fill.fg-grad{background:linear-gradient(90deg,#dc2626,#f87171,#f59e0b,#34d399,#10b981);}
+.riskfg-card .rfg-bar-fill.vix-grad{background:linear-gradient(90deg,var(--green2),var(--yellow),var(--red2));}
+.riskfg-card .rfg-bar-fill.dxy-grad{background:linear-gradient(90deg,var(--red2),var(--text3),var(--green2));}
+.riskfg-card .rfg-read{font-family:var(--mono);font-size:9.5px;color:var(--text2);font-weight:700;text-align:right;letter-spacing:.04em;text-transform:uppercase;line-height:1.3;}
+.riskfg-card .rfg-foot{margin-top:8px;padding:7px 9px;background:rgba(14,165,233,.06);border-left:2px solid var(--blue);border-radius:0 5px 5px 0;font-family:var(--mono);font-size:9.5px;color:var(--text2);font-weight:600;letter-spacing:.04em;line-height:1.5;}
 
 /* ═══════ GEOPOLITICAL RISK METER (Macro Pulse left stack) ═══════ */
 .geo-mp-card{position:relative;}
@@ -570,7 +590,7 @@ body{overflow-x:hidden;overflow-y:auto;}
 .geo-foot .foot-text{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text2);}
 .geo-foot .foot-impact{color:var(--red2);font-weight:800;flex-shrink:0;}
 .macro-pulse-grid > .mp-card.world-map-card{display:flex;flex-direction:column;min-height:0;}
-.macro-pulse-grid > .mp-card.world-map-card > .world-map-wrap{flex:1;min-height:260px;}
+.macro-pulse-grid > .mp-card.world-map-card > .world-map-wrap{flex:1;min-height:200px;}
 .macro-pulse-grid-bottom{display:none;}
 
 .ccy-callout{font-family:var(--mono);font-size:10px;color:var(--text2);text-align:center;margin-top:10px;padding:6px 8px;background:var(--bg3);border-radius:5px;font-weight:600;line-height:1.5;}
@@ -680,7 +700,7 @@ body{overflow-x:hidden;overflow-y:auto;}
 
 /* World Map widget — animated, premium feel */
 .world-map-card{background:var(--bg2);padding:14px 16px;}
-.world-map-wrap{position:relative;width:100%;background:radial-gradient(ellipse at center,rgba(14,165,233,.07) 0%,rgba(139,92,246,.03) 40%,var(--bg) 80%);border:1px solid var(--border);border-radius:8px;overflow:hidden;min-height:260px;}
+.world-map-wrap{position:relative;width:100%;background:radial-gradient(ellipse at center,rgba(14,165,233,.07) 0%,rgba(139,92,246,.03) 40%,var(--bg) 80%);border:1px solid var(--border);border-radius:8px;overflow:hidden;min-height:200px;}
 /* Animated aurora sweep across the map background */
 .world-map-wrap::before{content:'';position:absolute;inset:0;background:linear-gradient(120deg,transparent 30%,rgba(14,165,233,.06) 50%,transparent 70%);background-size:200% 100%;animation:auroraSweep 12s linear infinite;pointer-events:none;}
 @keyframes auroraSweep{0%{background-position:100% 0;}100%{background-position:-100% 0;}}
@@ -1926,40 +1946,49 @@ body{overflow-x:hidden;overflow-y:auto;}
               <div class="ccy-callout" id="ccyCallout">—</div>
             </div>
 
-            <div class="mp-card">
+            <!-- Combined Risk Sentiment + Fear & Greed in one compact card -->
+            <div class="mp-card riskfg-card">
               <div class="mp-card-h">
-                <div class="mp-card-title">🌡️ Risk Sentiment</div>
-                <div class="mp-card-sub" id="riskSubtitle">News-weighted aggregate mood</div>
+                <div class="mp-card-title">🌡️ Risk · Fear &amp; Greed</div>
+                <div class="mp-card-sub" id="riskSubtitle">News-weighted mood + cross-asset vol</div>
               </div>
-              <div class="risk-thermometer" id="riskTherm">
-                <div class="rt-track">
-                  <div class="rt-fill" id="rtFill" style="height:50%;"></div>
-                  <div class="rt-tick" style="bottom:80%;"><span>Risk-On</span></div>
-                  <div class="rt-tick" style="bottom:50%;"><span>Neutral</span></div>
-                  <div class="rt-tick" style="bottom:20%;"><span>Risk-Off</span></div>
-                </div>
-                <div class="rt-readout">
-                  <div class="rt-val" id="rtVal">—</div>
-                  <div class="rt-lbl" id="rtLbl">Calculating…</div>
-                  <div class="rt-context" id="rtContext" style="font-family:var(--mono);font-size:9px;color:var(--text3);margin-top:6px;line-height:1.4;">—</div>
-                </div>
-              </div>
-              <!-- Real cross-asset vol gauges — VIX (equity fear) + DXY (USD demand) -->
-              <div class="vol-gauges">
-                <div class="vg vix">
-                  <div class="vg-h"><span class="vg-name">VIX</span><span class="vg-val" id="vgVixVal">—</span></div>
-                  <div class="vg-bar"><div class="vg-bar-fill" id="vgVixBar" style="width:30%"></div></div>
-                  <div class="vg-zone" id="vgVixZone">Equity vol · loading…</div>
-                </div>
-                <div class="vg dxy">
-                  <div class="vg-h"><span class="vg-name">DXY</span><span class="vg-val" id="vgDxyVal">—</span></div>
-                  <div class="vg-bar"><div class="vg-bar-fill" id="vgDxyBar" style="width:50%"></div></div>
-                  <div class="vg-zone" id="vgDxyZone">Dollar index · loading…</div>
-                </div>
+              <table class="rfg-table">
+                <thead>
+                  <tr><th>Metric</th><th>Score</th><th>Read</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="rfg-row" id="rfgRiskRow">
+                    <td class="rfg-name"><span class="rfg-ic">🌡️</span> Risk Sentiment</td>
+                    <td class="rfg-val"><span id="rtVal">—</span><div class="rfg-bar"><div class="rfg-bar-fill" id="rtFill" style="width:50%"></div></div></td>
+                    <td class="rfg-read" id="rtLbl">Calculating…</td>
+                  </tr>
+                  <tr class="rfg-row" id="rfgFgRow">
+                    <td class="rfg-name"><span class="rfg-ic">😱</span> Fear &amp; Greed</td>
+                    <td class="rfg-val"><span id="fgVal">—</span><div class="rfg-bar"><div class="rfg-bar-fill fg-grad" id="fgFill" style="width:50%"></div></div></td>
+                    <td class="rfg-read" id="fgLbl">Calculating…</td>
+                  </tr>
+                  <tr class="rfg-row vix-row">
+                    <td class="rfg-name"><span class="rfg-ic">📊</span> VIX <span class="rfg-meta">equity vol</span></td>
+                    <td class="rfg-val"><span id="vgVixVal">—</span><div class="rfg-bar"><div class="rfg-bar-fill vix-grad" id="vgVixBar" style="width:30%"></div></div></td>
+                    <td class="rfg-read" id="vgVixZone">loading…</td>
+                  </tr>
+                  <tr class="rfg-row dxy-row">
+                    <td class="rfg-name"><span class="rfg-ic">💵</span> DXY <span class="rfg-meta">USD index</span></td>
+                    <td class="rfg-val"><span id="vgDxyVal">—</span><div class="rfg-bar"><div class="rfg-bar-fill dxy-grad" id="vgDxyBar" style="width:50%"></div></div></td>
+                    <td class="rfg-read" id="vgDxyZone">loading…</td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="rfg-foot" id="rtContext">—</div>
+              <!-- Hidden helpers kept so existing JS hooks still work without rewrites -->
+              <div style="display:none;">
+                <div class="rt-context" id="rtContextLegacy">—</div>
+                <svg id="fgSvgLegacy"><line class="fg-needle" id="fgNeedle" x1="0" y1="0" x2="0" y2="0"/></svg>
+                <div class="fg-context" id="fgContext">—</div>
               </div>
             </div>
 
-            <!-- Mood Heatmap + Fear & Greed -->
+            <!-- Market Mood (now sits beside the combined Risk+F&G card) -->
             <div class="mp-card">
               <div class="mp-card-h">
                 <div class="mp-card-title">🧠 Market Mood</div>
@@ -1967,37 +1996,6 @@ body{overflow-x:hidden;overflow-y:auto;}
               </div>
               <div class="mood-grid" id="moodGrid"></div>
               <div class="mood-summary" id="moodSummary" style="font-family:var(--mono);font-size:10px;color:var(--text2);text-align:center;margin-top:10px;line-height:1.5;">Awaiting data…</div>
-            </div>
-
-            <div class="mp-card">
-              <div class="mp-card-h">
-                <div class="mp-card-title">😱 Fear &amp; Greed</div>
-                <div class="mp-card-sub">0 = panic · 50 = neutral · 100 = euphoria</div>
-              </div>
-              <div class="fg-gauge">
-                <svg class="fg-svg" viewBox="0 0 200 115" preserveAspectRatio="xMidYMid meet">
-                  <defs>
-                    <linearGradient id="fgGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stop-color="#dc2626"/>
-                      <stop offset="25%" stop-color="#f87171"/>
-                      <stop offset="50%" stop-color="#f59e0b"/>
-                      <stop offset="75%" stop-color="#34d399"/>
-                      <stop offset="100%" stop-color="#10b981"/>
-                    </linearGradient>
-                  </defs>
-                  <path class="fg-arc-bg" stroke="url(#fgGrad)" d="M 20 100 A 80 80 0 0 1 180 100"/>
-                  <line class="fg-needle" id="fgNeedle" x1="100" y1="100" x2="100" y2="28"/>
-                  <circle class="fg-hub" cx="100" cy="100" r="6"/>
-                </svg>
-                <div class="fg-tickrow">
-                  <span>0</span><span>25</span><span>50</span><span>75</span><span>100</span>
-                </div>
-                <div class="fg-readout">
-                  <div class="fg-val" id="fgVal">—</div>
-                  <div class="fg-lbl" id="fgLbl">Calculating…</div>
-                </div>
-                <div class="fg-context" id="fgContext">Aggregates news bias, risk-on/off, currency drift.</div>
-              </div>
             </div>
 
             <!-- Volatility Pulse (now half-width, sits next to Geo Risk) -->
@@ -3863,13 +3861,14 @@ function renderRiskTherm(){
   var fillEl=document.getElementById('rtFill');
   var valEl=document.getElementById('rtVal');
   var lblEl=document.getElementById('rtLbl');
-  var ctxEl=document.getElementById('rtContext');
+  var ctxEl=document.getElementById('rtContext');     // now the combined card's context line
   if(!fillEl||!valEl||!lblEl)return;
-  fillEl.style.height=risk.score+'%';
+  // Combined-card layout: rtFill is a horizontal bar in the table, rtVal /
+  // rtLbl are inline cells. The bar uses width%, not height%.
+  fillEl.style.width=risk.score+'%';
   valEl.textContent=risk.score;
   lblEl.textContent=risk.label;
   if(ctxEl){
-    // Show what's actually driving the score so traders learn the why
     var recent=(LIVE_NEWS||[]).slice(0,30);
     var bull=recent.filter(function(n){return n.tag&&n.tag.cls==='bull';}).length;
     var bear=recent.filter(function(n){return n.tag&&n.tag.cls==='bear';}).length;
@@ -4644,18 +4643,18 @@ function computeFearGreed(){
 }
 function renderFearGreed(){
   var fg=computeFearGreed();
-  var needle=document.getElementById('fgNeedle');
+  var fill=document.getElementById('fgFill');         // bar in the combined card
   var val=document.getElementById('fgVal');
   var lbl=document.getElementById('fgLbl');
-  var ctx=document.getElementById('fgContext');
-  if(!needle||!val||!lbl)return;
-  // Map 0..100 → -90°..+90° rotation around center (100,100)
-  var deg=-90+(fg.score/100)*180;
-  needle.style.transform='rotate('+deg+'deg)';
+  var legacyNeedle=document.getElementById('fgNeedle');
+  if(!val||!lbl)return;
+  if(fill)fill.style.width=fg.score+'%';
+  // Legacy SVG needle still exists in a hidden container so old hooks don't break
+  if(legacyNeedle){var deg=-90+(fg.score/100)*180;legacyNeedle.style.transform='rotate('+deg+'deg)';}
   val.textContent=fg.score;
-  val.className='fg-val '+fg.cls;
   lbl.textContent=fg.label;
-  lbl.className='fg-lbl '+fg.cls;
+  lbl.className='rfg-read '+fg.cls;
+  var ctx=document.getElementById('fgContext');
   if(ctx){
     if(fg.total>0){
       ctx.innerHTML='<strong style="color:var(--green2);">'+fg.bull+' bullish</strong> · <strong style="color:var(--red2);">'+fg.bear+' bearish</strong> stories · risk score '+fg.score;
