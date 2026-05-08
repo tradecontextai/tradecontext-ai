@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geopolitical Risk Meter — Sample</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=DM+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#03060d;--bg2:#060c18;--bg3:#0a1220;--bg4:#0f1a2e;
+  --border:#142035;--border2:#1f2e4a;
+  --blue:#0ea5e9;--purple:#8b5cf6;
+  --green:#10b981;--green2:#34d399;
+  --yellow:#f59e0b;--orange:#f97316;
+  --red:#ef4444;--red2:#f87171;
+  --text:#e2eaf4;--text2:#7a9ab8;--text3:#3a5570;
+  --sans:'Outfit',sans-serif;--mono:'DM Mono',monospace;
+  --grad-prem:linear-gradient(135deg,#0ea5e9,#8b5cf6);
+  --grad-bear:linear-gradient(135deg,#ef4444,#f97316);
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:30px;}
+.preview-wrap{max-width:880px;width:100%;}
+.preview-h{text-align:center;margin-bottom:24px;}
+.preview-h h1{font-size:24px;font-weight:900;letter-spacing:-.025em;margin-bottom:6px;}
+.preview-h h1 span{background:var(--grad-prem);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.preview-h p{font-size:13px;color:var(--text2);}
+
+/* ═══════ THE WIDGET — exact spec for Macro Pulse drop-in ═══════ */
+.geo-card{background:linear-gradient(135deg,var(--bg2),rgba(239,68,68,.04) 60%,var(--bg2));border:1px solid var(--border);border-radius:14px;padding:0;overflow:hidden;position:relative;}
+.geo-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad-bear);}
+.geo-h{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.geo-h-l{display:flex;align-items:center;gap:10px;}
+.geo-h-title{font-family:var(--sans);font-size:14px;font-weight:800;color:var(--text);}
+.geo-h-sub{font-family:var(--mono);font-size:9.5px;color:var(--text3);font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-top:2px;}
+.geo-pulse{width:8px;height:8px;border-radius:50%;background:var(--red2);box-shadow:0 0 8px rgba(248,113,113,.7);animation:geoPulse 1.4s ease-in-out infinite;}
+@keyframes geoPulse{0%,100%{opacity:.7;transform:scale(.9);}50%{opacity:1;transform:scale(1.1);}}
+.geo-h-tag{font-family:var(--mono);font-size:9.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:4px 9px;border-radius:100px;}
+
+/* Body — 2-col: gauge + breakdown */
+.geo-body{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);}
+@media (max-width:680px){.geo-body{grid-template-columns:1fr;}}
+.geo-pane{background:var(--bg2);padding:18px 20px;}
+
+/* ─── Left: SVG gauge ─── */
+.geo-gauge-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;}
+.geo-gauge{width:100%;max-width:240px;height:140px;display:block;}
+.geo-arc-bg{fill:none;stroke-width:14;stroke-linecap:round;}
+.geo-arc-fill{fill:none;stroke-width:14;stroke-linecap:round;transition:stroke-dashoffset .9s var(--ease),stroke .6s ease;}
+.geo-tick-row{display:flex;justify-content:space-between;width:100%;max-width:240px;font-family:var(--mono);font-size:8.5px;color:var(--text3);font-weight:700;letter-spacing:.06em;margin-top:-2px;}
+.geo-readout{margin-top:-26px;text-align:center;}
+.geo-score{font-family:var(--sans);font-size:46px;font-weight:900;line-height:1;letter-spacing:-.025em;}
+.geo-level{font-family:var(--mono);font-size:11px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;margin-top:4px;}
+.geo-context{font-family:var(--sans);font-size:11.5px;color:var(--text2);text-align:center;margin-top:10px;line-height:1.5;max-width:240px;}
+.geo-context strong{color:var(--text);}
+
+/* Severity colour scheme */
+.lvl-low      .geo-arc-fill,.lvl-low      .geo-score,.lvl-low      .geo-level{stroke:var(--green2);color:var(--green2);}
+.lvl-elevated .geo-arc-fill,.lvl-elevated .geo-score,.lvl-elevated .geo-level{stroke:var(--yellow);color:var(--yellow);}
+.lvl-high     .geo-arc-fill,.lvl-high     .geo-score,.lvl-high     .geo-level{stroke:var(--orange);color:var(--orange);}
+.lvl-severe   .geo-arc-fill,.lvl-severe   .geo-score,.lvl-severe   .geo-level{stroke:var(--red2);color:var(--red2);}
+.lvl-low      .geo-h-tag{background:rgba(52,211,153,.14);color:var(--green2);border:1px solid rgba(52,211,153,.4);}
+.lvl-elevated .geo-h-tag{background:rgba(245,158,11,.14);color:var(--yellow);border:1px solid rgba(245,158,11,.4);}
+.lvl-high     .geo-h-tag{background:rgba(249,115,22,.16);color:var(--orange);border:1px solid rgba(249,115,22,.4);}
+.lvl-severe   .geo-h-tag{background:rgba(239,68,68,.16);color:var(--red2);border:1px solid rgba(239,68,68,.4);animation:geoTagPulse 1.6s ease-in-out infinite;}
+@keyframes geoTagPulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0);}50%{box-shadow:0 0 14px rgba(239,68,68,.45);}}
+
+/* ─── Right: hotspots + driver list ─── */
+.geo-section-h{font-family:var(--mono);font-size:9px;font-weight:800;color:var(--text3);letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px;}
+.hotspot{display:grid;grid-template-columns:auto 1fr 56px;align-items:center;gap:10px;padding:8px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;margin-bottom:5px;font-family:var(--sans);transition:.2s;}
+.hotspot:hover{border-color:var(--border2);transform:translateX(2px);}
+.hotspot .hs-flag{font-size:18px;line-height:1;}
+.hotspot .hs-name{font-size:12.5px;font-weight:700;color:var(--text);}
+.hotspot .hs-sub{font-family:var(--mono);font-size:9px;color:var(--text3);font-weight:600;margin-top:1px;}
+.hotspot .hs-bar-wrap{justify-self:end;width:56px;}
+.hotspot .hs-bar-track{height:5px;background:var(--bg);border-radius:3px;overflow:hidden;}
+.hotspot .hs-bar-fill{height:100%;border-radius:3px;transition:width .8s var(--ease);}
+.hs-fill-low{background:linear-gradient(90deg,var(--green2),var(--yellow));}
+.hs-fill-mid{background:linear-gradient(90deg,var(--yellow),var(--orange));}
+.hs-fill-hi{background:linear-gradient(90deg,var(--orange),var(--red2));}
+.hotspot .hs-pct{font-family:var(--mono);font-size:9px;color:var(--text2);font-weight:700;text-align:right;margin-top:3px;}
+
+/* Driver chips — what's pumping the score right now */
+.driver-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;}
+.driver{padding:5px 10px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.3);border-radius:100px;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--red2);letter-spacing:.04em;display:inline-flex;align-items:center;gap:6px;}
+.driver .ct{background:rgba(239,68,68,.2);padding:1px 6px;border-radius:8px;font-size:9px;font-weight:800;}
+
+/* Footer ribbon — most recent contributing headline */
+.geo-foot{padding:11px 18px;background:var(--bg3);border-top:1px solid var(--border);font-family:var(--mono);font-size:10.5px;color:var(--text2);display:flex;align-items:center;gap:10px;line-height:1.4;}
+.geo-foot .foot-icon{font-size:14px;flex-shrink:0;}
+.geo-foot .foot-time{color:var(--text3);font-weight:700;flex-shrink:0;}
+.geo-foot .foot-text{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.geo-foot .foot-impact{color:var(--text);font-weight:800;flex-shrink:0;}
+
+/* Demo-only controls */
+.demo-bar{margin-top:24px;padding:14px 18px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.demo-bar span{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;margin-right:auto;}
+.demo-bar button{padding:7px 12px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-family:var(--mono);font-size:10.5px;font-weight:700;border-radius:6px;cursor:pointer;letter-spacing:.04em;transition:.15s;}
+.demo-bar button:hover{border-color:var(--blue);color:var(--blue);}
+.demo-bar button.active{background:var(--bluedim, rgba(14,165,233,.1));border-color:var(--blue);color:var(--blue);}
+</style>
+</head>
+<body>
+
+<div class="preview-wrap">
+
+  <div class="preview-h">
+    <h1>Geopolitical <span>Risk Meter</span> — sample</h1>
+    <p>Standalone preview. Drops into the Macro Pulse section as a 4th card next to the Sessions / Currency / Risk Therm tiles.</p>
+  </div>
+
+  <!-- ═══════ THE WIDGET ═══════ -->
+  <div class="geo-card lvl-severe" id="geoCard">
+    <div class="geo-h">
+      <div class="geo-h-l">
+        <div class="geo-pulse"></div>
+        <div>
+          <div class="geo-h-title">⚔️ Geopolitical Risk Meter</div>
+          <div class="geo-h-sub">Live · 24h news scan · 50+ keywords</div>
+        </div>
+      </div>
+      <span class="geo-h-tag" id="geoTag">SEVERE</span>
+    </div>
+
+    <div class="geo-body">
+      <!-- Left: gauge -->
+      <div class="geo-pane">
+        <div class="geo-gauge-wrap">
+          <svg class="geo-gauge" viewBox="0 0 240 140" preserveAspectRatio="xMidYMid meet">
+            <!-- Track -->
+            <path class="geo-arc-bg" stroke="rgba(255,255,255,.06)" d="M 28 120 A 92 92 0 0 1 212 120"/>
+            <!-- Fill (animated) -->
+            <path class="geo-arc-fill" id="geoArc" stroke-dasharray="289" stroke-dashoffset="0" d="M 28 120 A 92 92 0 0 1 212 120"/>
+          </svg>
+          <div class="geo-tick-row">
+            <span>0</span><span>25</span><span>50</span><span>75</span><span>100</span>
+          </div>
+          <div class="geo-readout">
+            <div class="geo-score" id="geoScore">82</div>
+            <div class="geo-level" id="geoLevel">SEVERE</div>
+          </div>
+          <div class="geo-context" id="geoContext">
+            <strong>Iran-US Hormuz tensions</strong> driving safe-haven flow. Gold +1.4%, oil +3.2%, VIX bid.
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: hotspots + drivers -->
+      <div class="geo-pane">
+        <div class="geo-section-h">🌐 Hotspots</div>
+        <div class="hotspot">
+          <span class="hs-flag">🇮🇷</span>
+          <div><div class="hs-name">Middle East</div><div class="hs-sub">Iran · Hormuz · Israel</div></div>
+          <div class="hs-bar-wrap">
+            <div class="hs-bar-track"><div class="hs-bar-fill hs-fill-hi" style="width:88%"></div></div>
+            <div class="hs-pct">88</div>
+          </div>
+        </div>
+        <div class="hotspot">
+          <span class="hs-flag">🇺🇦</span>
+          <div><div class="hs-name">Eastern Europe</div><div class="hs-sub">Russia · Ukraine · NATO</div></div>
+          <div class="hs-bar-wrap">
+            <div class="hs-bar-track"><div class="hs-bar-fill hs-fill-mid" style="width:54%"></div></div>
+            <div class="hs-pct">54</div>
+          </div>
+        </div>
+        <div class="hotspot">
+          <span class="hs-flag">🇨🇳</span>
+          <div><div class="hs-name">Asia-Pacific</div><div class="hs-sub">Taiwan · S. China Sea · DPRK</div></div>
+          <div class="hs-bar-wrap">
+            <div class="hs-bar-track"><div class="hs-bar-fill hs-fill-mid" style="width:41%"></div></div>
+            <div class="hs-pct">41</div>
+          </div>
+        </div>
+
+        <div class="driver-row" aria-label="What's driving the score">
+          <span class="driver">Hormuz <span class="ct">17</span></span>
+          <span class="driver">Iran <span class="ct">14</span></span>
+          <span class="driver">Strait <span class="ct">9</span></span>
+          <span class="driver">Sanctions <span class="ct">6</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer ribbon: latest contributing headline -->
+    <div class="geo-foot">
+      <span class="foot-icon">⚡</span>
+      <span class="foot-time" id="geoFootTime">3m ago</span>
+      <span class="foot-text" id="geoFootText">"Reports filtering in that Iran launched missiles at US Navy ships"</span>
+      <span class="foot-impact">+8</span>
+    </div>
+  </div>
+
+  <!-- Demo controls — flip through severity states to feel the animation -->
+  <div class="demo-bar">
+    <span>Preview state:</span>
+    <button onclick="setLevel(18,'low')">Low (18)</button>
+    <button onclick="setLevel(42,'elevated')">Elevated (42)</button>
+    <button onclick="setLevel(67,'high')">High (67)</button>
+    <button class="active" onclick="setLevel(82,'severe')">Severe (82)</button>
+  </div>
+
+</div>
+
+<script>
+// Animate the arc fill — full arc length ≈ 289 px (matches stroke-dasharray)
+var ARC_LEN=289;
+
+function setLevel(score,level){
+  var card=document.getElementById('geoCard');
+  card.classList.remove('lvl-low','lvl-elevated','lvl-high','lvl-severe');
+  card.classList.add('lvl-'+level);
+
+  document.getElementById('geoScore').textContent=score;
+  document.getElementById('geoLevel').textContent=level.toUpperCase();
+  document.getElementById('geoTag').textContent=level.toUpperCase();
+
+  var pct=Math.max(0,Math.min(100,score))/100;
+  var offset=ARC_LEN*(1-pct);
+  document.getElementById('geoArc').setAttribute('stroke-dashoffset',offset);
+
+  // Demo tag-along context
+  var ctx={
+    low:'<strong>Calm baseline.</strong> No major active conflicts driving safe-haven flow.',
+    elevated:'<strong>Elevated chatter</strong> on Russia/Ukraine + China-Taiwan. Moderate gold bid.',
+    high:'<strong>Active escalation risks.</strong> Watch oil + gold for breakouts on next headline.',
+    severe:'<strong>Iran-US Hormuz tensions</strong> driving safe-haven flow. Gold +1.4%, oil +3.2%, VIX bid.'
+  };
+  document.getElementById('geoContext').innerHTML=ctx[level];
+
+  // Demo button state
+  document.querySelectorAll('.demo-bar button').forEach(function(b){
+    b.classList.toggle('active',b.textContent.indexOf(score+'')!==-1);
+  });
+}
+
+// Boot at "severe" so the card looks alive on first paint
+setTimeout(function(){setLevel(82,'severe');},50);
+</script>
+
+</body>
+</html>
