@@ -5034,7 +5034,13 @@ document.addEventListener('click',function(e){
 // ════════════════════════════════════════════════════════════════════
 // ONBOARDING WIZARD — only fires once (until completed/skipped)
 // ════════════════════════════════════════════════════════════════════
+// Same launch flag as the paywall — hidden until you flip it on.
+window.TC_ONBOARDING_ENABLED = false;
 (function onboarding(){
+  if(!window.TC_ONBOARDING_ENABLED){
+    var m=document.getElementById('obModal');if(m)m.style.display='none';
+    return;
+  }
   var KEY='tc_onboarded';
   if(localStorage.getItem(KEY)==='1')return;
   var step=1, total=4, data={};
@@ -5195,12 +5201,18 @@ window.aiChatSend=function(){
 // ════════════════════════════════════════════════════════════════════
 // PAYWALL — 2-minute free preview, then locks the dashboard
 // ════════════════════════════════════════════════════════════════════
-// Cumulative seconds spent on the dashboard (across visits) live in
-// localStorage. After PAYWALL_LIMIT_S we show a blocking modal with three
-// pricing tiers. Already-paid users are detected via /api/auth/me and skip
-// the gate entirely. The modal can't be dismissed without a checkout click,
-// but it WILL allow sign-in (existing customers).
+// FLIP THIS TO `true` ON LAUNCH DAY. Until then the paywall countdown
+// strip + checkout modal stay hidden so the preview never locks while
+// you're iterating. (Stripe checkout, the 3 pricing tiers, the modal
+// markup, the affiliate plumbing — all built and waiting.)
+window.TC_PAYWALL_ENABLED = false;
+
 (function paywall(){
+  if(!window.TC_PAYWALL_ENABLED){
+    var strip=document.getElementById('pwStrip');if(strip)strip.style.display='none';
+    var modal=document.getElementById('pwModal');if(modal)modal.style.display='none';
+    return;
+  }
   var PAYWALL_LIMIT_S=120;            // 2-minute preview
   var KEY='tc_paywall_seconds';
   var EXEMPT_KEY='tc_paywall_exempt'; // sticky once we've confirmed paid
