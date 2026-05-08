@@ -511,13 +511,21 @@ body{overflow-x:hidden;overflow-y:auto;}
 /* Macro Pulse: 2-column — left widget stack, right World Map full-height */
 .macro-pulse-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:1px;background:var(--border);align-items:stretch;}
 @media (max-width:1100px){.macro-pulse-grid{grid-template-columns:1fr;}}
-.mp-left-stack{display:grid;grid-template-columns:1fr 1fr;grid-template-areas:"sess sess" "ccy geo" "riskfg mood" "vol vol";gap:1px;background:var(--border);}
-@media (max-width:780px){.mp-left-stack{grid-template-columns:1fr;grid-template-areas:"sess" "ccy" "geo" "riskfg" "mood" "vol";}}
+.mp-left-stack{display:grid;grid-template-columns:1fr 1fr;grid-template-areas:"sess sess" "ccy geo" "riskfg mood";gap:1px;background:var(--border);}
+@media (max-width:780px){.mp-left-stack{grid-template-columns:1fr;grid-template-areas:"sess" "ccy" "geo" "riskfg" "mood";}}
 .mp-left-stack > .mp-card{display:flex;flex-direction:column;min-height:0;background:var(--bg2);}
 .mp-left-stack > .sess-card{grid-area:sess;}
-.mp-left-stack > .vol-card{grid-area:vol;}
 .mp-left-stack > .geo-mp-card{grid-area:geo;}
 .mp-left-stack > .riskfg-card{grid-area:riskfg;}
+.mp-left-stack > .ccy-card{grid-area:ccy;}
+
+/* ─── Currency / Movers tab switcher ─── */
+.ccy-tabs{display:flex;gap:1px;background:var(--border);border-radius:6px;overflow:hidden;margin-bottom:10px;border:1px solid var(--border);}
+.ccy-tabs .ccy-tab{flex:1;background:var(--bg2);border:none;color:var(--text2);font-family:var(--mono);font-size:10px;font-weight:700;padding:7px 10px;cursor:pointer;letter-spacing:.04em;transition:.15s;text-align:center;}
+.ccy-tabs .ccy-tab:hover{color:var(--text);background:var(--bg3);}
+.ccy-tabs .ccy-tab.active{background:rgba(14,165,233,.12);color:var(--blue);box-shadow:inset 0 -2px 0 var(--blue);}
+.ccy-pane{display:none;}
+.ccy-pane.active{display:block;animation:fadeUp .22s var(--ease-out-quart);}
 
 /* ─── Combined Risk + Fear&Greed table card ─── */
 .riskfg-card .rfg-table{width:100%;border-collapse:collapse;font-family:var(--sans);}
@@ -1936,14 +1944,26 @@ body{overflow-x:hidden;overflow-y:auto;}
               <div class="sess-overlap-info" id="sessOverlapInfo">—</div>
             </div>
 
-            <!-- Currency Strength + Risk Therm (side-by-side) -->
-            <div class="mp-card">
+            <!-- Combined Currency Strength + Volatility Pulse — tabbed switcher -->
+            <div class="mp-card ccy-card">
               <div class="mp-card-h">
-                <div class="mp-card-title">💪 Currency Strength</div>
-                <div class="mp-card-sub" id="ccySubtitle">Live drift · since you opened · Yahoo prices</div>
+                <div class="mp-card-title">💪 Strength &amp; Movers</div>
+                <div class="mp-card-sub" id="ccySubtitle">Live drift · since prev close · Yahoo + Binance</div>
               </div>
-              <div class="ccy-strength" id="ccyStrength"></div>
-              <div class="ccy-callout" id="ccyCallout">—</div>
+              <div class="ccy-tabs">
+                <button class="ccy-tab active" data-tab="ccy" onclick="setCcyTab('ccy',this)">💪 Currency Strength</button>
+                <button class="ccy-tab" data-tab="vol" onclick="setCcyTab('vol',this)">⚡ Top Movers</button>
+              </div>
+              <!-- Currency tab pane -->
+              <div class="ccy-pane active" id="ccyPaneCcy">
+                <div class="ccy-strength" id="ccyStrength"></div>
+                <div class="ccy-callout" id="ccyCallout">—</div>
+              </div>
+              <!-- Vol Pulse tab pane (was a separate card; merged here) -->
+              <div class="ccy-pane" id="ccyPaneVol">
+                <div class="vol-pulse" id="volPulse"></div>
+                <div class="vol-foot" id="volPulseFoot">↑ Live % move vs prev close · refreshes every 30s</div>
+              </div>
             </div>
 
             <!-- Combined Risk Sentiment + Fear & Greed in one compact card -->
@@ -1996,16 +2016,6 @@ body{overflow-x:hidden;overflow-y:auto;}
               </div>
               <div class="mood-grid" id="moodGrid"></div>
               <div class="mood-summary" id="moodSummary" style="font-family:var(--mono);font-size:10px;color:var(--text2);text-align:center;margin-top:10px;line-height:1.5;">Awaiting data…</div>
-            </div>
-
-            <!-- Volatility Pulse (now half-width, sits next to Geo Risk) -->
-            <div class="mp-card vol-card">
-              <div class="mp-card-h">
-                <div class="mp-card-title">⚡ Volatility Pulse</div>
-                <div class="mp-card-sub" id="volSubtitle">Biggest movers · live · Yahoo + Binance</div>
-              </div>
-              <div class="vol-pulse" id="volPulse"></div>
-              <div class="vol-foot" id="volPulseFoot">↑ Live % move since session open · refreshes every 30s</div>
             </div>
 
             <!-- Geopolitical Risk Meter — scans last 24h news for conflict keywords -->
@@ -3791,6 +3801,15 @@ function ccyStrengthFor(ccy){
   if(!deltas.length)return 0;
   return deltas.reduce(function(a,b){return a+b;},0)/deltas.length;
 }
+
+// Tab switcher inside the merged Currency Strength + Volatility Pulse card.
+// Both panes are pre-rendered on every tick — switching is a CSS class flip.
+window.setCcyTab=function(which,btn){
+  document.querySelectorAll('.ccy-card .ccy-tab').forEach(function(b){b.classList.remove('active');});
+  if(btn)btn.classList.add('active');
+  document.getElementById('ccyPaneCcy').classList.toggle('active',which==='ccy');
+  document.getElementById('ccyPaneVol').classList.toggle('active',which==='vol');
+};
 
 function renderCcyStrength(){
   var el=document.getElementById('ccyStrength');if(!el)return;
