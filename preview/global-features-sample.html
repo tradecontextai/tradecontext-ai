@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Global Features Preview — TradeContext.ai</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=DM+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#03060d;--bg2:#060c18;--bg3:#0a1220;--bg4:#0f1a2e;
+  --border:#142035;--border2:#1f2e4a;
+  --blue:#0ea5e9;--purple:#8b5cf6;
+  --green:#10b981;--green2:#34d399;
+  --yellow:#f59e0b;--orange:#f97316;
+  --red:#ef4444;--red2:#f87171;
+  --text:#e2eaf4;--text2:#7a9ab8;--text3:#3a5570;
+  --sans:'Outfit',sans-serif;--mono:'DM Mono',monospace;
+  --grad-prem:linear-gradient(135deg,#0ea5e9,#8b5cf6);
+  --grad-bull:linear-gradient(135deg,#10b981,#34d399);
+  --grad-bear:linear-gradient(135deg,#ef4444,#f97316);
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;line-height:1.5;}
+a{color:var(--blue);text-decoration:none;}
+.container{max-width:1080px;margin:0 auto;padding:30px 24px 80px;}
+
+/* Top nav strip — anchors to sections */
+.preview-nav{position:sticky;top:0;z-index:50;background:rgba(3,6,13,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.preview-logo{font-size:15px;font-weight:900;letter-spacing:-.02em;}
+.preview-logo span{background:var(--grad-prem);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.preview-tag{font-family:var(--mono);font-size:9.5px;font-weight:800;color:var(--blue);background:rgba(14,165,233,.1);border:1px solid rgba(14,165,233,.3);padding:4px 9px;border-radius:100px;letter-spacing:.1em;text-transform:uppercase;}
+.preview-anchors{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;}
+.preview-anchors a{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--text2);padding:6px 10px;border-radius:5px;letter-spacing:.04em;border:1px solid var(--border);}
+.preview-anchors a:hover{border-color:var(--blue);color:var(--blue);}
+
+/* Section blocks */
+section{padding:48px 0;border-bottom:1px solid var(--border);}
+section:last-of-type{border-bottom:none;}
+.sec-eyebrow{font-family:var(--mono);font-size:10px;font-weight:800;color:var(--blue);letter-spacing:.16em;text-transform:uppercase;margin-bottom:12px;}
+.sec-title{font-size:28px;font-weight:900;letter-spacing:-.025em;margin-bottom:8px;line-height:1.1;}
+.sec-title span{background:var(--grad-prem);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.sec-sub{font-size:14px;color:var(--text2);margin-bottom:24px;max-width:680px;}
+
+/* Re-usable card */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:22px;}
+.card + .card{margin-top:14px;}
+.card-h{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:16px;flex-wrap:wrap;}
+.card-h-title{font-family:var(--sans);font-size:14px;font-weight:800;color:var(--text);}
+.card-h-sub{font-family:var(--mono);font-size:9.5px;color:var(--text3);font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-top:2px;}
+
+/* ─── 1. Language switcher ─── */
+.lang-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
+.lang-row label{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;}
+.lang-select{background:var(--bg3);border:1px solid var(--border);color:var(--text);font-family:var(--sans);font-size:13px;font-weight:700;padding:9px 12px;border-radius:7px;outline:none;cursor:pointer;}
+.lang-demo-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media (max-width:680px){.lang-demo-grid{grid-template-columns:1fr;}}
+.lang-demo{padding:16px 18px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;}
+.lang-demo .l-eyebrow{font-family:var(--mono);font-size:9px;font-weight:800;color:var(--blue);letter-spacing:.14em;margin-bottom:6px;text-transform:uppercase;}
+.lang-demo .l-h{font-size:18px;font-weight:800;letter-spacing:-.015em;margin-bottom:6px;}
+.lang-demo .l-body{font-size:13px;color:var(--text2);line-height:1.6;}
+.lang-demo .l-cta{display:inline-block;margin-top:10px;padding:7px 14px;background:var(--grad-prem);color:#fff;font-family:var(--sans);font-size:11.5px;font-weight:800;border-radius:6px;letter-spacing:.04em;}
+
+/* ─── 2. Multi-currency ─── */
+.ccy-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+@media (max-width:680px){.ccy-row{grid-template-columns:1fr 1fr;}}
+.ccy-tier{padding:18px 16px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;text-align:center;}
+.ccy-tier.featured{border-color:var(--blue);background:linear-gradient(180deg,rgba(14,165,233,.06),rgba(139,92,246,.02));}
+.ccy-tier .ccy-name{font-family:var(--mono);font-size:9px;font-weight:800;color:var(--text2);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;}
+.ccy-tier .ccy-price{font-family:var(--sans);font-size:24px;font-weight:900;color:var(--text);letter-spacing:-.02em;line-height:1;}
+.ccy-tier .ccy-period{font-family:var(--mono);font-size:9.5px;color:var(--text3);font-weight:700;margin-top:4px;}
+
+/* ─── 3. Payment methods ─── */
+.pay-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+@media (max-width:780px){.pay-grid{grid-template-columns:repeat(3,1fr);}}
+@media (max-width:540px){.pay-grid{grid-template-columns:repeat(2,1fr);}}
+.pay-method{padding:14px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;text-align:center;font-family:var(--sans);}
+.pay-method .pm-icon{font-size:24px;margin-bottom:6px;}
+.pay-method .pm-name{font-size:12px;font-weight:800;color:var(--text);}
+.pay-method .pm-region{font-family:var(--mono);font-size:8.5px;color:var(--text3);font-weight:700;letter-spacing:.04em;text-transform:uppercase;margin-top:3px;}
+.pay-method.featured{border-color:var(--green2);box-shadow:0 0 0 1px rgba(52,211,153,.2);}
+.pay-method.featured .pm-region{color:var(--green2);}
+
+/* ─── 4. Daily Market Wrap ─── */
+.wrap-article{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:28px 30px;}
+.wrap-article .wa-eyebrow{font-family:var(--mono);font-size:10px;font-weight:800;color:var(--blue);letter-spacing:.16em;text-transform:uppercase;margin-bottom:10px;}
+.wrap-article .wa-title{font-family:var(--sans);font-size:26px;font-weight:900;letter-spacing:-.022em;margin-bottom:6px;line-height:1.15;}
+.wrap-article .wa-meta{font-family:var(--mono);font-size:10.5px;color:var(--text3);font-weight:600;letter-spacing:.04em;margin-bottom:24px;}
+.wrap-region{display:grid;grid-template-columns:80px 1fr 60px;gap:14px;align-items:flex-start;padding:14px 0;border-top:1px solid var(--border);}
+.wrap-region:first-of-type{border-top:none;padding-top:0;}
+.wrap-region .wr-flag{font-size:22px;line-height:1;}
+.wrap-region .wr-h{font-size:14px;font-weight:800;color:var(--text);margin-bottom:4px;}
+.wrap-region .wr-body{font-size:13px;color:var(--text2);line-height:1.55;}
+.wrap-region .wr-tag{font-family:var(--mono);font-size:9.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:4px 8px;border-radius:5px;text-align:center;align-self:flex-start;}
+.wrap-region .wr-tag.bull{color:var(--green2);background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.35);}
+.wrap-region .wr-tag.bear{color:var(--red2);background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.35);}
+.wrap-region .wr-tag.flat{color:var(--yellow);background:rgba(245,158,11,.10);border:1px solid rgba(245,158,11,.35);}
+.wrap-langs{display:flex;flex-wrap:wrap;gap:6px;margin-top:18px;padding-top:18px;border-top:1px dashed var(--border);}
+.wrap-lang{font-family:var(--mono);font-size:9.5px;font-weight:700;color:var(--text2);padding:5px 10px;background:var(--bg);border:1px solid var(--border);border-radius:100px;letter-spacing:.04em;}
+.wrap-lang.active{background:rgba(14,165,233,.12);border-color:var(--blue);color:var(--blue);}
+
+/* ─── 5. Native-language news scoring ─── */
+.news-stack{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media (max-width:780px){.news-stack{grid-template-columns:1fr;}}
+.news-tile{padding:16px 18px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;}
+.news-tile.bull{border-left:3px solid var(--green2);}
+.news-tile.bear{border-left:3px solid var(--red2);}
+.news-tile.neut{border-left:3px solid var(--yellow);}
+.news-tile .nt-h{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.news-tile .nt-flag{font-size:18px;line-height:1;}
+.news-tile .nt-meta{font-family:var(--mono);font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;}
+.news-tile .nt-bias{margin-left:auto;font-family:var(--mono);font-size:9.5px;font-weight:800;padding:3px 8px;border-radius:4px;letter-spacing:.06em;text-transform:uppercase;}
+.news-tile .nt-bias.bull{background:rgba(52,211,153,.16);color:var(--green2);border:1px solid rgba(52,211,153,.4);}
+.news-tile .nt-bias.bear{background:rgba(239,68,68,.16);color:var(--red2);border:1px solid rgba(239,68,68,.4);}
+.news-tile .nt-bias.neut{background:rgba(245,158,11,.16);color:var(--yellow);border:1px solid rgba(245,158,11,.4);}
+.news-tile .nt-orig{font-size:14px;font-weight:700;color:var(--text);line-height:1.5;margin-bottom:6px;}
+.news-tile .nt-trans{font-size:12.5px;font-style:italic;color:var(--text2);line-height:1.55;padding:8px 10px;background:rgba(14,165,233,.05);border-left:2px solid var(--blue);border-radius:0 5px 5px 0;}
+.news-tile .nt-trans-lbl{font-family:var(--mono);font-size:8.5px;color:var(--blue);font-weight:800;letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:3px;}
+.news-tile .nt-foot{margin-top:8px;display:flex;align-items:center;justify-content:space-between;font-family:var(--mono);font-size:9.5px;color:var(--text3);font-weight:600;}
+.news-tile .nt-foot .nt-syms{display:flex;gap:4px;}
+.news-tile .nt-foot .nt-sym{padding:2px 6px;background:var(--bg);border:1px solid var(--border);border-radius:3px;color:var(--text2);font-size:9px;}
+
+/* ─── 6. Sharia mode ─── */
+.sharia-row{display:flex;align-items:center;gap:14px;padding:14px 18px;background:linear-gradient(135deg,rgba(52,211,153,.08),transparent);border:1px solid rgba(52,211,153,.3);border-radius:10px;margin-bottom:14px;}
+.sharia-icon{font-size:28px;line-height:1;}
+.sharia-text{flex:1;}
+.sharia-text strong{color:var(--green2);}
+.sharia-toggle{position:relative;width:46px;height:24px;background:var(--bg);border-radius:12px;cursor:pointer;border:1px solid var(--border);}
+.sharia-toggle.on{background:rgba(52,211,153,.2);border-color:var(--green2);}
+.sharia-toggle::after{content:'';position:absolute;top:2px;left:2px;width:18px;height:18px;background:var(--text2);border-radius:50%;transition:.2s var(--ease);}
+.sharia-toggle.on::after{left:24px;background:var(--green2);}
+.asset-table{width:100%;border-collapse:collapse;font-family:var(--sans);}
+.asset-table th{font-family:var(--mono);font-size:9px;font-weight:800;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);}
+.asset-table td{padding:10px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text);}
+.asset-table tr:last-child td{border-bottom:none;}
+.asset-table .asset-sym{font-family:var(--mono);font-weight:800;}
+.asset-table .asset-pass{color:var(--green2);font-weight:800;}
+.asset-table .asset-fail{color:var(--red2);font-weight:800;}
+.asset-table tr.filtered td{opacity:.4;background:rgba(239,68,68,.04);}
+.asset-table .asset-reason{font-family:var(--mono);font-size:10px;color:var(--text3);}
+
+/* ─── 7. Local indices ─── */
+.idx-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+@media (max-width:780px){.idx-grid{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:480px){.idx-grid{grid-template-columns:1fr;}}
+.idx-tile{padding:13px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:9px;}
+.idx-tile .ix-h{display:flex;align-items:center;gap:6px;margin-bottom:6px;}
+.idx-tile .ix-flag{font-size:14px;}
+.idx-tile .ix-name{font-family:var(--sans);font-size:12.5px;font-weight:800;color:var(--text);}
+.idx-tile .ix-sub{font-family:var(--mono);font-size:9px;color:var(--text3);font-weight:700;letter-spacing:.04em;}
+.idx-tile .ix-row{display:flex;align-items:baseline;justify-content:space-between;margin-top:4px;}
+.idx-tile .ix-px{font-family:var(--mono);font-size:14px;font-weight:800;color:var(--text);}
+.idx-tile .ix-pct{font-family:var(--mono);font-size:11px;font-weight:800;}
+.idx-tile .ix-pct.up{color:var(--green2);}
+.idx-tile .ix-pct.dn{color:var(--red2);}
+
+/* Sticky footer note */
+.preview-foot{position:fixed;bottom:0;left:0;right:0;padding:12px 24px;background:rgba(6,12,24,.95);backdrop-filter:blur(10px);border-top:1px solid var(--border);text-align:center;z-index:99;}
+.preview-foot p{font-family:var(--mono);font-size:11px;color:var(--text2);font-weight:600;letter-spacing:.04em;}
+.preview-foot strong{color:var(--text);}
+</style>
+</head>
+<body>
+
+<div class="preview-nav">
+  <div class="preview-logo">TradeContext<span>.ai</span></div>
+  <span class="preview-tag">Preview · global features</span>
+  <div class="preview-anchors">
+    <a href="#sec-lang">Language</a>
+    <a href="#sec-ccy">Currency</a>
+    <a href="#sec-pay">Payments</a>
+    <a href="#sec-wrap">Daily wrap</a>
+    <a href="#sec-news">Local news</a>
+    <a href="#sec-sharia">Sharia</a>
+    <a href="#sec-idx">Indices</a>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- ════════ 1. Multi-language UI ════════ -->
+  <section id="sec-lang">
+    <div class="sec-eyebrow">1 · Multi-language UI + AI Chat</div>
+    <h2 class="sec-title">Pick your language. <span>The whole dashboard follows.</span></h2>
+    <p class="sec-sub">Every dashboard string + AI chat + bias commentary localizes via Claude. Switch live, no reload. Try the dropdown:</p>
+
+    <div class="card">
+      <div class="lang-row">
+        <label for="langSel">Language:</label>
+        <select id="langSel" class="lang-select" onchange="applyLang(this.value)">
+          <option value="en">🇬🇧 English</option>
+          <option value="es">🇪🇸 Español</option>
+          <option value="ar">🇸🇦 العربية</option>
+          <option value="hi">🇮🇳 हिन्दी</option>
+          <option value="zh">🇨🇳 中文</option>
+          <option value="pt">🇧🇷 Português</option>
+          <option value="ru">🇷🇺 Русский</option>
+          <option value="de">🇩🇪 Deutsch</option>
+          <option value="fr">🇫🇷 Français</option>
+        </select>
+      </div>
+      <div class="lang-demo-grid">
+        <div class="lang-demo">
+          <div class="l-eyebrow" data-i18n="newsBadge">⚡ Breaking news</div>
+          <div class="l-h" data-i18n="newsTitle">Iran-US Hormuz tensions push gold +1.4%</div>
+          <div class="l-body" data-i18n="newsBody">Safe-haven flow accelerating. AI bias: bullish XAU/USD. Watch oil + JPY for follow-through.</div>
+          <a class="l-cta" data-i18n="cta">View AI playbook →</a>
+        </div>
+        <div class="lang-demo">
+          <div class="l-eyebrow" data-i18n="aiEyebrow">🧠 AI trading analyst</div>
+          <div class="l-h" data-i18n="aiTitle">Why is gold moving right now?</div>
+          <div class="l-body" data-i18n="aiBody">Iran-US military escalation near the Strait of Hormuz is driving a textbook safe-haven bid. Gold up 1.4%, oil up 3.2% — both consistent with a geopolitical risk-off rotation.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════ 2. Multi-currency pricing ════════ -->
+  <section id="sec-ccy">
+    <div class="sec-eyebrow">2 · Multi-currency pricing</div>
+    <h2 class="sec-title">Show pricing in <span>their money</span>, not yours.</h2>
+    <p class="sec-sub">Every $ amount on the dashboard renders in the viewer's home currency via live FX. Pricing page leads with their currency. Cuts checkout friction in non-USD markets ~40%.</p>
+    <div class="card">
+      <div class="lang-row">
+        <label for="ccySel">Currency:</label>
+        <select id="ccySel" class="lang-select" onchange="applyCcy(this.value)">
+          <option value="USD">🇺🇸 USD ($)</option>
+          <option value="GBP">🇬🇧 GBP (£)</option>
+          <option value="EUR">🇪🇺 EUR (€)</option>
+          <option value="INR">🇮🇳 INR (₹)</option>
+          <option value="BRL">🇧🇷 BRL (R$)</option>
+          <option value="JPY">🇯🇵 JPY (¥)</option>
+          <option value="AED">🇦🇪 AED (د.إ)</option>
+          <option value="ZAR">🇿🇦 ZAR (R)</option>
+        </select>
+      </div>
+      <div class="ccy-row">
+        <div class="ccy-tier">
+          <div class="ccy-name">Monthly</div>
+          <div class="ccy-price" id="priceMonth">$39.95</div>
+          <div class="ccy-period">/month</div>
+        </div>
+        <div class="ccy-tier featured">
+          <div class="ccy-name">Annual · Save 17%</div>
+          <div class="ccy-price" id="priceYear">$399</div>
+          <div class="ccy-period">/year</div>
+        </div>
+        <div class="ccy-tier">
+          <div class="ccy-name">Lifetime</div>
+          <div class="ccy-price" id="priceLife">$799</div>
+          <div class="ccy-period">once</div>
+        </div>
+        <div class="ccy-tier">
+          <div class="ccy-name">Daily fx-quoted</div>
+          <div class="ccy-price" id="priceFx" style="font-size:14px;">live FX</div>
+          <div class="ccy-period">refreshed hourly</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════ 3. Local payment methods ════════ -->
+  <section id="sec-pay">
+    <div class="sec-eyebrow">3 · Local payment methods</div>
+    <h2 class="sec-title">Stripe ➕ <span>the methods Stripe doesn't cover.</span></h2>
+    <p class="sec-sub">UPI, Pix, M-Pesa, GCash, Alipay, WeChat Pay — each one unlocks a country. Wired via Stripe + Razorpay (India), Mercado Pago (LatAm), Flutterwave (Africa), regional rails for the rest.</p>
+    <div class="card">
+      <div class="card-h">
+        <div>
+          <div class="card-h-title">Available checkout methods</div>
+          <div class="card-h-sub">Auto-shown by viewer geo at checkout</div>
+        </div>
+      </div>
+      <div class="pay-grid">
+        <div class="pay-method"><div class="pm-icon">💳</div><div class="pm-name">Card</div><div class="pm-region">Global</div></div>
+        <div class="pay-method featured"><div class="pm-icon">📱</div><div class="pm-name">UPI</div><div class="pm-region">🇮🇳 India</div></div>
+        <div class="pay-method featured"><div class="pm-icon">💚</div><div class="pm-name">Pix</div><div class="pm-region">🇧🇷 Brazil</div></div>
+        <div class="pay-method featured"><div class="pm-icon">📲</div><div class="pm-name">M-Pesa</div><div class="pm-region">🇰🇪 Kenya</div></div>
+        <div class="pay-method"><div class="pm-icon">🅿️</div><div class="pm-name">PayPal</div><div class="pm-region">Global</div></div>
+        <div class="pay-method featured"><div class="pm-icon">🟦</div><div class="pm-name">GCash</div><div class="pm-region">🇵🇭 Philippines</div></div>
+        <div class="pay-method"><div class="pm-icon">🇸🇬</div><div class="pm-name">PayNow</div><div class="pm-region">🇸🇬 Singapore</div></div>
+        <div class="pay-method"><div class="pm-icon">🟢</div><div class="pm-name">Alipay</div><div class="pm-region">🇨🇳 China</div></div>
+        <div class="pay-method"><div class="pm-icon">💬</div><div class="pm-name">WeChat Pay</div><div class="pm-region">🇨🇳 China</div></div>
+        <div class="pay-method"><div class="pm-icon">🇪🇺</div><div class="pm-name">SEPA</div><div class="pm-region">🇪🇺 EU</div></div>
+        <div class="pay-method"><div class="pm-icon">🟣</div><div class="pm-name">iDEAL</div><div class="pm-region">🇳🇱 Netherlands</div></div>
+        <div class="pay-method"><div class="pm-icon">🇩🇪</div><div class="pm-name">Sofort</div><div class="pm-region">🇩🇪 Germany</div></div>
+        <div class="pay-method"><div class="pm-icon">🟠</div><div class="pm-name">Bizum</div><div class="pm-region">🇪🇸 Spain</div></div>
+        <div class="pay-method"><div class="pm-icon">🟡</div><div class="pm-name">FPX</div><div class="pm-region">🇲🇾 Malaysia</div></div>
+        <div class="pay-method"><div class="pm-icon">🪙</div><div class="pm-name">USDT/USDC</div><div class="pm-region">Crypto</div></div>
+        <div class="pay-method"><div class="pm-icon">↗️</div><div class="pm-name">Apple Pay</div><div class="pm-region">Global</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════ 4. Daily Market Wrap ════════ -->
+  <section id="sec-wrap">
+    <div class="sec-eyebrow">4 · How the world traded today</div>
+    <h2 class="sec-title">One AI wrap. <span>Eight languages.</span></h2>
+    <p class="sec-sub">Every weekday at 06:00 UTC Claude writes the day-ahead market wrap. We translate it into 8 languages and publish to /blog. Free SEO traffic magnet — same engine that powers Bloomberg's terminal, but readable.</p>
+    <article class="wrap-article">
+      <div class="wa-eyebrow">📰 Daily Market Wrap · Auto-translated</div>
+      <h3 class="wa-title">Hormuz tension drives gold higher; Asian risk-off, European sessions cautious</h3>
+      <div class="wa-meta">8 May 2026 · 06:00 UTC · Generated by AI · 8 translations available</div>
+
+      <div class="wrap-region">
+        <span class="wr-flag">🌏</span>
+        <div>
+          <div class="wr-h">Asia · risk-off rotation</div>
+          <div class="wr-body">Nikkei -1.2%, KOSPI -0.8%. JPY bid against the dollar as safe-haven flow accelerates. Hong Kong open weak after Iran-US Hormuz headlines hit the wires overnight.</div>
+        </div>
+        <span class="wr-tag bear">Bearish</span>
+      </div>
+
+      <div class="wrap-region">
+        <span class="wr-flag">🇮🇳</span>
+        <div>
+          <div class="wr-h">India · oil-import drag</div>
+          <div class="wr-body">SENSEX flat, NIFTY down 0.3%. Strong INR weakness on rising oil — refiners under pressure. RBI announcement at 14:30 IST could shift the read.</div>
+        </div>
+        <span class="wr-tag flat">Flat</span>
+      </div>
+
+      <div class="wrap-region">
+        <span class="wr-flag">🇪🇺</span>
+        <div>
+          <div class="wr-h">Europe · cautious open</div>
+          <div class="wr-body">FTSE +0.1%, DAX flat. Energy sector +2.3% on oil pop, financials soft. Watch ECB minutes at 12:30 GMT for hawkish surprises.</div>
+        </div>
+        <span class="wr-tag flat">Flat</span>
+      </div>
+
+      <div class="wrap-region">
+        <span class="wr-flag">🇺🇸</span>
+        <div>
+          <div class="wr-h">Americas · gold + dollar bid</div>
+          <div class="wr-body">SPX futures -0.4%. Gold +1.4%, WTI +3.2%. NFP at 13:30 ET — consensus 200k. A beat could mute the safe-haven bid; a miss reinforces it.</div>
+        </div>
+        <span class="wr-tag bear">Bearish</span>
+      </div>
+
+      <div class="wrap-region">
+        <span class="wr-flag">🇸🇦</span>
+        <div>
+          <div class="wr-h">Middle East · oil-export tailwind</div>
+          <div class="wr-body">TADAWUL +1.1% led by Aramco. UAE stocks bid on regional risk premium. Watch for any official Iranian/US response that shifts oil materially.</div>
+        </div>
+        <span class="wr-tag bull">Bullish</span>
+      </div>
+
+      <div class="wrap-langs">
+        <span class="wrap-lang active">🇬🇧 EN</span>
+        <span class="wrap-lang">🇪🇸 ES</span>
+        <span class="wrap-lang">🇸🇦 AR</span>
+        <span class="wrap-lang">🇮🇳 HI</span>
+        <span class="wrap-lang">🇨🇳 ZH</span>
+        <span class="wrap-lang">🇧🇷 PT</span>
+        <span class="wrap-lang">🇷🇺 RU</span>
+        <span class="wrap-lang">🇩🇪 DE</span>
+        <span class="wrap-lang">🇫🇷 FR</span>
+      </div>
+    </article>
+  </section>
+
+  <!-- ════════ 5. Native-language news scoring ════════ -->
+  <section id="sec-news">
+    <div class="sec-eyebrow">5 · Native-language news scoring</div>
+    <h2 class="sec-title">Score the news <span>in its own language</span>, not English.</h2>
+    <p class="sec-sub">A breaking Hindi RBI headline moves USD/INR before the English wire even picks it up. Claude reads the original — Hindi, Mandarin, Arabic, Portuguese, Russian, Spanish — and scores bias instantly. We surface the original + the AI translation side-by-side.</p>
+    <div class="news-stack">
+      <div class="news-tile bull">
+        <div class="nt-h">
+          <span class="nt-flag">🇮🇳</span>
+          <span class="nt-meta">RBI · Hindi · 2m ago</span>
+          <span class="nt-bias bull">▲ Bullish INR</span>
+        </div>
+        <div class="nt-orig">RBI ने अप्रत्याशित रूप से रेपो दर 25 बीपीएस बढ़ाई, मुद्रास्फीति का मुकाबला करने के लिए सख्त रुख</div>
+        <div class="nt-trans">
+          <span class="nt-trans-lbl">AI translation</span>
+          RBI surprises with a 25bps repo rate hike — hawkish stance to combat inflation. INR likely to firm against majors; expect equities to face short-term pressure.
+        </div>
+        <div class="nt-foot">
+          <span>Source: Mint · scored in 1.2s</span>
+          <div class="nt-syms"><span class="nt-sym">USD/INR</span><span class="nt-sym">SENSEX</span></div>
+        </div>
+      </div>
+
+      <div class="news-tile bear">
+        <div class="nt-h">
+          <span class="nt-flag">🇨🇳</span>
+          <span class="nt-meta">PBOC · Mandarin · 4m ago</span>
+          <span class="nt-bias bear">▼ Bearish CNH</span>
+        </div>
+        <div class="nt-orig">人民银行下调存款准备金率0.5个百分点 释放约万亿元长期流动性</div>
+        <div class="nt-trans">
+          <span class="nt-trans-lbl">AI translation</span>
+          PBOC cuts RRR by 50bps, unlocking ~CNY 1tn in long-term liquidity. Dovish — CNH softness expected; CSI 300 supportive on cheaper funding.
+        </div>
+        <div class="nt-foot">
+          <span>Source: Xinhua · scored in 0.9s</span>
+          <div class="nt-syms"><span class="nt-sym">USD/CNH</span><span class="nt-sym">CSI 300</span></div>
+        </div>
+      </div>
+
+      <div class="news-tile bull">
+        <div class="nt-h">
+          <span class="nt-flag">🇸🇦</span>
+          <span class="nt-meta">Aramco · Arabic · 6m ago</span>
+          <span class="nt-bias bull">▲ Bullish Oil</span>
+        </div>
+        <div class="nt-orig">أرامكو ترفع أسعار البيع الرسمية لخام الخفيف العربي إلى آسيا للشهر الثالث على التوالي</div>
+        <div class="nt-trans">
+          <span class="nt-trans-lbl">AI translation</span>
+          Aramco raises Official Selling Prices for Arab Light to Asia for the third consecutive month — read as confidence in tight crude demand. Bullish for Brent / WTI; supportive for energy equities.
+        </div>
+        <div class="nt-foot">
+          <span>Source: SPA · scored in 1.1s</span>
+          <div class="nt-syms"><span class="nt-sym">BRENT</span><span class="nt-sym">WTI</span></div>
+        </div>
+      </div>
+
+      <div class="news-tile neut">
+        <div class="nt-h">
+          <span class="nt-flag">🇧🇷</span>
+          <span class="nt-meta">BCB · Portuguese · 8m ago</span>
+          <span class="nt-bias neut">● Neutral BRL</span>
+        </div>
+        <div class="nt-orig">Banco Central mantém Selic em 10,5% pela segunda reunião consecutiva, sinaliza pausa</div>
+        <div class="nt-trans">
+          <span class="nt-trans-lbl">AI translation</span>
+          BCB holds Selic at 10.5% for the second consecutive meeting, signals pause. In line with consensus — minimal directional impulse for BRL. Watch the Q&A for forward guidance.
+        </div>
+        <div class="nt-foot">
+          <span>Source: Globo · scored in 1.0s</span>
+          <div class="nt-syms"><span class="nt-sym">USD/BRL</span><span class="nt-sym">IBOV</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════ 6. Sharia-compliant mode ════════ -->
+  <section id="sec-sharia">
+    <div class="sec-eyebrow">6 · Sharia-compliant mode</div>
+    <h2 class="sec-title">A toggle that <span>filters haram instruments</span>.</h2>
+    <p class="sec-sub">Excludes interest-bearing pairs (interest-rate swaps, certain bond futures), riba-heavy financials, and instruments flagged by AAOIFI / DSN-MUI screens. Marks halal vs filtered in every asset list. Massive in Middle East + South-East Asia (300M+ Muslim traders).</p>
+    <div class="card">
+      <div class="sharia-row">
+        <div class="sharia-icon">☪️</div>
+        <div class="sharia-text"><strong>Sharia-compliant mode is ON.</strong> Asset lists, news scoring + AI playbook all respect AAOIFI / DSN-MUI screens. Toggle off any time in settings.</div>
+        <div class="sharia-toggle on" id="shariaTog" onclick="this.classList.toggle('on');document.querySelectorAll('.asset-table tr').forEach(function(r){var p=r.querySelector('.asset-pass,.asset-fail');if(p&&p.classList.contains('asset-fail'))r.classList.toggle('filtered',shariaTog.classList.contains('on'));});"></div>
+      </div>
+      <table class="asset-table">
+        <thead>
+          <tr><th>Symbol</th><th>Name</th><th>Status</th><th>Reason</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="asset-sym">XAU/USD</td><td>Gold</td><td class="asset-pass">✓ Halal</td><td class="asset-reason">Spot commodity, no riba</td></tr>
+          <tr><td class="asset-sym">EUR/USD</td><td>Euro / Dollar</td><td class="asset-pass">✓ Halal</td><td class="asset-reason">Spot FX (T+0 settled)</td></tr>
+          <tr class="filtered"><td class="asset-sym">USDJPY swap</td><td>USD/JPY rolling swap</td><td class="asset-fail">✗ Filtered</td><td class="asset-reason">Overnight swap = riba</td></tr>
+          <tr><td class="asset-sym">2222.SR</td><td>Saudi Aramco</td><td class="asset-pass">✓ Halal</td><td class="asset-reason">AAOIFI screen passed</td></tr>
+          <tr class="filtered"><td class="asset-sym">JPM</td><td>JPMorgan Chase</td><td class="asset-fail">✗ Filtered</td><td class="asset-reason">Conventional bank · interest-heavy</td></tr>
+          <tr><td class="asset-sym">BTC/USD</td><td>Bitcoin</td><td class="asset-pass">✓ Halal</td><td class="asset-reason">Spot crypto, no leverage</td></tr>
+          <tr class="filtered"><td class="asset-sym">US10Y</td><td>10-year Treasury</td><td class="asset-fail">✗ Filtered</td><td class="asset-reason">Interest-bearing bond</td></tr>
+          <tr><td class="asset-sym">CL=F</td><td>WTI Crude</td><td class="asset-pass">✓ Halal</td><td class="asset-reason">Spot commodity future</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ════════ 7. Local indices ════════ -->
+  <section id="sec-idx">
+    <div class="sec-eyebrow">7 · Local indices coverage</div>
+    <h2 class="sec-title">Every region's <span>home market</span>, not just US + UK.</h2>
+    <p class="sec-sub">India, Brazil, Saudi, Korea, Indonesia, Vietnam, Argentina, Egypt, Nigeria, Mexico, Turkey, Poland — full coverage. AI bias + news + chat work the same as for SPX. 10× addressable market.</p>
+    <div class="card">
+      <div class="card-h">
+        <div>
+          <div class="card-h-title">New regional indices added</div>
+          <div class="card-h-sub">Live prices · same AI bias engine · same news scoring</div>
+        </div>
+      </div>
+      <div class="idx-grid">
+        <div class="idx-tile"><div class="ix-h"><span class="ix-flag">🇮🇳</span><span class="ix-name">SENSEX</span></div><div class="ix-sub">Bombay 30 · BSE</div><div class="ix-row"><span class="ix-px">79,142</span><span class="ix-pct up">+0.42%</span></div></div>
+        <div class="idx-tile"><div class="ix-h"><span class="ix-flag">🇮🇳</span><span class="ix-name">NIFTY 50</span></div><div class="ix-sub">National 50 · NSE</div><div class="ix-row"><span class="ix-px">24,096</span><span class="ix-pct up">+0.31%</span></div></div>
+        <div class="idx-tile"><div class="ix-h"><span class="ix-flag">🇧🇷</span><span class="ix-name">BOVESPA</span></div><div class="ix-sub">São Paulo · B3</div><div class="ix-row"><span class="ix-px">128,540</span><span class="ix-pct dn">-0.18%</span></div></div>
+        <div class="idx-tile"><div class="ix-h"><span class="ix-flag">🇰🇷</span><span class="ix-name">KOSPI</span></div><div class="ix-sub">Korea · KRX</div><div class="ix-row"><span class="ix-px">2,712</span><span class="ix-pct dn">-0.81%</span></div></div>
+        <div class="idx-tile"><div class="ix-h"><span class="ix-flag">🇸🇦</span><span class="ix-name">TADAWUL</span></div><div class="ix-sub">Saudi · TASI</div><div class="ix-row"><span class="ix-px">11,840</span><span class="ix-pct up">+1.12%</span></div></div>
+        <div class="idx-tile"><div class="ix-h"><span class="ix-flag">🇮🇩</span><span class="ix-name">JKSE</span></div><div class="ix-sub">Jakarta · IDX</div><div class="ix-row"><span class="ix-px">7,408</span><span class="ix-pct up">+0.27%</span></div></div>
+        <div class="idx-tile"><div class="ix-h"><span class="ix-flag">🇻🇳</span><span class="ix-name">VN-INDEX</span></div><div class="ix-sub">HOSE · Vietnam</div><div class="ix-row"><span class="ix-px">1,241</span><span class="ix-pct up">+0.55%</span></div></div>
+        <div class="idx-tile"><div class="ix-h"><span class="ix-flag">🇿🇦</span><span class="ix-name">JSE TOP40</span></div><div class="ix-sub">South Africa · JSE</div><div class="ix-row"><span class="ix-px">71,840</span><span class="ix-pct dn">-0.34%</span></div></div>
+        <div class="idx-tile"><div class="ix-h"><span class="ix-flag">🇲🇽</span><span class="ix-name">IPC</span></div><div class="ix-sub">Mexico · BMV</div><div class="ix-row"><span class="ix-px">52,180</span><span class="ix-pct up">+0.21%</span></div></div>
+        <div class="idx-tile"><div class="ix-h"><span class="ix-flag">🇹🇷</span><span class="ix-name">BIST 100</span></div><div class="ix-sub">Turkey · Borsa</div><div class="ix-row"><span class="ix-px">10,648</span><span class="ix-pct up">+0.97%</span></div></div>
+        <div class="idx-tile"><div class="ix-h"><span class="ix-flag">🇵🇱</span><span class="ix-name">WIG20</span></div><div class="ix-sub">Warsaw · GPW</div><div class="ix-row"><span class="ix-px">2,488</span><span class="ix-pct dn">-0.15%</span></div></div>
+        <div class="idx-tile"><div class="ix-h"><span class="ix-flag">🇪🇬</span><span class="ix-name">EGX 30</span></div><div class="ix-sub">Cairo · EGX</div><div class="ix-row"><span class="ix-px">28,742</span><span class="ix-pct up">+0.62%</span></div></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="preview-foot">
+  <p>This is a <strong>preview only</strong> — nothing is wired into the live site yet. Approve and I'll ship every section into the dashboard + backend.</p>
+</div>
+
+<script>
+// ─── 1. Live language switcher ───
+var I18N={
+  en:{newsBadge:'⚡ Breaking news',newsTitle:'Iran-US Hormuz tensions push gold +1.4%',newsBody:'Safe-haven flow accelerating. AI bias: bullish XAU/USD. Watch oil + JPY for follow-through.',cta:'View AI playbook →',aiEyebrow:'🧠 AI trading analyst',aiTitle:'Why is gold moving right now?',aiBody:'Iran-US military escalation near the Strait of Hormuz is driving a textbook safe-haven bid. Gold up 1.4%, oil up 3.2% — both consistent with a geopolitical risk-off rotation.'},
+  es:{newsBadge:'⚡ Noticia urgente',newsTitle:'Tensiones Irán-EE.UU. en Hormuz impulsan oro +1.4%',newsBody:'Flujo de refugio acelerando. Sesgo IA: alcista XAU/USD. Vigilar petróleo + JPY para confirmación.',cta:'Ver plan de trading →',aiEyebrow:'🧠 Analista de IA',aiTitle:'¿Por qué se mueve el oro ahora?',aiBody:'La escalada militar entre Irán y EE.UU. cerca del Estrecho de Hormuz está provocando una clásica búsqueda de refugio. Oro +1.4%, petróleo +3.2% — coherente con rotación geopolítica risk-off.'},
+  ar:{newsBadge:'⚡ خبر عاجل',newsTitle:'توترات إيران والولايات المتحدة في هرمز ترفع الذهب 1.4%',newsBody:'تدفق الملاذ الآمن يتسارع. تحيز الذكاء الاصطناعي: صعودي للذهب/الدولار. راقب النفط والين للمتابعة.',cta:'عرض كتاب اللعب ←',aiEyebrow:'🧠 محلل ذكاء اصطناعي',aiTitle:'لماذا يتحرك الذهب الآن؟',aiBody:'التصعيد العسكري الإيراني الأمريكي قرب مضيق هرمز يدفع طلباً نموذجياً على الملاذ الآمن. الذهب +1.4%، النفط +3.2% — متسق مع دوران جيوسياسي risk-off.'},
+  hi:{newsBadge:'⚡ ब्रेकिंग न्यूज़',newsTitle:'ईरान-अमेरिका होर्मुज तनाव से सोना +1.4%',newsBody:'सुरक्षित-शरण प्रवाह तेज़ हो रहा। AI झुकाव: XAU/USD में तेज़ी। तेल और JPY पर नज़र।',cta:'AI प्लेबुक देखें →',aiEyebrow:'🧠 AI ट्रेडिंग विश्लेषक',aiTitle:'सोना अभी क्यों चल रहा है?',aiBody:'होर्मुज जलडमरूमध्य के पास ईरान-अमेरिका सैन्य तनाव क्लासिक सुरक्षित-शरण मांग को बढ़ा रहा है। सोना +1.4%, तेल +3.2% — दोनों भू-राजनीतिक risk-off रोटेशन के अनुरूप।'},
+  zh:{newsBadge:'⚡ 突发新闻',newsTitle:'伊朗-美国霍尔木兹紧张局势推动黄金上涨1.4%',newsBody:'避险资金流加速。AI偏向：XAU/USD看涨。关注石油和日元的跟进。',cta:'查看AI交易手册 →',aiEyebrow:'🧠 AI交易分析师',aiTitle:'为什么黄金现在在动?',aiBody:'霍尔木兹海峡附近的伊朗-美国军事升级正在推动典型的避险买盘。黄金上涨1.4%，石油上涨3.2% — 均与地缘政治风险偏好下降一致。'},
+  pt:{newsBadge:'⚡ Notícia urgente',newsTitle:'Tensões Irã-EUA em Hormuz empurram ouro +1.4%',newsBody:'Fluxo para porto-seguro acelerando. Viés IA: bullish XAU/USD. Observar petróleo + JPY para confirmação.',cta:'Ver playbook de IA →',aiEyebrow:'🧠 Analista de IA',aiTitle:'Por que o ouro está se movendo agora?',aiBody:'A escalada militar entre Irã e EUA perto do Estreito de Hormuz está impulsionando uma demanda clássica por porto-seguro. Ouro +1.4%, petróleo +3.2% — ambos consistentes com rotação geopolítica risk-off.'},
+  ru:{newsBadge:'⚡ Срочные новости',newsTitle:'Напряжённость Иран-США в Ормузе толкает золото +1.4%',newsBody:'Поток в безопасные активы ускоряется. AI-смещение: бычье XAU/USD. Следите за нефтью и иеной.',cta:'Открыть AI-плейбук →',aiEyebrow:'🧠 AI-аналитик',aiTitle:'Почему золото движется сейчас?',aiBody:'Военная эскалация между Ираном и США у Ормузского пролива провоцирует классический спрос на безопасные активы. Золото +1.4%, нефть +3.2% — оба соответствуют геополитической ротации risk-off.'},
+  de:{newsBadge:'⚡ Eilmeldung',newsTitle:'Iran-US Hormuz-Spannungen treiben Gold +1.4%',newsBody:'Safe-Haven-Fluss beschleunigt. KI-Bias: bullisch XAU/USD. Achten Sie auf Öl + JPY für Folgebestätigung.',cta:'KI-Playbook ansehen →',aiEyebrow:'🧠 KI-Handelsanalyst',aiTitle:'Warum bewegt sich Gold gerade?',aiBody:'Die militärische Eskalation zwischen Iran und USA in der Nähe der Straße von Hormuz löst eine klassische Safe-Haven-Nachfrage aus. Gold +1.4%, Öl +3.2% — beide konsistent mit geopolitischer Risk-off-Rotation.'},
+  fr:{newsBadge:'⚡ Actualité urgente',newsTitle:'Tensions Iran-US à Hormuz poussent l\'or +1.4%',newsBody:'Flux refuge en accélération. Biais IA: haussier XAU/USD. Surveiller pétrole + JPY pour confirmation.',cta:'Voir le playbook IA →',aiEyebrow:'🧠 Analyste IA',aiTitle:'Pourquoi l\'or bouge maintenant?',aiBody:'L\'escalade militaire entre l\'Iran et les États-Unis près du détroit d\'Ormuz génère une demande classique de valeur refuge. Or +1.4%, pétrole +3.2% — les deux conformes à une rotation géopolitique risk-off.'}
+};
+function applyLang(code){
+  var dict=I18N[code]||I18N.en;
+  document.querySelectorAll('[data-i18n]').forEach(function(el){
+    var key=el.dataset.i18n;
+    if(dict[key])el.textContent=dict[key];
+  });
+  // RTL flip for Arabic
+  document.body.dir=code==='ar'?'rtl':'ltr';
+}
+
+// ─── 2. Multi-currency pricing ───
+var FX={USD:1,GBP:.79,EUR:.92,INR:83.4,BRL:5.02,JPY:155.2,AED:3.67,ZAR:18.6};
+var SYM={USD:'$',GBP:'£',EUR:'€',INR:'₹',BRL:'R$',JPY:'¥',AED:'د.إ ',ZAR:'R'};
+function applyCcy(code){
+  var rate=FX[code]||1, sym=SYM[code]||'$';
+  function fmt(usd){
+    var v=usd*rate;
+    if(code==='JPY'||code==='INR'){return sym+Math.round(v).toLocaleString();}
+    return sym+v.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+  }
+  document.getElementById('priceMonth').textContent=fmt(39.95);
+  document.getElementById('priceYear').textContent=fmt(399);
+  document.getElementById('priceLife').textContent=fmt(799);
+  document.getElementById('priceFx').textContent='1 USD = '+rate+' '+code;
+}
+</script>
+</body>
+</html>
