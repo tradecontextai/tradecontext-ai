@@ -855,15 +855,15 @@ body{overflow-x:hidden;overflow-y:auto;}
 .trade-submit.sell{background:var(--grad-bear);box-shadow:0 4px 16px rgba(239,68,68,.3);}
 .trade-submit:hover{transform:translateY(-2px);filter:brightness(1.08);}
 .trade-submit:active{transform:translateY(-1px) scale(.97);transition-duration:.08s;}
-.trade-submit-secondary{padding:14px 16px;border-radius:8px;border:1px solid var(--border2);background:var(--bg);color:var(--text2);font-family:var(--sans);font-size:13px;font-weight:700;cursor:pointer;transition:.18s var(--ease-out-quart);white-space:nowrap;display:inline-flex;align-items:center;}
+.trade-submit-secondary{padding:14px 12px;border-radius:8px;border:1px solid var(--border2);background:var(--bg);color:var(--text2);font-family:var(--sans);font-size:13px;font-weight:700;cursor:pointer;transition:.18s var(--ease-out-quart);white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;width:100%;}
 .trade-submit-secondary:hover{border-color:var(--blue);color:var(--blue);}
 .trade-submit-secondary:active{transform:scale(.97);transition-duration:.08s;}
 
 /* MetaTrader 4/5 split button */
-.mt-launcher{position:relative;display:inline-flex;align-items:stretch;}
-.mt-launcher-btn{padding:14px 14px;border:1px solid rgba(14,165,233,.35);background:linear-gradient(135deg,rgba(14,165,233,.10),rgba(14,165,233,.04));color:var(--blue);font-family:var(--sans);font-size:13px;font-weight:800;cursor:pointer;transition:.18s var(--ease-out-quart);white-space:nowrap;display:inline-flex;align-items:center;gap:6px;letter-spacing:.02em;}
-.mt-launcher-btn.main{border-radius:8px 0 0 8px;border-right:none;}
-.mt-launcher-btn.toggle{border-radius:0 8px 8px 0;padding:14px 9px;font-size:10px;color:var(--text2);}
+.mt-launcher{position:relative;display:flex;align-items:stretch;width:100%;}
+.mt-launcher-btn{padding:14px 8px;border:1px solid rgba(14,165,233,.35);background:linear-gradient(135deg,rgba(14,165,233,.10),rgba(14,165,233,.04));color:var(--blue);font-family:var(--sans);font-size:13px;font-weight:800;cursor:pointer;transition:.18s var(--ease-out-quart);white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;gap:6px;letter-spacing:.02em;}
+.mt-launcher-btn.main{border-radius:8px 0 0 8px;border-right:none;flex:1;min-width:0;}
+.mt-launcher-btn.toggle{border-radius:0 8px 8px 0;padding:14px 9px;font-size:10px;color:var(--text2);flex-shrink:0;}
 .mt-launcher-btn:hover{background:rgba(14,165,233,.18);border-color:var(--blue);color:var(--blue);}
 .mt-launcher-btn:active{transform:scale(.97);transition-duration:.08s;}
 .mt-menu{position:absolute;top:calc(100% + 6px);right:0;min-width:190px;background:var(--bg2);border:1px solid var(--border2);border-radius:8px;box-shadow:0 18px 38px rgba(0,0,0,.55);padding:6px;z-index:30;display:none;}
@@ -1329,8 +1329,8 @@ body{overflow-x:hidden;overflow-y:auto;}
               </div>
               <span class="trade-ai-cta">APPLY →</span>
             </div>
-            <div style="display:flex;gap:8px;position:relative;flex-wrap:wrap;">
-              <button class="trade-submit buy" id="tradeSubmit" onclick="copyTradeSetup()" style="flex:1;min-width:160px;">📋 Copy Setup</button>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;position:relative;">
+              <button class="trade-submit buy" id="tradeSubmit" onclick="copyTradeSetup()" style="width:100%;">📋 Copy Setup</button>
               <div class="mt-launcher" id="mtLauncher">
                 <button class="mt-launcher-btn main" id="mtMainBtn" onclick="openMetaTrader('mt5')" title="Copy setup + open MetaTrader 5">📈 MT5</button>
                 <button class="mt-launcher-btn toggle" onclick="toggleMtMenu(event)" title="Switch between MT4 / MT5">▾</button>
