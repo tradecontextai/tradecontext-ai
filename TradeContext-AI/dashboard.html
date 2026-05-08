@@ -151,9 +151,10 @@ body{overflow-x:hidden;overflow-y:auto;}
 .section-block{margin-bottom:36px;}
 
 /* ═══════════ KPI HERO STRIP — single row, no scroll ═══════════ */
-.kpi-strip{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:10px;margin-bottom:24px;}
-@media (max-width:1280px){.kpi-strip{grid-template-columns:repeat(5,minmax(0,1fr));}}
-@media (max-width:780px){.kpi-strip{grid-template-columns:repeat(2,minmax(0,1fr));}}
+.kpi-strip{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px;margin-bottom:24px;}
+.kpi-strip .kpi-card.movers{grid-column:span 2;}
+@media (max-width:1280px){.kpi-strip{grid-template-columns:repeat(4,minmax(0,1fr));}.kpi-strip .kpi-card.movers{grid-column:span 2;}}
+@media (max-width:780px){.kpi-strip{grid-template-columns:repeat(2,minmax(0,1fr));}.kpi-strip .kpi-card.movers{grid-column:span 2;}}
 .kpi-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:13px 14px;transition:transform .25s var(--ease-out-quart),border-color .2s,box-shadow .25s var(--ease-out-quart);position:relative;overflow:hidden;min-width:0;cursor:default;animation:kpiSlideIn .55s var(--ease-out-expo) both;}
 /* Staggered entrance — each KPI card delays slightly more than the last */
 .kpi-card:nth-child(1){animation-delay:.04s;}
@@ -175,6 +176,21 @@ body{overflow-x:hidden;overflow-y:auto;}
 .kpi-card.good{background:linear-gradient(135deg,var(--bg2),rgba(52,211,153,.05));border-color:rgba(52,211,153,.25);}
 .kpi-card.alert{background:linear-gradient(135deg,var(--bg2),rgba(239,68,68,.06));border-color:rgba(239,68,68,.3);cursor:pointer;}
 .kpi-card.alert:hover{border-color:rgba(239,68,68,.5);}
+/* Top movers card — denser layout, no big number, rows take all the space */
+.kpi-card.movers{padding:11px 12px 8px;background:linear-gradient(135deg,var(--bg2),rgba(14,165,233,.04) 60%,rgba(139,92,246,.05));border-color:rgba(14,165,233,.25);}
+.kpi-card.movers::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--grad-prem);}
+.kpi-card.movers .kpi-label{margin-bottom:7px;}
+.movers-list{display:flex;flex-direction:column;gap:3px;}
+.movers-list .mv-row{display:grid;grid-template-columns:1fr 56px 50px;align-items:center;gap:6px;padding:3px 0;font-family:var(--mono);font-size:10.5px;}
+.movers-list .mv-row .mv-sym{color:var(--text);font-weight:700;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.movers-list .mv-row .mv-px{color:var(--text2);font-weight:600;text-align:right;font-size:9.5px;white-space:nowrap;overflow:hidden;}
+.movers-list .mv-row .mv-pct{font-weight:800;text-align:right;font-size:11px;}
+.movers-list .mv-row.up .mv-pct{color:var(--green2);}
+.movers-list .mv-row.down .mv-pct{color:var(--red2);}
+.movers-list .mv-row.up .mv-arr{color:var(--green2);}
+.movers-list .mv-row.down .mv-arr{color:var(--red2);}
+.movers-list .mv-empty{font-family:var(--mono);font-size:10px;color:var(--text3);text-align:center;padding:14px 0;}
+.kpi-card.movers:hover .mv-row{background:transparent;}
 .kpi-label{font-family:var(--mono);font-size:8.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);display:flex;align-items:center;gap:4px;margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .kpi-value{font-family:var(--mono);font-size:19px;font-weight:800;letter-spacing:-.02em;line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .kpi-sub{font-family:var(--mono);font-size:9.5px;color:var(--text3);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -1585,16 +1601,6 @@ body{overflow-x:hidden;overflow-y:auto;}
       <div class="kpi-value" style="color:var(--purple);">1:2.4</div>
       <div class="kpi-sub">PF 2.14</div>
     </div>
-    <div class="kpi-card warn">
-      <div class="kpi-label" style="color:var(--yellow);">🏆 FTMO P1</div>
-      <div class="kpi-value" style="color:var(--yellow);">4.28%</div>
-      <div class="kpi-sub">$100K · Day 14/30</div>
-    </div>
-    <div class="kpi-card good">
-      <div class="kpi-label" style="color:var(--green2);">🥇 The5%ers</div>
-      <div class="kpi-value" style="color:var(--green2);">+$8,400</div>
-      <div class="kpi-sub">$200K funded</div>
-    </div>
     <div class="kpi-card">
       <div class="kpi-label">🤖 AI Score</div>
       <div class="kpi-value" style="background:var(--grad-prem);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">94</div>
@@ -1604,6 +1610,13 @@ body{overflow-x:hidden;overflow-y:auto;}
       <div class="kpi-label" style="color:var(--red2);">⚡ BREAKING</div>
       <div class="kpi-value" style="font-size:13px;color:var(--red2);line-height:1.2;" id="kpiBreakingTitle">Awaiting feed…</div>
       <div class="kpi-sub" style="color:var(--red2);" id="kpiBreakingSub">—</div>
+    </div>
+    <!-- Top 5 movers — populated from _TD (live bulk-fetch prices) -->
+    <div class="kpi-card movers" id="kpiMovers" title="Top 5 movers across all asset classes (vs prev close)">
+      <div class="kpi-label" style="background:var(--grad-prem);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">🚀 TOP MOVERS</div>
+      <div class="movers-list" id="moversList">
+        <div class="mv-empty">Loading live prices…</div>
+      </div>
     </div>
   </div>
 
@@ -3083,6 +3096,7 @@ async function fetchMacroSnapshot(){
     // Re-render the dependent widgets so they reflect the new prices instantly
     if(typeof renderCcyStrength==='function')renderCcyStrength();
     if(typeof renderVolatilityPulse==='function')renderVolatilityPulse();
+    if(typeof renderTopMovers==='function')renderTopMovers();
     var ccySub=document.getElementById('ccySubtitle');
     var volSub=document.getElementById('volSubtitle');
     var srcStr=Object.keys(sources).map(function(k){return sources[k]+'×'+k;}).join(' · ')||'no live source';
@@ -4550,6 +4564,39 @@ function renderFearGreed(){
 // Once macro snapshot lands, t._prevClose is the real previous-day close from
 // Yahoo/Binance/Finnhub. Until then we fall back to the in-page baseline.
 var _volBaseline=null;
+// ════════════ TOP 5 MOVERS (KPI strip) ════════════
+// Compact ranked list: biggest absolute % movers across all asset classes
+// in _TD (forex majors, gold, oil, indices, BTC, ETH). Uses prevClose when
+// the bulk fetch has landed; falls back to the in-page baseline so the
+// list is never empty after first load.
+function renderTopMovers(){
+  var el=document.getElementById('moversList');
+  if(!el||typeof _TD==='undefined'||!_TD.length)return;
+  var hasLive=_macroSnapshot&&_macroSnapshot.lastTs;
+  if(!hasLive){
+    el.innerHTML='<div class="mv-empty">Loading live prices…</div>';
+    return;
+  }
+  var rows=_TD.map(function(t){
+    var base=t._prevClose||t.p;
+    var pct=base?((t.p-base)/base)*100:0;
+    return {sym:t.s,p:t.p,d:t.d,pct:pct};
+  });
+  rows.sort(function(a,b){return Math.abs(b.pct)-Math.abs(a.pct);});
+  var top=rows.slice(0,5);
+  el.innerHTML=top.map(function(r){
+    var dir=r.pct>=0?'up':'down';
+    var sign=r.pct>=0?'+':'';
+    var arr=r.pct>=0?'▲':'▼';
+    var px=r.p.toLocaleString('en-GB',{minimumFractionDigits:r.d,maximumFractionDigits:r.d});
+    return '<div class="mv-row '+dir+'" title="'+r.sym+' · '+px+' · '+sign+r.pct.toFixed(2)+'%">'
+      +'<div class="mv-sym">'+r.sym+'</div>'
+      +'<div class="mv-px">'+px+'</div>'
+      +'<div class="mv-pct"><span class="mv-arr">'+arr+'</span> '+sign+r.pct.toFixed(2)+'%</div>'
+    +'</div>';
+  }).join('');
+}
+
 function renderVolatilityPulse(){
   var el=document.getElementById('volPulse');
   if(!el||typeof _TD==='undefined'||!_TD.length)return;
