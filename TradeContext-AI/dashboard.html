@@ -858,6 +858,20 @@ body{overflow-x:hidden;overflow-y:auto;}
 .trade-submit-secondary{padding:14px 16px;border-radius:8px;border:1px solid var(--border2);background:var(--bg);color:var(--text2);font-family:var(--sans);font-size:13px;font-weight:700;cursor:pointer;transition:.18s var(--ease-out-quart);white-space:nowrap;display:inline-flex;align-items:center;}
 .trade-submit-secondary:hover{border-color:var(--blue);color:var(--blue);}
 .trade-submit-secondary:active{transform:scale(.97);transition-duration:.08s;}
+
+/* MetaTrader 4/5 split button */
+.mt-launcher{position:relative;display:inline-flex;align-items:stretch;}
+.mt-launcher-btn{padding:14px 14px;border:1px solid rgba(14,165,233,.35);background:linear-gradient(135deg,rgba(14,165,233,.10),rgba(14,165,233,.04));color:var(--blue);font-family:var(--sans);font-size:13px;font-weight:800;cursor:pointer;transition:.18s var(--ease-out-quart);white-space:nowrap;display:inline-flex;align-items:center;gap:6px;letter-spacing:.02em;}
+.mt-launcher-btn.main{border-radius:8px 0 0 8px;border-right:none;}
+.mt-launcher-btn.toggle{border-radius:0 8px 8px 0;padding:14px 9px;font-size:10px;color:var(--text2);}
+.mt-launcher-btn:hover{background:rgba(14,165,233,.18);border-color:var(--blue);color:var(--blue);}
+.mt-launcher-btn:active{transform:scale(.97);transition-duration:.08s;}
+.mt-menu{position:absolute;top:calc(100% + 6px);right:0;min-width:190px;background:var(--bg2);border:1px solid var(--border2);border-radius:8px;box-shadow:0 18px 38px rgba(0,0,0,.55);padding:6px;z-index:30;display:none;}
+.mt-menu.open{display:block;animation:fadeUp .18s var(--ease-out-quart);}
+.mt-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:6px;cursor:pointer;font-family:var(--sans);font-size:12px;font-weight:700;color:var(--text);transition:.12s;}
+.mt-item:hover{background:var(--bluedim);color:var(--blue);}
+.mt-item .mt-ic{font-size:16px;}
+.mt-item .mt-meta{margin-left:auto;font-family:var(--mono);font-size:9px;color:var(--text3);font-weight:600;letter-spacing:.04em;}
 .trade-disclaimer{font-family:var(--mono);font-size:9px;color:var(--text3);text-align:center;line-height:1.5;letter-spacing:.04em;padding-top:4px;}
 
 /* ═══════ BROKER DROPDOWN — fixed-position so it escapes overflow:hidden parents ═══════ */
@@ -1315,8 +1329,23 @@ body{overflow-x:hidden;overflow-y:auto;}
               </div>
               <span class="trade-ai-cta">APPLY →</span>
             </div>
-            <div style="display:flex;gap:8px;position:relative;">
-              <button class="trade-submit buy" id="tradeSubmit" onclick="copyTradeSetup()" style="flex:1;">📋 Copy Setup</button>
+            <div style="display:flex;gap:8px;position:relative;flex-wrap:wrap;">
+              <button class="trade-submit buy" id="tradeSubmit" onclick="copyTradeSetup()" style="flex:1;min-width:160px;">📋 Copy Setup</button>
+              <div class="mt-launcher" id="mtLauncher">
+                <button class="mt-launcher-btn main" id="mtMainBtn" onclick="openMetaTrader('mt5')" title="Copy setup + open MetaTrader 5">📈 MT5</button>
+                <button class="mt-launcher-btn toggle" onclick="toggleMtMenu(event)" title="Switch between MT4 / MT5">▾</button>
+                <div class="mt-menu" id="mtMenu">
+                  <div class="mt-item" onclick="openMetaTrader('mt5')">
+                    <span class="mt-ic">📈</span><span>Open in MetaTrader 5</span><span class="mt-meta">MT5</span>
+                  </div>
+                  <div class="mt-item" onclick="openMetaTrader('mt4')">
+                    <span class="mt-ic">📊</span><span>Open in MetaTrader 4</span><span class="mt-meta">MT4</span>
+                  </div>
+                  <div class="mt-item" onclick="openMetaTrader('webterminal')">
+                    <span class="mt-ic">🌐</span><span>Open MT5 Web Terminal</span><span class="mt-meta">WEB</span>
+                  </div>
+                </div>
+              </div>
               <button class="trade-submit-secondary" id="brokerDropdownBtn" onclick="toggleBrokerDropdown(event)">
                 <span id="brokerDropdownLabel">↗ Open in OANDA</span>
                 <span style="opacity:.6;font-size:10px;margin-left:5px;">▾</span>
@@ -3275,7 +3304,65 @@ function fillTradeDefaults(price,dir){
 }
 // Copy the trade setup to clipboard so the user can paste into their broker.
 // We never execute trades — that would require FCA/SEC authorisation.
-function copyTradeSetup(){
+// ═══════ METATRADER 4/5 LAUNCHER ═══════
+// MT4/MT5 desktop apps register custom URL handlers (metatrader4://, metatrader5://)
+// when installed. We copy the trade setup to clipboard first (the user pastes it
+// into the New Order dialog), then attempt the deep link. If the OS doesn't
+// resolve the protocol within ~700ms the user gets sent to the official download
+// page so they can install it. Web terminal works without any install.
+function toggleMtMenu(e){
+  if(e){e.stopPropagation();e.preventDefault();}
+  var m=document.getElementById('mtMenu');
+  if(!m)return;
+  m.classList.toggle('open');
+  if(m.classList.contains('open')){
+    setTimeout(function(){
+      document.addEventListener('click',function close(ev){
+        if(!ev.target.closest('#mtLauncher')){m.classList.remove('open');document.removeEventListener('click',close);}
+      });
+    },0);
+  }
+}
+function openMetaTrader(version){
+  document.getElementById('mtMenu')&&document.getElementById('mtMenu').classList.remove('open');
+  // Update the main button label to remember the user's last choice
+  var main=document.getElementById('mtMainBtn');
+  if(main&&version!=='webterminal'){
+    main.textContent=version==='mt4'?'📊 MT4':'📈 MT5';
+    main.setAttribute('onclick',"openMetaTrader('"+version+"')");
+  }
+  // Always copy the setup to the clipboard first so the user can paste in MT
+  copyTradeSetup({silent:true});
+  var sym=(window._activeSymLabel||'XAU/USD');
+  var dir=_tradeDir==='buy'?'long':'short';
+  if(version==='webterminal'){
+    // MetaTrader Web Terminal — works in any browser, no install
+    window.open('https://www.mql5.com/en/trading','_blank','noopener');
+    toast({kind:'blue',icon:'🌐',title:'Opening MT5 Web Terminal',desc:'Setup copied to clipboard — paste into the New Order dialog.',duration:6000});
+    return;
+  }
+  var scheme=version==='mt4'?'metatrader4://':'metatrader5://';
+  var fallback=version==='mt4'?'https://www.metatrader4.com/en/download':'https://www.metatrader5.com/en/download';
+  toast({kind:'blue',icon:version==='mt4'?'📊':'📈',title:'Opening '+version.toUpperCase(),desc:'Setup copied — paste into the New Order box for '+sym+' '+dir+'.',duration:6000});
+  // Attempt the deep link via a hidden iframe (most reliable cross-browser approach)
+  var t=Date.now();
+  var iframe=document.createElement('iframe');
+  iframe.style.display='none';
+  iframe.src=scheme;
+  document.body.appendChild(iframe);
+  // If the protocol handler succeeds the page loses focus quickly; if it doesn't,
+  // we open the download page so the user can install MT.
+  setTimeout(function(){
+    document.body.removeChild(iframe);
+    if(Date.now()-t<1200&&document.hasFocus()){
+      // Probably no handler — send them to the official download
+      window.open(fallback,'_blank','noopener');
+      toast({kind:'yellow',icon:'⬇️',title:version.toUpperCase()+' not detected',desc:'Opening the official download page. Setup is still on your clipboard.',duration:7000});
+    }
+  },800);
+}
+
+function copyTradeSetup(opts){
   var sym=(window._activeSymLabel||'XAU/USD');
   var dir=_tradeDir==='buy'?'LONG':'SHORT';
   var size=document.getElementById('tradeSize').value;
@@ -3296,13 +3383,14 @@ function copyTradeSetup(){
     +'─────────────────────\n'
     +'Generated: '+new Date().toISOString()+'\n'
     +'⚠️ Not financial advice — execute at your own risk on your broker.';
+  var silent=opts&&opts.silent;
   if(navigator.clipboard&&navigator.clipboard.writeText){
     navigator.clipboard.writeText(setup).then(function(){
-      toast({kind:'green',icon:'📋',title:'Setup copied to clipboard',desc:'Paste into '+sym+' on your broker. We never place trades.',duration:5000});
+      if(!silent)toast({kind:'green',icon:'📋',title:'Setup copied to clipboard',desc:'Paste into '+sym+' on your broker. We never place trades.',duration:5000});
     }).catch(function(){fallback();});
   }else fallback();
   function fallback(){
-    toast({kind:'yellow',icon:'⚠️',title:'Clipboard unavailable',desc:'Copy this manually: '+sym+' '+dir+' size '+size+' SL '+sl+' TP '+tp,duration:8000});
+    if(!silent)toast({kind:'yellow',icon:'⚠️',title:'Clipboard unavailable',desc:'Copy this manually: '+sym+' '+dir+' size '+size+' SL '+sl+' TP '+tp,duration:8000});
   }
 }
 
