@@ -711,6 +711,20 @@ body{overflow-x:hidden;overflow-y:auto;}
 
 /* World Map widget — animated, premium feel */
 .world-map-card{background:var(--bg2);padding:14px 16px;}
+/* World Pulse map ⇄ Live TV tab switcher */
+.wp-tabs{display:flex;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:6px;overflow:hidden;flex-shrink:0;}
+.wp-tab{background:var(--bg2);border:none;color:var(--text2);font-family:var(--mono);font-size:9.5px;font-weight:700;padding:6px 10px;cursor:pointer;letter-spacing:.04em;transition:.15s;white-space:nowrap;}
+.wp-tab:hover{color:var(--text);background:var(--bg3);}
+.wp-tab.active{background:rgba(14,165,233,.14);color:var(--blue);box-shadow:inset 0 -2px 0 var(--blue);}
+.wp-tv-pane{display:none;flex-direction:column;gap:10px;flex:1;min-height:0;}
+.wp-tv-pane.show{display:flex;animation:fadeUp .2s var(--ease-out-quart);}
+.wp-tv-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.wp-tv-channel{flex:1;min-width:140px;background:var(--bg3);border:1px solid var(--border);color:var(--text);font-family:var(--sans);font-size:12px;font-weight:700;padding:8px 10px;border-radius:6px;outline:none;cursor:pointer;}
+.wp-tv-channel:focus{border-color:var(--blue);box-shadow:0 0 0 2px rgba(14,165,233,.12);}
+.wp-tv-note{font-family:var(--mono);font-size:9.5px;color:var(--text3);font-weight:600;letter-spacing:.04em;}
+.wp-tv-frame-wrap{position:relative;flex:1;min-height:260px;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--bg);}
+.wp-tv-frame-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block;z-index:2;}
+.wp-tv-fallback{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;padding:24px;color:var(--text2);font-family:var(--sans);font-size:13px;line-height:1.5;z-index:1;}
 .world-map-wrap{position:relative;width:100%;background:radial-gradient(ellipse at center,rgba(14,165,233,.07) 0%,rgba(139,92,246,.03) 40%,var(--bg) 80%);border:1px solid var(--border);border-radius:8px;overflow:hidden;min-height:200px;}
 /* Animated aurora sweep across the map background */
 .world-map-wrap::before{content:'';position:absolute;inset:0;background:linear-gradient(120deg,transparent 30%,rgba(14,165,233,.06) 50%,transparent 70%);background-size:200% 100%;animation:auroraSweep 12s linear infinite;pointer-events:none;}
@@ -2057,10 +2071,41 @@ body{overflow-x:hidden;overflow-y:auto;}
 
           <!-- RIGHT side: World Pulse Map (full height) -->
           <div class="mp-card world-map-card">
-            <div class="mp-card-h">
-              <div class="mp-card-title">🌍 World Pulse</div>
-              <div class="mp-card-sub">Financial centre heat · session-aware · hover any city</div>
+            <div class="mp-card-h" style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+              <div>
+                <div class="mp-card-title" id="wpTitle">🌍 World Pulse</div>
+                <div class="mp-card-sub" id="wpSub">Financial centre heat · session-aware · hover any city</div>
+              </div>
+              <!-- Map / Live TV switcher -->
+              <div class="wp-tabs">
+                <button class="wp-tab active" data-pane="map" onclick="setWorldPane('map',this)" title="World Pulse Map">🌍 Map</button>
+                <button class="wp-tab" data-pane="tv" onclick="setWorldPane('tv',this)" title="Live markets TV">📺 Live TV</button>
+              </div>
             </div>
+
+            <!-- TV pane — stays mounted but hidden so the iframe doesn't reload on every tab flip -->
+            <div class="wp-tv-pane" id="wpTvPane">
+              <div class="wp-tv-bar">
+                <select class="wp-tv-channel" id="wpTvChannel" onchange="setTvChannel(this.value)">
+                  <option value="yahoo">📈 Yahoo Finance Live</option>
+                  <option value="cnbc">🇺🇸 CNBC</option>
+                  <option value="dw">🌍 DW News</option>
+                  <option value="reuters">📰 Reuters</option>
+                  <option value="france24">🇪🇺 France 24 English</option>
+                  <option value="aljazeera">🌐 Al Jazeera English</option>
+                </select>
+                <span class="wp-tv-note">Free YouTube live · auto-muted</span>
+              </div>
+              <div class="wp-tv-frame-wrap">
+                <iframe id="wpTvFrame" src="" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                <div class="wp-tv-fallback" id="wpTvFallback">
+                  <span style="font-size:24px;">📺</span>
+                  <div>If this channel isn't live right now, pick another from the dropdown.</div>
+                  <div style="margin-top:6px;font-family:var(--mono);font-size:9.5px;color:var(--text3);">Streams provided by their respective broadcasters via YouTube. We don't host or rebroadcast.</div>
+                </div>
+              </div>
+            </div>
+
             <div class="world-map-wrap" id="worldMapWrap">
               <svg class="world-map-svg" id="worldMapSvg" viewBox="0 0 1000 500" preserveAspectRatio="xMidYMid meet">
                 <defs>
@@ -3804,6 +3849,60 @@ function ccyStrengthFor(ccy){
   if(!deltas.length)return 0;
   return deltas.reduce(function(a,b){return a+b;},0)/deltas.length;
 }
+
+// ════════════ WORLD PULSE — Map ⇄ Live TV switcher ════════════
+// Free YouTube live-stream embeds from major finance/news broadcasters.
+// We use YouTube's standard `embed/live_stream?channel=ID` endpoint —
+// it picks up whatever's live on that channel right now, or shows a
+// 'no stream' frame if nothing's broadcasting. The iframe stays mounted
+// so flipping back to the map and back to TV doesn't reload the stream.
+var TV_CHANNELS={
+  yahoo:    {id:'UCEAZeUIeJs0IjQiqTCdVSIg', title:'Yahoo Finance Live', sub:'Markets · earnings · 9-4 ET'},
+  cnbc:     {id:'UCvJJ_dzjViJCoLf5uKUTwoA', title:'CNBC',                sub:'US markets · breaking · 24/7'},
+  dw:       {id:'UCknLrEdhRCp1aegoMqRaCZg', title:'DW News',             sub:'European news + business · 24/7'},
+  reuters:  {id:'UChqUTb7kYRX8-EiaN3XFrSQ', title:'Reuters',             sub:'Global newswire · macro flow'},
+  france24: {id:'UCQfwfsi5VrQ8yKZ-UWmAEFg', title:'France 24 English',   sub:'EU + macro · 24/7'},
+  aljazeera:{id:'UCNye-wNBqNL5ZzHSJj3l8Bg', title:'Al Jazeera English',  sub:'Global · MENA focus · 24/7'},
+};
+function _ytLiveSrc(chId){
+  // autoplay=1 + mute=1 lets browsers actually start the stream
+  // playsinline keeps it inline on iOS instead of fullscreen-hijacking
+  return 'https://www.youtube.com/embed/live_stream?channel='+encodeURIComponent(chId)
+    +'&autoplay=1&mute=1&playsinline=1&modestbranding=1&rel=0';
+}
+window.setTvChannel=function(key){
+  var ch=TV_CHANNELS[key];if(!ch)return;
+  var f=document.getElementById('wpTvFrame');if(f)f.src=_ytLiveSrc(ch.id);
+  try{localStorage.setItem('tc_tv_channel',key);}catch(_){}
+};
+window.setWorldPane=function(which,btn){
+  document.querySelectorAll('.world-map-card .wp-tab').forEach(function(b){b.classList.remove('active');});
+  if(btn)btn.classList.add('active');
+  var tv=document.getElementById('wpTvPane');
+  var map=document.getElementById('worldMapWrap');
+  var legend=document.querySelector('.world-map-card .world-map-legend');
+  if(which==='tv'){
+    tv.classList.add('show');
+    map.style.display='none';
+    if(legend)legend.style.display='none';
+    // Lazy-load the iframe on first activation
+    var f=document.getElementById('wpTvFrame');
+    if(f&&!f.src){
+      var saved='yahoo';
+      try{saved=localStorage.getItem('tc_tv_channel')||'yahoo';}catch(_){}
+      var sel=document.getElementById('wpTvChannel');if(sel)sel.value=saved;
+      setTvChannel(saved);
+    }
+    document.getElementById('wpTitle').textContent='📺 Live Markets TV';
+    document.getElementById('wpSub').textContent='Free finance + macro broadcasters · YouTube embeds';
+  }else{
+    tv.classList.remove('show');
+    map.style.display='';
+    if(legend)legend.style.display='';
+    document.getElementById('wpTitle').textContent='🌍 World Pulse';
+    document.getElementById('wpSub').textContent='Financial centre heat · session-aware · hover any city';
+  }
+};
 
 // Tab switcher inside the merged Currency Strength + Volatility Pulse card.
 // Both panes are pre-rendered on every tick — switching is a CSS class flip.
