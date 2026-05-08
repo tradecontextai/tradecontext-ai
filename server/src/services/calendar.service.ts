@@ -80,8 +80,11 @@ function normaliseImpact(i: string): Impact {
 }
 
 // In-memory cache — { until: epoch ms, data: events[] }
+// Was 1 hour — too long when actuals print mid-session and the dashboard
+// is meant to refresh after each release. 5 min is enough to spread Finnhub
+// quota across a busy day while still catching prints fast.
 let cache: { until: number; data: CalendarEvent[] } | null = null;
-const TTL_MS = 60 * 60 * 1000; // 1 hour
+const TTL_MS = 5 * 60 * 1000; // 5 minutes
 
 export const calendarAvailable = (): boolean => Boolean(env.FINNHUB_API_KEY);
 

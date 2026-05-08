@@ -431,7 +431,8 @@ body{overflow-x:hidden;overflow-y:auto;}
 /* Red breaking glow — applied to .news-side-col when breaking news is fresh */
 @keyframes breakingGlow{0%,100%{box-shadow:inset 0 0 0 0 rgba(239,68,68,0),0 0 0 0 rgba(239,68,68,0);}50%{box-shadow:inset 0 0 30px rgba(239,68,68,.12),0 0 28px rgba(239,68,68,.25);}}
 .news-side-col.has-breaking{animation:breakingGlow 2.8s ease-in-out infinite;border-left:2px solid rgba(239,68,68,.5);}
-.news-side-col.has-breaking::before{background:var(--red)!important;}
+/* Top stripe stays in the brand gradient even during breaking news —
+   the Breaking tab + card pulse already carry the red signal. */
 /* Heading stays in its default blue/purple gradient — only the eyebrow text
    shifts red so the user knows breaking is active. */
 .news-side-col.has-breaking .ns-pulse{background:var(--red2);box-shadow:0 0 10px rgba(239,68,68,.8);animation:blink .7s infinite;}
@@ -2181,7 +2182,11 @@ body{overflow-x:hidden;overflow-y:auto;}
       <div class="panel">
         <div class="panel-h">
           <div class="panel-h-title">📅 Economic Calendar <span class="news-live-badge" style="font-size:8px;">LIVE</span></div>
-          <span style="font-family:var(--mono);font-size:10px;color:var(--blue);font-weight:700;" id="calDateLabel"></span>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="font-family:var(--mono);font-size:9px;color:var(--text3);font-weight:600;" id="calLastUpdated">—</span>
+            <button onclick="refreshCalendar()" title="Force refresh from Finnhub" style="background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-family:var(--mono);font-size:10px;font-weight:700;padding:4px 9px;border-radius:5px;cursor:pointer;letter-spacing:.04em;">↻</button>
+            <span style="font-family:var(--mono);font-size:10px;color:var(--blue);font-weight:700;" id="calDateLabel"></span>
+          </div>
         </div>
         <!-- Range toggle: Today (default) / Week -->
         <div style="display:flex;gap:6px;padding:8px 14px;border-bottom:1px solid var(--border);background:var(--bg2);align-items:center;">
@@ -5264,19 +5269,46 @@ function renderCalendar(){
   wrap.innerHTML=html;
 }
 
-async function loadCalendar(){
+var _calLastFetch=0;
+async function loadCalendar(opts){
+  var force=!!(opts&&opts.force);
   try{
-    var r=await fetch(TC_API+'/api/calendar');
+    var url=TC_API+'/api/calendar'+(force?'?force=true':'');
+    var r=await fetch(url);
     if(!r.ok)throw new Error('HTTP '+r.status);
     var d=await r.json();
     _calData=d.events||[];
+    _calLastFetch=Date.now();
     renderCalendar();
+    var sub=document.getElementById('calLastUpdated');
+    if(sub)sub.textContent='Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
     console.log('[live] calendar loaded',_calData.length,'events');
   }catch(e){
     console.warn('[live] calendar fetch failed',e.message);
     var wrap=document.getElementById('calWrap');
     if(wrap)wrap.innerHTML='<div style="padding:24px;text-align:center;font-family:var(--mono);font-size:10px;color:var(--text3);">Calendar unavailable — backend offline.</div>';
   }
+}
+window.refreshCalendar=function(){loadCalendar({force:true});};
+
+// Smart refresh strategy:
+//  1. Standard poll every 3 minutes (was 10) so prints land within minutes.
+//  2. EXTRA refresh 60s AFTER any high-impact event time so the actual figure
+//     comes through fast — high-impact prints (CPI, NFP, FOMC) drive the
+//     whole point of the calendar.
+function _scheduleHighImpactRefreshes(){
+  if(!_calData||!_calData.length)return;
+  var now=Date.now();
+  _calData.forEach(function(e){
+    if(e.impact!=='high')return;
+    var t=parseCalDate(e.time).getTime();
+    if(isNaN(t))return;
+    var refreshAt=t+60000;          // 60s after release
+    var ms=refreshAt-now;
+    if(ms>0&&ms<6*3600*1000){       // within next 6 hours
+      setTimeout(function(){loadCalendar({force:true});},ms);
+    }
+  });
 }
 
 function setCalFilter(impact,btn){
@@ -5286,8 +5318,8 @@ function setCalFilter(impact,btn){
   renderCalendar();
 }
 
-loadCalendar();
-setInterval(loadCalendar,10*60*1000); // refresh every 10 min
+loadCalendar().then(function(){_scheduleHighImpactRefreshes();});
+setInterval(function(){loadCalendar().then(function(){_scheduleHighImpactRefreshes();});},3*60*1000);
 
 // ════════════ LIVE WIRINGS — Playbooks, Positions, Broker, Journal ════════════
 
