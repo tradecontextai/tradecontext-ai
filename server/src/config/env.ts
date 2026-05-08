@@ -38,6 +38,9 @@ const schema = z.object({
   STRIPE_PRO_ANNUAL_PRICE_ID: optionalString('price_'),
   STRIPE_ELITE_MONTHLY_PRICE_ID: optionalString('price_'),
   STRIPE_ELITE_ANNUAL_PRICE_ID: optionalString('price_'),
+  // Single-plan launch pricing — Pro tier carries the full product (decided
+  // 2026-05-08). Lifetime is a one-time payment, not a subscription.
+  STRIPE_LIFETIME_PRICE_ID: optionalString('price_'),
 
   ANTHROPIC_API_KEY: optionalString(),
   FINNHUB_API_KEY: optionalString(),

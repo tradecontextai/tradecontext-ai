@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — TradeContext.ai</title>
+<meta name="description" content="TradeContext.ai is built by traders, for traders. AI that actually understands what's moving the market.">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=DM+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#03060d;--bg2:#060c18;--bg3:#0a1220;--border:#142035;--blue:#0ea5e9;--purple:#8b5cf6;--green2:#34d399;--text:#e2eaf4;--text2:#7a9ab8;--text3:#3a5570;--sans:'Outfit',sans-serif;--mono:'DM Mono',monospace;--grad-prem:linear-gradient(135deg,#0ea5e9,#8b5cf6);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;}
+.navbar{height:62px;background:rgba(3,6,13,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 40px;position:sticky;top:0;z-index:10;}
+.nav-logo{font-size:19px;font-weight:900;letter-spacing:-.02em;text-decoration:none;color:var(--text);}
+.nav-logo span{background:var(--grad-prem);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.nav-links{display:flex;gap:28px;font-family:var(--mono);font-size:11px;font-weight:600;}
+.nav-links a{color:var(--text2);text-decoration:none;letter-spacing:.04em;}
+.nav-links a:hover{color:var(--blue);}
+.nav-cta{padding:8px 18px;background:var(--grad-prem);color:#fff;font-family:var(--sans);font-size:12px;font-weight:800;border-radius:6px;text-decoration:none;letter-spacing:.04em;}
+.hero{padding:80px 40px 50px;text-align:center;max-width:880px;margin:0 auto;}
+.hero-eyebrow{font-family:var(--mono);font-size:11px;font-weight:800;color:var(--blue);letter-spacing:.16em;text-transform:uppercase;margin-bottom:14px;}
+.hero-title{font-size:54px;font-weight:900;letter-spacing:-.03em;margin-bottom:18px;line-height:1.05;}
+.hero-title span{background:var(--grad-prem);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero-sub{font-size:18px;color:var(--text2);max-width:680px;margin:0 auto;line-height:1.6;}
+.section{max-width:780px;margin:0 auto;padding:40px 40px;}
+.section h2{font-size:26px;font-weight:900;letter-spacing:-.02em;margin-bottom:14px;}
+.section p{font-size:16px;color:var(--text2);line-height:1.75;margin-bottom:14px;}
+.section p strong{color:var(--text);}
+.principles{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin:30px 0 12px;}
+@media (max-width:780px){.principles{grid-template-columns:1fr;}.hero-title{font-size:38px;}}
+.principle{padding:24px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;}
+.principle-icon{font-size:28px;margin-bottom:10px;}
+.principle h3{font-size:16px;font-weight:800;margin-bottom:6px;color:var(--text);}
+.principle p{font-size:13.5px;color:var(--text2);line-height:1.55;margin:0;}
+.cta-block{max-width:760px;margin:60px auto 80px;padding:36px 40px;background:linear-gradient(135deg,rgba(14,165,233,.08),rgba(139,92,246,.05));border:1px solid var(--border);border-radius:14px;text-align:center;}
+.cta-block h3{font-size:24px;font-weight:900;margin-bottom:10px;}
+.cta-block p{font-size:14px;color:var(--text2);margin-bottom:22px;}
+.cta-btn{display:inline-block;padding:13px 28px;background:var(--grad-prem);color:#fff;font-family:var(--sans);font-size:14px;font-weight:800;border-radius:8px;text-decoration:none;letter-spacing:.04em;}
+.cta-btn:hover{filter:brightness(1.1);}
+footer{padding:40px;text-align:center;font-family:var(--mono);font-size:10px;color:var(--text3);border-top:1px solid var(--border);}
+footer a{color:var(--text2);margin:0 10px;text-decoration:none;}
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <a class="nav-logo" href="home.html">TradeContext<span>.ai</span></a>
+  <div class="nav-links">
+    <a href="home.html">Home</a>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="pricing.html">Pricing</a>
+    <a href="track-record.html">Track Record</a>
+    <a href="blog.html">Blog</a>
+    <a href="about.html">About</a>
+  </div>
+  <a href="signup.html" class="nav-cta">Get Started</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-eyebrow">Why we built this</div>
+  <h1 class="hero-title">Trading platforms <span>show you charts</span>. We tell you what they mean.</h1>
+  <p class="hero-sub">TradeContext.ai is a one-person company building the trading dashboard we wished existed — one that actually reads the news, understands the macro context, and tells you what's moving the market in plain English.</p>
+</section>
+
+<section class="section">
+  <h2>The problem</h2>
+  <p>Every retail trader stares at the same charts. The same indicators. The same TradingView feed. Yet the people moving the market — institutional desks, central bank traders, prop shops — are reading <strong>news, macro flow and order book context</strong> in real time and acting on it before retail even reads the headline.</p>
+  <p>That asymmetry is the gap between losing and winning. We built TradeContext.ai to close it.</p>
+</section>
+
+<section class="section">
+  <h2>What makes us different</h2>
+  <div class="principles">
+    <div class="principle">
+      <div class="principle-icon">🧠</div>
+      <h3>AI that reads, not predicts</h3>
+      <p>Our Claude-powered engine scores every breaking story for bias, impact and affected markets — within seconds of publication. Not a magic ball; a research analyst that never sleeps.</p>
+    </div>
+    <div class="principle">
+      <div class="principle-icon">⚡</div>
+      <h3>Macro you can see</h3>
+      <p>Live currency strength, risk sentiment, fear &amp; greed, session overlap, world-pulse heat map — all the signals that drive flow, in one glance.</p>
+    </div>
+    <div class="principle">
+      <div class="principle-icon">🛡️</div>
+      <h3>We never trade for you</h3>
+      <p>We're not a broker. We never touch your funds. Our job is to hand you the highest-conviction setup; you pull the trigger on your regulated broker.</p>
+    </div>
+    <div class="principle">
+      <div class="principle-icon">🪜</div>
+      <h3>One plan, one price</h3>
+      <p>No tiers. No "upgrade for the good stuff". $39.95/month gets every feature. Annual saves 17%. Lifetime is pay-once-use-forever.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <h2>Built by a trader, in London</h2>
+  <p>Hi — I'm Amir, the solo founder of TradeContext.ai. I traded forex, indices and gold for years, frustrated that no platform gave me a single-pane view of <em>why</em> the market was moving. So I built one. With Claude as my research analyst, every news story now gets read, scored and explained in seconds.</p>
+  <p>This is a small bootstrapped company, not a venture-funded SaaS factory. Every feature you see was built because I (or an early customer) needed it. Email me at <a href="mailto:hello@tradecontext.ai" style="color:var(--blue);">hello@tradecontext.ai</a> if you want anything specific — I read every email.</p>
+</section>
+
+<div class="cta-block">
+  <h3>Try it for 2 minutes, free</h3>
+  <p>No credit card. No signup until you decide to subscribe.</p>
+  <a href="dashboard.html" class="cta-btn">Open the dashboard →</a>
+</div>
+
+<footer>
+  © 2026 TradeContext.ai ·
+  <a href="terms.html">Terms</a>
+  <a href="privacy.html">Privacy</a>
+  <a href="risk.html">Risk warning</a>
+  <a href="pricing.html">Pricing</a>
+  <a href="mailto:hello@tradecontext.ai">Contact</a>
+</footer>
+</body>
+</html>

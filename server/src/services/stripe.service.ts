@@ -15,18 +15,23 @@ export const stripe = env.STRIPE_SECRET_KEY
   : null;
 
 // ──────── Price ID mapping ────────
+// Launch model = single plan ("pro") at $39.95/mo, $399/yr, $799 lifetime.
+// "elite" is kept around so legacy users on the elite tier still resolve, but
+// the dashboard pricing page only shows pro.
 export type PlanTier = Exclude<Plan, 'free'>;
-export type Billing = 'monthly' | 'annual';
+export type Billing = 'monthly' | 'annual' | 'lifetime';
 
 export function priceIdFor(plan: PlanTier, billing: Billing): string {
   const map: Record<PlanTier, Record<Billing, string | undefined>> = {
     pro: {
       monthly: env.STRIPE_PRO_MONTHLY_PRICE_ID,
       annual: env.STRIPE_PRO_ANNUAL_PRICE_ID,
+      lifetime: env.STRIPE_LIFETIME_PRICE_ID,
     },
     elite: {
       monthly: env.STRIPE_ELITE_MONTHLY_PRICE_ID,
       annual: env.STRIPE_ELITE_ANNUAL_PRICE_ID,
+      lifetime: env.STRIPE_LIFETIME_PRICE_ID,
     },
   };
   const id = map[plan][billing];
@@ -75,16 +80,18 @@ export async function createCheckoutSession(opts: {
   const customerId = await ensureStripeCustomer(opts.userId);
   const priceId = priceIdFor(opts.plan, opts.billing);
 
+  // Lifetime = one-time payment, monthly/annual = recurring subscription
+  const isLifetime = opts.billing === 'lifetime';
   const session = await stripe.checkout.sessions.create({
     customer: customerId,
-    mode: 'subscription',
+    mode: isLifetime ? 'payment' : 'subscription',
     line_items: [{ price: priceId, quantity: 1 }],
     success_url: `${env.CLIENT_URL}/dashboard.html?checkout=success`,
-    cancel_url: `${env.CLIENT_URL}/signup.html?checkout=cancelled`,
+    cancel_url: `${env.CLIENT_URL}/pricing.html?checkout=cancelled`,
     allow_promotion_codes: true,
-    subscription_data: {
-      metadata: { userId: opts.userId, plan: opts.plan, billing: opts.billing },
-    },
+    ...(isLifetime
+      ? {}
+      : { subscription_data: { metadata: { userId: opts.userId, plan: opts.plan, billing: opts.billing } } }),
     metadata: { userId: opts.userId, plan: opts.plan, billing: opts.billing },
   });
 
@@ -104,7 +111,11 @@ export async function createPortalSession(userId: string) {
 
 // ──────── Webhook event handling ────────
 function planFromPriceId(priceId: string): PlanTier | null {
-  if (priceId === env.STRIPE_PRO_MONTHLY_PRICE_ID || priceId === env.STRIPE_PRO_ANNUAL_PRICE_ID)
+  if (
+    priceId === env.STRIPE_PRO_MONTHLY_PRICE_ID ||
+    priceId === env.STRIPE_PRO_ANNUAL_PRICE_ID ||
+    priceId === env.STRIPE_LIFETIME_PRICE_ID
+  )
     return 'pro';
   if (priceId === env.STRIPE_ELITE_MONTHLY_PRICE_ID || priceId === env.STRIPE_ELITE_ANNUAL_PRICE_ID)
     return 'elite';

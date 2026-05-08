@@ -16,8 +16,8 @@ export const stripeRouter = Router();
 
 // ──────── POST /api/stripe/checkout ────────
 const checkoutSchema = z.object({
-  plan: z.enum(['pro', 'elite']),
-  billing: z.enum(['monthly', 'annual']),
+  plan: z.enum(['pro', 'elite']).default('pro'),
+  billing: z.enum(['monthly', 'annual', 'lifetime']),
 });
 
 stripeRouter.post('/checkout', requireAuth, async (req, res, next) => {

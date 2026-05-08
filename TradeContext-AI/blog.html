@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Market Wraps &amp; Analysis — TradeContext.ai Blog</title>
+<meta name="description" content="Daily AI-generated market wraps, weekly macro analysis, and trader education from TradeContext.ai.">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=DM+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#03060d;--bg2:#060c18;--bg3:#0a1220;--border:#142035;--blue:#0ea5e9;--purple:#8b5cf6;--green2:#34d399;--text:#e2eaf4;--text2:#7a9ab8;--text3:#3a5570;--sans:'Outfit',sans-serif;--mono:'DM Mono',monospace;--grad-prem:linear-gradient(135deg,#0ea5e9,#8b5cf6);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;}
+.navbar{height:62px;background:rgba(3,6,13,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 40px;position:sticky;top:0;z-index:10;}
+.nav-logo{font-size:19px;font-weight:900;letter-spacing:-.02em;text-decoration:none;color:var(--text);}
+.nav-logo span{background:var(--grad-prem);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.nav-links{display:flex;gap:28px;font-family:var(--mono);font-size:11px;font-weight:600;}
+.nav-links a{color:var(--text2);text-decoration:none;letter-spacing:.04em;}
+.nav-links a:hover{color:var(--blue);}
+.nav-cta{padding:8px 18px;background:var(--grad-prem);color:#fff;font-family:var(--sans);font-size:12px;font-weight:800;border-radius:6px;text-decoration:none;letter-spacing:.04em;}
+.hero{padding:60px 40px 30px;text-align:center;max-width:880px;margin:0 auto;}
+.hero-eyebrow{font-family:var(--mono);font-size:11px;font-weight:800;color:var(--blue);letter-spacing:.16em;text-transform:uppercase;margin-bottom:14px;}
+.hero-title{font-size:48px;font-weight:900;letter-spacing:-.03em;margin-bottom:14px;line-height:1.05;}
+.hero-title span{background:var(--grad-prem);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero-sub{font-size:16px;color:var(--text2);max-width:600px;margin:0 auto;line-height:1.6;}
+.tag-row{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;padding:20px 40px;}
+.tag{padding:7px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:100px;font-family:var(--mono);font-size:10.5px;font-weight:700;color:var(--text2);cursor:pointer;letter-spacing:.04em;text-transform:uppercase;text-decoration:none;}
+.tag:hover,.tag.active{background:var(--bg3);border-color:var(--blue);color:var(--blue);}
+.posts{max-width:1180px;margin:0 auto;padding:30px 40px 80px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+@media (max-width:980px){.posts{grid-template-columns:1fr 1fr;}}
+@media (max-width:680px){.posts{grid-template-columns:1fr;}.hero-title{font-size:36px;}}
+.post{padding:24px 22px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:.22s cubic-bezier(.22,.61,.36,1);text-decoration:none;color:inherit;display:flex;flex-direction:column;}
+.post:hover{transform:translateY(-3px);border-color:var(--blue);box-shadow:0 18px 36px rgba(14,165,233,.15);}
+.post-kind{font-family:var(--mono);font-size:9px;font-weight:800;color:var(--blue);letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px;}
+.post-kind.education{color:var(--green2);}
+.post-kind.analysis{color:var(--purple);}
+.post-title{font-size:18px;font-weight:800;letter-spacing:-.01em;margin-bottom:8px;line-height:1.35;}
+.post-excerpt{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:16px;flex:1;}
+.post-meta{display:flex;align-items:center;justify-content:space-between;font-family:var(--mono);font-size:9.5px;color:var(--text3);font-weight:700;letter-spacing:.05em;}
+.post-meta .symbols{display:flex;gap:4px;}
+.post-meta .sym{padding:2px 6px;background:var(--bg3);border-radius:3px;color:var(--text2);font-size:9px;}
+.empty{grid-column:1/-1;padding:60px 30px;text-align:center;color:var(--text3);font-family:var(--mono);font-size:12px;border:1px dashed var(--border);border-radius:12px;}
+.subscribe-cta{max-width:760px;margin:0 auto 80px;padding:36px 40px;background:linear-gradient(135deg,rgba(14,165,233,.08),rgba(139,92,246,.05));border:1px solid var(--border);border-radius:14px;text-align:center;}
+.subscribe-cta h3{font-size:22px;font-weight:900;margin-bottom:10px;}
+.subscribe-cta p{font-size:13.5px;color:var(--text2);margin-bottom:18px;line-height:1.6;}
+.cta-btn{display:inline-block;padding:12px 26px;background:var(--grad-prem);color:#fff;font-family:var(--sans);font-size:13px;font-weight:800;border-radius:8px;text-decoration:none;letter-spacing:.04em;}
+footer{padding:40px;text-align:center;font-family:var(--mono);font-size:10px;color:var(--text3);border-top:1px solid var(--border);}
+footer a{color:var(--text2);margin:0 10px;text-decoration:none;}
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <a class="nav-logo" href="home.html">TradeContext<span>.ai</span></a>
+  <div class="nav-links">
+    <a href="home.html">Home</a>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="pricing.html">Pricing</a>
+    <a href="track-record.html">Track Record</a>
+    <a href="blog.html">Blog</a>
+    <a href="about.html">About</a>
+  </div>
+  <a href="signup.html" class="nav-cta">Get Started</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-eyebrow">📰 Daily wraps · weekly macro · forever-fresh</div>
+  <h1 class="hero-title">Market context, <span>delivered daily</span></h1>
+  <p class="hero-sub">Every weekday at 06:00 UTC our AI publishes the day-ahead wrap: what moved overnight, what's scheduled today, and which assets to watch.</p>
+</section>
+
+<div class="tag-row" id="tagRow">
+  <a href="#" class="tag active" data-tag="all">All</a>
+  <a href="#" class="tag" data-tag="market-wrap">Daily wrap</a>
+  <a href="#" class="tag" data-tag="analysis">Analysis</a>
+  <a href="#" class="tag" data-tag="education">Education</a>
+</div>
+
+<div class="posts" id="postsGrid">
+  <div class="empty">Loading the latest posts…</div>
+</div>
+
+<div class="subscribe-cta">
+  <h3>Get the daily wrap by email</h3>
+  <p>Same content, delivered to your inbox before London opens. Free for subscribers.</p>
+  <a href="signup.html" class="cta-btn">Subscribe →</a>
+</div>
+
+<footer>
+  © 2026 TradeContext.ai ·
+  <a href="terms.html">Terms</a>
+  <a href="privacy.html">Privacy</a>
+  <a href="risk.html">Risk warning</a>
+  <a href="pricing.html">Pricing</a>
+  <a href="about.html">About</a>
+</footer>
+
+<script>
+var TC_API=(location.hostname==='localhost'||location.hostname==='127.0.0.1')?'http://localhost:3001':location.origin;
+var _posts=[],_filter='all';
+
+function fmtDate(iso){
+  try{var d=new Date(iso);return d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});}catch(_){return '';}
+}
+
+function render(){
+  var grid=document.getElementById('postsGrid');
+  var rows=_filter==='all'?_posts:_posts.filter(function(p){return p.kind===_filter;});
+  if(!rows.length){
+    grid.innerHTML='<div class="empty">No posts yet — check back tomorrow morning. The 06:00 UTC cron will spin up our first wrap shortly.</div>';
+    return;
+  }
+  grid.innerHTML=rows.map(function(p){
+    var symHtml=(p.symbols||[]).slice(0,3).map(function(s){return '<span class="sym">'+s+'</span>';}).join('');
+    return '<a class="post" href="blog-post.html?slug='+encodeURIComponent(p.slug)+'">'
+      +'<div class="post-kind '+(p.kind||'')+'">'+(p.kind||'analysis').replace(/-/g,' ')+'</div>'
+      +'<div class="post-title">'+p.title+'</div>'
+      +'<div class="post-excerpt">'+(p.description||'').slice(0,180)+'…</div>'
+      +'<div class="post-meta"><span>'+fmtDate(p.publishedAt)+'</span><span class="symbols">'+symHtml+'</span></div>'
+    +'</a>';
+  }).join('');
+}
+
+document.querySelectorAll('.tag').forEach(function(t){
+  t.addEventListener('click',function(e){
+    e.preventDefault();
+    document.querySelectorAll('.tag').forEach(function(x){x.classList.remove('active');});
+    t.classList.add('active');
+    _filter=t.dataset.tag;render();
+  });
+});
+
+fetch(TC_API+'/api/blog/posts').then(function(r){return r.json();}).then(function(d){
+  _posts=(d&&d.posts)||[];render();
+}).catch(function(){
+  document.getElementById('postsGrid').innerHTML='<div class="empty">Couldn\'t reach the blog backend. The first daily wrap publishes at 06:00 UTC tomorrow.</div>';
+});
+</script>
+</body>
+</html>

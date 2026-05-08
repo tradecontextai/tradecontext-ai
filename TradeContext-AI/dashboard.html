@@ -201,6 +201,45 @@ body{overflow-x:hidden;overflow-y:auto;}
 /* Journal slot becomes the panel itself when reparented — keep height in sync */
 .three-col-row .panel{height:600px;max-height:600px;overflow:hidden;}
 .three-col-row .panel > .journal-hero,.three-col-row .panel > .kpi-grid-mini{flex-shrink:0;}
+/* ═══════ PAYWALL — countdown strip + blocking modal ═══════ */
+.pw-strip{position:sticky;top:0;z-index:50;background:linear-gradient(90deg,rgba(14,165,233,.08),rgba(139,92,246,.06));border-bottom:1px solid var(--border);}
+.pw-strip-inner{display:flex;align-items:center;gap:14px;padding:7px 18px;font-family:var(--mono);font-size:11px;color:var(--text2);font-weight:700;letter-spacing:.04em;}
+.pw-strip-pulse{width:8px;height:8px;border-radius:50%;background:var(--blue);box-shadow:0 0 8px var(--blue);animation:nowPulse 2s ease-in-out infinite;}
+.pw-strip-cta{margin-left:auto;background:var(--grad-prem);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:900;text-decoration:none;font-size:11.5px;}
+.pw-strip-track{height:2px;background:var(--bg2);}
+.pw-strip-bar{height:100%;background:var(--grad-prem);width:0;transition:width 1s linear;}
+.pw-modal{position:fixed;inset:0;z-index:200;background:rgba(7,12,22,.78);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px;}
+.pw-modal.show{display:flex;animation:fadeUp .3s var(--ease-out-quart);}
+.pw-card{max-width:1080px;width:100%;background:var(--bg2);border:1px solid var(--border2);border-radius:16px;padding:42px 38px 30px;box-shadow:0 28px 80px rgba(0,0,0,.7);position:relative;overflow:hidden;}
+.pw-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--grad-prem);}
+.pw-card-h{text-align:center;margin-bottom:30px;}
+.pw-eyebrow{font-family:var(--mono);font-size:11px;font-weight:800;color:var(--yellow);letter-spacing:.16em;text-transform:uppercase;margin-bottom:10px;}
+.pw-title{font-family:var(--sans);font-size:34px;font-weight:900;color:var(--text);letter-spacing:-.02em;margin-bottom:8px;}
+.pw-sub{font-family:var(--sans);font-size:14px;color:var(--text2);max-width:560px;margin:0 auto;line-height:1.55;}
+.pw-tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px;}
+@media (max-width:780px){.pw-tiers{grid-template-columns:1fr;}}
+.pw-tier{position:relative;padding:24px 22px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;transition:.22s var(--ease-out-quart);display:flex;flex-direction:column;}
+.pw-tier:hover{transform:translateY(-3px);border-color:var(--blue);box-shadow:0 18px 36px rgba(14,165,233,.18);}
+.pw-tier.featured{border:1.5px solid var(--blue);background:linear-gradient(180deg,rgba(14,165,233,.08),rgba(139,92,246,.04));}
+.pw-tier.featured::after{content:'';position:absolute;inset:-1px;border-radius:12px;border:1.5px solid transparent;background:var(--grad-prem) border-box;-webkit-mask:linear-gradient(#000 0 0) padding-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;}
+.pw-badge{position:absolute;top:-10px;right:14px;padding:4px 10px;font-family:var(--mono);font-size:9px;font-weight:900;color:#fff;background:var(--grad-prem);border-radius:100px;letter-spacing:.1em;text-transform:uppercase;}
+.pw-badge.gold{background:linear-gradient(135deg,#f59e0b,#fbbf24);color:#0b1220;}
+.pw-tier-h{font-family:var(--sans);font-size:13px;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;}
+.pw-price{font-family:var(--sans);display:flex;align-items:baseline;gap:6px;margin-bottom:6px;}
+.pw-amt{font-size:38px;font-weight:900;color:var(--text);letter-spacing:-.02em;}
+.pw-per{font-family:var(--mono);font-size:11px;color:var(--text3);font-weight:700;letter-spacing:.04em;}
+.pw-tier-sub{font-family:var(--sans);font-size:12px;color:var(--text3);margin-bottom:18px;line-height:1.5;}
+.pw-cta{margin-top:auto;padding:13px 16px;border:1px solid var(--border2);background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13px;font-weight:800;letter-spacing:.03em;border-radius:8px;cursor:pointer;transition:.18s var(--ease-out-quart);}
+.pw-cta:hover{border-color:var(--blue);color:var(--blue);transform:translateY(-1px);}
+.pw-cta.primary{background:var(--grad-prem);color:#fff;border-color:transparent;box-shadow:0 8px 22px rgba(14,165,233,.35);}
+.pw-cta.primary:hover{filter:brightness(1.1);transform:translateY(-2px);}
+.pw-cta.gold{background:linear-gradient(135deg,#f59e0b,#fbbf24);color:#0b1220;border-color:transparent;box-shadow:0 8px 22px rgba(245,158,11,.35);}
+.pw-cta.gold:hover{filter:brightness(1.06);transform:translateY(-2px);}
+.pw-foot{font-family:var(--mono);font-size:10px;color:var(--text3);text-align:center;letter-spacing:.04em;}
+.pw-foot a{color:var(--blue);text-decoration:none;}
+.pw-foot a:hover{text-decoration:underline;}
+.pw-foot-sep{margin:0 8px;opacity:.5;}
+
 /* FAQ section centered + capped to readable width */
 .faq-centered{max-width:920px;margin-left:auto!important;margin-right:auto!important;text-align:center;}
 .faq-centered .section-title{justify-content:center;text-align:center;gap:14px;}
@@ -1076,6 +1115,56 @@ body{overflow-x:hidden;overflow-y:auto;}
 </head>
 <body>
 
+<!-- ═══════ FREE-PREVIEW COUNTDOWN BAR (auto-hides after paywall lock) ═══════ -->
+<div class="pw-strip" id="pwStrip">
+  <div class="pw-strip-inner">
+    <span class="pw-strip-pulse"></span>
+    <span id="pwTimerLbl">Free preview · 2:00 left</span>
+    <a href="#" onclick="tcCheckout('monthly');return false;" class="pw-strip-cta">Upgrade now →</a>
+  </div>
+  <div class="pw-strip-track"><div class="pw-strip-bar" id="pwTimerBar"></div></div>
+</div>
+
+<!-- ═══════ PAYWALL MODAL ═══════ -->
+<div class="pw-modal" id="pwModal" role="dialog" aria-modal="true" aria-labelledby="pwTitle">
+  <div class="pw-card">
+    <div class="pw-card-h">
+      <div class="pw-eyebrow">⏱ Free preview ended</div>
+      <div class="pw-title" id="pwTitle">Unlock TradeContext.ai</div>
+      <div class="pw-sub">Live AI bias, news intelligence, broker hub, journal, alerts. One plan. No tiers. Cancel anytime.</div>
+    </div>
+    <div class="pw-tiers">
+      <div class="pw-tier">
+        <div class="pw-tier-h">Monthly</div>
+        <div class="pw-price"><span class="pw-amt">$39.95</span><span class="pw-per">/month</span></div>
+        <div class="pw-tier-sub">Cancel anytime · billed monthly</div>
+        <button class="pw-cta" onclick="tcCheckout('monthly')">Start monthly</button>
+      </div>
+      <div class="pw-tier featured">
+        <div class="pw-badge">SAVE 17%</div>
+        <div class="pw-tier-h">Annual</div>
+        <div class="pw-price"><span class="pw-amt">$399</span><span class="pw-per">/year</span></div>
+        <div class="pw-tier-sub">~$33/mo · 2 months free</div>
+        <button class="pw-cta primary" onclick="tcCheckout('annual')">Go annual</button>
+      </div>
+      <div class="pw-tier">
+        <div class="pw-badge gold">LIFETIME</div>
+        <div class="pw-tier-h">One-time</div>
+        <div class="pw-price"><span class="pw-amt">$799</span><span class="pw-per">once</span></div>
+        <div class="pw-tier-sub">Pay once · use forever · founders only</div>
+        <button class="pw-cta gold" onclick="tcCheckout('lifetime')">Buy lifetime</button>
+      </div>
+    </div>
+    <div class="pw-foot">
+      Already a subscriber? <a href="/signup.html?mode=signin">Sign in →</a>
+      <span class="pw-foot-sep">·</span>
+      <a href="/risk.html" target="_blank">Risk warning</a>
+      <span class="pw-foot-sep">·</span>
+      <a href="/terms.html" target="_blank">Terms</a>
+    </div>
+  </div>
+</div>
+
 <!-- ═══════ TOP STRIP (ticker + sessions) ═══════ -->
 <div class="top-strip">
   <div class="ticker-bar">
@@ -1776,13 +1865,21 @@ body{overflow-x:hidden;overflow-y:auto;}
 
 <!-- ═══════ FOOTER ═══════ -->
 <footer class="footer">
+  <div class="footer-disclosure" style="max-width:880px;margin:0 auto 18px;padding:14px 20px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;font-family:var(--sans);font-size:11.5px;color:var(--text2);line-height:1.65;text-align:left;">
+    <strong style="color:var(--yellow);">Affiliate disclosure:</strong> TradeContext.ai earns a referral commission from some brokers listed in the "Open in [Broker]" dropdown when you open and fund an account through us. This <em>never</em> changes which brokers appear or where they rank — every broker shown is independently chosen because it's regulated by a recognised authority (FCA, ASIC, CFTC, MAS etc.). We are not a broker, never place trades for you, and never touch client funds. See our <a href="terms.html" style="color:var(--blue);">terms</a> and <a href="risk.html" style="color:var(--blue);">risk warning</a>.
+  </div>
   <div class="footer-links">
-    <a href="index.html">Home</a>
+    <a href="home.html">Home</a>
     <a href="dashboard.html">Dashboard</a>
     <a href="news-bias.html">News Bias</a>
     <a href="markets.html">Markets</a>
     <a href="journal.html">Journal</a>
     <a href="broker-connect.html">Broker Hub</a>
+    <a href="track-record.html">Track Record</a>
+    <a href="prop-firm.html">Prop Firm</a>
+    <a href="blog.html">Blog</a>
+    <a href="pricing.html">Pricing</a>
+    <a href="about.html">About</a>
     <a href="risk.html">Risk</a>
     <a href="privacy.html">Privacy</a>
     <a href="terms.html">Terms</a>
@@ -2154,9 +2251,13 @@ function buildTicker(){
     var k=t.s.replace(/[/ ]/g,'_');
     return '<div class="t-i"><span class="t-s">'+t.s+'</span><span class="t-p" data-sym="'+k+'">'+fmt(t.p,t.d)+'</span><span class="t-c up" data-arr="'+k+'">▲</span></div>';
   }).join('');
-  // Tick every 1 second — small randomised drift per tick (roughly 0.02% magnitude)
-  setInterval(function(){
+  // The random-walk simulator below ONLY runs while the macro snapshot has
+  // never landed (showLiveOrPlaceholder). Once /api/price/bulk has returned
+  // real prices we kill the simulator so users never see fake data drift.
+  var simInterval=setInterval(function(){
+    if(_macroSnapshot&&_macroSnapshot.lastTs){clearInterval(simInterval);return;}
     _TD.forEach(function(t){
+      if(t.live)return; // never overwrite a live tick
       var mv=(Math.random()-0.498)*t.p*0.0002;
       t.p=Math.max(0.001,t.p+mv);
       var up=mv>=0,k=t.s.replace(/[/ ]/g,'_');
@@ -2170,6 +2271,26 @@ function buildTicker(){
       });
     });
   },1000);
+
+  // After macro snapshot lands, animate the ticker from the new live prices
+  // instead of randomly walking. We diff vs prevClose for direction colouring.
+  setInterval(function(){
+    if(!_macroSnapshot||!_macroSnapshot.lastTs)return;
+    _TD.forEach(function(t){
+      if(!t.live)return;
+      var k=t.s.replace(/[/ ]/g,'_');
+      var base=t._prevClose||t.p;
+      var up=t.p>=base;
+      document.querySelectorAll('[data-sym="'+k+'"]').forEach(function(e){
+        e.textContent=fmt(t.p,t.d);
+        e.style.color=up?'#34d399':'#f87171';
+        setTimeout(function(){e.style.color='';},500);
+      });
+      document.querySelectorAll('[data-arr="'+k+'"]').forEach(function(e){
+        e.textContent=up?'▲':'▼';e.className='t-c '+(up?'up':'dn');
+      });
+    });
+  },5000);
 }
 buildTicker();
 
@@ -3331,6 +3452,13 @@ function openMetaTrader(version){
     main.textContent=version==='mt4'?'📊 MT4':'📈 MT5';
     main.setAttribute('onclick',"openMetaTrader('"+version+"')");
   }
+  // Log the click for funnel analytics — fire-and-forget
+  try{
+    fetch(TC_API+'/api/brokers/click',{
+      method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',
+      body:JSON.stringify({brokerId:version,symbol:(window._activeSymLabel||null),surface:'mt-launcher'})
+    });
+  }catch(_){}
   // Always copy the setup to the clipboard first so the user can paste in MT
   copyTradeSetup({silent:true});
   var sym=(window._activeSymLabel||'XAU/USD');
@@ -3547,12 +3675,31 @@ function renderBrokerDropdown(filter){
 }
 function filterBrokerDropdown(v){renderBrokerDropdown(v);}
 
-function openBrokerSite(id){
+// Open the broker via our click-tracking endpoint so we (a) log the conversion
+// for affiliate revenue analytics, (b) get back the tracked URL with our IB
+// code injected. Pop the new tab synchronously (with about:blank) before the
+// fetch resolves — popup blockers require user-gesture-window-open.
+function openBrokerSite(id,surface){
   var b=BROKER_LIST.find(function(x){return x.id===id;});
   if(!b){toast({kind:'red',icon:'⚠️',title:'Broker not found',duration:3000});return;}
   setPreferredBroker(id);
   closeBrokerDropdown();
-  window.open(b.url,'_blank','noopener,noreferrer');
+  // Open the tab immediately so popup blockers don't kick in. We rewrite its
+  // location once we get the tracked URL back from the backend.
+  var win=window.open('about:blank','_blank','noopener,noreferrer');
+  fetch(TC_API+'/api/brokers/click',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    credentials:'include',
+    body:JSON.stringify({brokerId:id,symbol:(window._activeSymLabel||null),surface:surface||'dropdown'})
+  }).then(function(r){return r.json();}).then(function(d){
+    var url=(d&&d.url)||b.url;
+    if(win&&!win.closed)win.location=url;
+    else window.open(url,'_blank','noopener,noreferrer');
+  }).catch(function(){
+    // Backend down — still send the user through with the plain URL
+    if(win&&!win.closed)win.location=b.url;
+  });
   toast({
     kind:'blue',
     icon:'↗',
@@ -4652,6 +4799,107 @@ document.addEventListener('click',function(e){
   }
   setInterval(tick,3000);
   setTimeout(tick,1000);
+})();
+
+// ════════════════════════════════════════════════════════════════════
+// PAYWALL — 2-minute free preview, then locks the dashboard
+// ════════════════════════════════════════════════════════════════════
+// Cumulative seconds spent on the dashboard (across visits) live in
+// localStorage. After PAYWALL_LIMIT_S we show a blocking modal with three
+// pricing tiers. Already-paid users are detected via /api/auth/me and skip
+// the gate entirely. The modal can't be dismissed without a checkout click,
+// but it WILL allow sign-in (existing customers).
+(function paywall(){
+  var PAYWALL_LIMIT_S=120;            // 2-minute preview
+  var KEY='tc_paywall_seconds';
+  var EXEMPT_KEY='tc_paywall_exempt'; // sticky once we've confirmed paid
+  var locked=false, timer=null;
+
+  function getSeconds(){return parseInt(localStorage.getItem(KEY)||'0',10)||0;}
+  function bumpSeconds(){var s=getSeconds()+1;localStorage.setItem(KEY,String(s));return s;}
+  function exempt(){return localStorage.getItem(EXEMPT_KEY)==='1';}
+  function setExempt(v){if(v)localStorage.setItem(EXEMPT_KEY,'1');else localStorage.removeItem(EXEMPT_KEY);}
+
+  function lock(){
+    if(locked||exempt())return;
+    locked=true;
+    var modal=document.getElementById('pwModal');
+    if(!modal)return;
+    modal.classList.add('show');
+    document.body.style.overflow='hidden';
+  }
+  function unlock(){
+    locked=false;
+    var modal=document.getElementById('pwModal');
+    if(modal)modal.classList.remove('show');
+    document.body.style.overflow='';
+  }
+  window.tcUnlockPaywall=unlock;
+
+  // Server check: if a logged-in user has plan != free, mark exempt forever
+  fetch(TC_API+'/api/auth/me',{credentials:'include'}).then(function(r){
+    if(!r.ok)return null;return r.json();
+  }).then(function(d){
+    if(d&&d.user&&d.user.plan&&d.user.plan!=='free'){setExempt(true);unlock();}
+  }).catch(function(){});
+
+  // Tick every second the page is visible
+  function start(){
+    if(timer)clearInterval(timer);
+    timer=setInterval(function(){
+      if(document.hidden||exempt())return;
+      var s=bumpSeconds();
+      var rem=PAYWALL_LIMIT_S-s;
+      var bar=document.getElementById('pwTimerBar');
+      var lbl=document.getElementById('pwTimerLbl');
+      if(rem>0){
+        if(bar)bar.style.width=(100-(rem/PAYWALL_LIMIT_S)*100).toFixed(1)+'%';
+        if(lbl){
+          var m=Math.floor(rem/60),sec=rem%60;
+          lbl.textContent='Free preview · '+m+':'+(sec<10?'0':'')+sec+' left';
+        }
+      }else{
+        if(lbl)lbl.textContent='Free preview ended';
+        if(bar)bar.style.width='100%';
+        lock();
+      }
+    },1000);
+  }
+  start();
+  document.addEventListener('visibilitychange',function(){if(!document.hidden)start();});
+
+  // Checkout — calls /api/stripe/checkout, redirects to Stripe-hosted page
+  window.tcCheckout=function(billing){
+    var btns=document.querySelectorAll('.pw-cta');btns.forEach(function(b){b.disabled=true;b.style.opacity='.6';});
+    fetch(TC_API+'/api/stripe/checkout',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      credentials:'include',
+      body:JSON.stringify({plan:'pro',billing:billing})
+    }).then(function(r){
+      if(r.status===401){
+        // Not signed in — bounce to signup, preserve intent
+        window.location='/signup.html?intent='+billing;
+        return null;
+      }
+      return r.json();
+    }).then(function(d){
+      if(d&&d.url)window.location=d.url;
+      else if(d){
+        toast({kind:'red',icon:'⚠️',title:'Checkout error',desc:d.error&&d.error.message||'Try again in a moment',duration:6000});
+        btns.forEach(function(b){b.disabled=false;b.style.opacity='';});
+      }
+    }).catch(function(){
+      toast({kind:'red',icon:'⚠️',title:'Network error',desc:'Couldn\'t reach Stripe — check connection',duration:6000});
+      btns.forEach(function(b){b.disabled=false;b.style.opacity='';});
+    });
+  };
+
+  // Optimistic unlock when returning from a successful Stripe redirect
+  if(/[?&]checkout=success/.test(location.search)){
+    setExempt(true);unlock();
+    toast&&toast({kind:'green',icon:'✅',title:'Welcome to TradeContext.ai',desc:'Your subscription is active. Enjoy.',duration:7000});
+  }
 })();
 </script>
 </body>

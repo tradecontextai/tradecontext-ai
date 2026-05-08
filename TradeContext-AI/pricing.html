@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pricing — TradeContext.ai</title>
+<meta name="description" content="One plan, no tiers. $39.95/month, $399/year, or $799 lifetime. Live AI bias, news intelligence, broker hub, journal, alerts.">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=DM+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#03060d;--bg2:#060c18;--bg3:#0a1220;--border:#142035;--border2:#1f2e4a;--blue:#0ea5e9;--purple:#8b5cf6;--green:#10b981;--green2:#34d399;--yellow:#f59e0b;--red:#ef4444;--text:#e2eaf4;--text2:#7a9ab8;--text3:#3a5570;--sans:'Outfit',sans-serif;--mono:'DM Mono',monospace;--grad-prem:linear-gradient(135deg,#0ea5e9,#8b5cf6);--ease:cubic-bezier(.22,.61,.36,1);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;}
+.navbar{height:62px;background:rgba(3,6,13,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 40px;position:sticky;top:0;z-index:10;}
+.nav-logo{font-size:19px;font-weight:900;letter-spacing:-.02em;text-decoration:none;color:var(--text);}
+.nav-logo span{background:var(--grad-prem);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.nav-links{display:flex;gap:28px;font-family:var(--mono);font-size:11px;font-weight:600;}
+.nav-links a{color:var(--text2);text-decoration:none;letter-spacing:.04em;}
+.nav-links a:hover{color:var(--blue);}
+.nav-cta{padding:8px 18px;background:var(--grad-prem);color:#fff;font-family:var(--sans);font-size:12px;font-weight:800;border-radius:6px;text-decoration:none;letter-spacing:.04em;}
+.hero{padding:80px 40px 30px;text-align:center;max-width:980px;margin:0 auto;}
+.hero-eyebrow{font-family:var(--mono);font-size:11px;font-weight:800;color:var(--blue);letter-spacing:.16em;text-transform:uppercase;margin-bottom:14px;}
+.hero-title{font-size:56px;font-weight:900;letter-spacing:-.03em;margin-bottom:14px;line-height:1.05;}
+.hero-title span{background:var(--grad-prem);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero-sub{font-size:17px;color:var(--text2);max-width:640px;margin:0 auto 30px;line-height:1.55;}
+.tiers{padding:0 40px 60px;max-width:1180px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+@media (max-width:880px){.tiers{grid-template-columns:1fr;}.hero-title{font-size:40px;}}
+.tier{position:relative;padding:36px 30px;background:var(--bg2);border:1px solid var(--border);border-radius:14px;display:flex;flex-direction:column;transition:.25s var(--ease);}
+.tier:hover{transform:translateY(-4px);border-color:var(--blue);box-shadow:0 24px 50px rgba(14,165,233,.15);}
+.tier.featured{border:1.5px solid var(--blue);background:linear-gradient(180deg,rgba(14,165,233,.07),rgba(139,92,246,.03));}
+.tier-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);padding:5px 12px;font-family:var(--mono);font-size:9.5px;font-weight:900;color:#fff;background:var(--grad-prem);border-radius:100px;letter-spacing:.12em;text-transform:uppercase;}
+.tier-badge.gold{background:linear-gradient(135deg,#f59e0b,#fbbf24);color:#0b1220;}
+.tier-name{font-family:var(--sans);font-size:14px;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:18px;}
+.tier-price{display:flex;align-items:baseline;gap:8px;margin-bottom:8px;}
+.tier-amt{font-size:54px;font-weight:900;letter-spacing:-.03em;color:var(--text);line-height:1;}
+.tier-per{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--text3);letter-spacing:.04em;}
+.tier-tagline{font-size:13px;color:var(--text3);margin-bottom:22px;line-height:1.5;}
+.tier-features{list-style:none;padding:0;margin:0 0 28px;display:flex;flex-direction:column;gap:11px;}
+.tier-features li{font-size:13.5px;color:var(--text);padding-left:24px;position:relative;line-height:1.45;}
+.tier-features li::before{content:'✓';position:absolute;left:0;top:0;color:var(--green2);font-weight:900;font-size:13px;}
+.tier-cta{margin-top:auto;padding:14px 18px;border:1px solid var(--border2);background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;font-weight:800;letter-spacing:.03em;border-radius:9px;cursor:pointer;text-decoration:none;text-align:center;transition:.18s var(--ease);}
+.tier-cta:hover{border-color:var(--blue);color:var(--blue);transform:translateY(-1px);}
+.tier-cta.primary{background:var(--grad-prem);color:#fff;border-color:transparent;box-shadow:0 10px 26px rgba(14,165,233,.3);}
+.tier-cta.primary:hover{filter:brightness(1.1);transform:translateY(-2px);}
+.tier-cta.gold{background:linear-gradient(135deg,#f59e0b,#fbbf24);color:#0b1220;border-color:transparent;box-shadow:0 10px 26px rgba(245,158,11,.3);}
+.tier-cta.gold:hover{filter:brightness(1.06);transform:translateY(-2px);}
+.compare{padding:60px 40px;max-width:980px;margin:0 auto;text-align:center;}
+.compare-h{font-size:13px;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:.14em;margin-bottom:24px;}
+.compare-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+@media (max-width:780px){.compare-grid{grid-template-columns:1fr 1fr;}}
+.compare-cell{padding:22px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;}
+.compare-num{font-size:34px;font-weight:900;background:var(--grad-prem);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;margin-bottom:6px;}
+.compare-lbl{font-family:var(--mono);font-size:10px;color:var(--text3);font-weight:700;letter-spacing:.06em;text-transform:uppercase;}
+.guarantee{max-width:760px;margin:40px auto 80px;padding:30px 40px;background:linear-gradient(135deg,rgba(52,211,153,.06),rgba(52,211,153,.02));border:1px solid rgba(52,211,153,.25);border-radius:12px;text-align:center;}
+.guarantee h3{font-size:20px;font-weight:800;color:var(--green2);margin-bottom:8px;}
+.guarantee p{font-size:14px;color:var(--text2);line-height:1.65;}
+footer{padding:40px;text-align:center;font-family:var(--mono);font-size:10px;color:var(--text3);border-top:1px solid var(--border);}
+footer a{color:var(--text2);margin:0 10px;text-decoration:none;}
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <a class="nav-logo" href="home.html">TradeContext<span>.ai</span></a>
+  <div class="nav-links">
+    <a href="home.html">Home</a>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="markets.html">Markets</a>
+    <a href="track-record.html">Track Record</a>
+    <a href="blog.html">Blog</a>
+    <a href="about.html">About</a>
+  </div>
+  <a href="signup.html" class="nav-cta">Get Started</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-eyebrow">⚡ One plan · No tiers · Cancel anytime</div>
+  <h1 class="hero-title">Pricing that <span>respects your time</span></h1>
+  <p class="hero-sub">Every feature, every market, every signal — for one price. Pick monthly to dip your toe in, annual to save 17%, or lifetime if you mean business.</p>
+</section>
+
+<section class="tiers">
+  <div class="tier">
+    <div class="tier-name">Monthly</div>
+    <div class="tier-price"><span class="tier-amt">$39.95</span><span class="tier-per">/month</span></div>
+    <div class="tier-tagline">Perfect to test-drive. Cancel any time, no questions asked.</div>
+    <ul class="tier-features">
+      <li>Live AI news bias (every story scored)</li>
+      <li>AI bias engine — fundamental + technical</li>
+      <li>AI Strategy &amp; Macro Pulse dashboard</li>
+      <li>58 regulated brokers · MT4/5 launcher</li>
+      <li>Trade journal · alerts · watchlist</li>
+      <li>AI chat per chart</li>
+      <li>Email + breaking-news push alerts</li>
+    </ul>
+    <a href="signup.html?plan=monthly" class="tier-cta">Start monthly</a>
+  </div>
+
+  <div class="tier featured">
+    <div class="tier-badge">Most popular · save 17%</div>
+    <div class="tier-name">Annual</div>
+    <div class="tier-price"><span class="tier-amt">$399</span><span class="tier-per">/year</span></div>
+    <div class="tier-tagline">~$33/month · 2 months on the house. The smart choice.</div>
+    <ul class="tier-features">
+      <li>Everything in Monthly</li>
+      <li>2 months free vs monthly billing</li>
+      <li>Priority email support</li>
+      <li>Early access to new features</li>
+      <li>Track record archive (full 365-day history)</li>
+      <li>Funded-account / prop-firm tools</li>
+      <li>Trade idea leaderboard access</li>
+    </ul>
+    <a href="signup.html?plan=annual" class="tier-cta primary">Go annual</a>
+  </div>
+
+  <div class="tier">
+    <div class="tier-badge gold">Lifetime · founders only</div>
+    <div class="tier-name">Lifetime</div>
+    <div class="tier-price"><span class="tier-amt">$799</span><span class="tier-per">once</span></div>
+    <div class="tier-tagline">Pay once. Use forever. Limited to first 500 customers.</div>
+    <ul class="tier-features">
+      <li>Everything in Annual</li>
+      <li>Pay once, never billed again</li>
+      <li>Direct line to founder for feature requests</li>
+      <li>"Founder" badge on the leaderboard</li>
+      <li>All future features · no upsells</li>
+      <li>White-glove onboarding call</li>
+      <li>Locked at $799 — even when prices rise</li>
+    </ul>
+    <a href="signup.html?plan=lifetime" class="tier-cta gold">Buy lifetime</a>
+  </div>
+</section>
+
+<section class="compare">
+  <div class="compare-h">What you get</div>
+  <div class="compare-grid">
+    <div class="compare-cell"><div class="compare-num">58</div><div class="compare-lbl">Regulated brokers</div></div>
+    <div class="compare-cell"><div class="compare-num">24/7</div><div class="compare-lbl">Live news scoring</div></div>
+    <div class="compare-cell"><div class="compare-num">12+</div><div class="compare-lbl">Asset classes</div></div>
+    <div class="compare-cell"><div class="compare-num">10s</div><div class="compare-lbl">Macro Pulse refresh</div></div>
+  </div>
+</section>
+
+<div class="guarantee">
+  <h3>14-day money-back guarantee</h3>
+  <p>If TradeContext.ai isn't for you in the first 14 days, email <a href="mailto:hello@tradecontext.ai" style="color:var(--green2);">hello@tradecontext.ai</a> and we'll refund you in full. No forms, no friction.</p>
+</div>
+
+<footer>
+  © 2026 TradeContext.ai ·
+  <a href="terms.html">Terms</a>
+  <a href="privacy.html">Privacy</a>
+  <a href="risk.html">Risk warning</a>
+  <a href="about.html">About</a>
+  <a href="mailto:hello@tradecontext.ai">Contact</a>
+</footer>
+</body>
+</html>

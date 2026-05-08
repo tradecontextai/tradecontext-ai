@@ -88,6 +88,10 @@ model User {
   watchlist         WatchlistItem[]
   alerts            Alert[]
   fundedAccounts    FundedAccount[]
+  brokerClicks      BrokerClick[]
+  profile           UserProfile?
+  chatMessages      AiChatMessage[]
+  tradeIdeas        TradeIdea[]
 
   @@map("users")
 }
@@ -281,4 +285,135 @@ model FundedAccount {
 
   @@index([userId])
   @@map("funded_accounts")
+}
+
+// ───────────── BROKER AFFILIATE CLICK TRACKING ─────────────
+// Every click on the "Open in [Broker]" / MT5 / prop-firm CTAs is logged so
+// we can attribute conversions, run weekly revenue reports, and split-test
+// CTA copy. brokerId may be 'mt4'/'mt5' for MetaTrader launcher hits.
+model BrokerClick {
+  id           String   @id @default(uuid())
+  userId       String?  @map("user_id")          // null when user not signed in
+  brokerId     String   @map("broker_id")        // matches RegulatedBroker.id
+  symbol       String?                            // active chart symbol at click time
+  surface      String?                            // 'dropdown' | 'mt-launcher' | 'prop-page' | etc.
+  affiliateRef String?  @map("affiliate_ref")    // ref code substituted into URL, if any
+  ip           String?                            // for crude dedupe + abuse signal
+  userAgent    String?  @map("user_agent")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([brokerId, createdAt])
+  @@index([userId])
+  @@map("broker_clicks")
+}
+
+// ───────────── ONBOARDING / PERSONALISATION ─────────────
+// Captured by the first-load wizard. Used to seed Claude prompts (so the AI
+// playbook + bias commentary speak to *this* trader's style, account size,
+// and instruments) and to drive the leaderboard / ideas filtering.
+model UserProfile {
+  userId          String   @id @map("user_id")
+  experience      String?                            // 'beginner' | 'intermediate' | 'advanced'
+  style           String?                            // 'scalper' | 'day-trader' | 'swing' | 'position'
+  accountSize     Decimal? @map("account_size") @db.Decimal(15, 2)
+  riskPctPerTrade Decimal? @map("risk_pct_per_trade") @db.Decimal(5, 2)
+  primaryAssets   String[] @map("primary_assets")    // ['XAU/USD', 'BTC/USD', ...]
+  sessions        String[]                            // ['london', 'ny']
+  goals           String?                             // 'pass-prop-firm' | 'income' | 'wealth'
+  propFirm        String?  @map("prop_firm")          // 'ftmo' | 'topstep' | null
+  completedAt     DateTime? @map("completed_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_profiles")
+}
+
+// ───────────── AI CHAT (per chart) ─────────────
+// One row per turn. Sessions are bucketed by symbol so history scopes to the
+// active chart. Stored so we can rehydrate the side panel + measure usage.
+model AiChatMessage {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  symbol    String                                    // 'XAU/USD' etc.
+  role      String                                    // 'user' | 'assistant'
+  content   String   @db.Text
+  ctxNewsIds String[] @map("ctx_news_ids")            // news headlines we injected as context
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, symbol, createdAt])
+  @@map("ai_chat_messages")
+}
+
+// ───────────── BIAS OUTCOMES (track record) ─────────────
+// Snapshot of every bias generation + the actual price move N hours later.
+// Powers the public /track-record page (hit rate, avg R, P&L curve).
+model BiasOutcome {
+  id            String   @id @default(uuid())
+  symbol        String
+  bias          String                                 // 'bullish' | 'bearish' | 'neutral'
+  source        String                                 // 'fundamental' | 'technical' | 'dayTrade' | 'swingTrade'
+  generatedAt   DateTime @map("generated_at")
+  priceAtGen    Decimal  @map("price_at_gen") @db.Decimal(18, 6)
+  priceAfter1h  Decimal? @map("price_after_1h") @db.Decimal(18, 6)
+  priceAfter4h  Decimal? @map("price_after_4h") @db.Decimal(18, 6)
+  priceAfter24h Decimal? @map("price_after_24h") @db.Decimal(18, 6)
+  hit1h         Boolean? @map("hit_1h")                // direction matched after 1h?
+  hit4h         Boolean? @map("hit_4h")
+  hit24h        Boolean? @map("hit_24h")
+  rationale     String?  @db.Text
+
+  @@index([symbol, generatedAt])
+  @@index([source, generatedAt])
+  @@map("bias_outcomes")
+}
+
+// ───────────── BLOG / DAILY MARKET WRAP ─────────────
+// Cron job calls Claude every weekday at 06:00 UTC to generate the day-ahead
+// wrap. Indexed pages = SEO oxygen. Slug is used for /blog/{slug} routes.
+model BlogPost {
+  id          String   @id @default(uuid())
+  slug        String   @unique
+  title       String
+  description String   @db.Text
+  body        String   @db.Text
+  tags        String[]
+  symbols     String[]                                // ['EUR/USD', 'XAU/USD'] for cross-linking
+  kind        String                                  // 'market-wrap' | 'analysis' | 'education'
+  published   Boolean  @default(true)
+  publishedAt DateTime @default(now()) @map("published_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([published, publishedAt])
+  @@map("blog_posts")
+}
+
+// ───────────── TRADE IDEAS / LEADERBOARD ─────────────
+// Users post setups; system tracks SL/TP hits to compute a public win-rate.
+// Stops the platform feeling lonely on day one and builds network effects.
+model TradeIdea {
+  id          String   @id @default(uuid())
+  userId      String   @map("user_id")
+  symbol      String
+  direction   String                                  // 'long' | 'short'
+  entry       Decimal  @db.Decimal(18, 6)
+  stopLoss    Decimal  @map("stop_loss") @db.Decimal(18, 6)
+  takeProfit  Decimal  @map("take_profit") @db.Decimal(18, 6)
+  thesis      String   @db.Text
+  outcome     String?                                 // 'win' | 'loss' | 'breakeven' | null=open
+  rR          Decimal? @map("r_r") @db.Decimal(5, 2)
+  closedAt    DateTime? @map("closed_at")
+  upvotes     Int      @default(0)
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([outcome, createdAt])
+  @@map("trade_ideas")
 }
