@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog &amp; Insights · TradeContext.ai — Macro, charts, trades</title>
+<meta name="description" content="Weekly market context from the TradeContext.ai desk. Macro briefings, geopolitical risk reads, technical setups, AI-powered news bias deep-dives, and trade journal reviews.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Crect width='36' height='36' rx='8' fill='%230a1628'/%3E%3Cpolyline points='4,28 12,20 20,24 28,10' fill='none' stroke='%230ea5e9' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='28' cy='10' r='3.5' fill='%230ea5e9'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#03060d;--bg2:#070d1a;--bg3:#0c1626;
+  --border:#142035;--border-strong:#1f2e4a;
+  --blue:#0ea5e9;--blue2:#38bdf8;--violet:#8b5cf6;
+  --green:#10b981;--green2:#34d399;
+  --yellow:#f59e0b;--orange:#f97316;
+  --red:#ef4444;--red2:#f87171;
+  --text:#e2eaf4;--text2:#a5b8d0;--text3:#7a9ab8;--text4:#3a5570;
+  --f-sans:'Inter',sans-serif;--f-mono:'JetBrains Mono',monospace;
+  --grad-prem:linear-gradient(135deg,#0ea5e9 0%,#8b5cf6 100%);
+  --ease-out-quart:cubic-bezier(.25,1,.5,1);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--f-sans);font-size:14.5px;line-height:1.6;letter-spacing:-.005em;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+a{color:inherit;text-decoration:none;}
+body::before{content:'';position:fixed;inset:0;z-index:-2;pointer-events:none;background:radial-gradient(ellipse 1100px 700px at 15% -8%,rgba(14,165,233,.18),transparent 65%),radial-gradient(ellipse 900px 600px at 90% 5%,rgba(139,92,246,.16),transparent 70%);filter:blur(40px);opacity:.85;}
+body::after{content:'';position:fixed;inset:-50%;z-index:-1;pointer-events:none;background:conic-gradient(from 0deg at 50% 50%,transparent 0deg,rgba(14,165,233,.025) 60deg,transparent 120deg,rgba(139,92,246,.03) 180deg,transparent 240deg,rgba(52,211,153,.02) 300deg,transparent 360deg);animation:auroraSpin 90s linear infinite;mix-blend-mode:screen;}
+@keyframes auroraSpin{to{transform:rotate(360deg);}}
+
+/* Hero — same chrome as homepage */
+.tc-hero{max-width:980px;margin:0 auto;padding:78px 32px 30px;text-align:center;}
+.tc-eyebrow{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;background:rgba(14,165,233,.08);border:1px solid rgba(14,165,233,.25);border-radius:100px;font-family:var(--f-mono);font-size:10.5px;font-weight:800;color:var(--blue2);letter-spacing:.16em;text-transform:uppercase;margin-bottom:22px;}
+.tc-eyebrow::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--blue2);box-shadow:0 0 8px var(--blue2);animation:lp 1.6s ease-in-out infinite;}
+@keyframes lp{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.55;transform:scale(.85);}}
+.tc-h1{font-family:var(--f-sans);font-size:clamp(38px,5vw,62px);font-weight:900;letter-spacing:-.035em;line-height:1.04;margin-bottom:18px;}
+.tc-h1 em{font-style:normal;background:var(--grad-prem);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.tc-sub{font-size:17px;color:var(--text2);max-width:680px;margin:0 auto 30px;line-height:1.65;}
+.tc-sub strong{color:var(--text);font-weight:700;}
+
+/* Category chips */
+.bl-cats{max-width:1080px;margin:0 auto 36px;padding:0 32px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
+.bl-cat{padding:8px 16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:100px;font-family:var(--f-mono);font-size:10.5px;font-weight:700;color:var(--text2);letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:.18s var(--ease-out-quart);}
+.bl-cat:hover{color:var(--blue2);border-color:rgba(14,165,233,.4);background:rgba(14,165,233,.06);}
+.bl-cat.on{color:#fff;background:linear-gradient(135deg,#0ea5e9,#8b5cf6);border-color:transparent;}
+
+/* Wrap */
+.bl-wrap{max-width:1280px;margin:0 auto 60px;padding:0 32px;}
+
+/* Featured (hero) post */
+.bl-featured{margin-bottom:42px;}
+.bl-featured-card{display:grid;grid-template-columns:1fr 1fr;gap:0;background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,.005));border:1px solid rgba(255,255,255,.07);border-radius:20px;overflow:hidden;transition:.25s var(--ease-out-quart);}
+@media (max-width:780px){.bl-featured-card{grid-template-columns:1fr;}}
+.bl-featured-card:hover{transform:translateY(-3px);border-color:rgba(14,165,233,.32);box-shadow:0 22px 50px -16px rgba(14,165,233,.3);}
+.bl-featured-cover{aspect-ratio:16/10;background:linear-gradient(135deg,#0a1628,#0e1f3a);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;}
+.bl-featured-cover::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 30%,rgba(14,165,233,.22),transparent 60%),radial-gradient(ellipse at 70% 70%,rgba(139,92,246,.16),transparent 60%);}
+.bl-featured-cover-emoji{font-size:96px;position:relative;z-index:1;filter:drop-shadow(0 8px 24px rgba(0,0,0,.5));}
+.bl-featured-body{padding:36px;display:flex;flex-direction:column;justify-content:center;}
+.bl-featured-tag{display:inline-flex;align-items:center;gap:7px;padding:5px 12px;background:rgba(245,158,11,.10);border:1px solid rgba(245,158,11,.3);border-radius:100px;font-family:var(--f-mono);font-size:9.5px;font-weight:800;color:var(--yellow);letter-spacing:.14em;text-transform:uppercase;align-self:flex-start;margin-bottom:14px;}
+.bl-featured-tag::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--yellow);box-shadow:0 0 6px var(--yellow);animation:lp 1.6s ease-in-out infinite;}
+.bl-featured-title{font-family:var(--f-sans);font-size:30px;font-weight:900;letter-spacing:-.025em;line-height:1.15;margin-bottom:12px;color:var(--text);}
+.bl-featured-excerpt{font-size:14.5px;color:var(--text2);line-height:1.6;margin-bottom:18px;}
+.bl-featured-meta{display:flex;align-items:center;gap:12px;font-family:var(--f-mono);font-size:10.5px;color:var(--text3);font-weight:700;letter-spacing:.06em;}
+.bl-featured-meta .dot{width:3px;height:3px;background:var(--text3);border-radius:50%;}
+
+/* Grid of posts */
+.bl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px;}
+.bl-card{background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,.005));border:1px solid rgba(255,255,255,.07);border-radius:16px;overflow:hidden;transition:.25s var(--ease-out-quart);display:flex;flex-direction:column;}
+.bl-card:hover{transform:translateY(-3px);border-color:rgba(14,165,233,.3);box-shadow:0 18px 38px -14px rgba(14,165,233,.28);}
+.bl-cover{aspect-ratio:16/10;background:linear-gradient(135deg,#0a1628,#0e1f3a);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;}
+.bl-cover::before{content:'';position:absolute;inset:0;}
+.bl-cover.macro::before{background:radial-gradient(ellipse at 30% 30%,rgba(14,165,233,.22),transparent 60%),radial-gradient(ellipse at 70% 70%,rgba(139,92,246,.16),transparent 60%);}
+.bl-cover.geo::before{background:radial-gradient(ellipse at 30% 30%,rgba(248,113,113,.18),transparent 60%),radial-gradient(ellipse at 70% 70%,rgba(245,158,11,.16),transparent 60%);}
+.bl-cover.technical::before{background:radial-gradient(ellipse at 30% 30%,rgba(52,211,153,.18),transparent 60%),radial-gradient(ellipse at 70% 70%,rgba(14,165,233,.16),transparent 60%);}
+.bl-cover.crypto::before{background:radial-gradient(ellipse at 30% 30%,rgba(245,158,11,.2),transparent 60%),radial-gradient(ellipse at 70% 70%,rgba(139,92,246,.16),transparent 60%);}
+.bl-cover.ai::before{background:radial-gradient(ellipse at 30% 30%,rgba(139,92,246,.2),transparent 60%),radial-gradient(ellipse at 70% 70%,rgba(14,165,233,.16),transparent 60%);}
+.bl-cover.journal::before{background:radial-gradient(ellipse at 30% 30%,rgba(34,211,238,.18),transparent 60%),radial-gradient(ellipse at 70% 70%,rgba(52,211,153,.16),transparent 60%);}
+.bl-cover-emoji{font-size:54px;position:relative;z-index:1;filter:drop-shadow(0 6px 16px rgba(0,0,0,.5));}
+.bl-cover-cat{position:absolute;top:12px;left:12px;padding:4px 10px;background:rgba(0,0,0,.5);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.12);border-radius:100px;font-family:var(--f-mono);font-size:9px;font-weight:800;color:#fff;letter-spacing:.12em;text-transform:uppercase;z-index:2;}
+.bl-body{padding:20px;flex:1;display:flex;flex-direction:column;}
+.bl-title{font-family:var(--f-sans);font-size:17px;font-weight:800;letter-spacing:-.015em;line-height:1.3;margin-bottom:8px;color:var(--text);}
+.bl-excerpt{font-size:13px;color:var(--text2);line-height:1.55;margin-bottom:14px;flex:1;}
+.bl-meta{display:flex;align-items:center;gap:10px;font-family:var(--f-mono);font-size:10px;color:var(--text3);font-weight:700;letter-spacing:.06em;}
+.bl-meta .dot{width:3px;height:3px;background:var(--text3);border-radius:50%;}
+
+/* Newsletter CTA */
+.bl-newsletter{max-width:780px;margin:50px auto 80px;padding:40px 36px;text-align:center;background:linear-gradient(135deg,rgba(14,165,233,.08),rgba(139,92,246,.06));border:1px solid rgba(14,165,233,.22);border-radius:18px;backdrop-filter:blur(12px);}
+.bl-newsletter h3{font-size:26px;font-weight:900;letter-spacing:-.02em;margin-bottom:10px;}
+.bl-newsletter h3 em{font-style:normal;background:var(--grad-prem);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.bl-newsletter p{color:var(--text2);max-width:520px;margin:0 auto 22px;font-size:14.5px;}
+.bl-form{display:flex;gap:10px;max-width:480px;margin:0 auto;flex-wrap:wrap;}
+.bl-form input{flex:1;min-width:220px;padding:13px 16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);color:var(--text);font-family:var(--f-sans);font-size:14px;border-radius:11px;outline:none;transition:.2s;}
+.bl-form input:focus{border-color:rgba(14,165,233,.5);box-shadow:0 0 0 3px rgba(14,165,233,.12);}
+.bl-form button{padding:13px 22px;background:var(--grad-prem);color:#fff;border:none;border-radius:11px;font-family:var(--f-sans);font-size:13.5px;font-weight:800;cursor:pointer;letter-spacing:.04em;transition:.22s;}
+.bl-form button:hover{transform:translateY(-2px);box-shadow:0 12px 28px -10px rgba(14,165,233,.6);}
+.bl-newsletter-foot{font-family:var(--f-mono);font-size:10px;color:var(--text3);margin-top:14px;letter-spacing:.06em;}
+
+.tc-foot{max-width:1280px;margin:0 auto;padding:30px 32px 60px;text-align:center;color:var(--text3);font-size:12px;border-top:1px solid rgba(255,255,255,.05);}
+.tc-foot a{color:var(--blue);}
+</style>
+<script src="shared-nav.js" defer></script>
+</head>
+<body data-page="blog">
+
+<!-- preview-bar + nav are injected by shared-nav.js so they stay identical to the homepage -->
+
+<!-- ═══════════ HERO ═══════════ -->
+<section class="tc-hero">
+  <div class="tc-eyebrow">📝 BLOG &amp; INSIGHTS · WEEKLY</div>
+  <h1 class="tc-h1">Market <em>context</em>, written by humans.</h1>
+  <p class="tc-sub">
+    Macro briefings, geopolitical risk reads, technical breakdowns, and AI deep-dives — written every week from the TradeContext.ai desk. <strong>No fluff, no signals, no shilling.</strong>
+  </p>
+</section>
+
+<!-- Category filter -->
+<div class="bl-cats" id="blCats">
+  <button class="bl-cat on" data-cat="all">All Posts</button>
+  <button class="bl-cat" data-cat="macro">Macro</button>
+  <button class="bl-cat" data-cat="geo">Geopolitics</button>
+  <button class="bl-cat" data-cat="technical">Technicals</button>
+  <button class="bl-cat" data-cat="crypto">Crypto</button>
+  <button class="bl-cat" data-cat="ai">AI &amp; Strategy</button>
+  <button class="bl-cat" data-cat="journal">Trade Journal</button>
+</div>
+
+<div class="bl-wrap">
+
+  <!-- Featured / latest post -->
+  <article class="bl-featured" data-cat="geo">
+    <a class="bl-featured-card" href="#">
+      <div class="bl-featured-cover">
+        <span class="bl-featured-cover-emoji">⚔️</span>
+      </div>
+      <div class="bl-featured-body">
+        <div class="bl-featured-tag">⚡ Latest · Featured</div>
+        <h2 class="bl-featured-title">Iran-Hormuz risk premium: why gold is leading the safe-haven trade</h2>
+        <p class="bl-featured-excerpt">When tankers turn around in the world's busiest oil chokepoint, the bond market hears it first. We map the cross-asset reaction over the past 72 hours, and why the gold + Treasuries + USD rotation has more legs than the equity sell-off suggests.</p>
+        <div class="bl-featured-meta">
+          <span>11 May 2026</span><span class="dot"></span>
+          <span>8 min read</span><span class="dot"></span>
+          <span>Geopolitics</span>
+        </div>
+      </div>
+    </a>
+  </article>
+
+  <!-- Grid of posts -->
+  <div class="bl-grid" id="blGrid">
+
+    <article class="bl-card" data-cat="macro">
+      <a href="#">
+        <div class="bl-cover macro"><span class="bl-cover-emoji">🏦</span><span class="bl-cover-cat">Macro</span></div>
+        <div class="bl-body">
+          <h3 class="bl-title">What the Fed's "patience" language really means for the dollar</h3>
+          <p class="bl-excerpt">Dot-plot vs the press conference: traders are pricing 2025 differently than the committee. Here's how to position for the gap closing.</p>
+          <div class="bl-meta"><span>9 May 2026</span><span class="dot"></span><span>6 min</span></div>
+        </div>
+      </a>
+    </article>
+
+    <article class="bl-card" data-cat="technical">
+      <a href="#">
+        <div class="bl-cover technical"><span class="bl-cover-emoji">📉</span><span class="bl-cover-cat">Technicals</span></div>
+        <div class="bl-body">
+          <h3 class="bl-title">RSI mean-reversion: backtest results across 8 asset classes</h3>
+          <p class="bl-excerpt">We ran the textbook RSI strategy on BTC, gold, SPX and 5 others over the past decade. Spoiler: it works on some, fails brutally on others. Here's the cut-off.</p>
+          <div class="bl-meta"><span>7 May 2026</span><span class="dot"></span><span>11 min</span></div>
+        </div>
+      </a>
+    </article>
+
+    <article class="bl-card" data-cat="crypto">
+      <a href="#">
+        <div class="bl-cover crypto"><span class="bl-cover-emoji">₿</span><span class="bl-cover-cat">Crypto</span></div>
+        <div class="bl-body">
+          <h3 class="bl-title">Bitcoin's $80k retest: capitulation or just a pause?</h3>
+          <p class="bl-excerpt">Long-term holder cohorts haven't sold. Funding is neutral. CME open interest is rebuilding. Three signals that say this is a digestion, not a top.</p>
+          <div class="bl-meta"><span>5 May 2026</span><span class="dot"></span><span>7 min</span></div>
+        </div>
+      </a>
+    </article>
+
+    <article class="bl-card" data-cat="ai">
+      <a href="#">
+        <div class="bl-cover ai"><span class="bl-cover-emoji">🧠</span><span class="bl-cover-cat">AI &amp; Strategy</span></div>
+        <div class="bl-body">
+          <h3 class="bl-title">How we score every headline in under 2 seconds</h3>
+          <p class="bl-excerpt">Behind the scenes of the AI News Bias engine: prompt design, Claude vs cheaper models, why we re-score every story when context changes, and the 68.4% hit rate breakdown.</p>
+          <div class="bl-meta"><span>2 May 2026</span><span class="dot"></span><span>9 min</span></div>
+        </div>
+      </a>
+    </article>
+
+    <article class="bl-card" data-cat="macro">
+      <a href="#">
+        <div class="bl-cover macro"><span class="bl-cover-emoji">📊</span><span class="bl-cover-cat">Macro</span></div>
+        <div class="bl-body">
+          <h3 class="bl-title">CPI day playbook: what to do in the 30 minutes either side</h3>
+          <p class="bl-excerpt">The exact pre-print risk-off → post-print direction trade we run every month. Position sizing, entry windows, and the three indicators that filter the false breakouts.</p>
+          <div class="bl-meta"><span>28 Apr 2026</span><span class="dot"></span><span>5 min</span></div>
+        </div>
+      </a>
+    </article>
+
+    <article class="bl-card" data-cat="technical">
+      <a href="#">
+        <div class="bl-cover technical"><span class="bl-cover-emoji">🧱</span><span class="bl-cover-cat">Technicals</span></div>
+        <div class="bl-body">
+          <h3 class="bl-title">Order blocks demystified — what the SMC crowd gets right (and wrong)</h3>
+          <p class="bl-excerpt">Order blocks, FVGs, inducement — useful concepts that most YouTube traders apply incorrectly. Here's the institutional version, with examples on EUR/USD this month.</p>
+          <div class="bl-meta"><span>25 Apr 2026</span><span class="dot"></span><span>10 min</span></div>
+        </div>
+      </a>
+    </article>
+
+    <article class="bl-card" data-cat="geo">
+      <a href="#">
+        <div class="bl-cover geo"><span class="bl-cover-emoji">🌍</span><span class="bl-cover-cat">Geopolitics</span></div>
+        <div class="bl-body">
+          <h3 class="bl-title">The four geopolitical hotspots we're tracking in 2026</h3>
+          <p class="bl-excerpt">Middle East, Taiwan strait, Russia-Ukraine, US election aftermath. The base-rate market reactions, and the contrarian trades when consensus is wrong.</p>
+          <div class="bl-meta"><span>21 Apr 2026</span><span class="dot"></span><span>13 min</span></div>
+        </div>
+      </a>
+    </article>
+
+    <article class="bl-card" data-cat="journal">
+      <a href="#">
+        <div class="bl-cover journal"><span class="bl-cover-emoji">📓</span><span class="bl-cover-cat">Trade Journal</span></div>
+        <div class="bl-body">
+          <h3 class="bl-title">Journal review: 3 revenge-trade clusters and how the AI flagged them</h3>
+          <p class="bl-excerpt">Real Q1 trading data — what discipline-A traders do differently after a loser, and how the AI Journal scores you on it without judgement.</p>
+          <div class="bl-meta"><span>18 Apr 2026</span><span class="dot"></span><span>6 min</span></div>
+        </div>
+      </a>
+    </article>
+
+    <article class="bl-card" data-cat="ai">
+      <a href="#">
+        <div class="bl-cover ai"><span class="bl-cover-emoji">🤖</span><span class="bl-cover-cat">AI &amp; Strategy</span></div>
+        <div class="bl-body">
+          <h3 class="bl-title">Why the AI chat needs the chart — and the chart needs the AI chat</h3>
+          <p class="bl-excerpt">Decoupled tools lose 80% of their value. The argument for unified, context-aware AI analysis grounded in live news + price action. With dashboard examples.</p>
+          <div class="bl-meta"><span>14 Apr 2026</span><span class="dot"></span><span>8 min</span></div>
+        </div>
+      </a>
+    </article>
+
+  </div>
+
+</div>
+
+<!-- Newsletter signup -->
+<section class="bl-newsletter">
+  <h3>The weekly <em>desk brief</em> — direct to your inbox.</h3>
+  <p>One email every Sunday evening. The week ahead's calendar, our macro read, three trades we're watching. No upsells.</p>
+  <form class="bl-form" onsubmit="return blSubscribe(event)">
+    <input type="email" placeholder="you@email.com" required>
+    <button type="submit">Subscribe →</button>
+  </form>
+  <div class="bl-newsletter-foot">🔓 unsubscribe any time · we never share your email · no third parties</div>
+</section>
+
+<footer class="tc-foot">
+  <strong>TradeContext.ai</strong> · Educational content only — not personal financial advice · See <a href="../risk.html">risk warning</a> · <a href="mailto:hello@tradecontext.ai">hello@tradecontext.ai</a>
+</footer>
+
+<script>
+// Category filter — pure DOM, no framework
+document.querySelectorAll('#blCats .bl-cat').forEach(function(btn){
+  btn.onclick=function(){
+    document.querySelectorAll('#blCats .bl-cat').forEach(function(b){b.classList.remove('on');});
+    btn.classList.add('on');
+    var cat = btn.dataset.cat;
+    document.querySelectorAll('.bl-card, .bl-featured').forEach(function(card){
+      if (cat === 'all' || card.dataset.cat === cat) card.style.display = '';
+      else card.style.display = 'none';
+    });
+  };
+});
+
+// Newsletter form — placeholder until backend wired
+function blSubscribe(e){
+  e.preventDefault();
+  var btn = e.target.querySelector('button');
+  btn.textContent = '✓ Subscribed';
+  btn.disabled = true;
+  btn.style.background = 'linear-gradient(135deg,#10b981,#34d399)';
+  return false;
+}
+</script>
+
+</body>
+</html>
