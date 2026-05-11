@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" width="1080" height="1080" role="img" aria-label="TradeContext.ai · Instagram post">
+  <!--
+    TradeContext.ai — 1080×1080 square for Instagram feed post.
+    Also works for: LinkedIn / Facebook square post, story-square mode.
+    Full lockup centred on the branded navy + ambient aurora.
+  -->
+  <defs>
+    <linearGradient id="brandGrad" x1="0" y1="1080" x2="1080" y2="0">
+      <stop offset="0%" stop-color="#0ea5e9"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+    <linearGradient id="bgFill" x1="0" y1="0" x2="0" y2="1080">
+      <stop offset="0%" stop-color="#03060d"/>
+      <stop offset="100%" stop-color="#070d1a"/>
+    </linearGradient>
+    <linearGradient id="tileBg" x1="0" y1="0" x2="200" y2="200">
+      <stop offset="0%" stop-color="#0a1628"/>
+      <stop offset="100%" stop-color="#0e1f3a"/>
+    </linearGradient>
+    <radialGradient id="auraCyan" cx="18%" cy="0%" r="75%">
+      <stop offset="0%"  stop-color="#0ea5e9" stop-opacity="0.22"/>
+      <stop offset="65%" stop-color="#0ea5e9" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="auraViolet" cx="88%" cy="12%" r="65%">
+      <stop offset="0%"  stop-color="#8b5cf6" stop-opacity="0.20"/>
+      <stop offset="70%" stop-color="#8b5cf6" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="auraGreen" cx="50%" cy="78%" r="55%">
+      <stop offset="0%"  stop-color="#34d399" stop-opacity="0.06"/>
+      <stop offset="80%" stop-color="#34d399" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="vignette" cx="50%" cy="50%" r="65%">
+      <stop offset="60%" stop-color="#000" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#000" stop-opacity="0.45"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background stack -->
+  <rect width="1080" height="1080" fill="url(#bgFill)"/>
+  <rect width="1080" height="1080" fill="url(#auraCyan)"/>
+  <rect width="1080" height="1080" fill="url(#auraViolet)"/>
+  <rect width="1080" height="1080" fill="url(#auraGreen)"/>
+  <rect width="1080" height="1080" fill="url(#vignette)"/>
+
+  <!-- Top eyebrow pill — "LIVE · AI TRADING INTELLIGENCE" -->
+  <g transform="translate(540 200)">
+    <rect x="-220" y="-22" width="440" height="44" rx="22" fill="rgba(14,165,233,0.10)" stroke="rgba(14,165,233,0.32)" stroke-width="1.5"/>
+    <circle cx="-185" cy="0" r="5" fill="#38bdf8"/>
+    <text x="-170" y="6" font-family="'JetBrains Mono', monospace" font-weight="800" font-size="16" fill="#38bdf8" letter-spacing="3">
+      LIVE · AI TRADING INTELLIGENCE
+    </text>
+  </g>
+
+  <!-- Centred logo lockup (mark + wordmark stacked vertically for square format) -->
+  <g transform="translate(540 540)">
+    <!-- Mark tile -->
+    <g transform="translate(-100 -210)">
+      <rect width="200" height="200" rx="44" fill="url(#tileBg)"/>
+      <rect width="200" height="200" rx="44" fill="none" stroke="rgba(14,165,233,0.5)" stroke-width="2.5"/>
+      <g transform="translate(20 20) scale(4.444)">
+        <polyline points="4,28 12,20 20,24 28,10" fill="none" stroke="url(#brandGrad)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="28" cy="10" r="3.8" fill="url(#brandGrad)"/>
+        <circle cx="28" cy="10" r="1.7" fill="#fff"/>
+      </g>
+    </g>
+    <!-- Wordmark centered below mark -->
+    <text x="0" y="50" text-anchor="middle" font-family="Inter, -apple-system, 'Segoe UI Variable', 'Segoe UI', Roboto, system-ui, sans-serif" font-weight="900" font-size="92" letter-spacing="-3.6">
+      <tspan fill="#e2eaf4">TradeContext</tspan><tspan fill="url(#brandGrad)">.ai</tspan>
+    </text>
+    <!-- Tagline -->
+    <text x="0" y="120" text-anchor="middle" font-family="Inter, -apple-system, 'Segoe UI Variable', sans-serif" font-weight="600" font-size="26" fill="#a5b8d0" letter-spacing="-0.4">
+      Trade with the context institutional desks have.
+    </text>
+  </g>
+
+  <!-- Bottom accent — price strip aesthetic + URL -->
+  <g transform="translate(540 920)">
+    <text x="0" y="0" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-weight="700" font-size="18" fill="#7a9ab8" letter-spacing="5">
+      ⚡ AI NEWS BIAS  ·  🌍 GEOPOLITICAL RISK  ·  📈 LIVE CHARTS
+    </text>
+    <text x="0" y="42" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-weight="800" font-size="22" fill="url(#brandGrad)" letter-spacing="3">
+      TRADECONTEXT.AI
+    </text>
+  </g>
+</svg>

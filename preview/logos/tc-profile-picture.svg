@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" width="1080" height="1080" role="img" aria-label="TradeContext.ai · profile picture">
+  <!--
+    TradeContext.ai — 1080×1080 social profile / display picture.
+    Designed for the CIRCLE CROP most platforms apply (Instagram, Twitter/X,
+    LinkedIn, Discord, etc.) — the chart-mark is well inside the safe inner
+    circle, with the brand gradient + ambient navy filling the frame.
+    Square format also works for platforms that don't crop (Facebook page).
+  -->
+  <defs>
+    <linearGradient id="brandGrad" x1="0" y1="1080" x2="1080" y2="0">
+      <stop offset="0%" stop-color="#0ea5e9"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+    <radialGradient id="auraCenter" cx="50%" cy="50%" r="55%">
+      <stop offset="0%"  stop-color="#0ea5e9" stop-opacity="0.22"/>
+      <stop offset="55%" stop-color="#8b5cf6" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#03060d" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="bgFill" x1="0" y1="0" x2="1080" y2="1080">
+      <stop offset="0%" stop-color="#03060d"/>
+      <stop offset="50%" stop-color="#070d1a"/>
+      <stop offset="100%" stop-color="#0a1628"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Solid navy backdrop (covers the corners that get cropped to circle) -->
+  <rect width="1080" height="1080" fill="url(#bgFill)"/>
+  <!-- Radial brand glow centred behind the mark — visible in the circle -->
+  <rect width="1080" height="1080" fill="url(#auraCenter)"/>
+
+  <!-- Thin gradient ring at safe-circle edge — gives the avatar a halo when
+       displayed inside any circular crop. Radius 510 stays just inside the
+       540 circle most platforms use. -->
+  <circle cx="540" cy="540" r="510" fill="none" stroke="url(#brandGrad)" stroke-width="6" stroke-opacity="0.32"/>
+
+  <!-- The chart mark — large, centred, scaled into the safe circle.
+       Original 36×36 viewBox scaled ×20 → 720×720 footprint, centred at 540.
+       That fits comfortably inside even aggressive 60% circle crops. -->
+  <g transform="translate(180 180) scale(20)">
+    <polyline points="4,28 12,20 20,24 28,10" fill="none" stroke="url(#brandGrad)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="28" cy="10" r="3.8" fill="url(#brandGrad)"/>
+    <circle cx="28" cy="10" r="1.7" fill="#fff"/>
+  </g>
+</svg>
