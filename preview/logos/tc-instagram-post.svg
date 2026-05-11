@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" width="1080" height="1080" role="img" aria-label="TradeContext.ai · Instagram post">
   <!--
     TradeContext.ai — 1080×1080 square for Instagram feed post.
-    Also works for: LinkedIn / Facebook square post, story-square mode.
-    Full lockup centred on the branded navy + ambient aurora.
+    Mark + 'TradeContext.ai' wordmark SIDE-BY-SIDE — exactly like the
+    homepage navbar lockup. Branded navy + ambient aurora background.
   -->
   <defs>
     <linearGradient id="brandGrad" x1="0" y1="1080" x2="1080" y2="0">
@@ -13,7 +13,7 @@
       <stop offset="0%" stop-color="#03060d"/>
       <stop offset="100%" stop-color="#070d1a"/>
     </linearGradient>
-    <linearGradient id="tileBg" x1="0" y1="0" x2="200" y2="200">
+    <linearGradient id="tileBg" x1="0" y1="0" x2="160" y2="160">
       <stop offset="0%" stop-color="#0a1628"/>
       <stop offset="100%" stop-color="#0e1f3a"/>
     </linearGradient>
@@ -35,15 +35,15 @@
     </radialGradient>
   </defs>
 
-  <!-- Background stack -->
+  <!-- Background stack — same as the live homepage -->
   <rect width="1080" height="1080" fill="url(#bgFill)"/>
   <rect width="1080" height="1080" fill="url(#auraCyan)"/>
   <rect width="1080" height="1080" fill="url(#auraViolet)"/>
   <rect width="1080" height="1080" fill="url(#auraGreen)"/>
   <rect width="1080" height="1080" fill="url(#vignette)"/>
 
-  <!-- Top eyebrow pill — "LIVE · AI TRADING INTELLIGENCE" -->
-  <g transform="translate(540 200)">
+  <!-- Top eyebrow pill -->
+  <g transform="translate(540 240)">
     <rect x="-220" y="-22" width="440" height="44" rx="22" fill="rgba(14,165,233,0.10)" stroke="rgba(14,165,233,0.32)" stroke-width="1.5"/>
     <circle cx="-185" cy="0" r="5" fill="#38bdf8"/>
     <text x="-170" y="6" font-family="'JetBrains Mono', monospace" font-weight="800" font-size="16" fill="#38bdf8" letter-spacing="3">
@@ -51,29 +51,32 @@
     </text>
   </g>
 
-  <!-- Centred logo lockup (mark + wordmark stacked vertically for square format) -->
-  <g transform="translate(540 540)">
-    <!-- Mark tile -->
-    <g transform="translate(-100 -210)">
-      <rect width="200" height="200" rx="44" fill="url(#tileBg)"/>
-      <rect width="200" height="200" rx="44" fill="none" stroke="rgba(14,165,233,0.5)" stroke-width="2.5"/>
-      <g transform="translate(20 20) scale(4.444)">
+  <!-- ┌─ Horizontal lockup — mark + wordmark side by side (like the navbar) ─┐
+       Mark 140×140 + gap + wordmark @ 88px ≈ 870px total. Centred at canvas x=540 -->
+  <g transform="translate(105 470)">
+    <!-- Mark tile (140×140) -->
+    <g>
+      <rect width="140" height="140" rx="32" fill="url(#tileBg)"/>
+      <rect width="140" height="140" rx="32" fill="none" stroke="rgba(14,165,233,0.5)" stroke-width="2.2"/>
+      <g transform="translate(13 13) scale(3.166)">
         <polyline points="4,28 12,20 20,24 28,10" fill="none" stroke="url(#brandGrad)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
         <circle cx="28" cy="10" r="3.8" fill="url(#brandGrad)"/>
         <circle cx="28" cy="10" r="1.7" fill="#fff"/>
       </g>
     </g>
-    <!-- Wordmark centered below mark -->
-    <text x="0" y="50" text-anchor="middle" font-family="Inter, -apple-system, 'Segoe UI Variable', 'Segoe UI', Roboto, system-ui, sans-serif" font-weight="900" font-size="92" letter-spacing="-3.6">
+    <!-- Wordmark — to the right of the tile, vertically centred against it.
+         Single <text> with <tspan>s so '.ai' flows naturally after 'TradeContext'. -->
+    <text x="170" y="106" font-family="Inter, -apple-system, 'Segoe UI Variable', 'Segoe UI', Roboto, system-ui, sans-serif" font-weight="900" font-size="88" letter-spacing="-3.4">
       <tspan fill="#e2eaf4">TradeContext</tspan><tspan fill="url(#brandGrad)">.ai</tspan>
-    </text>
-    <!-- Tagline -->
-    <text x="0" y="120" text-anchor="middle" font-family="Inter, -apple-system, 'Segoe UI Variable', sans-serif" font-weight="600" font-size="26" fill="#a5b8d0" letter-spacing="-0.4">
-      Trade with the context institutional desks have.
     </text>
   </g>
 
-  <!-- Bottom accent — price strip aesthetic + URL -->
+  <!-- Tagline below the lockup -->
+  <text x="540" y="720" text-anchor="middle" font-family="Inter, -apple-system, 'Segoe UI Variable', sans-serif" font-weight="600" font-size="28" fill="#a5b8d0" letter-spacing="-0.4">
+    Trade with the context institutional desks have.
+  </text>
+
+  <!-- Bottom feature strip + URL -->
   <g transform="translate(540 920)">
     <text x="0" y="0" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-weight="700" font-size="18" fill="#7a9ab8" letter-spacing="5">
       ⚡ AI NEWS BIAS  ·  🌍 GEOPOLITICAL RISK  ·  📈 LIVE CHARTS
