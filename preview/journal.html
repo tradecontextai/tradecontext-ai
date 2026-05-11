@@ -545,6 +545,34 @@ tr.jl-row-new td{animation:jlPulseIn 2.5s ease-out 1;}
     </div>
   </div>
 
+  <!-- ═══════════ TRADE LOG — moved up so it's right under the equity + AI cards ═══════════ -->
+  <div class="jl-card">
+    <div class="jl-card-h">
+      <div class="jl-card-h-t">📒 Trade Log</div>
+      <div class="jl-card-h-sub" id="jlTradeCount">0 trades</div>
+    </div>
+    <div class="jl-tbl-wrap">
+      <table class="jl-tbl">
+        <thead>
+          <tr>
+            <th>Date / Time</th>
+            <th>Symbol</th>
+            <th>Side</th>
+            <th>Entry</th>
+            <th>Exit</th>
+            <th>R</th>
+            <th>P&amp;L</th>
+            <th>Setup</th>
+            <th>Broker</th>
+            <th>News</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="jlTrades"></tbody>
+      </table>
+    </div>
+  </div>
+
   <!-- ═══════════ BROKER CONNECT ═══════════ -->
   <div class="jl-card" id="connect-brokers">
     <div class="jl-card-h">
@@ -769,34 +797,6 @@ tr.jl-row-new td{animation:jlPulseIn 2.5s ease-out 1;}
         <button class="jl-card-h-link" onclick="openSettings()">Edit →</button>
       </div>
       <div class="jl-settings-grid" id="jlSettingsSummary"></div>
-    </div>
-  </div>
-
-  <!-- ═══════════ TRADE LOG ═══════════ -->
-  <div class="jl-card">
-    <div class="jl-card-h">
-      <div class="jl-card-h-t">📒 Trade Log</div>
-      <div class="jl-card-h-sub" id="jlTradeCount">0 trades</div>
-    </div>
-    <div class="jl-tbl-wrap">
-      <table class="jl-tbl">
-        <thead>
-          <tr>
-            <th>Date / Time</th>
-            <th>Symbol</th>
-            <th>Side</th>
-            <th>Entry</th>
-            <th>Exit</th>
-            <th>R</th>
-            <th>P&amp;L</th>
-            <th>Setup</th>
-            <th>Broker</th>
-            <th>News</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="jlTrades"></tbody>
-      </table>
     </div>
   </div>
 
@@ -2374,6 +2374,13 @@ var BROKER_CFG = {
 };
 window.connectBroker = function(name){
   if (name === 'CSV') { openCsvImport(); return; }
+  // MT4/MT5 never have a real remote login — route to the install flow instead
+  if (name === 'MT4' || name === 'MT5') {
+    _brkState = { broker: name, _displayName: name };
+    document.getElementById('brkModal').classList.add('show');
+    renderBrkStep('install');
+    return;
+  }
   var cfg = BROKER_CFG[name]; if(!cfg)return;
   state._connectingBroker = name;
   var logo = document.getElementById('jlModalLogo');
@@ -2752,6 +2759,81 @@ function renderBrkStep(step){
     renderBrkList();
     setTimeout(function(){var i = document.getElementById('brkSearchInput'); if (i) i.focus();}, 100);
   }
+  else if (step === 'install'){
+    // ─── Real install flow for MT4/MT5 — no fake login form ───
+    var displayName = _brkState._displayName || _brkState.broker;
+    setBrkHead(_brkState.broker);
+    document.getElementById('brkTitle').textContent = displayName + ' · EA Bridge';
+    document.getElementById('brkSub').textContent = 'Connect your real terminal in 60 seconds';
+
+    var isLive = !!state._syncTokenLive;
+    var token = (state._syncToken || (state._syncToken = (Math.random().toString(36)+Math.random().toString(36)+Math.random().toString(36)).replace(/[^a-z0-9]/g,'').slice(0,32)));
+    saveState();
+    var origin = (location.hostname==='localhost'||location.hostname==='127.0.0.1') ? 'http://localhost:3001' : 'https://api.tradecontext.ai';
+    var webhook = origin + '/api/journal-bridge/fill?token=' + token;
+    var eaUrl = origin + '/api/journal-bridge/ea?token=' + token;
+
+    var banner = isLive
+      ? '<div style="padding:13px 16px;margin-bottom:18px;background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.4);border-radius:11px;font-family:var(--f-mono);font-size:11px;color:var(--text);line-height:1.65;">' +
+          '<strong style="color:var(--green2);">🟢 LIVE · Token bound to your account.</strong> Once the EA is installed, every closed fill in your '+_brkState.broker+' terminal will create a real Trade row in this journal. Tested end-to-end.' +
+        '</div>'
+      : '<div style="padding:13px 16px;margin-bottom:18px;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.32);border-radius:11px;font-family:var(--f-mono);font-size:11px;color:var(--text);line-height:1.65;">' +
+          '<strong style="color:var(--yellow);">⚠️ Not signed in.</strong> Token below is browser-local. ' +
+          '<a href="../signup.html?mode=signin&next=/preview/journal.html" style="color:var(--blue);text-decoration:underline;">Sign in</a> to get a real persistent token bound to your account.' +
+        '</div>';
+
+    body.innerHTML =
+      '<div class="brk-step">REAL INSTALL · 3 STEPS</div>' +
+      '<div class="brk-h">Install the EA in your '+_brkState.broker+' terminal</div>' +
+      '<div class="brk-sub">'+_brkState.broker+' does not expose remote login to third parties — every journal that says it does is faking it. The actual way to get your fills out is a small Expert Advisor (EA) that runs <em>inside</em> your '+_brkState.broker+' and posts to a webhook. That\'s exactly what we ship.</div>' +
+      banner +
+      // Step 1
+      '<div style="display:flex;gap:14px;align-items:flex-start;padding:16px;background:rgba(14,165,233,.04);border:1px solid rgba(14,165,233,.22);border-radius:11px;margin-bottom:12px;">' +
+        '<div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,#8b5cf6);color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--f-sans);font-size:14px;font-weight:900;flex-shrink:0;">1</div>' +
+        '<div style="flex:1;">' +
+          '<div style="font-family:var(--f-sans);font-size:14px;font-weight:800;margin-bottom:6px;">Download the EA</div>' +
+          '<div style="font-family:var(--f-mono);font-size:11px;color:var(--text2);line-height:1.6;margin-bottom:10px;">A tiny <code style="background:rgba(255,255,255,.06);padding:1px 5px;border-radius:3px;">.mq4</code> file pre-configured with your personal webhook URL. No editing needed.</div>' +
+          '<a class="brk-btn primary" href="'+eaUrl+'" target="_blank" rel="noopener" style="display:inline-flex;text-decoration:none;align-items:center;gap:8px;padding:10px 18px;font-size:13px;">📥 Download TradeContextBridge.mq4</a>' +
+        '</div>' +
+      '</div>' +
+      // Step 2
+      '<div style="display:flex;gap:14px;align-items:flex-start;padding:16px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:11px;margin-bottom:12px;">' +
+        '<div style="width:34px;height:34px;border-radius:50%;background:rgba(14,165,233,.18);color:var(--blue2);border:1px solid rgba(14,165,233,.4);display:flex;align-items:center;justify-content:center;font-family:var(--f-sans);font-size:14px;font-weight:900;flex-shrink:0;">2</div>' +
+        '<div style="flex:1;">' +
+          '<div style="font-family:var(--f-sans);font-size:14px;font-weight:800;margin-bottom:6px;">Drop it into '+_brkState.broker+'</div>' +
+          '<div style="font-family:var(--f-mono);font-size:11px;color:var(--text2);line-height:1.7;">' +
+            '• Open '+_brkState.broker+' on your computer<br>' +
+            '• <strong style="color:var(--text);">File → Open Data Folder</strong> → <code style="background:rgba(255,255,255,.06);padding:1px 5px;border-radius:3px;">MQL'+(_brkState.broker==='MT5'?'5':'4')+'/Experts/</code><br>' +
+            '• Move the downloaded file into that folder<br>' +
+            '• In '+_brkState.broker+': <strong style="color:var(--text);">Tools → Options → Expert Advisors</strong> → tick <strong>Allow WebRequest for URL</strong> → add <code style="background:rgba(255,255,255,.06);padding:1px 5px;border-radius:3px;">'+origin+'</code><br>' +
+            '• Right-click <strong>TradeContextBridge</strong> in the Navigator → <strong style="color:var(--text);">Attach to chart</strong>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      // Step 3
+      '<div style="display:flex;gap:14px;align-items:flex-start;padding:16px;background:rgba(52,211,153,.04);border:1px solid rgba(52,211,153,.28);border-radius:11px;margin-bottom:18px;">' +
+        '<div style="width:34px;height:34px;border-radius:50%;background:rgba(52,211,153,.18);color:var(--green2);border:1px solid rgba(52,211,153,.4);display:flex;align-items:center;justify-content:center;font-family:var(--f-sans);font-size:14px;font-weight:900;flex-shrink:0;">3</div>' +
+        '<div style="flex:1;">' +
+          '<div style="font-family:var(--f-sans);font-size:14px;font-weight:800;margin-bottom:6px;">Trade as normal</div>' +
+          '<div style="font-family:var(--f-mono);font-size:11px;color:var(--text2);line-height:1.6;">Every time you close a position in '+_brkState.broker+', the EA posts it to your journal. Refresh this page to see new fills appear in the trade log.</div>' +
+        '</div>' +
+      '</div>' +
+      // Webhook URL (advanced)
+      '<details style="background:rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.06);border-radius:9px;padding:11px 14px;margin-bottom:18px;">' +
+        '<summary style="cursor:pointer;font-family:var(--f-mono);font-size:10.5px;color:var(--text3);font-weight:800;letter-spacing:.08em;text-transform:uppercase;">Advanced · webhook URL for custom bots</summary>' +
+        '<div style="margin-top:10px;font-family:var(--f-mono);font-size:10.5px;color:var(--text2);line-height:1.6;">' +
+          'POST trade fills directly from any custom bot to this URL — fully documented JSON schema. Token is single-purpose: receive fills only.' +
+        '</div>' +
+        '<div style="display:flex;gap:8px;margin-top:8px;">' +
+          '<input class="brk-input" id="brkWebhookUrl" value="'+webhook+'" readonly style="font-size:11.5px;flex:1;">' +
+          '<button class="brk-btn primary" onclick="copyText(this,\'brkWebhookUrl\')" style="flex:0 0 auto;padding:11px 16px;font-size:12.5px;">📋 Copy</button>' +
+        '</div>' +
+      '</details>' +
+      '<div class="brk-actions">' +
+        '<button class="brk-btn secondary" onclick="renderBrkStep(\'pick\')">← Back</button>' +
+        '<button class="brk-btn primary" onclick="closeBrkSim()">Done</button>' +
+      '</div>';
+  }
   else if (step === 'login'){
     var cfg = BRK_PORTALS[_brkState.broker];
     setBrkHead(_brkState.broker);
@@ -2860,7 +2942,13 @@ window.copyText = function(btn, inputId){
 window.brkPick = function(broker){
   _brkState.broker = broker;
   setBrkHead(broker);
-  renderBrkStep('login');
+  // MT4/MT5 can never authenticate via a web form — go straight to the real
+  // install-EA flow. OANDA + custom broker bridges have their own dialog.
+  if (broker === 'MT4' || broker === 'MT5') {
+    renderBrkStep('install');
+  } else {
+    renderBrkStep('login');
+  }
 };
 
 window.setBrkRegion = function(r){
@@ -2910,10 +2998,11 @@ window.renderBrkList = function(){
 window.brkPickCustom = function(brokerName){
   var bname = brokerName || (document.getElementById('brkSearchInput')||{value:''}).value.trim() || 'Custom Broker';
   var rec = BROKERS_DB.find(function(b){return b.name === bname;});
-  // If broker supports MT4/MT5/cTrader, route to that platform's flow
+  // If broker supports MT4/MT5/cTrader, route to that platform's install-EA flow.
+  // We never fake an MT login form — MetaQuotes doesn't expose remote auth.
   if (rec && rec.platforms) {
-    if (rec.platforms.indexOf('MT5') >= 0) { _brkState.broker = 'MT5'; _brkState._displayName = bname; setBrkHead('MT5'); renderBrkStep('login'); return; }
-    if (rec.platforms.indexOf('MT4') >= 0) { _brkState.broker = 'MT4'; _brkState._displayName = bname; setBrkHead('MT4'); renderBrkStep('login'); return; }
+    if (rec.platforms.indexOf('MT5') >= 0) { _brkState.broker = 'MT5'; _brkState._displayName = bname; setBrkHead('MT5'); renderBrkStep('install'); return; }
+    if (rec.platforms.indexOf('MT4') >= 0) { _brkState.broker = 'MT4'; _brkState._displayName = bname; setBrkHead('MT4'); renderBrkStep('install'); return; }
   }
   // Otherwise use generic OAuth-style flow with the broker's name
   _brkState.broker = 'OANDA';   // reuse the OAuth shell — visually still OANDA but with custom name
