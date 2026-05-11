@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Trading Journal · TradeContext.ai — Better than Tradezella</title>
-<meta name="description" content="Connect MT4, MT5, OANDA, TradingView or any broker — every trade auto-imported, AI-scored for discipline, news-contextualised. The trading journal Tradezella wishes it built.">
+<title>AI Trading Journal · TradeContext.ai — The journal that reads itself</title>
+<meta name="description" content="Connect MT4, MT5, OANDA, TradingView or any broker — every trade auto-imported, AI-scored for discipline, news-contextualised. Plan it, fill it, review it, level up.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Crect width='36' height='36' rx='8' fill='%230a1628'/%3E%3Cpolyline points='4,28 12,20 20,24 28,10' fill='none' stroke='%230ea5e9' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='28' cy='10' r='3.5' fill='%230ea5e9'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -86,9 +86,9 @@ body::after{content:'';position:fixed;inset:-50%;z-index:-1;pointer-events:none;
 .jl-chart svg{width:100%;height:100%;display:block;}
 
 /* Calendar heatmap */
-.jl-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;}
-.jl-cal-dow{font-family:var(--f-mono);font-size:10.5px;color:var(--text3);font-weight:800;letter-spacing:.1em;text-align:left;padding:8px 4px 6px;text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,.06);}
-.jl-cal-cell{aspect-ratio:1.15;border-radius:9px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.05);display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;padding:8px 10px;font-family:var(--f-mono);font-size:11px;color:var(--text3);font-weight:700;cursor:pointer;transition:.2s var(--ease-out-quart);position:relative;min-height:80px;}
+.jl-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
+.jl-cal-dow{font-family:var(--f-mono);font-size:9.5px;color:var(--text3);font-weight:800;letter-spacing:.1em;text-align:left;padding:6px 4px 4px;text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,.06);}
+.jl-cal-cell{aspect-ratio:1.4;border-radius:7px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.05);display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;padding:6px 8px;font-family:var(--f-mono);font-size:10.5px;color:var(--text3);font-weight:700;cursor:pointer;transition:.2s var(--ease-out-quart);position:relative;min-height:58px;max-height:78px;}
 .jl-cal-cell:hover{transform:translateY(-2px);border-color:rgba(14,165,233,.5);z-index:2;box-shadow:0 12px 24px -10px rgba(14,165,233,.4);}
 .jl-cal-cell.empty{opacity:.2;cursor:default;}
 .jl-cal-cell.empty:hover{transform:none;box-shadow:none;}
@@ -99,9 +99,9 @@ body::after{content:'';position:fixed;inset:-50%;z-index:-1;pointer-events:none;
 .jl-cal-cell.neg1{background:rgba(248,113,113,.10);color:#f87171;border-color:rgba(248,113,113,.25);}
 .jl-cal-cell.neg2{background:rgba(248,113,113,.22);color:#f87171;border-color:rgba(248,113,113,.4);}
 .jl-cal-cell.neg3{background:rgba(248,113,113,.36);color:#fff;border-color:rgba(248,113,113,.6);}
-.jl-cal-cell-day{font-size:13px;font-weight:800;color:var(--text);}
-.jl-cal-cell-pnl{font-size:13px;font-weight:900;margin-top:auto;letter-spacing:-.01em;align-self:flex-end;}
-.jl-cal-cell-tcount{font-size:9px;color:var(--text3);font-weight:700;letter-spacing:.06em;margin-top:3px;}
+.jl-cal-cell-day{font-size:11.5px;font-weight:800;color:var(--text);}
+.jl-cal-cell-pnl{font-size:11px;font-weight:900;margin-top:auto;letter-spacing:-.01em;align-self:flex-end;}
+.jl-cal-cell-tcount{font-size:8.5px;color:var(--text3);font-weight:700;letter-spacing:.04em;margin-top:1px;}
 .jl-cal-cell.pos1 .jl-cal-cell-day,
 .jl-cal-cell.pos2 .jl-cal-cell-day,
 .jl-cal-cell.pos3 .jl-cal-cell-day,
@@ -421,7 +421,7 @@ tr.jl-row-new td{animation:jlPulseIn 2.5s ease-out 1;}
 
 <!-- ═══════════ HERO ═══════════ -->
 <section class="tc-hero">
-  <div class="tc-eyebrow">📓 AI TRADING JOURNAL · BETTER THAN TRADEZELLA</div>
+  <div class="tc-eyebrow">📓 AI TRADING JOURNAL · LIVE BROKER SYNC</div>
   <h1 class="tc-h1">Every trade. Every <em>broker</em>. <br>Scored by AI.</h1>
   <p class="tc-sub">
     Connect <strong>MT4, MT5, OANDA, TradingView</strong> or any broker — and the journal auto-imports every trade, scores you on discipline, flags revenge-trade clusters, and contextualises each fill with the news that was breaking when you clicked.
@@ -429,14 +429,14 @@ tr.jl-row-new td{animation:jlPulseIn 2.5s ease-out 1;}
   <div class="tc-sub-foot">No CSV exports · No manual entry · No bullshit</div>
 </section>
 
-<!-- vs Tradezella -->
+<!-- What makes it elite -->
 <div class="jl-vs">
   <div class="jl-vs-card win">AI discipline grading</div>
   <div class="jl-vs-card win">News context per trade</div>
   <div class="jl-vs-card win">Revenge-trade detection</div>
-  <div class="jl-vs-card win">MT4 / MT5 native</div>
-  <div class="jl-vs-card win">Free — included with $39.95/mo</div>
-  <div class="jl-vs-card lose">Tradezella · $39+/mo extra</div>
+  <div class="jl-vs-card win">MT4 / MT5 native sync</div>
+  <div class="jl-vs-card win">Pre-trade plan + post-trade review</div>
+  <div class="jl-vs-card win">Included in your $39.95/mo plan</div>
 </div>
 
 <div class="jl-wrap">
@@ -642,13 +642,22 @@ tr.jl-row-new td{animation:jlPulseIn 2.5s ease-out 1;}
     </div>
   </div>
 
-  <!-- ═══════════ PERFORMANCE BY SETUP — full width ═══════════ -->
-  <div class="jl-card">
-    <div class="jl-card-h">
-      <div class="jl-card-h-t">🎯 Win Rate by Setup</div>
-      <div class="jl-card-h-sub">current filter window</div>
+  <!-- ═══════════ PERFORMANCE PAIR — setup + day-of-week side by side ═══════════ -->
+  <div class="jl-row" style="grid-template-columns:1fr 1fr;">
+    <div class="jl-card">
+      <div class="jl-card-h">
+        <div class="jl-card-h-t">🎯 Win Rate by Setup</div>
+        <div class="jl-card-h-sub">current filter window</div>
+      </div>
+      <div class="jl-setups" id="jlSetups"></div>
     </div>
-    <div class="jl-setups" id="jlSetups"></div>
+    <div class="jl-card">
+      <div class="jl-card-h">
+        <div class="jl-card-h-t">📆 Performance by Day of Week</div>
+        <div class="jl-card-h-sub">when you actually edge — and when you don't</div>
+      </div>
+      <div id="jlDow"></div>
+    </div>
   </div>
 
   <!-- ═══════════ MISTAKE FREQUENCY ═══════════ -->
@@ -702,7 +711,7 @@ tr.jl-row-new td{animation:jlPulseIn 2.5s ease-out 1;}
 <!-- CTA -->
 <section class="jl-cta">
   <h2>Stop journaling. <em>Start improving.</em></h2>
-  <p>Tradezella charges $39/month to type in your trades manually. We auto-import them, score your discipline, flag your bad habits, and contextualise every fill with the news that was breaking. Included in the $39.95/mo TradeContext subscription.</p>
+  <p>Auto-imported trades. AI-scored discipline. Plan-vs-fill adherence. News context on every entry. Coach chat that's seen your last 50 trades. All included in the $39.95/mo TradeContext subscription.</p>
   <a href="../dashboard.html" class="btn">Open the dashboard <span>→</span></a>
 </section>
 
@@ -1248,6 +1257,7 @@ function render(){
   renderAI(stats, disc, filtered);
   renderCalendar(filtered);
   renderSetups(filtered);
+  renderDayOfWeek(filtered);
   renderMistakes(filtered);
   renderSettingsSummary();
   renderFilters();
@@ -1462,6 +1472,43 @@ function renderSetups(trades){
       '<div class="jl-bar-val '+cls+'">'+(r.wr*100).toFixed(0)+'%</div></div>';
   }).join('') : '<div class="jl-empty" style="padding:30px 0;"><div class="jl-empty-emoji">🎯</div><div class="jl-empty-h">No tagged setups yet</div><div class="jl-empty-body">Tag your trades with a setup name to see which playbooks actually work.</div></div>';
   document.getElementById('jlSetups').innerHTML = html;
+}
+
+function renderDayOfWeek(trades){
+  var DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  // bucket every closed trade by day of week
+  var stats = DAYS.map(function(d){return {name:d, wins:0, losses:0, pnl:0, count:0, totalR:0};});
+  trades.filter(function(t){return t.status==='closed' && t.closedAt;}).forEach(function(t){
+    var dow = new Date(t.closedAt).getDay();
+    var s = stats[dow];
+    s.count++;
+    s.pnl += t.pnl || 0;
+    s.totalR += t.pnlR || 0;
+    if (t.pnl > 0) s.wins++; else if (t.pnl < 0) s.losses++;
+  });
+  // Skip weekends with no activity entirely; show trading days
+  var rows = stats.filter(function(s){return s.count > 0;});
+  if (!rows.length) {
+    document.getElementById('jlDow').innerHTML = '<div class="jl-empty" style="padding:30px 0;"><div class="jl-empty-emoji">📆</div><div class="jl-empty-h">Not enough data yet</div><div class="jl-empty-body">Log a few more trades and we\'ll surface your strongest and weakest weekdays here.</div></div>';
+    return;
+  }
+  var maxPnlAbs = Math.max.apply(null, rows.map(function(r){return Math.abs(r.pnl);})) || 1;
+  var html = rows.map(function(r){
+    var wr = r.count ? r.wins/(r.wins+r.losses||1) : 0;
+    var pnlCls = r.pnl >= 0 ? 'pos' : 'neg';
+    var pnlPctOfMax = Math.abs(r.pnl) / maxPnlAbs;
+    var widthPct = (pnlPctOfMax * 100).toFixed(0);
+    return '<div class="jl-bar-row" title="'+r.count+' trades · win rate '+(wr*100).toFixed(0)+'% · avg '+(r.totalR/r.count).toFixed(2)+'R">'+
+      '<div class="jl-bar-lbl">'+r.name+'</div>' +
+      '<div class="jl-bar-track"><div class="jl-bar '+pnlCls+'" style="width:'+widthPct+'%;"></div></div>' +
+      '<div class="jl-bar-val '+pnlCls+'">'+(r.pnl>=0?'+$':'-$')+Math.abs(Math.round(r.pnl)).toLocaleString()+'</div>'+
+      '</div>';
+  }).join('');
+  // Find best + worst day
+  var sorted = rows.slice().sort(function(a,b){return b.pnl - a.pnl;});
+  var best = sorted[0], worst = sorted[sorted.length-1];
+  var footer = rows.length >= 3 ? '<div style="margin-top:14px;padding:10px 12px;background:rgba(14,165,233,.04);border-left:2px solid var(--blue2);border-radius:0 7px 7px 0;font-family:var(--f-mono);font-size:10.5px;color:var(--text2);line-height:1.6;">💡 Strongest: <strong style="color:var(--green2);">'+best.name+'</strong> ('+(best.pnl>=0?'+$':'-$')+Math.abs(Math.round(best.pnl))+') · Weakest: <strong style="color:var(--red2);">'+worst.name+'</strong> ('+(worst.pnl>=0?'+$':'-$')+Math.abs(Math.round(worst.pnl))+')</div>' : '';
+  document.getElementById('jlDow').innerHTML = html + footer;
 }
 
 function renderMistakes(trades){
