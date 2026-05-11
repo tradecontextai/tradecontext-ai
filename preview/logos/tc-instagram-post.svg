@@ -42,23 +42,15 @@
   <rect width="1080" height="1080" fill="url(#auraGreen)"/>
   <rect width="1080" height="1080" fill="url(#vignette)"/>
 
-  <!-- Top eyebrow pill -->
-  <g transform="translate(540 240)">
-    <rect x="-220" y="-22" width="440" height="44" rx="22" fill="rgba(14,165,233,0.10)" stroke="rgba(14,165,233,0.32)" stroke-width="1.5"/>
-    <circle cx="-185" cy="0" r="5" fill="#38bdf8"/>
-    <text x="-170" y="6" font-family="'JetBrains Mono', monospace" font-weight="800" font-size="16" fill="#38bdf8" letter-spacing="3">
-      LIVE · AI TRADING INTELLIGENCE
-    </text>
-  </g>
-
-  <!-- ┌─ Horizontal lockup — mark + wordmark side by side (like the navbar) ─┐
-       Mark 140×140 + gap + wordmark @ 88px ≈ 870px total. Centred at canvas x=540 -->
-  <g transform="translate(105 470)">
-    <!-- Mark tile (140×140) -->
+  <!-- ┌─ Horizontal lockup — mark + wordmark side by side, centred ─┐
+       Mark 160×160 + 30px gap + 'TradeContext.ai' @ 100px ≈ 992px lockup width.
+       Vertically centred on the 1080 canvas. -->
+  <g transform="translate(44 460)">
+    <!-- Mark tile (160×160) -->
     <g>
-      <rect width="140" height="140" rx="32" fill="url(#tileBg)"/>
-      <rect width="140" height="140" rx="32" fill="none" stroke="rgba(14,165,233,0.5)" stroke-width="2.2"/>
-      <g transform="translate(13 13) scale(3.166)">
+      <rect width="160" height="160" rx="36" fill="url(#tileBg)"/>
+      <rect width="160" height="160" rx="36" fill="none" stroke="rgba(14,165,233,0.5)" stroke-width="2.5"/>
+      <g transform="translate(15 15) scale(3.61)">
         <polyline points="4,28 12,20 20,24 28,10" fill="none" stroke="url(#brandGrad)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
         <circle cx="28" cy="10" r="3.8" fill="url(#brandGrad)"/>
         <circle cx="28" cy="10" r="1.7" fill="#fff"/>
@@ -66,23 +58,8 @@
     </g>
     <!-- Wordmark — to the right of the tile, vertically centred against it.
          Single <text> with <tspan>s so '.ai' flows naturally after 'TradeContext'. -->
-    <text x="170" y="106" font-family="Inter, -apple-system, 'Segoe UI Variable', 'Segoe UI', Roboto, system-ui, sans-serif" font-weight="900" font-size="88" letter-spacing="-3.4">
+    <text x="195" y="120" font-family="Inter, -apple-system, 'Segoe UI Variable', 'Segoe UI', Roboto, system-ui, sans-serif" font-weight="900" font-size="100" letter-spacing="-3.8">
       <tspan fill="#e2eaf4">TradeContext</tspan><tspan fill="url(#brandGrad)">.ai</tspan>
-    </text>
-  </g>
-
-  <!-- Tagline below the lockup -->
-  <text x="540" y="720" text-anchor="middle" font-family="Inter, -apple-system, 'Segoe UI Variable', sans-serif" font-weight="600" font-size="28" fill="#a5b8d0" letter-spacing="-0.4">
-    Trade with the context institutional desks have.
-  </text>
-
-  <!-- Bottom feature strip + URL -->
-  <g transform="translate(540 920)">
-    <text x="0" y="0" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-weight="700" font-size="18" fill="#7a9ab8" letter-spacing="5">
-      ⚡ AI NEWS BIAS  ·  🌍 GEOPOLITICAL RISK  ·  📈 LIVE CHARTS
-    </text>
-    <text x="0" y="42" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-weight="800" font-size="22" fill="url(#brandGrad)" letter-spacing="3">
-      TRADECONTEXT.AI
     </text>
   </g>
 </svg>
