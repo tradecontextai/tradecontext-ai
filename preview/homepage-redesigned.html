@@ -62,16 +62,20 @@ body::after{
 
 /* ═══════════════ NAVBAR ═══════════════ */
 .nav{position:sticky;top:38px;z-index:100;background:rgba(3,6,13,.7);backdrop-filter:blur(22px) saturate(1.4);-webkit-backdrop-filter:blur(22px) saturate(1.4);border-bottom:1px solid rgba(255,255,255,.05);}
-.nav-inner{max-width:1280px;margin:0 auto;padding:14px 32px;display:flex;align-items:center;gap:24px;position:relative;}
-/* Proper logo — matches dashboard SVG */
-.brand{display:flex;align-items:center;gap:10px;font-size:19px;font-weight:900;letter-spacing:-.03em;color:var(--text);flex-shrink:0;transition:.18s var(--ease-out-quart);}
+@media (min-width:1px){.preview-bar{position:sticky;top:0;}}
+/* 3-col layout: brand left · nav-links DEAD CENTER · cta-row right */
+.nav-inner{max-width:1280px;margin:0 auto;padding:14px 32px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:24px;position:relative;}
+/* Logo — mark sits FLUSH with wordmark, no visible gap */
+.brand{display:inline-flex;align-items:center;gap:0;font-size:19px;font-weight:900;letter-spacing:-.03em;color:var(--text);flex-shrink:0;transition:.18s var(--ease-out-quart);text-decoration:none;line-height:1;}
 .brand:hover{transform:translateY(-1px);}
-.brand-mark{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:linear-gradient(135deg,#0a1628 0%,#0e1f3a 100%);border:1px solid rgba(14,165,233,.3);box-shadow:0 4px 14px -4px rgba(14,165,233,.4),inset 0 1px 0 rgba(255,255,255,.06);overflow:hidden;position:relative;}
-.brand-mark::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 70% 30%,rgba(14,165,233,.18),transparent 60%);pointer-events:none;}
+.brand:hover .brand-mark{box-shadow:0 6px 18px -4px rgba(14,165,233,.55),inset 0 1px 0 rgba(255,255,255,.08);}
+.brand-mark{width:28px;height:28px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;background:linear-gradient(135deg,#0a1628,#0e1f3a);border:1px solid rgba(14,165,233,.32);box-shadow:0 4px 14px -4px rgba(14,165,233,.4),inset 0 1px 0 rgba(255,255,255,.06);position:relative;margin-right:8px;transition:box-shadow .22s var(--ease-out-quart);}
+.brand-mark::before{content:'';position:absolute;inset:0;border-radius:7px;background:radial-gradient(circle at 70% 30%,rgba(14,165,233,.20),transparent 60%);pointer-events:none;}
 .brand-mark svg{display:block;position:relative;z-index:1;}
-.brand .ai{background:var(--grad-prem);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:800;}
+.brand .word{display:inline-flex;align-items:baseline;letter-spacing:-.035em;}
+.brand .ai{background:var(--grad-prem);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:800;margin-left:0;}
 /* Nav links + dropdown menus */
-.nav-links{display:flex;gap:2px;margin-left:18px;list-style:none;padding:0;align-items:center;}
+.nav-links{display:flex;gap:2px;list-style:none;padding:0;margin:0;align-items:center;justify-content:center;}
 .nav-links > li{position:relative;}
 .nav-links > li > a{display:inline-flex;align-items:center;gap:5px;padding:8px 14px;font-size:13px;font-weight:500;color:var(--text2);border-radius:8px;transition:.18s var(--ease-out-quart);cursor:pointer;}
 .nav-links > li > a:hover,.nav-links > li:hover > a{color:var(--text);background:rgba(255,255,255,.04);}
@@ -88,7 +92,7 @@ body::after{
 .dd-item.primary .ic{background:linear-gradient(135deg,rgba(14,165,233,.18),rgba(139,92,246,.12));border-color:rgba(14,165,233,.4);}
 .dd-divider{height:1px;background:rgba(255,255,255,.06);margin:6px 8px;}
 /* Right side cluster */
-.nav-cta-row{margin-left:auto;display:flex;align-items:center;gap:10px;}
+.nav-cta-row{display:flex;align-items:center;gap:10px;justify-content:flex-end;}
 .live-pill{display:flex;align-items:center;gap:6px;padding:5px 10px;background:rgba(52,211,153,.10);border:1px solid rgba(52,211,153,.3);border-radius:100px;font-family:var(--f-mono);font-size:9.5px;color:var(--green2);font-weight:700;letter-spacing:.1em;text-transform:uppercase;}
 .live-pill .live-dot{width:6px;height:6px;border-radius:50%;background:var(--green2);box-shadow:0 0 6px var(--green2);animation:lp 1.6s ease-in-out infinite;}
 .nav-signin{padding:8px 16px;font-size:12.5px;font-weight:600;color:var(--text2);border:1px solid var(--border);border-radius:8px;transition:.18s var(--ease-out-quart);}
@@ -127,17 +131,37 @@ body::after{
 .stat-num{font-family:var(--f-sans);font-size:28px;font-weight:900;background:var(--grad-prem);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-.025em;line-height:1;margin-bottom:6px;}
 .stat-lbl{font-family:var(--f-mono);font-size:9.5px;color:var(--text3);font-weight:700;letter-spacing:.1em;text-transform:uppercase;}
 
-/* ═══════════════ COMPANY MARQUEE ═══════════════ */
-.marquee-section{padding:80px 0 40px;text-align:center;}
-.marquee-h{font-family:var(--f-mono);font-size:10.5px;color:var(--text3);font-weight:700;letter-spacing:.16em;text-transform:uppercase;margin-bottom:24px;}
-.marquee{position:relative;overflow:hidden;padding:14px 0;}
-.marquee::before,.marquee::after{content:'';position:absolute;top:0;bottom:0;width:120px;z-index:2;pointer-events:none;}
-.marquee::before{left:0;background:linear-gradient(90deg,var(--bg),transparent);}
-.marquee::after{right:0;background:linear-gradient(270deg,var(--bg),transparent);}
-.marquee-track{display:inline-flex;gap:48px;white-space:nowrap;animation:slideX 32s linear infinite;padding-left:48px;}
+/* ═══════════════ TOP TICKER STRIP — live prices, above everything ═══════════════ */
+.top-ticker{position:sticky;top:0;z-index:201;background:rgba(0,0,0,.55);backdrop-filter:blur(18px) saturate(1.3);-webkit-backdrop-filter:blur(18px) saturate(1.3);border-bottom:1px solid rgba(14,165,233,.18);overflow:hidden;}
+.top-ticker::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(14,165,233,.5),rgba(139,92,246,.45),transparent);}
+.top-ticker-inner{position:relative;overflow:hidden;padding:9px 0;display:flex;align-items:center;}
+.top-ticker-lbl{flex-shrink:0;padding:0 18px;font-family:var(--f-mono);font-size:9.5px;font-weight:800;color:var(--green2);letter-spacing:.16em;text-transform:uppercase;display:flex;align-items:center;gap:7px;border-right:1px solid rgba(255,255,255,.06);}
+.top-ticker-lbl .dot{width:6px;height:6px;border-radius:50%;background:var(--green2);box-shadow:0 0 6px var(--green2);animation:lp 1.6s ease-in-out infinite;}
+.top-ticker-wrap{flex:1;overflow:hidden;position:relative;}
+.top-ticker-wrap::before,.top-ticker-wrap::after{content:'';position:absolute;top:0;bottom:0;width:60px;z-index:2;pointer-events:none;}
+.top-ticker-wrap::before{left:0;background:linear-gradient(90deg,rgba(0,0,0,.55),transparent);}
+.top-ticker-wrap::after{right:0;background:linear-gradient(270deg,rgba(0,0,0,.55),transparent);}
+.top-ticker-track{display:inline-flex;gap:36px;white-space:nowrap;animation:slideX 60s linear infinite;padding-left:36px;}
 @keyframes slideX{from{transform:translateX(0);}to{transform:translateX(-50%);}}
-.marquee-item{display:inline-flex;gap:8px;align-items:baseline;font-family:var(--f-mono);font-size:14px;font-weight:700;color:var(--text2);}
-.marquee-item .sym{color:var(--text);letter-spacing:.04em;}
+.tt-item{display:inline-flex;gap:8px;align-items:baseline;font-family:var(--f-mono);font-size:12px;font-weight:700;}
+.tt-item .sym{color:var(--text2);letter-spacing:.04em;}
+.tt-item .px{color:var(--text);font-feature-settings:"tnum","ss01";}
+.tt-item .pct.up{color:var(--green2);}
+.tt-item .pct.dn{color:var(--red2);}
+
+/* ═══════════════ COMPANY LOGO MARQUEE — major tradable assets ═══════════════ */
+.logos-section{padding:80px 0 40px;text-align:center;position:relative;}
+.logos-h{font-family:var(--f-mono);font-size:10.5px;color:var(--text3);font-weight:700;letter-spacing:.16em;text-transform:uppercase;margin-bottom:6px;}
+.logos-sub{font-family:var(--f-sans);font-size:14px;color:var(--text2);margin-bottom:30px;max-width:560px;margin-left:auto;margin-right:auto;}
+.logos-marquee{position:relative;overflow:hidden;padding:14px 0;mask-image:linear-gradient(90deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 12%,#000 88%,transparent 100%);}
+.logos-track{display:inline-flex;gap:18px;white-space:nowrap;align-items:center;animation:slideX 80s linear infinite;padding-left:18px;}
+.logo-pill{display:inline-flex;align-items:center;gap:9px;padding:9px 16px 9px 13px;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.008));border:1px solid rgba(255,255,255,.07);border-radius:10px;transition:.25s var(--ease-out-quart);flex-shrink:0;}
+.logo-pill:hover{border-color:rgba(14,165,233,.4);transform:translateY(-2px);background:linear-gradient(180deg,rgba(14,165,233,.06),rgba(14,165,233,.01));}
+.logo-pill img{width:18px;height:18px;display:block;object-fit:contain;}
+.logo-pill .lp-tick{font-family:var(--f-mono);font-size:10.5px;font-weight:700;color:var(--text);letter-spacing:.04em;}
+.logo-pill .lp-name{font-family:var(--f-sans);font-size:11.5px;font-weight:600;color:var(--text2);}
+.logos-row + .logos-row{margin-top:10px;}
+.logos-row.reverse .logos-track{animation-direction:reverse;animation-duration:95s;}
 
 /* ═══════════════ SECTION ═══════════════ */
 .section{padding:80px 32px;max-width:1280px;margin:0 auto;}
@@ -172,6 +196,19 @@ body::after{
 .dash-mock-body{display:grid;grid-template-columns:1.5fr 1fr;gap:14px;}
 @media (max-width:780px){.dash-mock-body{grid-template-columns:1fr;}}
 .dm-card{padding:18px 20px;background:linear-gradient(180deg,rgba(255,255,255,.022),rgba(255,255,255,.005));border:1px solid rgba(255,255,255,.06);border-radius:12px;position:relative;overflow:hidden;}
+
+/* Slideshow stage + controls */
+.slide-controls{margin-left:auto;display:flex;gap:6px;}
+.slide-arrow{width:28px;height:28px;border-radius:7px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:var(--text2);cursor:pointer;font-size:15px;font-weight:700;line-height:1;display:flex;align-items:center;justify-content:center;transition:.18s var(--ease-out-quart);}
+.slide-arrow:hover{background:rgba(14,165,233,.10);border-color:rgba(14,165,233,.4);color:var(--blue);}
+.slide-stage{position:relative;min-height:340px;}
+.slide{position:absolute;inset:0;opacity:0;transform:translateX(20px);transition:opacity .5s var(--ease-out-quart),transform .55s var(--ease-out-expo);pointer-events:none;}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:auto;position:relative;inset:auto;}
+.slide-foot{display:flex;align-items:center;justify-content:space-between;gap:14px;padding-top:14px;margin-top:14px;border-top:1px solid rgba(255,255,255,.05);}
+.slide-label{font-family:var(--f-mono);font-size:10px;font-weight:700;color:var(--text2);letter-spacing:.1em;text-transform:uppercase;}
+.slide-dots{display:flex;gap:5px;}
+.slide-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.12);cursor:pointer;transition:.3s var(--ease-out-quart);}
+.slide-dot.active{width:22px;border-radius:3px;background:linear-gradient(90deg,var(--blue),var(--violet));box-shadow:0 0 8px rgba(14,165,233,.5);}
 .dm-eyebrow{font-family:var(--f-mono);font-size:9.5px;color:var(--blue);font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:7px;}
 .dm-eyebrow .pulse{width:7px;height:7px;border-radius:50%;background:#34d399;box-shadow:0 0 6px #34d399;animation:lp 1.4s ease-in-out infinite;}
 .dm-h{font-size:18px;font-weight:800;letter-spacing:-.02em;margin-bottom:14px;}
@@ -283,20 +320,56 @@ body::after{
   <a href="https://www.tradecontext.ai" target="_blank" rel="noopener">↗ compare with live</a>
 </div>
 
+<!-- ═══════════ LIVE PRICE TICKER — sticks to the very top of the page ═══════════ -->
+<div class="top-ticker">
+  <div class="top-ticker-inner">
+    <div class="top-ticker-lbl"><span class="dot"></span>Live Prices</div>
+    <div class="top-ticker-wrap">
+      <div class="top-ticker-track">
+        <span class="tt-item"><span class="sym">XAU/USD</span><span class="px">3,121.40</span><span class="pct up">+1.42%</span></span>
+        <span class="tt-item"><span class="sym">EUR/USD</span><span class="px">1.0853</span><span class="pct dn">-0.18%</span></span>
+        <span class="tt-item"><span class="sym">GBP/USD</span><span class="px">1.2784</span><span class="pct up">+0.22%</span></span>
+        <span class="tt-item"><span class="sym">USD/JPY</span><span class="px">151.82</span><span class="pct up">+0.42%</span></span>
+        <span class="tt-item"><span class="sym">BTC/USD</span><span class="px">92,148</span><span class="pct up">+2.18%</span></span>
+        <span class="tt-item"><span class="sym">ETH/USD</span><span class="px">3,482</span><span class="pct up">+1.85%</span></span>
+        <span class="tt-item"><span class="sym">SPX</span><span class="px">5,641</span><span class="pct dn">-0.28%</span></span>
+        <span class="tt-item"><span class="sym">NASDAQ</span><span class="px">17,924</span><span class="pct dn">-0.35%</span></span>
+        <span class="tt-item"><span class="sym">DOW</span><span class="px">38,720</span><span class="pct up">+0.12%</span></span>
+        <span class="tt-item"><span class="sym">FTSE 100</span><span class="px">8,442</span><span class="pct up">+0.18%</span></span>
+        <span class="tt-item"><span class="sym">DAX</span><span class="px">18,540</span><span class="pct dn">-0.21%</span></span>
+        <span class="tt-item"><span class="sym">NIKKEI</span><span class="px">38,180</span><span class="pct dn">-1.20%</span></span>
+        <span class="tt-item"><span class="sym">WTI Oil</span><span class="px">76.34</span><span class="pct up">+3.21%</span></span>
+        <span class="tt-item"><span class="sym">BRENT</span><span class="px">80.42</span><span class="pct up">+2.84%</span></span>
+        <!-- duplicate set so loop is seamless -->
+        <span class="tt-item"><span class="sym">XAU/USD</span><span class="px">3,121.40</span><span class="pct up">+1.42%</span></span>
+        <span class="tt-item"><span class="sym">EUR/USD</span><span class="px">1.0853</span><span class="pct dn">-0.18%</span></span>
+        <span class="tt-item"><span class="sym">GBP/USD</span><span class="px">1.2784</span><span class="pct up">+0.22%</span></span>
+        <span class="tt-item"><span class="sym">USD/JPY</span><span class="px">151.82</span><span class="pct up">+0.42%</span></span>
+        <span class="tt-item"><span class="sym">BTC/USD</span><span class="px">92,148</span><span class="pct up">+2.18%</span></span>
+        <span class="tt-item"><span class="sym">ETH/USD</span><span class="px">3,482</span><span class="pct up">+1.85%</span></span>
+        <span class="tt-item"><span class="sym">SPX</span><span class="px">5,641</span><span class="pct dn">-0.28%</span></span>
+        <span class="tt-item"><span class="sym">NASDAQ</span><span class="px">17,924</span><span class="pct dn">-0.35%</span></span>
+        <span class="tt-item"><span class="sym">DOW</span><span class="px">38,720</span><span class="pct up">+0.12%</span></span>
+        <span class="tt-item"><span class="sym">FTSE 100</span><span class="px">8,442</span><span class="pct up">+0.18%</span></span>
+        <span class="tt-item"><span class="sym">DAX</span><span class="px">18,540</span><span class="pct dn">-0.21%</span></span>
+        <span class="tt-item"><span class="sym">NIKKEI</span><span class="px">38,180</span><span class="pct dn">-1.20%</span></span>
+        <span class="tt-item"><span class="sym">WTI Oil</span><span class="px">76.34</span><span class="pct up">+3.21%</span></span>
+        <span class="tt-item"><span class="sym">BRENT</span><span class="px">80.42</span><span class="pct up">+2.84%</span></span>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ═══════════ NAVBAR ═══════════ -->
 <nav class="nav">
   <div class="nav-inner">
-    <!-- Proper logo — chart-icon SVG mark + wordmark, same artwork the dashboard uses -->
+    <!-- Logo — mark sits flush against the wordmark, no visible space between them -->
     <a href="#" class="brand" aria-label="TradeContext.ai home">
       <span class="brand-mark">
-        <svg width="22" height="22" viewBox="0 0 36 36" fill="none" aria-hidden="true">
-          <!-- Trading line that breaks upward then resolves to a glowing endpoint -->
-          <polyline points="4,28 12,20 20,24 28,10"
-                    fill="none" stroke="url(#brandGrad)" stroke-width="3"
-                    stroke-linecap="round" stroke-linejoin="round"/>
-          <!-- Endpoint dot (the "context" the line is pointing to) -->
-          <circle cx="28" cy="10" r="3.5" fill="url(#brandGrad)"/>
-          <circle cx="28" cy="10" r="1.5" fill="#fff"/>
+        <svg width="18" height="18" viewBox="0 0 36 36" fill="none" aria-hidden="true">
+          <polyline points="4,28 12,20 20,24 28,10" fill="none" stroke="url(#brandGrad)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="28" cy="10" r="3.8" fill="url(#brandGrad)"/>
+          <circle cx="28" cy="10" r="1.7" fill="#fff"/>
           <defs>
             <linearGradient id="brandGrad" x1="0" y1="36" x2="36" y2="0">
               <stop offset="0%" stop-color="#0ea5e9"/>
@@ -305,7 +378,7 @@ body::after{
           </defs>
         </svg>
       </span>
-      TradeContext<span class="ai">.ai</span>
+      <span class="word">TradeContext<span class="ai">.ai</span></span>
     </a>
     <!-- Same Features + Resources dropdowns as the dashboard, plus standalone links for FAQ/Pricing etc -->
     <ul class="nav-links">
@@ -378,77 +451,192 @@ body::after{
   <div class="stat"><div class="stat-num">24/7</div><div class="stat-lbl">Live news scoring</div></div>
 </div>
 
-<!-- ═══════════ MARQUEE ═══════════ -->
-<div class="marquee-section">
-  <div class="marquee-h">Live across every market</div>
-  <div class="marquee">
-    <div class="marquee-track">
-      <span class="marquee-item"><span class="sym">XAU/USD</span> $3,121.40</span>
-      <span class="marquee-item"><span class="sym">EUR/USD</span> 1.0853</span>
-      <span class="marquee-item"><span class="sym">BTC/USD</span> 92,148</span>
-      <span class="marquee-item"><span class="sym">SPX</span> 5,641</span>
-      <span class="marquee-item"><span class="sym">NIFTY 50</span> 24,096</span>
-      <span class="marquee-item"><span class="sym">SENSEX</span> 79,142</span>
-      <span class="marquee-item"><span class="sym">BOVESPA</span> 128,540</span>
-      <span class="marquee-item"><span class="sym">KOSPI</span> 2,712</span>
-      <span class="marquee-item"><span class="sym">TADAWUL</span> 11,840</span>
-      <span class="marquee-item"><span class="sym">WTI Oil</span> 76.34</span>
-      <!-- duplicate for seamless loop -->
-      <span class="marquee-item"><span class="sym">XAU/USD</span> $3,121.40</span>
-      <span class="marquee-item"><span class="sym">EUR/USD</span> 1.0853</span>
-      <span class="marquee-item"><span class="sym">BTC/USD</span> 92,148</span>
-      <span class="marquee-item"><span class="sym">SPX</span> 5,641</span>
-      <span class="marquee-item"><span class="sym">NIFTY 50</span> 24,096</span>
-      <span class="marquee-item"><span class="sym">SENSEX</span> 79,142</span>
-      <span class="marquee-item"><span class="sym">BOVESPA</span> 128,540</span>
-      <span class="marquee-item"><span class="sym">KOSPI</span> 2,712</span>
-      <span class="marquee-item"><span class="sym">TADAWUL</span> 11,840</span>
-      <span class="marquee-item"><span class="sym">WTI Oil</span> 76.34</span>
-    </div>
+<!-- ═══════════ 100 ASSETS LOGO WALL — three rows of major tradable companies sliding ═══════════ -->
+<div class="logos-section">
+  <div class="logos-h">Coverage you can trust</div>
+  <p class="logos-sub">Live across the 100+ biggest tradable assets on the planet.</p>
+
+  <!-- Row 1 · US tech + Apple/Google/Microsoft/Tesla cluster -->
+  <div class="logos-row">
+    <div class="logos-marquee"><div class="logos-track" id="logoRow1"></div></div>
+  </div>
+  <!-- Row 2 · Banks, energy, consumer — REVERSE direction for contrast -->
+  <div class="logos-row reverse">
+    <div class="logos-marquee"><div class="logos-track" id="logoRow2"></div></div>
+  </div>
+  <!-- Row 3 · Crypto + Asian + European leaders -->
+  <div class="logos-row">
+    <div class="logos-marquee"><div class="logos-track" id="logoRow3"></div></div>
   </div>
 </div>
 
-<!-- ═══════════ DASHBOARD PREVIEW MOCK ═══════════ -->
+<!-- ═══════════ DASHBOARD SLIDESHOW — auto-advancing 5-slide showcase ═══════════ -->
 <div class="dash-preview">
   <div class="dash-frame">
+    <!-- Browser chrome -->
     <div class="dash-mock-h">
       <span class="dot"></span><span class="dot"></span><span class="dot"></span>
       <span class="dash-mock-url">tradecontext.ai/dashboard</span>
+      <div class="slide-controls">
+        <button class="slide-arrow prev" onclick="dashSlide(-1)" aria-label="Previous">‹</button>
+        <button class="slide-arrow next" onclick="dashSlide(1)" aria-label="Next">›</button>
+      </div>
     </div>
-    <div class="dash-mock-body">
 
-      <div class="dm-card">
-        <div class="dm-eyebrow"><span class="pulse"></span>⚔️ Geopolitical Risk · LIVE</div>
-        <div class="dm-h">SEVERE · <em>82/100</em></div>
-        <div class="kpi-row">
-          <div class="kpi-mini"><div class="kpi-mini-lbl">Middle East</div><div class="kpi-mini-val bear">88</div></div>
-          <div class="kpi-mini"><div class="kpi-mini-lbl">E. Europe</div><div class="kpi-mini-val">54</div></div>
-          <div class="kpi-mini"><div class="kpi-mini-lbl">Asia-Pacific</div><div class="kpi-mini-val">41</div></div>
+    <!-- Slide stage — every slide pre-rendered, swap via opacity + transform -->
+    <div class="slide-stage" id="slideStage">
+
+      <!-- SLIDE 1 · Geopolitical Risk + News Bias (the live composite) -->
+      <div class="slide active" data-label="Geopolitical Risk + News Bias">
+        <div class="dash-mock-body">
+          <div class="dm-card">
+            <div class="dm-eyebrow"><span class="pulse"></span>⚔️ Geopolitical Risk · LIVE</div>
+            <div class="dm-h">SEVERE · <em>82/100</em></div>
+            <div class="kpi-row">
+              <div class="kpi-mini"><div class="kpi-mini-lbl">Middle East</div><div class="kpi-mini-val bear">88</div></div>
+              <div class="kpi-mini"><div class="kpi-mini-lbl">E. Europe</div><div class="kpi-mini-val">54</div></div>
+              <div class="kpi-mini"><div class="kpi-mini-lbl">Asia-Pacific</div><div class="kpi-mini-val">41</div></div>
+            </div>
+            <div class="bias-row"><span class="lbl">XAU/USD · Fundamental</span><span class="bias-pill bull">▲ Bullish</span></div>
+            <div class="bias-row"><span class="lbl">XAU/USD · Day Trade</span><span class="bias-pill bull">▲ Bullish</span></div>
+            <div class="bias-row"><span class="lbl">USD/JPY · Technical</span><span class="bias-pill bear">▼ Bearish</span></div>
+          </div>
+          <div class="dm-card">
+            <div class="dm-eyebrow"><span class="pulse"></span>📡 News Bias Intelligence</div>
+            <div class="dm-h">Scored in <em>1.2 seconds</em></div>
+            <div class="story-mini">
+              <div class="story-mini-h"><span class="story-mini-tag">⚡ Breaking</span><span class="story-mini-time">2m ago</span></div>
+              <div class="story-mini-txt">"Reports filtering in that Iran launched missiles at US Navy ships near Strait of Hormuz"</div>
+            </div>
+            <div class="story-mini" style="border-left-color:var(--green2);background:linear-gradient(90deg,rgba(52,211,153,.08),transparent 80%);">
+              <div class="story-mini-h"><span class="story-mini-tag" style="color:var(--green2);">▲ Bullish</span><span class="story-mini-time">14m ago</span></div>
+              <div class="story-mini-txt">"Aramco raises Asia OSPs for third straight month"</div>
+            </div>
+          </div>
         </div>
-        <div class="bias-row"><span class="lbl">XAU/USD · Fundamental</span><span class="bias-pill bull">▲ Bullish</span></div>
-        <div class="bias-row"><span class="lbl">XAU/USD · Day Trade</span><span class="bias-pill bull">▲ Bullish</span></div>
-        <div class="bias-row"><span class="lbl">USD/JPY · Technical</span><span class="bias-pill bear">▼ Bearish</span></div>
       </div>
 
-      <div class="dm-card">
-        <div class="dm-eyebrow"><span class="pulse"></span>📡 News Bias Intelligence</div>
-        <div class="dm-h">Scored in <em>1.2 seconds</em></div>
-        <div class="story-mini">
-          <div class="story-mini-h">
-            <span class="story-mini-tag">⚡ Breaking</span>
-            <span class="story-mini-time">2m ago</span>
+      <!-- SLIDE 2 · AI Bias Engine + verdicts -->
+      <div class="slide" data-label="AI Bias Engine · Fundamental + Technical">
+        <div class="dash-mock-body">
+          <div class="dm-card">
+            <div class="dm-eyebrow"><span class="pulse"></span>🧠 AI Bias · LIVE</div>
+            <div class="dm-h">XAU/USD <em>Intelligence</em></div>
+            <div style="display:flex;gap:8px;margin-bottom:10px;">
+              <div style="flex:1;padding:10px;background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.25);border-radius:8px;">
+                <div style="font-family:var(--f-mono);font-size:8.5px;color:var(--green2);letter-spacing:.12em;font-weight:800;margin-bottom:5px;">🌍 FUNDAMENTAL</div>
+                <div style="font-size:11.5px;line-height:1.4;color:var(--text);">Iran-Hormuz tensions drive sustained safe-haven demand. Fed signals patience on cuts.</div>
+              </div>
+              <div style="flex:1;padding:10px;background:rgba(245,158,11,.05);border:1px solid rgba(245,158,11,.25);border-radius:8px;">
+                <div style="font-family:var(--f-mono);font-size:8.5px;color:var(--yellow);letter-spacing:.12em;font-weight:800;margin-bottom:5px;">📊 TECHNICAL</div>
+                <div style="font-size:11.5px;line-height:1.4;color:var(--text);">Price extended at $3,121 — limited resistance. Momentum positive, volume thin.</div>
+              </div>
+            </div>
+            <div class="bias-row"><span class="lbl">⚡ Day Trade Verdict</span><span class="bias-pill bull">▲ Bullish</span></div>
+            <div class="bias-row"><span class="lbl">📅 Swing Trade Verdict</span><span class="bias-pill bull">▲ Bullish</span></div>
           </div>
-          <div class="story-mini-txt">"Reports filtering in that Iran launched missiles at US Navy ships near Strait of Hormuz"</div>
-        </div>
-        <div class="story-mini" style="border-left-color:var(--green2);background:linear-gradient(90deg,rgba(52,211,153,.08),transparent 80%);">
-          <div class="story-mini-h">
-            <span class="story-mini-tag" style="color:var(--green2);">▲ Bullish</span>
-            <span class="story-mini-time">14m ago</span>
+          <div class="dm-card">
+            <div class="dm-eyebrow"><span class="pulse"></span>📊 Public Track Record</div>
+            <div class="dm-h"><em>68.4%</em> · 90-day hit rate</div>
+            <div class="kpi-row">
+              <div class="kpi-mini"><div class="kpi-mini-lbl">Total calls</div><div class="kpi-mini-val">312</div></div>
+              <div class="kpi-mini"><div class="kpi-mini-lbl">Wins</div><div class="kpi-mini-val bull">213</div></div>
+              <div class="kpi-mini"><div class="kpi-mini-lbl">Avg R</div><div class="kpi-mini-val bull">+0.42</div></div>
+            </div>
+            <div style="font-family:var(--f-mono);font-size:10px;color:var(--text3);text-align:center;padding:8px;background:rgba(14,165,233,.04);border:1px dashed rgba(14,165,233,.2);border-radius:6px;">Every call logged + verified · permanent · no cherry-picking</div>
           </div>
-          <div class="story-mini-txt">"Aramco raises Asia OSPs for third straight month"</div>
         </div>
       </div>
 
+      <!-- SLIDE 3 · AI Chat per Chart -->
+      <div class="slide" data-label="AI Chat per Chart · grounded in live news">
+        <div class="dash-mock-body" style="grid-template-columns:1fr;">
+          <div class="dm-card" style="max-width:680px;margin:0 auto;width:100%;">
+            <div class="dm-eyebrow"><span class="pulse"></span>💬 AI Trading Analyst</div>
+            <div class="dm-h">Ask anything about <em>XAU/USD</em></div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div style="align-self:flex-end;max-width:80%;padding:10px 14px;background:rgba(14,165,233,.14);border:1px solid rgba(14,165,233,.3);border-radius:11px;font-size:13px;line-height:1.5;">Why is gold ripping right now?</div>
+              <div style="align-self:flex-start;max-width:88%;padding:12px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:11px;font-size:13px;line-height:1.6;">
+                Gold is pushing higher (~<strong>$3,121</strong>) on a <strong>perfect storm of safe-haven demand</strong>. The dominant driver is the Iran-US military escalation near the Strait of Hormuz — when there's a live confrontation near 20% of global oil flow, traders rotate hard into gold.
+                <br><br>
+                <em style="color:var(--text3);font-size:11px;">Educational analysis only — not personal financial advice.</em>
+              </div>
+              <div style="align-self:flex-start;max-width:88%;padding:7px 10px;background:rgba(14,165,233,.05);border-left:2px solid var(--blue);border-radius:0 6px 6px 0;font-family:var(--f-mono);font-size:9.5px;color:var(--text3);">📡 grounded in 3 news stories: "Iran missiles US Navy" · "Aramco OSP hike" · "Fed minutes hawkish"</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 4 · Macro Pulse (Sessions + Currency Strength + F&G + Risk) -->
+      <div class="slide" data-label="Macro Pulse · 8 signals in one card">
+        <div class="dash-mock-body">
+          <div class="dm-card">
+            <div class="dm-eyebrow"><span class="pulse"></span>🕐 Sessions · Currency Strength</div>
+            <div class="dm-h">London + NY <em>overlap LIVE</em></div>
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:10px;">
+              <div style="padding:7px 8px;background:rgba(52,211,153,.10);border:1px solid rgba(52,211,153,.3);border-radius:6px;text-align:center;"><div style="font-family:var(--f-mono);font-size:8.5px;color:var(--green2);font-weight:800;">🇬🇧 LDN</div><div style="font-family:var(--f-mono);font-size:8px;color:var(--green2);margin-top:2px;">OPEN</div></div>
+              <div style="padding:7px 8px;background:rgba(52,211,153,.10);border:1px solid rgba(52,211,153,.3);border-radius:6px;text-align:center;"><div style="font-family:var(--f-mono);font-size:8.5px;color:var(--green2);font-weight:800;">🇺🇸 NY</div><div style="font-family:var(--f-mono);font-size:8px;color:var(--green2);margin-top:2px;">OPEN</div></div>
+              <div style="padding:7px 8px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:6px;text-align:center;"><div style="font-family:var(--f-mono);font-size:8.5px;color:var(--text3);font-weight:800;">🇯🇵 TKY</div><div style="font-family:var(--f-mono);font-size:8px;color:var(--text3);margin-top:2px;">CLOSED</div></div>
+              <div style="padding:7px 8px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:6px;text-align:center;"><div style="font-family:var(--f-mono);font-size:8.5px;color:var(--text3);font-weight:800;">🇦🇺 SYD</div><div style="font-family:var(--f-mono);font-size:8px;color:var(--text3);margin-top:2px;">CLOSED</div></div>
+            </div>
+            <div style="font-family:var(--f-mono);font-size:10px;color:var(--yellow);text-align:center;padding:6px;background:rgba(245,158,11,.06);border:1px dashed rgba(245,158,11,.3);border-radius:6px;">🔥 ~70% of daily FX volume happens here</div>
+          </div>
+          <div class="dm-card">
+            <div class="dm-eyebrow"><span class="pulse"></span>🌡️ Risk · Fear &amp; Greed</div>
+            <div class="dm-h">VIX <em>14.2</em> · F&amp;G <em>62</em></div>
+            <div class="bias-row"><span class="lbl">Risk Sentiment</span><span class="bias-pill bull">62 RISK-ON</span></div>
+            <div class="bias-row"><span class="lbl">Fear &amp; Greed</span><span class="bias-pill" style="background:rgba(245,158,11,.16);color:var(--yellow);border:1px solid rgba(245,158,11,.35);">62 GREED</span></div>
+            <div class="bias-row"><span class="lbl">VIX · Equity Vol</span><span class="bias-pill bull">14.2 CALM</span></div>
+            <div class="bias-row"><span class="lbl">DXY · Dollar Index</span><span class="bias-pill bear">-0.18% OFFERED</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 5 · World Pulse with cities + Live TV switcher -->
+      <div class="slide" data-label="World Pulse Map + Live Markets TV">
+        <div class="dash-mock-body">
+          <div class="dm-card">
+            <div class="dm-eyebrow"><span class="pulse"></span>🌍 World Pulse</div>
+            <div class="dm-h"><em>4 of 13</em> financial centres open</div>
+            <div style="position:relative;height:140px;background:radial-gradient(ellipse at center,rgba(14,165,233,.10),transparent 70%);border:1px solid rgba(255,255,255,.06);border-radius:9px;overflow:hidden;margin-bottom:10px;">
+              <svg viewBox="0 0 280 140" style="position:absolute;inset:0;width:100%;height:100%;">
+                <circle cx="60" cy="55" r="3" fill="#34d399" filter="drop-shadow(0 0 4px #34d399)"/>
+                <circle cx="138" cy="48" r="3" fill="#34d399" filter="drop-shadow(0 0 4px #34d399)"/>
+                <circle cx="150" cy="52" r="3" fill="#34d399" filter="drop-shadow(0 0 4px #34d399)"/>
+                <circle cx="175" cy="60" r="3" fill="#f59e0b" filter="drop-shadow(0 0 4px #f59e0b)"/>
+                <circle cx="225" cy="58" r="3" fill="#7a9ab8"/>
+                <circle cx="240" cy="65" r="3" fill="#7a9ab8"/>
+                <text x="60" y="48" text-anchor="middle" font-family="JetBrains Mono" font-size="6.5" fill="#34d399">NY</text>
+                <text x="138" y="41" text-anchor="middle" font-family="JetBrains Mono" font-size="6.5" fill="#34d399">LDN</text>
+                <text x="150" y="65" text-anchor="middle" font-family="JetBrains Mono" font-size="6.5" fill="#34d399">FRA</text>
+                <text x="175" y="73" text-anchor="middle" font-family="JetBrains Mono" font-size="6.5" fill="#f59e0b">DXB</text>
+                <text x="225" y="50" text-anchor="middle" font-family="JetBrains Mono" font-size="6.5" fill="#7a9ab8">TKY</text>
+                <text x="240" y="78" text-anchor="middle" font-family="JetBrains Mono" font-size="6.5" fill="#7a9ab8">SYD</text>
+                <path d="M60 55 Q100 25 138 48" stroke="rgba(248,113,113,.6)" stroke-width="1" fill="none" stroke-dasharray="2 3"/>
+              </svg>
+            </div>
+            <div style="font-family:var(--f-mono);font-size:10px;color:var(--text3);text-align:center;">🌒 Day/night terminator · 🔥 heat arcs · 📡 news shockwaves</div>
+          </div>
+          <div class="dm-card">
+            <div class="dm-eyebrow"><span class="pulse"></span>📺 Live Markets TV</div>
+            <div class="dm-h">DW News · <em>24/7</em></div>
+            <div style="height:140px;background:linear-gradient(135deg,#000,#0a1628);border:1px solid rgba(255,255,255,.08);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;margin-bottom:10px;position:relative;overflow:hidden;">
+              <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(14,165,233,.12),transparent 60%);"></div>
+              <div style="font-size:32px;position:relative;z-index:1;">📺</div>
+              <div style="font-family:var(--f-mono);font-size:10px;color:var(--text2);position:relative;z-index:1;">Live · DW News English</div>
+              <div style="position:absolute;top:8px;left:8px;display:flex;align-items:center;gap:5px;padding:3px 8px;background:rgba(239,68,68,.18);border:1px solid rgba(239,68,68,.4);border-radius:100px;font-family:var(--f-mono);font-size:8px;color:var(--red2);font-weight:800;letter-spacing:.1em;">● LIVE</div>
+            </div>
+            <div style="font-family:var(--f-mono);font-size:9.5px;color:var(--text3);text-align:center;">DW · CNBC · Bloomberg QT · France 24 · Al Jazeera · Yahoo Finance</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Slide indicator dots + label -->
+    <div class="slide-foot">
+      <div class="slide-label" id="slideLabel">Geopolitical Risk + News Bias</div>
+      <div class="slide-dots" id="slideDots"></div>
     </div>
   </div>
 </div>
@@ -744,6 +932,94 @@ body::after{
     <strong>Important:</strong> TradeContext.ai is not a broker, never places trades, and does not provide personal financial advice. We earn affiliate commission from some broker referrals — this never influences which brokers we list. <strong>Trading involves significant risk of loss</strong> and is not suitable for all investors. AI-generated analysis is informational only. See <a href="risk.html" style="color:var(--blue);">risk warning</a>.
   </p>
 </footer>
+
+<script>
+// ────────── COMPANY LOGO MARQUEE ──────────
+// 100+ tradable assets across US tech, banks, energy, consumer, auto,
+// crypto, Asian + European leaders. Uses Simple Icons CDN (free SVG logos
+// by slug). Each row scrolls independently; row 2 reverses for parallax.
+var LOGOS=[
+  // ── Row 1 · US mega-caps ──
+  ["apple","Apple","AAPL"],["microsoft","Microsoft","MSFT"],["google","Alphabet","GOOGL"],
+  ["amazon","Amazon","AMZN"],["meta","Meta","META"],["nvidia","Nvidia","NVDA"],
+  ["tesla","Tesla","TSLA"],["netflix","Netflix","NFLX"],["adobe","Adobe","ADBE"],
+  ["salesforce","Salesforce","CRM"],["oracle","Oracle","ORCL"],["intel","Intel","INTC"],
+  ["amd","AMD","AMD"],["paypal","PayPal","PYPL"],["uber","Uber","UBER"],
+  ["airbnb","Airbnb","ABNB"],["spotify","Spotify","SPOT"],["snowflake","Snowflake","SNOW"],
+  ["palantir","Palantir","PLTR"],["shopify","Shopify","SHOP"],
+  // ── Row 2 · Banks + energy + industrials + consumer ──
+  ["jpmorganchase","JPMorgan","JPM"],["goldmansachs","Goldman","GS"],["mastercard","Mastercard","MA"],
+  ["visa","Visa","V"],["americanexpress","Amex","AXP"],["walmart","Walmart","WMT"],
+  ["costco","Costco","COST"],["target","Target","TGT"],["coca-cola","Coca-Cola","KO"],
+  ["pepsi","Pepsi","PEP"],["mcdonalds","McDonalds","MCD"],["starbucks","Starbucks","SBUX"],
+  ["nike","Nike","NKE"],["disney","Disney","DIS"],["fedex","FedEx","FDX"],
+  ["ups","UPS","UPS"],["exxonmobil","ExxonMobil","XOM"],["shell","Shell","SHEL"],
+  ["bp","BP","BP"],["chevron","Chevron","CVX"],
+  // ── Row 3 · Crypto + Asian + European + auto ──
+  ["bitcoin","Bitcoin","BTC"],["ethereum","Ethereum","ETH"],["solana","Solana","SOL"],
+  ["binance","Binance","BNB"],["coinbase","Coinbase","COIN"],["xrp","Ripple","XRP"],
+  ["litecoin","Litecoin","LTC"],["cardano","Cardano","ADA"],["polkadot","Polkadot","DOT"],
+  ["chainlink","Chainlink","LINK"],["dogecoin","Dogecoin","DOGE"],["samsung","Samsung","005930.KS"],
+  ["sony","Sony","6758.T"],["toyota","Toyota","7203.T"],["honda","Honda","7267.T"],
+  ["nintendo","Nintendo","7974.T"],["alibaba","Alibaba","BABA"],["tencent","Tencent","0700.HK"],
+  ["mercedes","Mercedes-Benz","MBG.DE"],["bmw","BMW","BMW.DE"],["volkswagen","Volkswagen","VOW.DE"],
+  ["ferrari","Ferrari","RACE"],["porsche","Porsche","P911.DE"],["lvmh","LVMH","MC.PA"],
+  ["loreal","L'Oréal","OR.PA"],["nestle","Nestlé","NESN.SW"],["roche","Roche","ROG.SW"],
+  ["asml","ASML","ASML"],["sap","SAP","SAP"],["siemens","Siemens","SIE.DE"]
+];
+function logoHTML(slug,name,tick){
+  // Use simpleicons.org colored SVG CDN — free, no API key, fast
+  var url='https://cdn.simpleicons.org/'+slug+'/_/_';
+  return '<a class="logo-pill" href="#" title="'+name+' · '+tick+'">'
+    +'<img src="'+url+'" alt="'+name+'" loading="lazy" onerror="this.style.display=\'none\'">'
+    +'<span class="lp-tick">'+tick+'</span>'
+    +'<span class="lp-name">'+name+'</span>'
+    +'</a>';
+}
+function fillRow(el,items){
+  if(!el)return;
+  // Duplicate the set so the marquee loops seamlessly
+  var html=items.map(function(x){return logoHTML(x[0],x[1],x[2]);}).join('');
+  el.innerHTML=html+html;
+}
+fillRow(document.getElementById('logoRow1'),LOGOS.slice(0,20));
+fillRow(document.getElementById('logoRow2'),LOGOS.slice(20,40));
+fillRow(document.getElementById('logoRow3'),LOGOS.slice(40,70));
+
+// ────────── DASHBOARD SLIDESHOW ──────────
+// 5 frames, auto-advances every 6 seconds. Click ← → arrows or dots to jump.
+(function(){
+  var slides=document.querySelectorAll('.slide-stage .slide');
+  var label=document.getElementById('slideLabel');
+  var dotsEl=document.getElementById('slideDots');
+  var idx=0,timer=null,PERIOD=6000;
+  // Build dots
+  slides.forEach(function(_,i){
+    var d=document.createElement('span');
+    d.className='slide-dot'+(i===0?' active':'');
+    d.onclick=function(){show(i);restart();};
+    dotsEl.appendChild(d);
+  });
+  function show(n){
+    idx=(n+slides.length)%slides.length;
+    slides.forEach(function(s,i){s.classList.toggle('active',i===idx);});
+    dotsEl.querySelectorAll('.slide-dot').forEach(function(d,i){d.classList.toggle('active',i===idx);});
+    var cur=slides[idx];
+    if(cur&&label)label.textContent=cur.dataset.label||'';
+  }
+  function restart(){clearInterval(timer);timer=setInterval(function(){if(!document.hidden)show(idx+1);},PERIOD);}
+  window.dashSlide=function(d){show(idx+d);restart();};
+  restart();
+  // Pause on hover so users can read
+  var stage=document.getElementById('slideStage');
+  if(stage){
+    stage.addEventListener('mouseenter',function(){clearInterval(timer);});
+    stage.addEventListener('mouseleave',restart);
+  }
+})();
+
+// ────────── FAQ accordion (vanilla) — already wired via onclick attrs ──────────
+</script>
 
 </body>
 </html>
