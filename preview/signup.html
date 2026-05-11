@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sign in / Sign up · TradeContext.ai</title>
-<meta name="description" content="Sign in to your TradeContext.ai account or create a new one. One plan · $39.95/mo · 14-day money-back guarantee · cancel any time.">
+<meta name="description" content="Sign in to your TradeContext.ai account or create a new one. One plan · $39.95/mo · cancel any time.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Crect width='36' height='36' rx='8' fill='%230a1628'/%3E%3Cpolyline points='4,28 12,20 20,24 28,10' fill='none' stroke='%230ea5e9' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='28' cy='10' r='3.5' fill='%230ea5e9'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -221,7 +221,7 @@ body::after{content:'';position:fixed;inset:-50%;z-index:-1;pointer-events:none;
 
       <!-- Plan picker — pre-selected via ?plan= or defaults to annual -->
       <div class="au-field">
-        <label class="au-lbl">Pick your plan <span style="font-family:var(--f-sans);font-weight:600;color:var(--text3);text-transform:none;letter-spacing:0;font-size:11px;margin-left:6px;">14-day money-back · cancel any time</span></label>
+        <label class="au-lbl">Pick your plan <span style="font-family:var(--f-sans);font-weight:600;color:var(--text3);text-transform:none;letter-spacing:0;font-size:11px;margin-left:6px;">Cancel any time · one-click from your account</span></label>
         <div class="au-plans" id="planList">
           <div class="au-plan" data-plan="monthly">
             <div class="au-plan-radio"></div>
@@ -276,7 +276,7 @@ body::after{content:'';position:fixed;inset:-50%;z-index:-1;pointer-events:none;
 <!-- Perks strip -->
 <div class="au-perks">
   <div class="au-perk"><span class="au-perk-ic">💰</span><span>$39.95/mo · one plan</span></div>
-  <div class="au-perk"><span class="au-perk-ic">🛡️</span><span>14-day money-back</span></div>
+  <div class="au-perk"><span class="au-perk-ic">🛡️</span><span>Read-only broker APIs</span></div>
   <div class="au-perk"><span class="au-perk-ic">🔓</span><span>Cancel any time</span></div>
 </div>
 
@@ -335,7 +335,7 @@ window.switchTab = function(tab, skipPushState){
   document.getElementById('signupForm').classList.toggle('on', tab === 'signup');
   document.getElementById('auEyebrow').textContent = tab === 'signup' ? 'CREATE ACCOUNT' : 'WELCOME BACK';
   document.getElementById('auTitle').innerHTML = tab === 'signup'
-    ? 'Start your <em>14-day trial</em>'
+    ? 'Create your <em>account</em>'
     : 'Sign in to <em>your desk</em>';
   document.getElementById('auSub').textContent = tab === 'signup'
     ? 'One plan · $39.95/mo · cancel any time. Full access from minute one.'
