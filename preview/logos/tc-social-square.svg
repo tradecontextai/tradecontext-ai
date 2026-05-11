@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="1024" height="1024" role="img" aria-label="TradeContext.ai social avatar">
+  <!--
+    TradeContext.ai · 1024×1024 social avatar (Twitter / LinkedIn / Discord / etc.)
+    Centered mark on the brand navy with a faint ambient glow. Export to PNG @ 1024.
+  -->
+  <defs>
+    <linearGradient id="g" x1="0" y1="512" x2="512" y2="0">
+      <stop offset="0%" stop-color="#0ea5e9"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+    <linearGradient id="bg" x1="0" y1="0" x2="512" y2="512">
+      <stop offset="0%" stop-color="#03060d"/>
+      <stop offset="100%" stop-color="#0a1628"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#0ea5e9" stop-opacity="0.18"/>
+      <stop offset="60%" stop-color="#8b5cf6" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <rect width="512" height="512" fill="url(#glow)"/>
+  <!-- 256×256 mark, centred -->
+  <g transform="translate(128 128) scale(7.111)">
+    <polyline points="4,28 12,20 20,24 28,10" fill="none" stroke="url(#g)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="28" cy="10" r="3.8" fill="url(#g)"/>
+    <circle cx="28" cy="10" r="1.7" fill="#fff"/>
+  </g>
+</svg>

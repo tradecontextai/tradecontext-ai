@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" width="256" height="256" role="img" aria-label="TradeContext.ai mark on dark tile">
+  <!--
+    TradeContext.ai · Brand Mark on tile (favicon / app-icon variant)
+    Dark navy rounded square with the mark inside.
+    Use for browser favicon, app icon, OG image corner, social avatar.
+  -->
+  <defs>
+    <linearGradient id="g" x1="0" y1="36" x2="36" y2="0">
+      <stop offset="0%" stop-color="#0ea5e9"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+    <linearGradient id="bg" x1="0" y1="0" x2="36" y2="36">
+      <stop offset="0%" stop-color="#0a1628"/>
+      <stop offset="100%" stop-color="#0e1f3a"/>
+    </linearGradient>
+  </defs>
+  <rect width="36" height="36" rx="8" fill="url(#bg)"/>
+  <rect width="36" height="36" rx="8" fill="none" stroke="rgba(14,165,233,0.32)" stroke-width="1"/>
+  <polyline points="4,28 12,20 20,24 28,10" fill="none" stroke="url(#g)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="28" cy="10" r="3.8" fill="url(#g)"/>
+  <circle cx="28" cy="10" r="1.7" fill="#fff"/>
+</svg>

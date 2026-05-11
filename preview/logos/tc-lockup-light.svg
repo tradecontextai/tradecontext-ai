@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 80" width="720" height="160" role="img" aria-label="TradeContext.ai">
+  <!--
+    TradeContext.ai · Horizontal lockup (mark + wordmark) · for LIGHT backgrounds.
+    Use on white slide decks, light email backgrounds, PDFs, printed material.
+  -->
+  <defs>
+    <linearGradient id="g" x1="0" y1="80" x2="80" y2="0">
+      <stop offset="0%" stop-color="#0ea5e9"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Mark — same gradient chart, no dark tile (sits directly on light bg) -->
+  <g transform="translate(6 6) scale(2.06)">
+    <polyline points="4,28 12,20 20,24 28,10" fill="none" stroke="url(#g)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="28" cy="10" r="3.8" fill="url(#g)"/>
+    <circle cx="28" cy="10" r="1.7" fill="#fff" stroke="url(#g)" stroke-width="0.5"/>
+  </g>
+
+  <!-- Wordmark — TradeContext (deep navy) + .ai (gradient) -->
+  <g font-family="Inter, -apple-system, 'Segoe UI', system-ui, sans-serif" font-weight="900" font-size="32" letter-spacing="-1.2">
+    <text x="90" y="51" fill="#0a1628">TradeContext</text>
+    <text x="296" y="51" fill="url(#g)">.ai</text>
+  </g>
+</svg>
