@@ -86,7 +86,7 @@ body::after{content:'';position:fixed;inset:-50%;z-index:-1;pointer-events:none;
 .jl-chart svg{width:100%;height:100%;display:block;}
 
 /* Calendar heatmap */
-.jl-cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;max-width:1400px;margin:0 auto;}
+.jl-cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;}
 .jl-cal-dow{font-family:var(--f-mono);font-size:9.5px;color:var(--text3);font-weight:800;letter-spacing:.1em;text-align:left;padding:6px 4px 4px;text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,.06);}
 .jl-cal-cell{height:72px;border-radius:7px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.05);display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;padding:7px 9px;font-family:var(--f-mono);font-size:10.5px;color:var(--text3);font-weight:700;cursor:pointer;transition:.2s var(--ease-out-quart);position:relative;}
 .jl-cal-cell:hover{transform:translateY(-2px);border-color:rgba(14,165,233,.5);z-index:2;box-shadow:0 12px 24px -10px rgba(14,165,233,.4);}
@@ -219,8 +219,9 @@ body::after{content:'';position:fixed;inset:-50%;z-index:-1;pointer-events:none;
   .jl-kpi-val{font-size:20px;}
 }
 
-/* ═══════ ACTION BAR ═══════ */
-.jl-actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;align-items:center;}
+/* ═══════ ACTION BAR — centered on the page ═══════ */
+.jl-actions{display:flex;gap:10px;flex-wrap:wrap;margin:0 auto 22px;align-items:center;justify-content:center;max-width:1280px;}
+.jl-actions-utility{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:-12px auto 22px;max-width:1280px;}
 .jl-action{padding:11px 16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);color:var(--text);font-family:var(--f-sans);font-size:13px;font-weight:700;border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:.18s var(--ease-out-quart);}
 .jl-action:hover{border-color:rgba(14,165,233,.4);background:rgba(14,165,233,.06);color:var(--blue2);transform:translateY(-1px);}
 .jl-action.primary{background:linear-gradient(135deg,#0ea5e9,#8b5cf6);border-color:transparent;color:#fff;box-shadow:0 8px 22px -8px rgba(14,165,233,.55);}
@@ -483,8 +484,12 @@ tr.jl-row-new td{animation:jlPulseIn 2.5s ease-out 1;}
     <button class="jl-action" onclick="openTagManager()"><span class="ic">🏷️</span>Setups / Tags</button>
     <button class="jl-action" onclick="openSettings()"><span class="ic">⚙️</span>Settings</button>
     <button class="jl-action" onclick="toggleCoach()"><span class="ic">🧠</span>AI Coach</button>
-    <button class="jl-action primary" onclick="openBrokerSim()" style="background:linear-gradient(135deg,#10b981,#34d399);"><span class="ic">🚀</span>Try a Live Broker Login</button>
-    <div class="jl-action-grow"></div>
+    <button class="jl-action" onclick="openNotes()"><span class="ic">📔</span>Notes</button>
+    <button class="jl-action primary" onclick="openBrokerSim()" style="background:linear-gradient(135deg,#10b981,#34d399);"><span class="ic">🚀</span>Connect Broker</button>
+  </div>
+
+  <!-- ═══════════ UTILITY ROW — live + reset (also centered) ═══════════ -->
+  <div class="jl-actions-utility">
     <span class="jl-live-pill" id="jlLivePill">Live sync · <span id="jlLiveBroker">MT4</span></span>
     <div class="jl-mode-pill" id="jlMode">DEMO · LOCAL</div>
     <button class="jl-action" onclick="resetJournal()" title="Wipe localStorage and re-seed demo data" style="padding:9px 12px;font-size:11.5px;"><span class="ic">↻</span>Reset Demo</button>
@@ -695,6 +700,58 @@ tr.jl-row-new td{animation:jlPulseIn 2.5s ease-out 1;}
       </div>
       <div id="jlDow"></div>
     </div>
+  </div>
+
+  <!-- ═══════════ WOW ROW 1 — Goal · Streak · Hour Heatmap ═══════════ -->
+  <div class="jl-row" style="grid-template-columns:1fr 1fr 2fr;">
+    <div class="jl-card">
+      <div class="jl-card-h">
+        <div class="jl-card-h-t">🎯 Annual Goal</div>
+        <div class="jl-card-h-sub" id="jlGoalSub">on pace</div>
+      </div>
+      <div id="jlGoal"></div>
+    </div>
+    <div class="jl-card">
+      <div class="jl-card-h">
+        <div class="jl-card-h-t">🔥 Streaks</div>
+        <div class="jl-card-h-sub">winning & losing</div>
+      </div>
+      <div id="jlStreak"></div>
+    </div>
+    <div class="jl-card">
+      <div class="jl-card-h">
+        <div class="jl-card-h-t">⏰ When You Trade Best</div>
+        <div class="jl-card-h-sub">P&amp;L by hour of day · all sessions</div>
+      </div>
+      <div id="jlHourly"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════ WOW ROW 2 — R-distribution + Symbol perf ═══════════ -->
+  <div class="jl-row" style="grid-template-columns:1fr 1fr;">
+    <div class="jl-card">
+      <div class="jl-card-h">
+        <div class="jl-card-h-t">📊 R-Multiple Distribution</div>
+        <div class="jl-card-h-sub">winners vs losers spread</div>
+      </div>
+      <div id="jlRDist"></div>
+    </div>
+    <div class="jl-card">
+      <div class="jl-card-h">
+        <div class="jl-card-h-t">💎 Symbol Performance</div>
+        <div class="jl-card-h-sub">top + bottom traded instruments</div>
+      </div>
+      <div id="jlSymbols"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════ NOTES + RECENT REFLECTIONS PREVIEW ═══════════ -->
+  <div class="jl-card">
+    <div class="jl-card-h">
+      <div class="jl-card-h-t">📔 Notes &amp; Reflections</div>
+      <button class="jl-card-h-link" onclick="openNotes()">＋ Add note →</button>
+    </div>
+    <div id="jlNotesInline"></div>
   </div>
 
   <!-- ═══════════ MISTAKE FREQUENCY ═══════════ -->
@@ -1022,6 +1079,55 @@ tr.jl-row-new td{animation:jlPulseIn 2.5s ease-out 1;}
   </div>
 </aside>
 
+<!-- ═══════ NOTES MODAL ═══════ -->
+<div class="jl-modal" id="notesModal">
+  <div class="jl-modal-card" style="max-width:680px;">
+    <button class="jl-modal-close" onclick="closeM('notesModal')">×</button>
+    <div class="jl-modal-h">
+      <div class="jl-broker-logo tv" style="width:48px;height:48px;border-radius:11px;font-size:16px;">📔</div>
+      <div>
+        <div class="jl-modal-title">Notes &amp; Daily Reflections</div>
+        <div class="jl-modal-sub">Plan · review · capture · improve</div>
+      </div>
+    </div>
+    <div class="jl-modal-help" id="notesPrompt"></div>
+    <div class="jl-row-2">
+      <div class="jl-modal-field">
+        <label class="jl-modal-lbl">Type</label>
+        <select class="jl-select" id="noteKind">
+          <option value="daily">📅 Daily reflection</option>
+          <option value="weekly">📆 Weekly review</option>
+          <option value="idea">💡 Trade idea / setup</option>
+          <option value="lesson">🎓 Lesson learned</option>
+          <option value="rule">📜 Rule update</option>
+        </select>
+      </div>
+      <div class="jl-modal-field">
+        <label class="jl-modal-lbl">Mood</label>
+        <div class="jl-emo-row" id="noteMood">
+          <button type="button" data-val="1">😡</button>
+          <button type="button" data-val="2">😟</button>
+          <button type="button" data-val="3">😐</button>
+          <button type="button" data-val="4">🙂</button>
+          <button type="button" data-val="5">😎</button>
+        </div>
+      </div>
+    </div>
+    <div class="jl-modal-field">
+      <label class="jl-modal-lbl">Your note</label>
+      <textarea class="jl-textarea" id="noteBody" rows="5" placeholder="Today I…"></textarea>
+    </div>
+    <div class="jl-modal-actions">
+      <button class="jl-modal-btn secondary" onclick="closeM('notesModal')">Close</button>
+      <button class="jl-modal-btn primary" onclick="saveNote()">Save Note</button>
+    </div>
+    <div style="margin-top:18px;padding-top:18px;border-top:1px solid rgba(255,255,255,.06);">
+      <div class="jl-modal-lbl" style="margin-bottom:10px;">📂 RECENT NOTES</div>
+      <div id="notesList" style="max-height:240px;overflow-y:auto;"></div>
+    </div>
+  </div>
+</div>
+
 <!-- ═══════ BROKER LOGIN SIMULATION ═══════ -->
 <div class="brk-modal" id="brkModal">
   <div class="brk-card">
@@ -1102,8 +1208,9 @@ function defaultState(){
       { id: uid(), name: 'MT4',   accountNumber: '91827361', server: 'ICMarkets-Live01', status: 'connected', connectedAt: Date.now() },
       { id: uid(), name: 'OANDA', accountNumber: '101-001-12345-001', server: 'practice', status: 'connected', connectedAt: Date.now() },
     ],
-    settings: { accountSize: 20000, riskPercent: 1.0, maxDailyLoss: 600, minRR: 1.5 },
+    settings: { accountSize: 20000, riskPercent: 1.0, maxDailyLoss: 600, minRR: 1.5, annualGoal: 30 },
     coachHistory: [],
+    notes: [],  // [{id, ts, kind: 'daily'|'weekly'|'idea', body, mood}]
     filters: { period: '90d', side: 'all', result: 'all', symbol: 'all', setup: 'all' },
   };
 }
@@ -1295,6 +1402,12 @@ function render(){
   renderCalendar(filtered);
   renderSetups(filtered);
   renderDayOfWeek(filtered);
+  renderGoal(filtered);
+  renderStreak(filtered);
+  renderHourly(filtered);
+  renderRDist(filtered);
+  renderSymbols(filtered);
+  renderNotesInline();
   renderMistakes(filtered);
   renderSettingsSummary();
   renderFilters();
@@ -1547,6 +1660,248 @@ function renderDayOfWeek(trades){
   var footer = rows.length >= 3 ? '<div style="margin-top:14px;padding:10px 12px;background:rgba(14,165,233,.04);border-left:2px solid var(--blue2);border-radius:0 7px 7px 0;font-family:var(--f-mono);font-size:10.5px;color:var(--text2);line-height:1.6;">💡 Strongest: <strong style="color:var(--green2);">'+best.name+'</strong> ('+(best.pnl>=0?'+$':'-$')+Math.abs(Math.round(best.pnl))+') · Weakest: <strong style="color:var(--red2);">'+worst.name+'</strong> ('+(worst.pnl>=0?'+$':'-$')+Math.abs(Math.round(worst.pnl))+')</div>' : '';
   document.getElementById('jlDow').innerHTML = html + footer;
 }
+
+// ─── Goal card ───
+function renderGoal(trades){
+  var closed = trades.filter(function(t){return t.status==='closed';});
+  var netPnl = closed.reduce(function(s,t){return s + (t.pnl||0);},0);
+  var goalPct = state.settings.annualGoal || 30; // annual %
+  var goalDollars = state.settings.accountSize * (goalPct/100);
+  var pct = goalDollars > 0 ? Math.max(0, Math.min(100, (netPnl/goalDollars)*100)) : 0;
+  var paceMsg;
+  var now = new Date();
+  var yearDay = Math.floor((now - new Date(now.getFullYear(),0,0)) / 86400000);
+  var yearProgress = (yearDay/365)*100;
+  if (pct >= yearProgress + 8) paceMsg = '🚀 Ahead of pace';
+  else if (pct >= yearProgress - 8) paceMsg = '✓ On pace';
+  else paceMsg = '⚠️ Behind pace';
+  document.getElementById('jlGoalSub').textContent = paceMsg;
+  var col = pct >= yearProgress - 8 ? '#34d399' : '#f87171';
+  document.getElementById('jlGoal').innerHTML =
+    '<div style="font-family:var(--f-sans);font-size:32px;font-weight:900;color:'+col+';letter-spacing:-.02em;line-height:1;">'+pct.toFixed(1)+'%</div>' +
+    '<div style="font-family:var(--f-mono);font-size:10.5px;color:var(--text3);letter-spacing:.08em;font-weight:700;margin-top:6px;">'+(netPnl>=0?'+$':'-$')+Math.abs(Math.round(netPnl)).toLocaleString()+' / $'+Math.round(goalDollars).toLocaleString()+' target ('+goalPct+'% annual)</div>' +
+    '<div style="height:8px;background:rgba(255,255,255,.05);border-radius:100px;margin-top:14px;overflow:hidden;">' +
+      '<div style="height:100%;width:'+pct.toFixed(1)+'%;background:linear-gradient(90deg,#0ea5e9,#34d399);border-radius:100px;transition:.3s;"></div>' +
+    '</div>' +
+    '<div style="font-family:var(--f-mono);font-size:9.5px;color:var(--text3);margin-top:8px;letter-spacing:.06em;">Year is '+yearProgress.toFixed(0)+'% done</div>';
+}
+
+// ─── Streak card ───
+function renderStreak(trades){
+  var closed = trades.filter(function(t){return t.status==='closed';}).sort(function(a,b){return (a.closedAt||a.openedAt)-(b.closedAt||b.openedAt);});
+  var current = 0, currentSign = 0; // 1=win streak, -1=loss
+  var longestWin = 0, longestLoss = 0;
+  var streak = 0, sign = 0;
+  for (var i = 0; i < closed.length; i++) {
+    var s = closed[i].pnl > 0 ? 1 : closed[i].pnl < 0 ? -1 : 0;
+    if (s === 0) continue;
+    if (s === sign) streak++;
+    else { sign = s; streak = 1; }
+    if (sign === 1 && streak > longestWin) longestWin = streak;
+    if (sign === -1 && streak > longestLoss) longestLoss = streak;
+  }
+  // Current streak (last contiguous)
+  for (var i = closed.length-1; i >= 0; i--) {
+    var s = closed[i].pnl > 0 ? 1 : closed[i].pnl < 0 ? -1 : 0;
+    if (s === 0) continue;
+    if (currentSign === 0) { currentSign = s; current = 1; }
+    else if (s === currentSign) current++;
+    else break;
+  }
+  var curLbl = currentSign === 1 ? 'win streak' : currentSign === -1 ? 'loss streak' : '—';
+  var curCol = currentSign === 1 ? '#34d399' : '#f87171';
+  document.getElementById('jlStreak').innerHTML =
+    '<div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:14px;">' +
+      '<div><div style="font-family:var(--f-mono);font-size:9.5px;color:var(--text3);letter-spacing:.1em;font-weight:800;text-transform:uppercase;">Current</div>' +
+        '<div style="font-family:var(--f-sans);font-size:32px;font-weight:900;color:'+curCol+';letter-spacing:-.02em;line-height:1;margin-top:4px;">'+current+'</div>' +
+        '<div style="font-family:var(--f-mono);font-size:9.5px;color:var(--text3);font-weight:700;margin-top:3px;">'+curLbl+'</div></div>' +
+    '</div>' +
+    '<div style="display:flex;justify-content:space-between;gap:10px;">' +
+      '<div style="flex:1;padding:10px;background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.25);border-radius:8px;">' +
+        '<div style="font-family:var(--f-mono);font-size:9px;color:var(--green2);letter-spacing:.08em;font-weight:800;">LONGEST WIN</div>' +
+        '<div style="font-family:var(--f-sans);font-size:18px;font-weight:900;color:var(--green2);margin-top:3px;">'+longestWin+'</div></div>' +
+      '<div style="flex:1;padding:10px;background:rgba(248,113,113,.06);border:1px solid rgba(248,113,113,.25);border-radius:8px;">' +
+        '<div style="font-family:var(--f-mono);font-size:9px;color:var(--red2);letter-spacing:.08em;font-weight:800;">LONGEST LOSS</div>' +
+        '<div style="font-family:var(--f-sans);font-size:18px;font-weight:900;color:var(--red2);margin-top:3px;">'+longestLoss+'</div></div>' +
+    '</div>';
+}
+
+// ─── Hour-of-day heatmap ───
+function renderHourly(trades){
+  var hours = new Array(24).fill(0).map(function(){return {wins:0,losses:0,pnl:0,count:0};});
+  trades.filter(function(t){return t.status==='closed' && t.closedAt;}).forEach(function(t){
+    var h = new Date(t.openedAt || t.closedAt).getHours();
+    hours[h].count++;
+    hours[h].pnl += t.pnl || 0;
+    if (t.pnl > 0) hours[h].wins++; else if (t.pnl < 0) hours[h].losses++;
+  });
+  // Find max abs P&L for scaling
+  var maxAbs = Math.max.apply(null, hours.map(function(h){return Math.abs(h.pnl);})) || 1;
+  var html = '<div style="display:grid;grid-template-columns:repeat(24,1fr);gap:3px;">';
+  for (var h = 0; h < 24; h++) {
+    var hr = hours[h];
+    var intensity = Math.abs(hr.pnl) / maxAbs;
+    var col = hr.pnl > 0 ? 'rgba(52,211,153,'+(0.12+intensity*0.55).toFixed(2)+')'
+            : hr.pnl < 0 ? 'rgba(248,113,113,'+(0.12+intensity*0.55).toFixed(2)+')'
+            : 'rgba(255,255,255,.025)';
+    var border = hr.pnl > 0 ? 'rgba(52,211,153,.32)' : hr.pnl < 0 ? 'rgba(248,113,113,.32)' : 'rgba(255,255,255,.05)';
+    html += '<div title="'+String(h).padStart(2,'0')+':00 · '+hr.count+' trades · '+(hr.pnl>=0?'+$':'-$')+Math.abs(Math.round(hr.pnl))+'" style="aspect-ratio:1;background:'+col+';border:1px solid '+border+';border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:var(--f-mono);font-size:9px;color:var(--text);font-weight:800;">'+h+'</div>';
+  }
+  html += '</div>';
+  // Find best & worst hours
+  var ranked = hours.map(function(h,i){return {i, pnl: h.pnl, count: h.count};}).filter(function(x){return x.count > 0;});
+  ranked.sort(function(a,b){return b.pnl - a.pnl;});
+  if (ranked.length) {
+    var best = ranked[0], worst = ranked[ranked.length-1];
+    html += '<div style="display:flex;gap:14px;margin-top:14px;font-family:var(--f-mono);font-size:10.5px;font-weight:700;letter-spacing:.04em;">' +
+      '<div style="color:var(--green2);">🟢 Best hour: <strong>'+String(best.i).padStart(2,'0')+':00</strong> ('+(best.pnl>=0?'+$':'-$')+Math.abs(Math.round(best.pnl))+')</div>' +
+      '<div style="color:var(--red2);">🔴 Worst: <strong>'+String(worst.i).padStart(2,'0')+':00</strong> ('+(worst.pnl>=0?'+$':'-$')+Math.abs(Math.round(worst.pnl))+')</div>' +
+      '</div>';
+  }
+  document.getElementById('jlHourly').innerHTML = html;
+}
+
+// ─── R-Multiple distribution histogram ───
+function renderRDist(trades){
+  var closed = trades.filter(function(t){return t.status==='closed';});
+  if (!closed.length){ document.getElementById('jlRDist').innerHTML = '<div class="jl-empty" style="padding:30px 0;"><div class="jl-empty-emoji">📊</div><div class="jl-empty-h">No closed trades yet</div></div>'; return; }
+  // Buckets: <-2R, -2 to -1.5, -1.5 to -1, -1 to -0.5, -0.5 to 0, 0 to 0.5, 0.5 to 1, 1 to 1.5, 1.5 to 2, 2 to 3, >3
+  var bucketDefs = [
+    {lo:-Infinity, hi:-2, label:'<-2R'},
+    {lo:-2, hi:-1, label:'-2 → -1'},
+    {lo:-1, hi:-0.5, label:'-1 → -0.5'},
+    {lo:-0.5, hi:0, label:'-0.5 → 0'},
+    {lo:0, hi:0.5, label:'0 → 0.5'},
+    {lo:0.5, hi:1, label:'0.5 → 1'},
+    {lo:1, hi:1.5, label:'1 → 1.5'},
+    {lo:1.5, hi:2, label:'1.5 → 2'},
+    {lo:2, hi:3, label:'2 → 3'},
+    {lo:3, hi:Infinity, label:'>3R'},
+  ];
+  var counts = bucketDefs.map(function(){return 0;});
+  closed.forEach(function(t){
+    for (var i = 0; i < bucketDefs.length; i++) {
+      var b = bucketDefs[i];
+      if (t.pnlR > b.lo && t.pnlR <= b.hi) { counts[i]++; break; }
+      if (b.lo === -Infinity && t.pnlR <= b.hi) { counts[i]++; break; }
+    }
+  });
+  var max = Math.max.apply(null, counts) || 1;
+  var html = '<div style="display:flex;align-items:flex-end;gap:6px;height:160px;margin-top:8px;">';
+  bucketDefs.forEach(function(b, i){
+    var h = (counts[i]/max)*100;
+    var col = b.hi <= 0 ? 'linear-gradient(180deg,#f87171,#ef4444)' : 'linear-gradient(180deg,#34d399,#10b981)';
+    html += '<div style="flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end;">' +
+      '<div style="font-family:var(--f-mono);font-size:10px;color:var(--text);font-weight:800;margin-bottom:4px;">'+(counts[i]||'')+'</div>' +
+      '<div style="width:100%;background:'+col+';border-radius:5px 5px 0 0;min-height:'+(counts[i]?'4px':'0')+';height:'+h.toFixed(1)+'%;transition:.3s;"></div>' +
+      '</div>';
+  });
+  html += '</div>';
+  html += '<div style="display:flex;gap:6px;margin-top:8px;">' + bucketDefs.map(function(b){return '<div style="flex:1;font-family:var(--f-mono);font-size:8.5px;color:var(--text3);text-align:center;font-weight:700;">'+b.label+'</div>';}).join('') + '</div>';
+  document.getElementById('jlRDist').innerHTML = html;
+}
+
+// ─── Symbol performance ───
+function renderSymbols(trades){
+  var bySym = {};
+  trades.filter(function(t){return t.status==='closed';}).forEach(function(t){
+    bySym[t.symbol] = bySym[t.symbol] || { pnl:0, count:0, wins:0, losses:0 };
+    bySym[t.symbol].pnl += t.pnl || 0;
+    bySym[t.symbol].count++;
+    if (t.pnl > 0) bySym[t.symbol].wins++; else if (t.pnl < 0) bySym[t.symbol].losses++;
+  });
+  var rows = Object.keys(bySym).map(function(k){return {sym:k, ...bySym[k]};});
+  if (!rows.length) { document.getElementById('jlSymbols').innerHTML = '<div class="jl-empty" style="padding:30px 0;"><div class="jl-empty-emoji">💎</div><div class="jl-empty-h">No symbol data yet</div></div>'; return; }
+  rows.sort(function(a,b){return b.pnl - a.pnl;});
+  var maxAbs = Math.max.apply(null, rows.map(function(r){return Math.abs(r.pnl);})) || 1;
+  document.getElementById('jlSymbols').innerHTML = rows.slice(0,8).map(function(r){
+    var wr = r.count ? (r.wins/(r.wins+r.losses||1))*100 : 0;
+    var col = r.pnl >= 0 ? 'pos' : 'neg';
+    return '<div class="jl-bar-row"><div class="jl-bar-lbl" title="'+r.count+' trades · '+wr.toFixed(0)+'% wins">'+r.sym+'</div>' +
+      '<div class="jl-bar-track"><div class="jl-bar '+col+'" style="width:'+(Math.abs(r.pnl)/maxAbs*100).toFixed(0)+'%;"></div></div>' +
+      '<div class="jl-bar-val '+col+'">'+(r.pnl>=0?'+$':'-$')+Math.abs(Math.round(r.pnl)).toLocaleString()+'</div></div>';
+  }).join('');
+}
+
+// ─── Notes inline preview ───
+function renderNotesInline(){
+  var notes = (state.notes || []).slice(0).sort(function(a,b){return b.ts-a.ts;}).slice(0, 4);
+  var notesEl = document.getElementById('jlNotesInline');
+  if (!notesEl) return;
+  if (!notes.length) {
+    notesEl.innerHTML = '<div class="jl-empty" style="padding:30px 0;"><div class="jl-empty-emoji">📔</div><div class="jl-empty-h">No notes yet</div><div class="jl-empty-body">Capture your daily reflection, your weekly review, or a setup idea. These power your AI coach context too.</div><button class="jl-action" onclick="openNotes()" style="margin-top:14px;"><span class="ic">＋</span>Add your first note</button></div>';
+    return;
+  }
+  var KIND_LBL = { daily:'📅 Daily', weekly:'📆 Weekly', idea:'💡 Idea', lesson:'🎓 Lesson', rule:'📜 Rule' };
+  var MOOD = ['','😡','😟','😐','🙂','😎'];
+  notesEl.innerHTML = '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;">' +
+    notes.map(function(n){
+      var d = new Date(n.ts);
+      return '<div style="padding:14px 16px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:11px;">' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;font-family:var(--f-mono);font-size:9.5px;color:var(--text3);font-weight:700;letter-spacing:.08em;margin-bottom:8px;text-transform:uppercase;">' +
+          '<span>'+(KIND_LBL[n.kind] || '📔')+'</span>' +
+          '<span>'+d.toISOString().slice(0,10)+' · '+(MOOD[n.mood]||'')+'</span>' +
+        '</div>' +
+        '<div style="font-size:13.5px;color:var(--text);line-height:1.55;white-space:pre-wrap;">'+n.body.slice(0,260).replace(/</g,'&lt;')+(n.body.length>260?'…':'')+'</div>' +
+      '</div>';
+    }).join('') + '</div>';
+}
+
+// ─── Notes modal ───
+window.openNotes = function(){
+  document.getElementById('noteBody').value = '';
+  document.querySelectorAll('#noteMood button').forEach(function(b){b.classList.remove('on');});
+  // Today's prompt
+  var prompts = [
+    '✍️ One thing you did well today, one thing to fix.',
+    '✍️ What was the news context for your best trade?',
+    '✍️ Were you patient enough today?',
+    '✍️ What setup did you skip — and was that the right call?',
+    '✍️ Rate your discipline 1-5 and explain.',
+  ];
+  document.getElementById('notesPrompt').innerHTML = prompts[Math.floor(Math.random()*prompts.length)];
+  renderNotesList();
+  openM('notesModal');
+};
+window.saveNote = function(){
+  var body = document.getElementById('noteBody').value.trim();
+  if (!body) { toast('Type a note first', 'error'); return; }
+  var moodSel = document.querySelector('#noteMood button.on');
+  var mood = moodSel ? parseInt(moodSel.dataset.val,10) : 3;
+  state.notes = state.notes || [];
+  state.notes.push({ id: uid(), ts: Date.now(), kind: document.getElementById('noteKind').value, body, mood });
+  saveState();
+  document.getElementById('noteBody').value = '';
+  renderNotesList();
+  render();
+  toast('Note saved', 'success');
+};
+function renderNotesList(){
+  var notes = (state.notes || []).slice(0).sort(function(a,b){return b.ts-a.ts;});
+  var KIND_LBL = { daily:'📅 Daily', weekly:'📆 Weekly', idea:'💡 Idea', lesson:'🎓 Lesson', rule:'📜 Rule' };
+  var MOOD = ['','😡','😟','😐','🙂','😎'];
+  if (!notes.length) {
+    document.getElementById('notesList').innerHTML = '<div style="text-align:center;padding:20px;font-family:var(--f-mono);font-size:11px;color:var(--text3);">No notes yet — save your first above.</div>';
+    return;
+  }
+  document.getElementById('notesList').innerHTML = notes.slice(0,10).map(function(n){
+    var d = new Date(n.ts);
+    return '<div style="padding:11px 14px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:9px;margin-bottom:8px;">' +
+      '<div style="display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:9.5px;color:var(--text3);font-weight:700;letter-spacing:.06em;margin-bottom:6px;text-transform:uppercase;">' +
+        '<span>'+(KIND_LBL[n.kind] || '📔')+' · '+(MOOD[n.mood]||'')+'</span>' +
+        '<span>'+d.toISOString().slice(0,10)+'</span>' +
+      '</div>' +
+      '<div style="font-size:12.5px;color:var(--text);line-height:1.5;white-space:pre-wrap;">'+n.body.replace(/</g,'&lt;')+'</div>' +
+      '<button onclick="deleteNote(\''+n.id+'\')" style="margin-top:6px;background:none;border:none;color:var(--text3);font-family:var(--f-mono);font-size:9.5px;cursor:pointer;letter-spacing:.06em;font-weight:700;">delete</button>' +
+    '</div>';
+  }).join('');
+}
+window.deleteNote = function(id){
+  state.notes = (state.notes||[]).filter(function(n){return n.id !== id;});
+  saveState();
+  renderNotesList();
+  render();
+};
 
 function renderMistakes(trades){
   var freq = {};
@@ -2208,9 +2563,61 @@ function seedDemo(s){
 // SIMULATED BROKER LOGIN — multi-step flow that feels real
 // ═══════════════════════════════════════════════════════════════════
 var BRK_PORTALS = {
-  'MT4':   { logoCls:'mt4',   title:'MetaTrader 4 · Web Terminal', sub:'Powered by MetaQuotes',         servers:['ICMarkets-Live01','Pepperstone-Live','FXCM-Real','Exness-Real','XM-Real'] },
-  'MT5':   { logoCls:'mt5',   title:'MetaTrader 5 · Web Terminal', sub:'Multi-asset · MetaQuotes',      servers:['ICMarkets-Live06','Pepperstone-Demo','IG-Live','Saxo-Live'] },
-  'OANDA': { logoCls:'oanda', title:'OANDA · v20 REST API',         sub:'OAuth · Trader portal',         servers:['practice','live'] },
+  'MT4':   { logoCls:'mt4',   title:'MetaTrader 4 · Web Terminal', sub:'Powered by MetaQuotes', servers:[
+    // ── IC Markets ──
+    'ICMarketsSC-Live01','ICMarketsSC-Live02','ICMarketsSC-Live03','ICMarketsSC-Live04','ICMarketsSC-Demo',
+    // ── Pepperstone ──
+    'Pepperstone-Edge01','Pepperstone-Edge02','Pepperstone-Live','Pepperstone-Demo',
+    // ── FXCM ──
+    'FXCM-RealUK01','FXCM-RealEU01','FXCM-RealUS01','FXCM-Demo01',
+    // ── XM ──
+    'XMGlobal-Real 1','XMGlobal-Real 2','XMGlobal-Real 3','XMGlobal-Demo 1','XMGlobal-Demo 2','XMUK-Real','XMUK-Demo',
+    // ── Exness ──
+    'Exness-Real','Exness-Real2','Exness-Real3','Exness-Real4','Exness-Pro','Exness-MT4Trial4','Exness-MT4Real4',
+    // ── IG ──
+    'IG Markets-Live','IG Markets-Demo','IG Markets-UK','IG Markets-AU',
+    // ── FP Markets ──
+    'FPMarkets-Live01','FPMarkets-Live02','FPMarkets-Demo01',
+    // ── Tickmill ──
+    'TickmillUK-Live01','TickmillUK-Live02','Tickmill-Live','Tickmill-Demo',
+    // ── HFM / HotForex ──
+    'HFMarketsLive','HFMarketsLive-Live2','HFMarkets-Demo',
+    // ── Vantage ──
+    'VantageInternational-Live','VantageInternational-Demo','VantageFX-Live','VantageFX-Demo',
+    // ── Axi ──
+    'AxiTrader-US03-Live','AxiTrader-US01-Live','AxiTrader-Demo','Axi-Live01','Axi-Demo01',
+    // ── ThinkMarkets ──
+    'ThinkMarkets-Live01','ThinkMarkets-Demo01',
+    // ── Forex.com ──
+    'FOREXcom-Live','FOREXcom-Demo','GAIN-Capital-Live','GAIN-Capital-Demo',
+    // ── OctaFX / FBS / Roboforex / Alpari ──
+    'OctaFX-Real','OctaFX-Real2','OctaFX-Demo',
+    'FBS-Real','FBS-Real-3','FBS-Real-4','FBS-Demo',
+    'RoboForex-ECN-2','RoboForex-Pro-2','RoboForex-Demo-1',
+    'Alpari-MT4-Live','Alpari-MT4-Demo','AlpariInternational-Live',
+    // ── Generic ──
+    'MT4-Live','MT4-Demo','MetaQuotes-Demo',
+  ] },
+  'MT5':   { logoCls:'mt5',   title:'MetaTrader 5 · Web Terminal', sub:'Multi-asset · MetaQuotes', servers:[
+    'ICMarketsSC-MT5','ICMarketsSC-MT5-Demo',
+    'Pepperstone-MT5-Live','Pepperstone-MT5-Demo',
+    'AdmiralMarkets-Live','AdmiralMarkets-Demo','Admirals-Live','Admirals-Demo',
+    'XMGlobal-MT5 Real','XMGlobal-MT5 Demo',
+    'Exness-MT5Real','Exness-MT5Real2','Exness-MT5Trial',
+    'TickmillUK-MT5-Live','TickmillUK-MT5-Demo',
+    'FPMarkets-MT5-Live','FPMarkets-MT5-Demo',
+    'IG-MT5','IG-MT5-Demo',
+    'Saxo-MT5-Live','Saxo-MT5-Demo',
+    'Vantage-MT5-Live','Vantage-MT5-Demo',
+    'Axi-MT5-Live','Axi-MT5-Demo',
+    'FXTM-MT5Live','FXTM-MT5Demo',
+    'OctaFX-MT5','OctaFX-MT5-Demo',
+    'RoboForex-Pro-MT5','RoboForex-Demo-MT5',
+    'MT5-Live','MT5-Demo','MetaQuotes-MT5-Demo',
+  ] },
+  'OANDA': { logoCls:'oanda', title:'OANDA · v20 REST API', sub:'OAuth · Trader portal', servers:[
+    'practice','live','live-us','live-eu','live-asia','practice-us','practice-eu',
+  ] },
 };
 
 // ─── Regulated brokers worldwide. Each: {name, region, regs[], platforms[]} ───
@@ -2350,13 +2757,17 @@ function renderBrkStep(step){
     setBrkHead(_brkState.broker);
     body.innerHTML =
       '<div class="brk-step">STEP 2 of 4 · ' + _brkState.broker + ' LOGIN</div>' +
+      '<div style="display:inline-flex;align-items:center;gap:6px;padding:4px 11px;background:rgba(245,158,11,.10);border:1px solid rgba(245,158,11,.32);border-radius:100px;font-family:var(--f-mono);font-size:9.5px;font-weight:800;color:var(--yellow);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;">⚠ Demo portal · simulates the flow</div>' +
       '<div class="brk-h">Sign in to your account</div>' +
-      '<div class="brk-sub">We don\'t store your password — we authenticate, request read-only access, and discard credentials immediately.</div>' +
+      '<div class="brk-sub">This is a guided walkthrough of the broker auth flow — no real credentials are sent or stored. After this you\'ll get a sync token + downloadable Expert Advisor that streams your <em>real</em> fills.</div>' +
       '<div class="brk-field"><label class="brk-lbl">Account number</label><input class="brk-input" id="brkLogin" placeholder="e.g. 91827361" value="91827361"></div>' +
       '<div class="brk-field"><label class="brk-lbl">Password</label><input class="brk-input" id="brkPwd" type="password" value="••••••••••••"></div>' +
-      '<div class="brk-field"><label class="brk-lbl">Server</label><select class="jl-select" id="brkServer">' +
-        cfg.servers.map(function(s){return '<option value="'+s+'">'+s+'</option>';}).join('') +
-      '</select></div>' +
+      '<div class="brk-field"><label class="brk-lbl">Server <span style="font-family:var(--f-sans);font-weight:600;color:var(--text3);text-transform:none;letter-spacing:0;margin-left:6px;">(type any name or pick from '+cfg.servers.length+' suggestions)</span></label>' +
+        '<input class="brk-input" id="brkServer" list="brkServerList" placeholder="e.g. ICMarketsSC-Live01" autocomplete="off">' +
+        '<datalist id="brkServerList">' +
+          cfg.servers.map(function(s){return '<option value="'+s+'">';}).join('') +
+        '</datalist>' +
+      '</div>' +
       '<div class="brk-actions">' +
         '<button class="brk-btn secondary" onclick="renderBrkStep(\'pick\')">Back</button>' +
         '<button class="brk-btn primary" onclick="brkLogin()">Sign in →</button>' +
@@ -2393,13 +2804,34 @@ function renderBrkStep(step){
   }
   else if (step === 'success'){
     var displayName = _brkState._displayName || _brkState.broker;
+    // Generate a sync token + real webhook URL (token persists per browser session)
+    var token = (state._syncToken || (state._syncToken = (Math.random().toString(36)+Math.random().toString(36)+Math.random().toString(36)).replace(/[^a-z0-9]/g,'').slice(0,32)));
+    saveState();
+    var origin = (location.hostname==='localhost'||location.hostname==='127.0.0.1') ? 'http://localhost:3001' : 'https://api.tradecontext.ai';
+    var webhook = origin + '/api/journal-bridge/fill?token=' + token;
+    var eaUrl = origin + '/api/journal-bridge/ea?token=' + token;
     body.innerHTML =
       '<div class="brk-success">' +
         '<div class="brk-success-ic">✓</div>' +
         '<div><div class="brk-success-t">Connected · '+displayName+' · #'+_brkState.account+'</div>' +
-        '<div class="brk-success-sub">Live · subscribed to fill stream · '+_brkState.broker+' bridge</div></div>' +
+        '<div class="brk-success-sub">Demo successful · '+_brkState.broker+' bridge ready to install</div></div>' +
       '</div>' +
-      '<div class="brk-h">Account dashboard</div>' +
+      '<div style="padding:13px 16px;margin-bottom:18px;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.32);border-radius:11px;font-family:var(--f-mono);font-size:11px;color:var(--text);line-height:1.65;">' +
+        '<strong style="color:var(--yellow);">⚠️ Honest note · this was a guided demo.</strong> Streamed fills below are simulated. To make this <strong>actually live</strong>, install the EA file below in your MT4/MT5 terminal — it will POST every real fill straight to your TradeContext journal.' +
+      '</div>' +
+      '<div class="brk-h">🔑 Your live sync token</div>' +
+      '<div class="brk-sub">Drop this into the EA, or paste the webhook URL into TradingView alerts / custom bots.</div>' +
+      '<div class="brk-field"><label class="brk-lbl">Webhook URL (paste in TradingView, bot, etc.)</label>' +
+        '<div style="display:flex;gap:8px;">' +
+          '<input class="brk-input" id="brkWebhookUrl" value="'+webhook+'" readonly style="font-size:11.5px;">' +
+          '<button class="brk-btn primary" onclick="copyText(this,\'brkWebhookUrl\')" style="flex:0 0 auto;padding:13px 16px;font-size:12.5px;">📋 Copy</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="brk-field"><label class="brk-lbl">MT4 / MT5 Expert Advisor</label>' +
+        '<a class="brk-btn primary" href="'+eaUrl+'" target="_blank" rel="noopener" style="display:flex;width:100%;text-decoration:none;justify-content:center;gap:8px;align-items:center;">📥 Download TradeContextBridge.mq4 → drop in your terminal</a>' +
+        '<div style="font-family:var(--f-mono);font-size:10px;color:var(--text3);margin-top:6px;letter-spacing:.04em;">After install, every closed trade streams to your journal in real time.</div>' +
+      '</div>' +
+      '<div class="brk-h" style="font-size:16px;margin-top:18px;">Account snapshot (sim)</div>' +
       '<div class="brk-stats">' +
         '<div class="brk-stat"><div class="brk-stat-lbl">Balance</div><div class="brk-stat-val">$'+(20000 + Math.floor(Math.random()*8000)).toLocaleString()+'</div></div>' +
         '<div class="brk-stat"><div class="brk-stat-lbl">Equity</div><div class="brk-stat-val good">$'+(22000 + Math.floor(Math.random()*5000)).toLocaleString()+'</div></div>' +
@@ -2411,6 +2843,13 @@ function renderBrkStep(step){
       '</div>';
   }
 }
+
+window.copyText = function(btn, inputId){
+  var el = document.getElementById(inputId);
+  if (!el) return;
+  el.select(); el.setSelectionRange(0,99999);
+  try { document.execCommand('copy'); btn.textContent = '✓ Copied'; setTimeout(function(){btn.textContent='📋 Copy';},1500); } catch(e){}
+};
 
 window.brkPick = function(broker){
   _brkState.broker = broker;
@@ -2751,6 +3190,7 @@ document.addEventListener('DOMContentLoaded', function(){
   wireEmo('planEmo');
   wireEmo('reviewEmo');
   wireEmo('reviewAdh');
+  wireEmo('noteMood');
   // Multi-select mistakes
   document.querySelectorAll('#reviewMistakes button').forEach(function(b){
     b.onclick = function(){ b.classList.toggle('on'); };
