@@ -74,6 +74,25 @@ body::after{content:'';position:fixed;inset:-50%;z-index:-1;pointer-events:none;
 .au-meter{height:3px;background:rgba(255,255,255,.05);border-radius:100px;overflow:hidden;margin-top:7px;}
 .au-meter-fill{height:100%;width:0;background:linear-gradient(90deg,#ef4444,#f59e0b,#34d399);transition:width .25s ease;border-radius:100px;}
 .au-meter-hint{font-family:var(--f-mono);font-size:10px;color:var(--text3);font-weight:700;letter-spacing:.04em;margin-top:5px;}
+/* Plan picker (Sign Up tab) */
+.au-plans{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
+.au-plan{display:flex;align-items:center;gap:11px;padding:11px 13px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.08);border-radius:11px;cursor:pointer;transition:.18s var(--ease-out-quart);position:relative;}
+.au-plan:hover{border-color:rgba(14,165,233,.3);background:rgba(14,165,233,.04);}
+.au-plan.on{border-color:rgba(14,165,233,.55);background:linear-gradient(135deg,rgba(14,165,233,.08),rgba(139,92,246,.05));box-shadow:0 0 0 1px rgba(14,165,233,.4) inset;}
+.au-plan.gold.on{border-color:rgba(245,158,11,.55);background:linear-gradient(135deg,rgba(245,158,11,.10),rgba(251,191,36,.05));box-shadow:0 0 0 1px rgba(245,158,11,.5) inset;}
+.au-plan-radio{width:18px;height:18px;border-radius:50%;border:2px solid rgba(255,255,255,.18);flex-shrink:0;position:relative;}
+.au-plan.on .au-plan-radio{border-color:var(--blue);}
+.au-plan.on .au-plan-radio::after{content:'';position:absolute;inset:3px;border-radius:50%;background:var(--blue);}
+.au-plan.gold.on .au-plan-radio{border-color:var(--yellow);}
+.au-plan.gold.on .au-plan-radio::after{background:var(--yellow);}
+.au-plan-body{flex:1;min-width:0;}
+.au-plan-h{display:flex;align-items:baseline;gap:8px;font-family:var(--f-sans);font-size:13.5px;font-weight:800;color:var(--text);}
+.au-plan-tag{font-family:var(--f-mono);font-size:9px;font-weight:800;color:var(--blue2);background:rgba(14,165,233,.10);border:1px solid rgba(14,165,233,.3);padding:2px 7px;border-radius:5px;letter-spacing:.06em;text-transform:uppercase;}
+.au-plan.gold .au-plan-tag{color:var(--yellow);background:rgba(245,158,11,.10);border-color:rgba(245,158,11,.32);}
+.au-plan-sub{font-family:var(--f-mono);font-size:10.5px;color:var(--text3);font-weight:700;letter-spacing:.04em;margin-top:3px;}
+.au-plan-price{font-family:var(--f-sans);font-size:15px;font-weight:900;color:var(--text);flex-shrink:0;letter-spacing:-.02em;}
+.au-plan-price .au-plan-per{font-size:10.5px;color:var(--text3);font-weight:700;font-family:var(--f-mono);letter-spacing:.04em;margin-left:3px;}
+
 .au-checkbox{display:flex;align-items:flex-start;gap:9px;font-size:12.5px;color:var(--text2);line-height:1.55;margin:14px 0 18px;cursor:pointer;}
 .au-checkbox input{margin-top:2px;accent-color:var(--blue);flex-shrink:0;}
 .au-checkbox a{color:var(--blue2);}
@@ -200,9 +219,40 @@ body::after{content:'';position:fixed;inset:-50%;z-index:-1;pointer-events:none;
         <div class="au-meter-hint" id="pwHint">Mix letters + numbers + a symbol</div>
       </div>
 
+      <!-- Plan picker — pre-selected via ?plan= or defaults to annual -->
+      <div class="au-field">
+        <label class="au-lbl">Pick your plan <span style="font-family:var(--f-sans);font-weight:600;color:var(--text3);text-transform:none;letter-spacing:0;font-size:11px;margin-left:6px;">14-day money-back · cancel any time</span></label>
+        <div class="au-plans" id="planList">
+          <div class="au-plan" data-plan="monthly">
+            <div class="au-plan-radio"></div>
+            <div class="au-plan-body">
+              <div class="au-plan-h">Monthly</div>
+              <div class="au-plan-sub">Cancel anytime · zero commitment</div>
+            </div>
+            <div class="au-plan-price">$39.95<span class="au-plan-per">/mo</span></div>
+          </div>
+          <div class="au-plan on" data-plan="annual">
+            <div class="au-plan-radio"></div>
+            <div class="au-plan-body">
+              <div class="au-plan-h">Annual <span class="au-plan-tag">Save 17%</span></div>
+              <div class="au-plan-sub">~$33/mo · 2 months free · most popular</div>
+            </div>
+            <div class="au-plan-price">$399<span class="au-plan-per">/yr</span></div>
+          </div>
+          <div class="au-plan gold" data-plan="lifetime">
+            <div class="au-plan-radio"></div>
+            <div class="au-plan-body">
+              <div class="au-plan-h">Lifetime <span class="au-plan-tag">500 only</span></div>
+              <div class="au-plan-sub">Pay once · use forever · locked price</div>
+            </div>
+            <div class="au-plan-price">$799<span class="au-plan-per">once</span></div>
+          </div>
+        </div>
+      </div>
+
       <label class="au-checkbox"><input type="checkbox" id="signupTerms" required>I agree to the <a href="terms.html">Terms</a>, <a href="risk.html">Risk Disclaimer</a> and acknowledge trading carries risk of loss.</label>
 
-      <button class="au-submit" id="signupSubmit" type="submit">Create account →</button>
+      <button class="au-submit" id="signupSubmit" type="submit"><span id="signupSubmitLabel">Continue to checkout · $399/yr →</span></button>
 
       <div class="au-divider">or</div>
       <div class="au-social-row">
@@ -238,12 +288,45 @@ body::after{content:'';position:fixed;inset:-50%;z-index:-1;pointer-events:none;
 <script>
 var API = (location.hostname==='localhost'||location.hostname==='127.0.0.1') ? 'http://localhost:3001' : '';
 
-// ─── Read query string · ?mode=signin or ?mode=signup or ?tab=signup ───
+// Plan catalogue — UI labels + checkout query strings
+var PLANS = {
+  monthly:  { label: 'Continue to checkout · $39.95/mo →', signedInLabel: 'Start monthly →',   price: '$39.95/mo' },
+  annual:   { label: 'Continue to checkout · $399/yr →',   signedInLabel: 'Start annual →',    price: '$399/yr' },
+  lifetime: { label: 'Buy Lifetime · $799 →',              signedInLabel: 'Buy lifetime →',    price: '$799 once' },
+};
+var selectedPlan = 'annual';
+
+// ─── Read query string ───
 (function(){
   var params = new URLSearchParams(location.search);
   var mode = (params.get('mode')||params.get('tab')||'login').toLowerCase();
+  // ?plan=monthly|annual|lifetime → pre-select that plan AND default to Sign Up tab
+  var planFromUrl = (params.get('plan')||'').toLowerCase();
+  if (PLANS[planFromUrl]) {
+    selectedPlan = planFromUrl;
+    if (!mode || mode === 'login' || mode === 'signin') mode = 'signup';
+  }
   if (mode === 'signup' || mode === 'register' || mode === 'create') switchTab('signup', /*skipPushState*/true);
 })();
+
+// ─── Plan picker wiring ───
+document.addEventListener('DOMContentLoaded', function(){
+  // Apply selected state to the matching tile
+  document.querySelectorAll('#planList .au-plan').forEach(function(el){
+    el.classList.toggle('on', el.dataset.plan === selectedPlan);
+    el.addEventListener('click', function(){
+      selectedPlan = el.dataset.plan;
+      document.querySelectorAll('#planList .au-plan').forEach(function(x){x.classList.toggle('on', x.dataset.plan === selectedPlan);});
+      updateSignupSubmitLabel();
+    });
+  });
+  updateSignupSubmitLabel();
+});
+
+function updateSignupSubmitLabel(){
+  var el = document.getElementById('signupSubmitLabel');
+  if (el && PLANS[selectedPlan]) el.textContent = PLANS[selectedPlan].label;
+}
 
 window.switchTab = function(tab, skipPushState){
   document.getElementById('tabLogin').classList.toggle('on',  tab === 'login');
@@ -336,12 +419,37 @@ window.submitAuth = async function(ev, mode){
       btn.disabled = false; btn.textContent = orig;
       return false;
     }
-    showMsg(okId, mode === 'login' ? '✓ Signed in — redirecting…' : '✓ Account created — redirecting…', 'success');
-    setTimeout(function(){
-      var next = new URLSearchParams(location.search).get('next');
-      if (next && next.indexOf('/') === 0) location.href = next;       // safe absolute path
-      else location.href = 'dashboard-redesigned.html';
-    }, 700);
+    if (mode === 'signup') {
+      // Hand off to Stripe checkout for the selected billing cadence
+      showMsg(okId, '✓ Account created — opening secure checkout…', 'success');
+      try {
+        var coRes = await fetch(API + '/api/stripe/checkout', {
+          method:'POST', credentials:'include',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ plan:'pro', billing: selectedPlan }),
+        });
+        var coData = await coRes.json().catch(function(){return{};});
+        if (coRes.ok && coData.url) {
+          // Off to Stripe-hosted checkout — they handle the card, redirect back to our return URLs
+          location.href = coData.url;
+          return false;
+        }
+        // Stripe not configured / not subscribable from here — fall back to dashboard
+        showMsg(okId, '✓ Account created. (Checkout will open from your dashboard.)', 'success');
+      } catch (_e) {
+        showMsg(okId, '✓ Account created. Checkout from your dashboard.', 'success');
+      }
+      setTimeout(function(){
+        var next = new URLSearchParams(location.search).get('next');
+        location.href = (next && next.indexOf('/') === 0) ? next : 'dashboard-redesigned.html';
+      }, 1100);
+    } else {
+      showMsg(okId, '✓ Signed in — redirecting…', 'success');
+      setTimeout(function(){
+        var next = new URLSearchParams(location.search).get('next');
+        location.href = (next && next.indexOf('/') === 0) ? next : 'dashboard-redesigned.html';
+      }, 700);
+    }
   } catch(e) {
     showMsg(errId, 'Network error — try again', 'error');
     btn.disabled = false; btn.textContent = orig;
