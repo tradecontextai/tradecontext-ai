@@ -2953,6 +2953,259 @@ div[style*="background:var(--bg3)"]:has(.cal-filter-btn){
 }
 
 /* ▲▲▲ END REDESIGN OVERLAY (Phase 1 + 2 + 3 + 4) ▲▲▲ */
+
+/* ═══════════════ REDESIGN OVERLAY · PHASE 5 ═══════════════
+   The 3-column row: AI Playbooks · Live Positions · AI Journal.
+   Headers, empty/error states, journal hero, kpi-grid-mini, score
+   pills, log textarea + Save button — everything inside these cards.
+   ═══════════════════════════════════════════════════════════ */
+
+/* ─── Three-column wrappers: matching ambient glow halos like Trade panel ── */
+.three-col-row > *,.three-col-row .panel{
+  background:
+    radial-gradient(ellipse 260px 180px at 0% 0%,rgba(14,165,233,.07),transparent 70%),
+    linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.005)) !important;
+  border:1px solid rgba(255,255,255,.08) !important;
+  border-radius:16px !important;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.03) inset,
+    0 22px 50px -22px rgba(0,0,0,.7),
+    0 0 50px -22px rgba(14,165,233,.14) !important;
+  position:relative;
+  overflow:hidden;
+}
+.three-col-row .panel::before,.three-col-panel::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(14,165,233,.45),rgba(139,92,246,.4),transparent);
+  z-index:2;
+}
+
+/* ─── Panel-h headers within the 3-col row ── */
+.three-col-row .panel-h,.three-col-panel .panel-h{
+  background:linear-gradient(135deg,rgba(14,165,233,.06),rgba(139,92,246,.04)) !important;
+  border-bottom:1px solid rgba(255,255,255,.05) !important;
+  padding:14px 18px !important;
+}
+.three-col-row .panel-h-title{
+  font-family:var(--font-sans-new) !important;
+  font-weight:800 !important;
+  font-size:15px !important;
+  letter-spacing:-.012em !important;
+}
+
+/* ─── "All →" / "Full journal →" / "Connect broker →" header links ── */
+.panel-h-link{
+  background:linear-gradient(135deg,rgba(14,165,233,.08),rgba(139,92,246,.04)) !important;
+  border:1px solid rgba(14,165,233,.28) !important;
+  border-radius:7px !important;
+  font-family:var(--font-mono-new) !important;
+  letter-spacing:.08em !important;
+  transition:.2s var(--ease-out-quart) !important;
+}
+.panel-h-link:hover{
+  background:linear-gradient(135deg,rgba(14,165,233,.14),rgba(139,92,246,.08)) !important;
+  border-color:rgba(14,165,233,.5) !important;
+  box-shadow:0 6px 14px -4px rgba(14,165,233,.3) !important;
+  transform:translateY(-1px) !important;
+}
+
+/* ─── Empty / error states inside the 3 columns ── */
+/* Pattern: <div style="padding:36px 24px;text-align:center"> ... </div> */
+[id="playbookContainer"] > div[style*="text-align:center"],
+[id="posTableWrap"] > div[style*="text-align:center"],
+.three-col-body > div[style*="text-align:center"]{
+  margin:18px !important;
+  padding:32px 22px !important;
+  background:linear-gradient(180deg,rgba(255,255,255,.022),rgba(255,255,255,.005)) !important;
+  border:1px dashed rgba(255,255,255,.1) !important;
+  border-radius:14px !important;
+}
+[id="playbookContainer"] > div[style*="text-align:center"] > div:first-child,
+[id="posTableWrap"] > div[style*="text-align:center"] > div:first-child,
+.three-col-body > div[style*="text-align:center"] > div:first-child{
+  font-size:42px !important;
+  filter:drop-shadow(0 6px 18px rgba(14,165,233,.3));
+  margin-bottom:10px !important;
+  animation:emptyIconFloat 4s ease-in-out infinite;
+}
+@keyframes emptyIconFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-4px);}}
+/* Title line of empty state ("Couldn't load playbooks") */
+[id="playbookContainer"] > div[style*="text-align:center"] > div:nth-child(2),
+[id="posTableWrap"] > div[style*="text-align:center"] > div:nth-child(2),
+.three-col-body > div[style*="text-align:center"] > div:nth-child(2){
+  font-family:var(--font-sans-new) !important;
+  font-size:14.5px !important;
+  font-weight:700 !important;
+  letter-spacing:-.005em !important;
+}
+/* Sub-line ("Failed to fetch") */
+[id="playbookContainer"] > div[style*="text-align:center"] > div:nth-child(3),
+[id="posTableWrap"] > div[style*="text-align:center"] > div:nth-child(3),
+.three-col-body > div[style*="text-align:center"] > div:nth-child(3){
+  font-family:var(--font-sans-new) !important;
+  color:rgba(226,234,244,.5) !important;
+  font-size:12px !important;
+  line-height:1.55 !important;
+}
+/* The CTA link at the bottom of empty state (e.g. "📡 Browse news →") */
+[id="playbookContainer"] > div[style*="text-align:center"] a,
+[id="posTableWrap"] > div[style*="text-align:center"] a,
+.three-col-body > div[style*="text-align:center"] a{
+  margin-top:14px !important;
+  background:linear-gradient(135deg,rgba(14,165,233,.14),rgba(139,92,246,.08)) !important;
+  border:1px solid rgba(14,165,233,.35) !important;
+  font-family:var(--font-mono-new) !important;
+  letter-spacing:.08em !important;
+  border-radius:8px !important;
+  padding:8px 16px !important;
+  transition:.2s var(--ease-out-quart) !important;
+}
+[id="playbookContainer"] > div[style*="text-align:center"] a:hover,
+[id="posTableWrap"] > div[style*="text-align:center"] a:hover,
+.three-col-body > div[style*="text-align:center"] a:hover{
+  background:linear-gradient(135deg,rgba(14,165,233,.22),rgba(139,92,246,.14)) !important;
+  border-color:rgba(14,165,233,.55) !important;
+  transform:translateY(-1px) !important;
+  box-shadow:0 6px 14px -4px rgba(14,165,233,.3) !important;
+}
+
+/* ─── Journal Hero (78 SCORE · Good Trader · pills) ── */
+.journal-hero{
+  background:
+    radial-gradient(ellipse 220px 140px at 100% 0%,rgba(139,92,246,.10),transparent 70%),
+    linear-gradient(135deg,rgba(14,165,233,.05),rgba(139,92,246,.03)) !important;
+  border-bottom:1px solid rgba(255,255,255,.05) !important;
+  padding:20px !important;
+}
+.score-ring{
+  filter:drop-shadow(0 6px 22px rgba(14,165,233,.35));
+}
+.score-num{
+  font-family:var(--font-sans-new) !important;
+  font-weight:900 !important;
+  font-size:24px !important;
+  letter-spacing:-.025em !important;
+}
+.score-lbl{
+  font-family:var(--font-mono-new) !important;
+  letter-spacing:.14em !important;
+}
+.score-pill{
+  font-family:var(--font-mono-new) !important;
+  letter-spacing:.06em !important;
+  background:rgba(255,255,255,.04) !important;
+  border:1px solid rgba(255,255,255,.07) !important;
+}
+
+/* ─── KPI grid mini (67% · 2.14 · 1:2.4) ── */
+.kpi-grid-mini{
+  background:transparent !important;
+  gap:1px !important;
+}
+.kpi-mini{
+  background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,.005)) !important;
+  border-top:1px solid rgba(255,255,255,.04) !important;
+  border-bottom:1px solid rgba(255,255,255,.04) !important;
+  padding:14px 8px !important;
+  transition:background .2s var(--ease-out-quart) !important;
+}
+.kpi-mini:hover{background:rgba(14,165,233,.05) !important;}
+.kpi-mini-val{
+  font-family:var(--font-mono-new) !important;
+  font-feature-settings:"tnum","ss01" !important;
+  font-size:17px !important;
+  font-weight:800 !important;
+  letter-spacing:-.01em !important;
+}
+.kpi-mini-lbl{
+  font-family:var(--font-mono-new) !important;
+  letter-spacing:.1em !important;
+  color:rgba(226,234,244,.45) !important;
+}
+
+/* ─── Journal log textarea ── */
+.three-col-row textarea,.three-col-panel textarea{
+  background:rgba(0,0,0,.3) !important;
+  border:1px solid rgba(255,255,255,.08) !important;
+  border-radius:10px !important;
+  padding:12px 14px !important;
+  font-family:var(--font-sans-new) !important;
+  font-size:12.5px !important;
+  line-height:1.6 !important;
+  transition:.18s var(--ease-out-quart) !important;
+  color:rgba(226,234,244,.92) !important;
+}
+.three-col-row textarea:hover,.three-col-panel textarea:hover{
+  border-color:rgba(255,255,255,.12) !important;
+}
+.three-col-row textarea:focus,.three-col-panel textarea:focus{
+  border-color:rgba(14,165,233,.5) !important;
+  background:rgba(0,0,0,.4) !important;
+  box-shadow:0 0 0 3px rgba(14,165,233,.12) !important;
+}
+.three-col-row textarea::placeholder,.three-col-panel textarea::placeholder{
+  color:rgba(226,234,244,.35) !important;
+  font-style:normal;
+}
+
+/* ─── Journal type select ("Trade · Long" dropdown) ── */
+.three-col-row select,.three-col-panel select{
+  background:rgba(0,0,0,.3) !important;
+  border:1px solid rgba(255,255,255,.08) !important;
+  border-radius:9px !important;
+  font-family:var(--font-sans-new) !important;
+  font-size:12.5px !important;
+  font-weight:600 !important;
+  color:rgba(226,234,244,.85) !important;
+  padding:10px 14px !important;
+  transition:.18s var(--ease-out-quart) !important;
+}
+.three-col-row select:hover,.three-col-panel select:hover{border-color:rgba(14,165,233,.4) !important;}
+
+/* ─── Save → button ── */
+.three-col-row button[onclick*="save"],
+.three-col-panel button[onclick*="save"],
+.three-col-row button:not(.panel-h-link):not([onclick*="open"]):not([onclick*="toggle"]),
+.three-col-row > * button[style*="background:var(--blue)"]{
+  background:linear-gradient(135deg,#0ea5e9,#8b5cf6) !important;
+  border:none !important;
+  color:#fff !important;
+  font-family:var(--font-sans-new) !important;
+  font-weight:700 !important;
+  font-size:12.5px !important;
+  border-radius:9px !important;
+  padding:10px 18px !important;
+  letter-spacing:.005em !important;
+  box-shadow:0 8px 18px -6px rgba(14,165,233,.45),inset 0 1px 0 rgba(255,255,255,.18) !important;
+  transition:.2s var(--ease-out-back) !important;
+}
+.three-col-row button[onclick*="save"]:hover,
+.three-col-panel button[onclick*="save"]:hover,
+.three-col-row > * button[style*="background:var(--blue)"]:hover{
+  transform:translateY(-2px) scale(1.02) !important;
+  filter:brightness(1.08) !important;
+  box-shadow:0 14px 28px -8px rgba(14,165,233,.6),inset 0 1px 0 rgba(255,255,255,.25) !important;
+}
+
+/* ─── data-table polish (used in Live Positions when data lands) ── */
+.data-table th{
+  font-family:var(--font-mono-new) !important;
+  background:rgba(255,255,255,.02) !important;
+  border-bottom:1px solid rgba(255,255,255,.06) !important;
+  letter-spacing:.1em !important;
+}
+.data-table td{
+  font-family:var(--font-mono-new) !important;
+  font-feature-settings:"tnum" !important;
+  border-bottom:1px solid rgba(255,255,255,.04) !important;
+}
+.data-table tbody tr:hover td{background:rgba(14,165,233,.05) !important;}
+.badge-long,.badge-short{font-family:var(--font-mono-new) !important;letter-spacing:.06em !important;}
+
+/* ─── Score ring SVG: smooth the stroke gradient ── */
+.score-ring svg circle{transition:stroke-dashoffset .8s var(--ease-out-expo) !important;}
+
+/* ▲▲▲ END REDESIGN OVERLAY (Phase 1 + 2 + 3 + 4 + 5) ▲▲▲ */
 </style>
 </head>
 <body>
