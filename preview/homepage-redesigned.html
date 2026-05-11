@@ -988,18 +988,32 @@ function tickerItemHTML(label,price,pct,source){
   return '<span class="tt-item"><span class="sym">'+label+'</span><span class="px">'+fmtPrice(price)+'</span><span class="pct '+cls+'">'+fmtPct(pct)+'</span></span>';
 }
 
+// API base: same-origin in production (e.g. tradecontext.ai), localhost:3001 in dev
+var API_BASE=(location.hostname==='localhost'||location.hostname==='127.0.0.1')
+  ? 'http://localhost:3001' : '';
+
 async function fetchPrices(symbols){
   try{
-    var res=await fetch('http://localhost:3001/api/price/bulk',{
+    var res=await fetch(API_BASE+'/api/price/bulk',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({symbols:symbols})
     });
-    if(!res.ok)return null;
+    if(!res.ok){console.warn('price/bulk',res.status);return null;}
     var d=await res.json();
     return d.ticks||null;
-  }catch(e){return null;}
+  }catch(e){console.warn('price/bulk fetch failed',e);return null;}
 }
+
+// Paint skeleton items immediately so the ticker is never empty
+(function paintSkeleton(){
+  var trackEl=document.getElementById('topTickerTrack');
+  if(!trackEl)return;
+  var items=TOP_TICKER_SYMBOLS.map(function(p){
+    return '<span class="tt-item"><span class="sym">'+p[0]+'</span><span class="px">…</span><span class="pct">…</span></span>';
+  }).join('');
+  trackEl.innerHTML=items+items;
+})();
 
 async function refreshLivePrices(){
   // Gather all unique backend symbols: top ticker + logo pills

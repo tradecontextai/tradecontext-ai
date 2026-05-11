@@ -172,7 +172,7 @@ export async function getPrice(rawSymbol: string): Promise<PriceTick> {
     tick = await fetchYahoo(STOCK_INDICES[symbol]);
   } else if (COMMODITIES[symbol]) {
     tick = await fetchYahoo(COMMODITIES[symbol]);
-  } else if (/^[A-Z][A-Z0-9.\-]{0,11}$/.test(symbol)) {
+  } else if (/^[A-Z0-9][A-Z0-9.\-]{0,11}$/.test(symbol)) {
     // Generic stock ticker. Yahoo accepts plain tickers (AAPL, MSFT, TSLA),
     // exchange-suffixed tickers (7203.T for Toyota Tokyo, 005930.KS for
     // Samsung Korea, BMW.DE for BMW Germany, RACE.MI for Ferrari Milan,
