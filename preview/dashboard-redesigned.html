@@ -2395,6 +2395,378 @@ body{padding-top:32px;}
 .aib-section,.aib-verdict,.broker-row,.cal-row{will-change:transform;}
 
 /* ▲▲▲ END REDESIGN OVERLAY (Phase 1 + Phase 2) ▲▲▲ */
+
+/* ═══════════════ REDESIGN OVERLAY · PHASE 3 ═══════════════
+   Targeted polish for every internal surface previously missed —
+   especially the TRADE PANEL and BROKER CARDS.
+   ═══════════════════════════════════════════════════════════ */
+
+/* ─── Trade panel: deep glass instead of solid bg2 ── */
+.trade-panel{
+  background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,.005)) !important;
+  border:1px solid rgba(255,255,255,.06) !important;
+  border-radius:16px !important;
+  box-shadow:var(--shadow-card) !important;
+  position:relative;overflow:hidden;
+}
+.trade-panel::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(14,165,233,.4),rgba(139,92,246,.4),transparent);
+  z-index:2;
+}
+
+/* ─── Trade panel header ── */
+.trade-panel-head{
+  background:linear-gradient(135deg,rgba(14,165,233,.06),rgba(139,92,246,.04)) !important;
+  border-bottom:1px solid rgba(255,255,255,.05) !important;
+  padding:16px 20px 12px !important;
+}
+.trade-panel-h-title{
+  font-family:var(--font-sans-new) !important;
+  font-size:16px !important;
+  font-weight:800 !important;
+  letter-spacing:-.015em !important;
+}
+.trade-panel-h-sub{
+  font-family:var(--font-mono-new) !important;
+  letter-spacing:.08em !important;
+}
+
+/* ─── Buy/Sell direction row (the tab pair at top of trade panel) ── */
+.trade-direction-row{
+  background:rgba(0,0,0,.2) !important;
+  border-bottom:1px solid rgba(255,255,255,.05) !important;
+  gap:1px !important;
+}
+.trade-dir-btn{
+  background:rgba(255,255,255,.015) !important;
+  color:rgba(226,234,244,.4) !important;
+  font-family:var(--font-sans-new) !important;
+  font-weight:700 !important;
+  letter-spacing:.005em !important;
+  border-bottom:3px solid transparent !important;
+  transition:.2s var(--ease-out-quart) !important;
+}
+.trade-dir-btn:hover{
+  background:rgba(255,255,255,.04) !important;
+  color:rgba(226,234,244,.7) !important;
+}
+.trade-dir-btn.buy.active{
+  background:linear-gradient(180deg,rgba(52,211,153,.16),rgba(52,211,153,.03)) !important;
+  color:#34d399 !important;
+  border-bottom-color:#34d399 !important;
+  box-shadow:inset 0 0 22px rgba(52,211,153,.12) !important;
+}
+.trade-dir-btn.sell.active{
+  background:linear-gradient(180deg,rgba(248,113,113,.16),rgba(248,113,113,.03)) !important;
+  color:#f87171 !important;
+  border-bottom-color:#f87171 !important;
+  box-shadow:inset 0 0 22px rgba(248,113,113,.12) !important;
+}
+
+/* ─── Trade form body ── */
+.trade-form{padding:18px 20px !important;gap:14px !important;}
+
+/* ─── Trade input groups (Live price / Lot size / SL / TP) ── */
+.trade-input-group label{
+  font-family:var(--font-mono-new) !important;
+  font-size:9px !important;
+  font-weight:800 !important;
+  letter-spacing:.12em !important;
+  color:rgba(226,234,244,.45) !important;
+  margin-bottom:6px !important;
+  text-transform:uppercase !important;
+}
+.trade-input-group input{
+  background:rgba(0,0,0,.3) !important;
+  border:1px solid rgba(255,255,255,.06) !important;
+  font-family:var(--font-mono-new) !important;
+  font-feature-settings:"tnum","ss01" !important;
+  font-weight:700 !important;
+  padding:11px 13px !important;
+  border-radius:8px !important;
+  transition:.2s var(--ease-out-quart) !important;
+  font-size:13.5px !important;
+}
+.trade-input-group input:hover{border-color:rgba(255,255,255,.1) !important;}
+.trade-input-group input:focus{
+  border-color:rgba(14,165,233,.55) !important;
+  background:rgba(0,0,0,.4) !important;
+  box-shadow:0 0 0 3px rgba(14,165,233,.14) !important;
+}
+
+/* ─── Trade R:R row (Risk + R:R indicator strip) ── */
+.trade-rr-row{
+  background:linear-gradient(135deg,rgba(255,255,255,.025),rgba(255,255,255,.005)) !important;
+  border:1px solid rgba(255,255,255,.06) !important;
+  border-radius:9px !important;
+  padding:12px 14px !important;
+  font-family:var(--font-mono-new) !important;
+  font-feature-settings:"tnum" !important;
+}
+.trade-rr-row .lbl{letter-spacing:.06em !important;color:rgba(226,234,244,.5) !important;}
+.trade-rr-row .val{font-weight:800 !important;}
+
+/* ─── Trade AI Auto-Fill banner ── */
+.trade-ai{
+  background:linear-gradient(135deg,rgba(14,165,233,.12),rgba(139,92,246,.08)) !important;
+  border:1px solid rgba(14,165,233,.32) !important;
+  border-radius:10px !important;
+  padding:12px 14px !important;
+  transition:.22s var(--ease-out-quart) !important;
+  position:relative;overflow:hidden;
+}
+.trade-ai::before{
+  content:'';position:absolute;inset:-1px;border-radius:11px;padding:1px;
+  background:conic-gradient(from 0deg at 50% 50%,
+    transparent 0%,
+    rgba(14,165,233,.5) 40%,
+    rgba(139,92,246,.4) 60%,
+    transparent 100%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;
+  pointer-events:none;animation:kpiConicSpin 12s linear infinite;
+  opacity:.5;
+}
+.trade-ai:hover{
+  background:linear-gradient(135deg,rgba(14,165,233,.20),rgba(139,92,246,.14)) !important;
+  border-color:rgba(14,165,233,.5) !important;
+  transform:translateY(-1px);
+}
+.trade-ai-icon{font-size:20px !important;}
+.trade-ai-label{
+  font-family:var(--font-mono-new) !important;
+  letter-spacing:.1em !important;
+  color:#0ea5e9 !important;
+}
+.trade-ai-desc{font-family:var(--font-sans-new) !important;}
+.trade-ai-cta{font-family:var(--font-mono-new) !important;letter-spacing:.06em !important;}
+
+/* ─── Trade submit buttons (Copy Setup / Open in Broker / MT5) ── */
+.trade-submit{
+  font-family:var(--font-sans-new) !important;
+  font-weight:700 !important;
+  letter-spacing:.005em !important;
+  text-transform:none !important;
+  font-size:13.5px !important;
+  border-radius:10px !important;
+  padding:13px 16px !important;
+}
+.trade-submit.buy{
+  background:linear-gradient(135deg,#10b981,#34d399) !important;
+  box-shadow:0 10px 26px -8px rgba(16,185,129,.5),inset 0 1px 0 rgba(255,255,255,.2) !important;
+}
+.trade-submit.sell{
+  background:linear-gradient(135deg,#ef4444,#f87171) !important;
+  box-shadow:0 10px 26px -8px rgba(239,68,68,.5),inset 0 1px 0 rgba(255,255,255,.2) !important;
+}
+.trade-submit:hover{
+  transform:translateY(-2px) scale(1.015) !important;
+  filter:brightness(1.08) !important;
+  box-shadow:0 16px 36px -10px rgba(16,185,129,.65),inset 0 1px 0 rgba(255,255,255,.28) !important;
+}
+.trade-submit.sell:hover{
+  box-shadow:0 16px 36px -10px rgba(239,68,68,.65),inset 0 1px 0 rgba(255,255,255,.28) !important;
+}
+.trade-submit-secondary{
+  background:rgba(255,255,255,.04) !important;
+  border:1px solid rgba(255,255,255,.08) !important;
+  border-radius:10px !important;
+  font-family:var(--font-sans-new) !important;
+  font-weight:700 !important;
+  letter-spacing:.005em !important;
+  color:rgba(226,234,244,.8) !important;
+  font-size:13px !important;
+  padding:13px 14px !important;
+  transition:.2s var(--ease-out-quart) !important;
+}
+.trade-submit-secondary:hover{
+  background:rgba(14,165,233,.08) !important;
+  border-color:rgba(14,165,233,.4) !important;
+  color:#0ea5e9 !important;
+  transform:translateY(-1px) !important;
+}
+
+/* ─── MT4/5 launcher main button ── */
+.mt-launcher-btn.main{
+  background:linear-gradient(135deg,rgba(14,165,233,.14),rgba(14,165,233,.04)) !important;
+  border:1px solid rgba(14,165,233,.35) !important;
+  border-right:none !important;
+  color:#0ea5e9 !important;
+  font-family:var(--font-sans-new) !important;
+  font-weight:700 !important;
+  border-radius:10px 0 0 10px !important;
+}
+.mt-launcher-btn.toggle{
+  background:linear-gradient(135deg,rgba(14,165,233,.14),rgba(14,165,233,.04)) !important;
+  border:1px solid rgba(14,165,233,.35) !important;
+  color:rgba(226,234,244,.6) !important;
+  border-radius:0 10px 10px 0 !important;
+}
+.mt-launcher-btn:hover{
+  background:linear-gradient(135deg,rgba(14,165,233,.22),rgba(14,165,233,.08)) !important;
+  border-color:#0ea5e9 !important;
+}
+
+/* ─── Trade disclaimer footer ── */
+.trade-disclaimer{
+  font-family:var(--font-mono-new) !important;
+  letter-spacing:.02em !important;
+  padding:10px 20px 14px !important;
+}
+
+/* ─── Broker dropdown internals ── */
+.bd-search input{
+  background:rgba(0,0,0,.3) !important;
+  border:1px solid rgba(255,255,255,.08) !important;
+  font-family:var(--font-sans-new) !important;
+  border-radius:8px !important;
+  padding:9px 12px !important;
+}
+.bd-search input:focus{
+  border-color:rgba(14,165,233,.5) !important;
+  box-shadow:0 0 0 3px rgba(14,165,233,.12) !important;
+}
+.bd-info{
+  font-family:var(--font-mono-new) !important;
+  letter-spacing:.06em !important;
+  color:rgba(226,234,244,.5) !important;
+}
+.bd-list{padding:4px !important;}
+.broker-row{
+  background:transparent !important;
+  border:1px solid transparent !important;
+  border-radius:8px !important;
+  transition:.15s var(--ease-out-quart) !important;
+}
+.broker-row:hover{
+  background:rgba(14,165,233,.06) !important;
+  border-color:rgba(14,165,233,.25) !important;
+  transform:translateX(2px);
+}
+.broker-row .broker-name{font-weight:700 !important;letter-spacing:-.005em !important;}
+.broker-row .broker-reg{font-family:var(--font-mono-new) !important;letter-spacing:.04em !important;}
+.bd-foot{
+  background:linear-gradient(180deg,rgba(245,158,11,.06),rgba(245,158,11,.02)) !important;
+  border-top:1px solid rgba(245,158,11,.2) !important;
+  font-family:var(--font-mono-new) !important;
+  letter-spacing:.02em !important;
+}
+
+/* ─── Broker Hub cards (the broker-connect column) ── */
+.broker-card{
+  background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,.005)) !important;
+  border:1px solid rgba(255,255,255,.06) !important;
+  border-radius:12px !important;
+  transition:.25s var(--ease-out-quart) !important;
+}
+.broker-card:hover{
+  border-color:rgba(14,165,233,.35) !important;
+  transform:translateY(-2px) !important;
+  box-shadow:0 18px 40px -10px rgba(14,165,233,.18) !important;
+}
+.broker-name-big{font-weight:800 !important;letter-spacing:-.012em !important;}
+.broker-status{font-family:var(--font-mono-new) !important;letter-spacing:.06em !important;}
+.broker-pnl-val{font-family:var(--font-mono-new) !important;font-feature-settings:"tnum" !important;font-weight:800 !important;letter-spacing:-.015em !important;}
+.broker-pnl-lbl{font-family:var(--font-mono-new) !important;letter-spacing:.08em !important;}
+.broker-btn{
+  background:rgba(255,255,255,.03) !important;
+  border:1px solid rgba(255,255,255,.08) !important;
+  font-family:var(--font-sans-new) !important;
+  font-weight:600 !important;
+  border-radius:8px !important;
+  transition:.18s var(--ease-out-quart) !important;
+}
+.broker-btn:hover{transform:translateY(-1px) !important;}
+.broker-btn.success{
+  background:linear-gradient(135deg,rgba(52,211,153,.16),rgba(52,211,153,.04)) !important;
+  border-color:rgba(52,211,153,.4) !important;
+  color:#34d399 !important;
+}
+.broker-btn.outline{
+  background:transparent !important;
+  border-color:rgba(255,255,255,.1) !important;
+  color:rgba(226,234,244,.7) !important;
+}
+.broker-btn.outline:hover{border-color:rgba(14,165,233,.4) !important;color:#0ea5e9 !important;}
+.add-broker{
+  background:rgba(255,255,255,.02) !important;
+  border:2px dashed rgba(255,255,255,.1) !important;
+  border-radius:12px !important;
+  transition:.22s var(--ease-out-quart) !important;
+}
+.add-broker:hover{
+  background:rgba(14,165,233,.06) !important;
+  border-color:rgba(14,165,233,.4) !important;
+  transform:translateY(-2px) !important;
+}
+.add-broker .plus{
+  background:linear-gradient(135deg,rgba(14,165,233,.18),rgba(139,92,246,.12)) !important;
+  border:1px solid rgba(14,165,233,.3) !important;
+  color:#0ea5e9 !important;
+}
+
+/* ─── Funded Account panels (if visible) ── */
+.fund-row,.funded-card{
+  background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,.005)) !important;
+  border:1px solid rgba(255,255,255,.06) !important;
+  border-radius:10px !important;
+}
+
+/* ─── Chart TF + chart-type buttons (timeframe pills) ── */
+.tf-btn,.ct-btn{
+  background:rgba(255,255,255,.03) !important;
+  border:1px solid rgba(255,255,255,.06) !important;
+  font-family:var(--font-mono-new) !important;
+  border-radius:6px !important;
+  transition:.15s var(--ease-out-quart) !important;
+  letter-spacing:.04em !important;
+}
+.tf-btn:hover,.ct-btn:hover{
+  border-color:rgba(14,165,233,.4) !important;
+  color:#0ea5e9 !important;
+}
+.tf-btn.active,.ct-btn.active{
+  background:linear-gradient(135deg,rgba(14,165,233,.18),rgba(14,165,233,.06)) !important;
+  border-color:rgba(14,165,233,.5) !important;
+  color:#0ea5e9 !important;
+  box-shadow:inset 0 0 0 1px rgba(14,165,233,.25) !important;
+}
+
+/* ─── Live pill at top (Live • indicator) ── */
+.live-pill{
+  background:linear-gradient(135deg,rgba(52,211,153,.12),rgba(52,211,153,.03)) !important;
+  border:1px solid rgba(52,211,153,.3) !important;
+  font-family:var(--font-mono-new) !important;
+  letter-spacing:.12em !important;
+}
+.live-dot{box-shadow:0 0 6px rgba(52,211,153,.7) !important;}
+
+/* ─── AI Strategy strip — symbol pill + manual badge ── */
+.strat-card-name{font-weight:700 !important;letter-spacing:-.005em !important;}
+.strat-lvl-lbl{font-family:var(--font-mono-new) !important;letter-spacing:.08em !important;}
+.strat-lvl-val{font-family:var(--font-mono-new) !important;font-feature-settings:"tnum" !important;}
+
+/* ─── Symbol modal — search input + symbol cards ── */
+.modal-search{
+  background:rgba(0,0,0,.3) !important;
+  border:1px solid rgba(255,255,255,.08) !important;
+  border-radius:9px !important;
+}
+.modal-search:focus{border-color:rgba(14,165,233,.5) !important;box-shadow:0 0 0 3px rgba(14,165,233,.12) !important;}
+
+/* ─── Footer hover lifts ── */
+.footer-col a:hover{color:#0ea5e9 !important;transform:translateX(2px) !important;}
+
+/* ─── Watchlist row: visible only in collapsed list, but still polish ── */
+.watch-row{
+  background:rgba(255,255,255,.02) !important;
+  border-bottom:1px solid rgba(255,255,255,.04) !important;
+  transition:background .15s var(--ease-out-quart) !important;
+}
+.watch-row:hover{background:rgba(14,165,233,.06) !important;}
+
+/* ▲▲▲ END REDESIGN OVERLAY (Phase 1 + 2 + 3) ▲▲▲ */
 </style>
 </head>
 <body>
