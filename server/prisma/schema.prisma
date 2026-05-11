@@ -78,6 +78,9 @@ model User {
   emailVerifyToken      String?    @map("email_verify_token")
   passwordResetToken    String?    @map("password_reset_token")
   passwordResetExpires  DateTime?  @map("password_reset_expires")
+  // Set when this user redeems a Lifetime checkout. Used to count remaining
+  // lifetime spots (capped at 500 by marketing).
+  lifetimeRedeemedAt    DateTime?  @map("lifetime_redeemed_at")
   createdAt             DateTime   @default(now()) @map("created_at")
   updatedAt             DateTime   @updatedAt @map("updated_at")
 

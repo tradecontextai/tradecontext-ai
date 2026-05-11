@@ -368,6 +368,7 @@ body::after{
   .hp-fab-label{display:none;}
 }
 </style>
+<script src="lifetime-counter.js" defer></script>
 </head>
 <body>
 
@@ -902,10 +903,10 @@ body::after{
     </div>
 
     <div class="tier">
-      <div class="tier-badge gold">Lifetime · 500 only</div>
+      <div class="tier-badge gold">Lifetime · <span data-lifetime-counter="remaining">500</span>/<span data-lifetime-counter="total">500</span> spots left</div>
       <div class="tier-name">Lifetime</div>
       <div class="tier-price"><span class="tier-amt">$799</span><span class="tier-per">once</span></div>
-      <div class="tier-tagline">Pay once. Use forever. Limited to the first 500 supporters.</div>
+      <div class="tier-tagline">Pay once. Use forever. Only <strong><span data-lifetime-counter="remaining">500</span> of <span data-lifetime-counter="total">500</span></strong> founder spots remaining.</div>
       <ul class="tier-features">
         <li>Everything in Annual</li>
         <li>Pay once, never billed again</li>

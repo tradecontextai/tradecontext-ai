@@ -21,6 +21,7 @@ import { geoRiskRouter } from './geo-risk';
 import { backtestRouter } from './backtest';
 import { journalCoachRouter } from './journal-coach';
 import { journalBridgeRouter } from './journal-broker-webhook';
+import { lifetimeRouter } from './lifetime';
 import { newsClientCount } from '../ws/news-broadcast';
 
 export const apiRouter = Router();
@@ -47,6 +48,7 @@ apiRouter.use('/geo-risk', geoRiskRouter);
 apiRouter.use('/backtest', backtestRouter);
 apiRouter.use('/journal-coach', journalCoachRouter);   // public AI coach for the journal page (no auth)
 apiRouter.use('/journal-bridge', journalBridgeRouter); // public webhook for MT4/MT5/custom EAs (token-auth via ?token=)
+apiRouter.use('/', lifetimeRouter);                    // GET /api/lifetime-spots (public, cached 30s)
 
 apiRouter.get('/health', (_req, res) => {
   res.json({
