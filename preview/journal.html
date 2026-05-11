@@ -580,12 +580,49 @@ tr.jl-row-new td{animation:jlPulseIn 2.5s ease-out 1;}
       <div class="jl-card-h-sub">Direct API · real-time auto-import · read-only</div>
     </div>
     <div style="padding:14px 16px;margin-bottom:16px;background:rgba(14,165,233,.04);border:1px solid rgba(14,165,233,.22);border-radius:11px;font-family:var(--f-mono);font-size:11px;color:var(--text2);line-height:1.65;">
-      <strong style="color:var(--text);">Only brokers with a real API are listed below.</strong> No fake login forms, no EA bridges to install. Sign in with a personal access token / read-only API key — we auto-pull every fill into your journal.
+      <strong style="color:var(--text);">Two ways to auto-sync — both honest:</strong>
+      <strong style="color:var(--green2);">Direct API</strong> (OANDA, Bybit soon) signs in with a token — no install. <strong style="color:var(--green2);">Plugin Bridge</strong> (MT4/MT5) drops a small EA into your terminal — works for <strong>Vantage, IC Markets, Pepperstone, Tickmill</strong> and every other MT4/MT5 broker. Same approach every serious journal uses for MetaTrader.
+    </div>
+
+    <!-- Quick search for your specific broker -->
+    <div style="margin-bottom:18px;">
+      <div style="font-family:var(--f-mono);font-size:9.5px;color:var(--text3);font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;">🔎 Find your broker — 60+ regulated brokers indexed</div>
+      <div style="position:relative;">
+        <input class="brk-input" id="gridBrkSearch" placeholder="Type a broker name… Vantage, IC Markets, Pepperstone, eToro, Tickmill…" oninput="gridBrkSearch()" style="width:100%;padding:12px 14px 12px 38px;background:rgba(255,255,255,.04);">
+        <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;opacity:.6;pointer-events:none;">🔎</span>
+      </div>
+      <div id="gridBrkResults" style="margin-top:6px;"></div>
     </div>
     <div class="jl-broker-grid">
 
       <div class="jl-broker">
-        <div class="jl-broker-status live">Live API ✓</div>
+        <div class="jl-broker-status live">Auto-sync ✓ Plugin</div>
+        <div class="jl-broker-h">
+          <div class="jl-broker-logo mt5">MT5</div>
+          <div>
+            <div class="jl-broker-name">MetaTrader 5</div>
+            <div class="jl-broker-sub">Vantage, IC Markets, Pepperstone, Tickmill, FP, IG, Saxo · 500+ brokers</div>
+          </div>
+        </div>
+        <div class="jl-broker-body">One-file Expert Advisor you drop on any MT5 chart. Streams every closed fill to your journal in real time — same approach as TraderSync, Tradezella, Edgewonk. Works for any broker that runs MT5.</div>
+        <button class="jl-broker-btn" onclick="connectBroker('MT5')">Get the MT5 plugin →</button>
+      </div>
+
+      <div class="jl-broker">
+        <div class="jl-broker-status live">Auto-sync ✓ Plugin</div>
+        <div class="jl-broker-h">
+          <div class="jl-broker-logo mt4">MT4</div>
+          <div>
+            <div class="jl-broker-name">MetaTrader 4</div>
+            <div class="jl-broker-sub">Vantage, IC Markets, Pepperstone, FXCM, Exness, XM · 500+ brokers</div>
+          </div>
+        </div>
+        <div class="jl-broker-body">Same plugin, MT4 build. Drop on any chart, fills stream to your journal automatically. Compatible with every MT4 broker — over 500 listed.</div>
+        <button class="jl-broker-btn" onclick="connectBroker('MT4')">Get the MT4 plugin →</button>
+      </div>
+
+      <div class="jl-broker">
+        <div class="jl-broker-status live">Direct API ✓</div>
         <div class="jl-broker-h">
           <div class="jl-broker-logo oanda">OA</div>
           <div>
@@ -593,7 +630,7 @@ tr.jl-row-new td{animation:jlPulseIn 2.5s ease-out 1;}
             <div class="jl-broker-sub">REST v20 · personal token</div>
           </div>
         </div>
-        <div class="jl-broker-body">Generate a personal access token at oanda.com → Manage API Access. Paste it here, we validate it, and pull every trade in your account immediately.</div>
+        <div class="jl-broker-body">Generate a personal access token at oanda.com → Manage API Access. Paste it here, we validate it, and pull every trade in your account immediately. No plugin needed.</div>
         <button class="jl-broker-btn" onclick="openOandaConnect()">Connect OANDA → live</button>
       </div>
 
@@ -2769,19 +2806,30 @@ function renderBrkStep(step){
     document.getElementById('brkTitle').textContent = 'Connect your trading account';
     document.getElementById('brkSub').textContent = 'Pick the platform or any regulated broker worldwide';
     body.innerHTML =
-      '<div class="brk-step">PICK A BROKER · LIVE API</div>' +
-      '<div class="brk-h">Connect a broker we sync live</div>' +
-      '<div class="brk-sub">Only brokers below have a real public API for retail accounts. Sign in with a personal token or read-only API key — we auto-pull every trade.</div>' +
-      // Quick-pick: only live brokers
-      '<div class="brk-pick-grid" style="margin-bottom:18px;">' +
+      '<div class="brk-step">PICK A BROKER · AUTO-SYNC</div>' +
+      '<div class="brk-h">Connect a broker we auto-sync</div>' +
+      '<div class="brk-sub">Two ways to auto-sync — both honest:<br><strong style="color:var(--green2);">Direct API</strong> (OANDA, more coming) signs in with a token, no install. <strong style="color:var(--green2);">Plugin Bridge</strong> (MT4/MT5) drops a small EA into your terminal — works for <strong>Vantage, IC Markets, Pepperstone, Tickmill</strong> and every other MT4/MT5 broker.</div>' +
+      // Quick-pick row 1: Plugin Bridges (covers most retail brokers)
+      '<div style="font-family:var(--f-mono);font-size:9.5px;color:var(--text3);font-weight:800;letter-spacing:.14em;text-transform:uppercase;margin:14px 0 8px;">⚙ Plugin Bridge · 500+ brokers</div>' +
+      '<div class="brk-pick-grid" style="margin-bottom:14px;">' +
+        '<div class="brk-pick" onclick="brkPick(\'MT4\')"><span class="brk-pick-emoji">📊</span><div class="brk-pick-name">MetaTrader 4</div><div class="brk-pick-sub">Plugin EA · auto-sync</div></div>' +
+        '<div class="brk-pick" onclick="brkPick(\'MT5\')"><span class="brk-pick-emoji">📈</span><div class="brk-pick-name">MetaTrader 5</div><div class="brk-pick-sub">Plugin EA · auto-sync</div></div>' +
+      '</div>' +
+      // Quick-pick row 2: Direct API
+      '<div style="font-family:var(--f-mono);font-size:9.5px;color:var(--text3);font-weight:800;letter-spacing:.14em;text-transform:uppercase;margin:14px 0 8px;">🔌 Direct API · token / OAuth</div>' +
+      '<div class="brk-pick-grid" style="margin-bottom:14px;">' +
         '<div class="brk-pick" onclick="openOandaConnect();closeBrkSim();"><span class="brk-pick-emoji">🌐</span><div class="brk-pick-name">OANDA</div><div class="brk-pick-sub">Live · REST v20</div></div>' +
         '<div class="brk-pick" style="opacity:.55;cursor:default;" onclick="toast(\'Coming this week\',\'success\')"><span class="brk-pick-emoji">🟡</span><div class="brk-pick-name">Binance</div><div class="brk-pick-sub">Coming soon</div></div>' +
         '<div class="brk-pick" style="opacity:.55;cursor:default;" onclick="toast(\'Coming this week\',\'success\')"><span class="brk-pick-emoji">🔵</span><div class="brk-pick-name">Coinbase</div><div class="brk-pick-sub">Coming soon</div></div>' +
       '</div>' +
-      '<div style="padding:14px 16px;margin-bottom:14px;background:rgba(245,158,11,.05);border:1px solid rgba(245,158,11,.28);border-radius:11px;font-family:var(--f-mono);font-size:10.5px;color:var(--text2);line-height:1.65;">' +
-        '<strong style="color:var(--yellow);">ℹ️ Why not MT4/MT5?</strong> MetaQuotes doesn\'t expose a remote login API for retail traders. There\'s no real way to sign in to your MT4/MT5 account from a third-party website. CSV import handles MT4/MT5 statements until we ship Binance/Kraken/IBKR.' +
-      '</div>' +
+      // Search the regulated-broker directory
+      '<div style="font-family:var(--f-mono);font-size:9.5px;color:var(--text3);font-weight:800;letter-spacing:.14em;text-transform:uppercase;margin:14px 0 8px;">🔎 Search the directory · 60+ regulated brokers</div>' +
+      '<div class="brk-search"><input class="brk-search-input" id="brkSearchInput" placeholder="Type a broker name… Vantage, IC Markets, Robinhood, Bybit…" oninput="renderBrkList()"></div>' +
+      '<div class="brk-list" id="brkList"></div>' +
       '<div class="brk-actions"><button class="brk-btn secondary" onclick="closeBrkSim()" style="flex:1;">Close</button></div>';
+    _brkFilters = { region: 'all', query: '' };
+    renderBrkList();
+    setTimeout(function(){var i = document.getElementById('brkSearchInput'); if (i) i.focus();}, 100);
   }
   else if (step === 'install'){
     // ─── Real install flow for MT4/MT5 — no fake login form ───
@@ -2955,6 +3003,46 @@ function renderBrkStep(step){
       '</div>';
   }
 }
+
+// ═══════════════════════════════════════════════════════════════════
+// In-page broker search — types into the small input above the grid
+// ═══════════════════════════════════════════════════════════════════
+window.gridBrkSearch = function(){
+  var input = document.getElementById('gridBrkSearch');
+  var resultsEl = document.getElementById('gridBrkResults');
+  if (!input || !resultsEl) return;
+  var q = input.value.trim().toLowerCase();
+  if (q.length < 2) { resultsEl.innerHTML = ''; return; }
+  var matches = (typeof BROKERS_DB !== 'undefined' ? BROKERS_DB : []).filter(function(b){
+    var hay = (b.name + ' ' + (b.regs||[]).join(' ') + ' ' + (b.platforms||[]).join(' ')).toLowerCase();
+    return hay.indexOf(q) >= 0;
+  }).slice(0, 6);
+  if (!matches.length) {
+    resultsEl.innerHTML = '<div style="padding:10px 12px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);border-radius:8px;font-family:var(--f-mono);font-size:10.5px;color:var(--text3);">No broker matched. If they support MT4/MT5 use the MT4/MT5 plugin above; otherwise <button onclick="connectBroker(\'CSV\')" style="background:none;border:none;color:var(--blue2);font:inherit;cursor:pointer;text-decoration:underline;">try CSV import</button>.</div>';
+    return;
+  }
+  resultsEl.innerHTML = matches.map(function(b){
+    var route, btnLbl;
+    if ((b.platforms||[]).indexOf('MT5') >= 0)      { route = 'gridPickPlatform(\''+b.name.replace(/'/g,"\\'")+'\',\'MT5\')'; btnLbl = '→ Connect via MT5 plugin'; }
+    else if ((b.platforms||[]).indexOf('MT4') >= 0) { route = 'gridPickPlatform(\''+b.name.replace(/'/g,"\\'")+'\',\'MT4\')'; btnLbl = '→ Connect via MT4 plugin'; }
+    else if (b.name === 'OANDA')                    { route = 'openOandaConnect()'; btnLbl = '→ Connect OANDA · live'; }
+    else                                            { route = "toast('"+b.name+" — coming soon. CSV import works for now.','success')"; btnLbl = 'Coming soon · use CSV'; }
+    var regs = (b.regs||[]).slice(0,3).map(function(r){return '<span class="brk-item-reg">'+r+'</span>';}).join('');
+    var plats = (b.platforms||[]).slice(0,3).map(function(p){return '<span class="brk-item-plat">'+p+'</span>';}).join('');
+    return '<div style="display:flex;align-items:center;gap:12px;padding:10px 12px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:9px;margin-top:6px;cursor:pointer;transition:.15s;" onmouseover="this.style.borderColor=\'rgba(14,165,233,.4)\'" onmouseout="this.style.borderColor=\'rgba(255,255,255,.06)\'" onclick="'+route+'">' +
+      '<div style="flex:1;min-width:0;">' +
+        '<div style="font-family:var(--f-sans);font-size:13.5px;font-weight:800;color:var(--text);">'+b.name+'</div>' +
+        '<div style="font-family:var(--f-mono);font-size:9.5px;color:var(--text3);font-weight:700;letter-spacing:.04em;margin-top:3px;display:flex;flex-wrap:wrap;gap:6px;">'+regs+plats+'</div>' +
+      '</div>' +
+      '<div style="font-family:var(--f-mono);font-size:10.5px;color:var(--blue2);font-weight:700;letter-spacing:.04em;flex-shrink:0;">'+btnLbl+'</div>' +
+    '</div>';
+  }).join('');
+};
+window.gridPickPlatform = function(brokerName, platform){
+  _brkState = { broker: platform, _displayName: brokerName };
+  document.getElementById('brkModal').classList.add('show');
+  renderBrkStep('install');
+};
 
 // ═══════════════════════════════════════════════════════════════════
 // OANDA — REAL live API connect flow
