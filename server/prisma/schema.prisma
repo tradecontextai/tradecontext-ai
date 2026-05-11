@@ -92,8 +92,30 @@ model User {
   profile           UserProfile?
   chatMessages      AiChatMessage[]
   tradeIdeas        TradeIdea[]
+  journalSyncTokens JournalSyncToken[]
 
   @@map("users")
+}
+
+// ───────────── JOURNAL SYNC TOKEN ─────────────
+// Per-user opaque tokens used by the MT4/MT5 Expert Advisor (and any custom
+// bot or TradingView webhook) to post trade fills directly to the journal
+// without needing a session cookie. One active token per user is enough for
+// the launch; rotation comes later.
+model JournalSyncToken {
+  id          String    @id @default(uuid())
+  userId      String    @map("user_id")
+  token       String    @unique
+  label       String?   // optional human-readable label e.g. "My MT4"
+  lastUsedAt  DateTime? @map("last_used_at")
+  fillsCount  Int       @default(0) @map("fills_count")
+  revoked     Boolean   @default(false)
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("journal_sync_tokens")
 }
 
 // ───────────── BROKERS ─────────────

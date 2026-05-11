@@ -13,6 +13,8 @@ import {
   getStats,
 } from '../services/journal.service';
 import { analyzeTradesForUser } from '../services/journal-ai.service';
+import { prisma } from '../config/db';
+import { randomToken } from '../lib/crypto';
 
 export const journalRouter = Router();
 
@@ -208,6 +210,41 @@ journalRouter.post('/sync', async (req, res, next) => {
   } catch (e) {
     next(e);
   }
+});
+
+// ──────── Sync tokens (for MT4/MT5/TradingView webhook bridges) ────────
+// One active token per user — re-issued on demand. The token never changes
+// once created so installed EAs keep working forever; rotation = revoke +
+// generate a new one.
+journalRouter.get('/token', async (req, res, next) => {
+  try {
+    const userId = req.user!.id;
+    let row = await prisma.journalSyncToken.findFirst({ where: { userId, revoked: false } });
+    if (!row) {
+      row = await prisma.journalSyncToken.create({
+        data: { userId, token: randomToken(24), label: 'Default · MT4 / MT5 / webhook' },
+      });
+    }
+    res.json({
+      token: row.token,
+      lastUsedAt: row.lastUsedAt,
+      fillsCount: row.fillsCount,
+      createdAt: row.createdAt,
+      label: row.label,
+    });
+  } catch (e) { next(e); }
+});
+
+// Rotate — revoke the old, issue a new one
+journalRouter.post('/token/rotate', async (req, res, next) => {
+  try {
+    const userId = req.user!.id;
+    await prisma.journalSyncToken.updateMany({ where: { userId, revoked: false }, data: { revoked: true } });
+    const row = await prisma.journalSyncToken.create({
+      data: { userId, token: randomToken(24), label: 'Rotated · ' + new Date().toISOString().slice(0,10) },
+    });
+    res.json({ token: row.token, createdAt: row.createdAt, label: row.label });
+  } catch (e) { next(e); }
 });
 
 // ──────── AI mistake auto-tagger ────────

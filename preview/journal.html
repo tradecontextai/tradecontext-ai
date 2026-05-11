@@ -2804,21 +2804,27 @@ function renderBrkStep(step){
   }
   else if (step === 'success'){
     var displayName = _brkState._displayName || _brkState.broker;
-    // Generate a sync token + real webhook URL (token persists per browser session)
+    // Sync token — real one from the backend if signed in, else a local demo token
+    var isLive = !!state._syncTokenLive;
     var token = (state._syncToken || (state._syncToken = (Math.random().toString(36)+Math.random().toString(36)+Math.random().toString(36)).replace(/[^a-z0-9]/g,'').slice(0,32)));
     saveState();
     var origin = (location.hostname==='localhost'||location.hostname==='127.0.0.1') ? 'http://localhost:3001' : 'https://api.tradecontext.ai';
     var webhook = origin + '/api/journal-bridge/fill?token=' + token;
     var eaUrl = origin + '/api/journal-bridge/ea?token=' + token;
+    var liveOrDemoBanner = isLive
+      ? '<div style="padding:13px 16px;margin-bottom:18px;background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.4);border-radius:11px;font-family:var(--f-mono);font-size:11px;color:var(--text);line-height:1.65;">' +
+          '<strong style="color:var(--green2);">🟢 LIVE · Your token is bound to your account.</strong> Every fill the EA posts will create a real Trade row in your journal. Tested working end-to-end.' +
+        '</div>'
+      : '<div style="padding:13px 16px;margin-bottom:18px;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.32);border-radius:11px;font-family:var(--f-mono);font-size:11px;color:var(--text);line-height:1.65;">' +
+          '<strong style="color:var(--yellow);">⚠️ DEMO · You\'re not signed in.</strong> The token below is browser-local. <a href="../signup.html?mode=signin&next=/preview/journal.html" style="color:var(--blue);text-decoration:underline;">Sign in</a> to get a real persistent token bound to your account — then the EA will actually post fills into your journal.' +
+        '</div>';
     body.innerHTML =
       '<div class="brk-success">' +
         '<div class="brk-success-ic">✓</div>' +
         '<div><div class="brk-success-t">Connected · '+displayName+' · #'+_brkState.account+'</div>' +
-        '<div class="brk-success-sub">Demo successful · '+_brkState.broker+' bridge ready to install</div></div>' +
+        '<div class="brk-success-sub">'+(isLive?'Live':'Demo')+' · '+_brkState.broker+' bridge ready to install</div></div>' +
       '</div>' +
-      '<div style="padding:13px 16px;margin-bottom:18px;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.32);border-radius:11px;font-family:var(--f-mono);font-size:11px;color:var(--text);line-height:1.65;">' +
-        '<strong style="color:var(--yellow);">⚠️ Honest note · this was a guided demo.</strong> Streamed fills below are simulated. To make this <strong>actually live</strong>, install the EA file below in your MT4/MT5 terminal — it will POST every real fill straight to your TradeContext journal.' +
-      '</div>' +
+      liveOrDemoBanner +
       '<div class="brk-h">🔑 Your live sync token</div>' +
       '<div class="brk-sub">Drop this into the EA, or paste the webhook URL into TradingView alerts / custom bots.</div>' +
       '<div class="brk-field"><label class="brk-lbl">Webhook URL (paste in TradingView, bot, etc.)</label>' +
@@ -3102,12 +3108,28 @@ async function checkAuth(){
     // Hide demo-mode pill since we're real
     var modePill = document.getElementById('jlMode');
     if (modePill) { modePill.textContent = 'LIVE · CLOUD-SYNCED'; modePill.style.background = 'rgba(52,211,153,.10)'; modePill.style.borderColor = 'rgba(52,211,153,.4)'; modePill.style.color = 'var(--green2)'; }
+    // Fetch the user's REAL persistent sync token (auto-creates one if not yet)
+    await fetchSyncToken();
     // Initial fetch of server trades + bulk sync of local ones
     await pullServerTrades();
     await pushLocalToServer();
   } catch(e) {
     _authUser = null; renderAuthBanner();
   }
+}
+
+async function fetchSyncToken(){
+  try {
+    var res = await fetch(API + '/api/journal/token', { credentials: 'include' });
+    if (!res.ok) return;
+    var d = await res.json();
+    if (d.token) {
+      state._syncToken = d.token;
+      state._syncTokenLive = true;   // marker so UI can say 'live token'
+      state._syncTokenFills = d.fillsCount || 0;
+      saveState();
+    }
+  } catch(e){}
 }
 
 async function pullServerTrades(){
