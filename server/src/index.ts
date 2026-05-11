@@ -34,6 +34,11 @@ app.use(
       if (env.NODE_ENV !== 'production' && /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
         return cb(null, true);
       }
+      // In dev, also accept file:// pages (browser sends Origin: "null" for these).
+      // Common when the user double-clicks dashboard.html instead of going via the static server.
+      if (env.NODE_ENV !== 'production' && origin === 'null') {
+        return cb(null, true);
+      }
       cb(new Error('CORS: origin not allowed: ' + origin));
     },
     credentials: true,
