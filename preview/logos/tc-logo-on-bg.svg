@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-label="TradeContext.ai">
+  <!--
+    TradeContext.ai — primary lockup on the page's brand background.
+    Dark navy (#03060d) base with the same two ambient aurora glows the
+    homepage runs, then the chart-mark tile + wordmark centred.
+    Use for: Twitter / LinkedIn banner cover, hero image, slide-deck title,
+    OG image, splash screen, any place that wants the brand atmosphere
+    baked in.
+  -->
+  <defs>
+    <linearGradient id="brandGrad" x1="0" y1="900" x2="900" y2="0">
+      <stop offset="0%" stop-color="#0ea5e9"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+    <linearGradient id="bgFill" x1="0" y1="0" x2="0" y2="900">
+      <stop offset="0%" stop-color="#03060d"/>
+      <stop offset="100%" stop-color="#070d1a"/>
+    </linearGradient>
+    <linearGradient id="tileBg" x1="0" y1="0" x2="160" y2="160">
+      <stop offset="0%" stop-color="#0a1628"/>
+      <stop offset="100%" stop-color="#0e1f3a"/>
+    </linearGradient>
+    <!-- Cyan ambient glow (top-left of page) -->
+    <radialGradient id="auraCyan" cx="15%" cy="-8%" r="70%">
+      <stop offset="0%"  stop-color="#0ea5e9" stop-opacity="0.18"/>
+      <stop offset="65%" stop-color="#0ea5e9" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Violet ambient glow (top-right of page) -->
+    <radialGradient id="auraViolet" cx="90%" cy="5%" r="60%">
+      <stop offset="0%"  stop-color="#8b5cf6" stop-opacity="0.16"/>
+      <stop offset="70%" stop-color="#8b5cf6" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Subtle green wash at bottom (matches site::before third stop) -->
+    <radialGradient id="auraGreen" cx="50%" cy="60%" r="55%">
+      <stop offset="0%"  stop-color="#34d399" stop-opacity="0.05"/>
+      <stop offset="80%" stop-color="#34d399" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Soft vignette so edges fall off cleanly -->
+    <radialGradient id="vignette" cx="50%" cy="50%" r="70%">
+      <stop offset="60%" stop-color="#000" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#000" stop-opacity="0.45"/>
+    </radialGradient>
+  </defs>
+
+  <!-- ┌─ Page background (matches CSS body + body::before stack) ─┐ -->
+  <rect width="1600" height="900" fill="url(#bgFill)"/>
+  <rect width="1600" height="900" fill="url(#auraCyan)"/>
+  <rect width="1600" height="900" fill="url(#auraViolet)"/>
+  <rect width="1600" height="900" fill="url(#auraGreen)"/>
+  <rect width="1600" height="900" fill="url(#vignette)"/>
+
+  <!-- ┌─ Centred logo lockup ─┐
+       Mark tile is 160×160, centred horizontally with the wordmark beside it.
+       Whole lockup is centred on the canvas. -->
+  <g transform="translate(440 370)">
+    <!-- Mark tile -->
+    <g>
+      <rect width="160" height="160" rx="36" fill="url(#tileBg)"/>
+      <rect width="160" height="160" rx="36" fill="none" stroke="rgba(14,165,233,0.45)" stroke-width="2"/>
+      <!-- Inner mark — chart line into glowing endpoint, scaled to fit -->
+      <g transform="translate(15 15) scale(3.61)">
+        <polyline points="4,28 12,20 20,24 28,10" fill="none" stroke="url(#brandGrad)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="28" cy="10" r="3.8" fill="url(#brandGrad)"/>
+        <circle cx="28" cy="10" r="1.7" fill="#fff"/>
+      </g>
+    </g>
+    <!-- Wordmark — single text element so .ai flows after TradeContext naturally -->
+    <text x="195" y="118" font-family="Inter, -apple-system, 'Segoe UI Variable', 'Segoe UI', Roboto, system-ui, sans-serif" font-weight="900" font-size="118" letter-spacing="-4.5">
+      <tspan fill="#e2eaf4">TradeContext</tspan><tspan fill="url(#brandGrad)">.ai</tspan>
+    </text>
+  </g>
+
+  <!-- ┌─ Tagline under the lockup ─┐ -->
+  <text x="800" y="595" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-weight="700" font-size="20" fill="#7a9ab8" letter-spacing="6">
+    TRADE WITH THE CONTEXT INSTITUTIONAL DESKS HAVE
+  </text>
+</svg>
