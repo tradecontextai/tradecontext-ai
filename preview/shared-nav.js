@@ -93,11 +93,11 @@
       <li>
         <a><span>Features</span> <span class="chev">▾</span></a>
         <div class="dd-menu">
-          <a href="../dashboard.html" class="dd-item primary"><span class="ic">📊</span>Full Dashboard</a>
+          <a href="dashboard-redesigned.html" class="dd-item primary"><span class="ic">📊</span>Full Dashboard <em style="color:#f59e0b;font-style:normal;font-size:9px;letter-spacing:.06em;text-transform:uppercase;font-weight:800;margin-left:4px;">NEW</em></a>
           <a href="journal.html" class="dd-item primary"><span class="ic">📓</span>AI Trading Journal <em style="color:#f59e0b;font-style:normal;font-size:9px;letter-spacing:.06em;text-transform:uppercase;font-weight:800;margin-left:4px;">NEW</em></a>
           <a href="backtest.html" class="dd-item"><span class="ic">📈</span>Backtest Engine</a>
           <div class="dd-divider"></div>
-          <a href="../dashboard.html" class="dd-item primary"><span class="ic">🚀</span>Open the desk →</a>
+          <a href="dashboard-redesigned.html" class="dd-item primary"><span class="ic">🚀</span>Open the desk →</a>
         </div>
       </li>
       <li><a href="homepage-redesigned.html#how"${act('how')}><span>How it works</span></a></li>
@@ -122,7 +122,7 @@
     <div class="nav-cta-row">
       <div class="live-pill"><div class="live-dot"></div>Live</div>
       <a href="../signup.html?mode=signin" class="nav-signin">Sign in</a>
-      <a href="../dashboard.html" class="nav-cta">Open the desk →</a>
+      <a href="dashboard-redesigned.html" class="nav-cta">Open the desk →</a>
     </div>
   </div>
 </nav>
