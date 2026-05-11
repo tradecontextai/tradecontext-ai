@@ -457,11 +457,11 @@ tr.jl-row-new td{animation:jlPulseIn 2.5s ease-out 1;}
 <!-- ═══════════ HERO ═══════════ -->
 <section class="tc-hero">
   <div class="tc-eyebrow">📓 AI TRADING JOURNAL · LIVE BROKER SYNC</div>
-  <h1 class="tc-h1">Every trade. Every <em>broker</em>. <br>Scored by AI.</h1>
+  <h1 class="tc-h1">Every trade. <em>Sign in</em>. <br>We pull the rest.</h1>
   <p class="tc-sub">
-    Connect <strong>MT4, MT5, OANDA, TradingView</strong> or any broker — and the journal auto-imports every trade, scores you on discipline, flags revenge-trade clusters, and contextualises each fill with the news that was breaking when you clicked.
+    Connect <strong>OANDA</strong> with a personal access token (Binance, Coinbase, Kraken and IBKR coming soon) — and the journal auto-imports every trade, scores you on discipline, flags revenge-trade clusters, and contextualises each fill with the news that was breaking when you clicked.
   </p>
-  <div class="tc-sub-foot">No CSV exports · No manual entry · No bullshit</div>
+  <div class="tc-sub-foot">Real API · read-only · encrypted</div>
 </section>
 
 <!-- What makes it elite -->
@@ -469,7 +469,7 @@ tr.jl-row-new td{animation:jlPulseIn 2.5s ease-out 1;}
   <div class="jl-vs-card win">AI discipline grading</div>
   <div class="jl-vs-card win">News context per trade</div>
   <div class="jl-vs-card win">Revenge-trade detection</div>
-  <div class="jl-vs-card win">MT4 / MT5 native sync</div>
+  <div class="jl-vs-card win">Direct broker API · live import</div>
   <div class="jl-vs-card win">Pre-trade plan + post-trade review</div>
   <div class="jl-vs-card win">Included in your $39.95/mo plan</div>
 </div>
@@ -573,81 +573,32 @@ tr.jl-row-new td{animation:jlPulseIn 2.5s ease-out 1;}
     </div>
   </div>
 
-  <!-- ═══════════ BROKER CONNECT ═══════════ -->
+  <!-- ═══════════ BROKER CONNECT — LIVE API ONLY ═══════════ -->
   <div class="jl-card" id="connect-brokers">
     <div class="jl-card-h">
       <div class="jl-card-h-t">🔌 Connect your broker</div>
-      <div class="jl-card-h-sub">Auto-import every fill · live · forever</div>
+      <div class="jl-card-h-sub">Direct API · real-time auto-import · read-only</div>
+    </div>
+    <div style="padding:14px 16px;margin-bottom:16px;background:rgba(14,165,233,.04);border:1px solid rgba(14,165,233,.22);border-radius:11px;font-family:var(--f-mono);font-size:11px;color:var(--text2);line-height:1.65;">
+      <strong style="color:var(--text);">Only brokers with a real API are listed below.</strong> No fake login forms, no EA bridges to install. Sign in with a personal access token / read-only API key — we auto-pull every fill into your journal.
     </div>
     <div class="jl-broker-grid">
 
       <div class="jl-broker">
-        <div class="jl-broker-status live">Connected</div>
-        <div class="jl-broker-h">
-          <div class="jl-broker-logo mt4">MT4</div>
-          <div>
-            <div class="jl-broker-name">MetaTrader 4</div>
-            <div class="jl-broker-sub">EA bridge · account #</div>
-          </div>
-        </div>
-        <div class="jl-broker-body">Drop our small EA on any chart. Trades stream in real-time. <strong>62 brokers</strong> supported including Pepperstone, IC Markets, FXCM.</div>
-        <button class="jl-broker-btn connected" onclick="connectBroker('MT4')">✓ Connected · #91827361</button>
-      </div>
-
-      <div class="jl-broker">
-        <div class="jl-broker-status">Available</div>
-        <div class="jl-broker-h">
-          <div class="jl-broker-logo mt5">MT5</div>
-          <div>
-            <div class="jl-broker-name">MetaTrader 5</div>
-            <div class="jl-broker-sub">EA bridge · multi-asset</div>
-          </div>
-        </div>
-        <div class="jl-broker-body">Same EA, MT5 build. Streams trades for forex, indices, crypto CFDs and equities. Two-way sync ready.</div>
-        <button class="jl-broker-btn" onclick="connectBroker('MT5')">Connect MT5 →</button>
-      </div>
-
-      <div class="jl-broker">
-        <div class="jl-broker-status live">Connected</div>
+        <div class="jl-broker-status live">Live API ✓</div>
         <div class="jl-broker-h">
           <div class="jl-broker-logo oanda">OA</div>
           <div>
             <div class="jl-broker-name">OANDA</div>
-            <div class="jl-broker-sub">REST v20 · live key</div>
+            <div class="jl-broker-sub">REST v20 · personal token</div>
           </div>
         </div>
-        <div class="jl-broker-body">Native OAuth flow. Sub-second fill push, full position book + historical trade pull from day one.</div>
-        <button class="jl-broker-btn connected" onclick="connectBroker('OANDA')">✓ Connected · Practice</button>
+        <div class="jl-broker-body">Generate a personal access token at oanda.com → Manage API Access. Paste it here, we validate it, and pull every trade in your account immediately.</div>
+        <button class="jl-broker-btn" onclick="openOandaConnect()">Connect OANDA → live</button>
       </div>
 
-      <div class="jl-broker">
-        <div class="jl-broker-status">Available</div>
-        <div class="jl-broker-h">
-          <div class="jl-broker-logo tv">TV</div>
-          <div>
-            <div class="jl-broker-name">TradingView</div>
-            <div class="jl-broker-sub">Webhook alerts</div>
-          </div>
-        </div>
-        <div class="jl-broker-body">Drop our webhook URL into any TradingView alert. Strategy fills stream straight into the journal with tags.</div>
-        <button class="jl-broker-btn" onclick="connectBroker('TradingView')">Get webhook URL →</button>
-      </div>
-
-      <div class="jl-broker">
-        <div class="jl-broker-status">Available</div>
-        <div class="jl-broker-h">
-          <div class="jl-broker-logo ic">IC</div>
-          <div>
-            <div class="jl-broker-name">IC Markets</div>
-            <div class="jl-broker-sub">cTrader · FIX API</div>
-          </div>
-        </div>
-        <div class="jl-broker-body">Direct cTrader account link via OAuth. Pulls full trade history + live positions. FIX bridge available for institutional accounts.</div>
-        <button class="jl-broker-btn" onclick="connectBroker('IC Markets')">Connect IC →</button>
-      </div>
-
-      <div class="jl-broker">
-        <div class="jl-broker-status">Available</div>
+      <div class="jl-broker" style="opacity:.7;">
+        <div class="jl-broker-status" style="background:rgba(245,158,11,.10);color:var(--yellow);border-color:rgba(245,158,11,.32);">Coming soon</div>
         <div class="jl-broker-h">
           <div class="jl-broker-logo binance">BN</div>
           <div>
@@ -655,34 +606,86 @@ tr.jl-row-new td{animation:jlPulseIn 2.5s ease-out 1;}
             <div class="jl-broker-sub">Read-only API key</div>
           </div>
         </div>
-        <div class="jl-broker-body">Spot + futures trade history pulled via read-only API. Funding fees, fees and PnL reconciled automatically.</div>
-        <button class="jl-broker-btn" onclick="connectBroker('Binance')">Connect Binance →</button>
+        <div class="jl-broker-body">Spot + futures + funding pulled via read-only API key (no withdrawal permission). Building this week.</div>
+        <button class="jl-broker-btn" onclick="toast('We\'ll email you when Binance + Bybit are live','success')">🔔 Notify me</button>
       </div>
 
-      <div class="jl-broker">
-        <div class="jl-broker-status">Available</div>
+      <div class="jl-broker" style="opacity:.7;">
+        <div class="jl-broker-status" style="background:rgba(245,158,11,.10);color:var(--yellow);border-color:rgba(245,158,11,.32);">Coming soon</div>
         <div class="jl-broker-h">
-          <div class="jl-broker-logo api">API</div>
+          <div class="jl-broker-logo" style="background:linear-gradient(135deg,#0052ff,#2151f5);">CB</div>
           <div>
-            <div class="jl-broker-name">Custom · REST API</div>
-            <div class="jl-broker-sub">Webhook · JSON</div>
+            <div class="jl-broker-name">Coinbase</div>
+            <div class="jl-broker-sub">Advanced Trade API</div>
           </div>
         </div>
-        <div class="jl-broker-body">Push your own fills from a custom bot or platform. Documented JSON schema, idempotent endpoints, instant ingest.</div>
-        <button class="jl-broker-btn" onclick="connectBroker('Custom API')">Get API docs →</button>
+        <div class="jl-broker-body">Spot trades via Advanced Trade REST API. HMAC SHA256 signing, read-only credential.</div>
+        <button class="jl-broker-btn" onclick="toast('We\'ll email you when Coinbase is live','success')">🔔 Notify me</button>
+      </div>
+
+      <div class="jl-broker" style="opacity:.7;">
+        <div class="jl-broker-status" style="background:rgba(245,158,11,.10);color:var(--yellow);border-color:rgba(245,158,11,.32);">Coming soon</div>
+        <div class="jl-broker-h">
+          <div class="jl-broker-logo" style="background:linear-gradient(135deg,#5e0db5,#8b5cf6);">KR</div>
+          <div>
+            <div class="jl-broker-name">Kraken</div>
+            <div class="jl-broker-sub">REST · API key</div>
+          </div>
+        </div>
+        <div class="jl-broker-body">Spot + futures fills, fee reconciliation. Read-only API key (Query Funds + Query Open/Closed Trades scopes only).</div>
+        <button class="jl-broker-btn" onclick="toast('We\'ll email you when Kraken is live','success')">🔔 Notify me</button>
+      </div>
+
+      <div class="jl-broker" style="opacity:.7;">
+        <div class="jl-broker-status" style="background:rgba(245,158,11,.10);color:var(--yellow);border-color:rgba(245,158,11,.32);">Coming soon</div>
+        <div class="jl-broker-h">
+          <div class="jl-broker-logo" style="background:linear-gradient(135deg,#d62800,#ff6b00);">IB</div>
+          <div>
+            <div class="jl-broker-name">Interactive Brokers</div>
+            <div class="jl-broker-sub">Client Portal · OAuth</div>
+          </div>
+        </div>
+        <div class="jl-broker-body">Multi-asset (equities, futures, options, forex) via the IBKR Client Portal API. Needs OAuth callback setup.</div>
+        <button class="jl-broker-btn" onclick="toast('We\'ll email you when IBKR is live','success')">🔔 Notify me</button>
+      </div>
+
+      <div class="jl-broker" style="opacity:.7;">
+        <div class="jl-broker-status" style="background:rgba(245,158,11,.10);color:var(--yellow);border-color:rgba(245,158,11,.32);">Coming soon</div>
+        <div class="jl-broker-h">
+          <div class="jl-broker-logo tv">TV</div>
+          <div>
+            <div class="jl-broker-name">TradingView</div>
+            <div class="jl-broker-sub">Alert webhooks</div>
+          </div>
+        </div>
+        <div class="jl-broker-body">Drop our webhook URL into any TradingView alert. Strategy fills + manual alerts ingest straight into the journal.</div>
+        <button class="jl-broker-btn" onclick="toast('We\'ll email you when TradingView is live','success')">🔔 Notify me</button>
       </div>
 
       <div class="jl-broker">
-        <div class="jl-broker-status">Available</div>
+        <div class="jl-broker-status live">Available now</div>
         <div class="jl-broker-h">
           <div class="jl-broker-logo csv">CSV</div>
           <div>
             <div class="jl-broker-name">CSV Import</div>
-            <div class="jl-broker-sub">For anything else</div>
+            <div class="jl-broker-sub">Any broker statement</div>
           </div>
         </div>
-        <div class="jl-broker-body">Got an export from cTrader, ThinkOrSwim, Interactive Brokers, NinjaTrader? Drop the CSV — auto-mapping detects the broker.</div>
+        <div class="jl-broker-body">Drop a CSV export from any broker — cTrader, MT4 statement, IBKR, ThinkOrSwim, NinjaTrader. Auto-detects column headers.</div>
         <button class="jl-broker-btn" onclick="connectBroker('CSV')">Upload CSV →</button>
+      </div>
+
+      <div class="jl-broker" style="opacity:.7;">
+        <div class="jl-broker-status" style="background:rgba(139,92,246,.10);color:var(--violet);border-color:rgba(139,92,246,.32);">Custom</div>
+        <div class="jl-broker-h">
+          <div class="jl-broker-logo api">API</div>
+          <div>
+            <div class="jl-broker-name">Custom REST · Bot</div>
+            <div class="jl-broker-sub">JSON webhook</div>
+          </div>
+        </div>
+        <div class="jl-broker-body">Push fills from any custom bot via documented JSON webhook with your personal token. <a href="#" onclick="openCustomApi(event)" style="color:var(--blue2);">Get docs + URL →</a></div>
+        <button class="jl-broker-btn" onclick="openCustomApi()">Open docs</button>
       </div>
 
     </div>
@@ -1125,6 +1128,36 @@ tr.jl-row-new td{animation:jlPulseIn 2.5s ease-out 1;}
       <div class="jl-modal-lbl" style="margin-bottom:10px;">📂 RECENT NOTES</div>
       <div id="notesList" style="max-height:240px;overflow-y:auto;"></div>
     </div>
+  </div>
+</div>
+
+<!-- ═══════ OANDA REAL CONNECT MODAL ═══════ -->
+<div class="jl-modal" id="oandaModal">
+  <div class="jl-modal-card" style="max-width:560px;">
+    <button class="jl-modal-close" onclick="closeM('oandaModal')">×</button>
+    <div class="jl-modal-h">
+      <div class="jl-broker-logo oanda" style="width:48px;height:48px;border-radius:11px;font-size:14px;">OA</div>
+      <div>
+        <div class="jl-modal-title">Connect OANDA · Live</div>
+        <div class="jl-modal-sub">REST v20 · read-only · encrypted on our side</div>
+      </div>
+    </div>
+    <div id="oandaModalBody"></div>
+  </div>
+</div>
+
+<!-- ═══════ CUSTOM API DOCS MODAL ═══════ -->
+<div class="jl-modal" id="customApiModal">
+  <div class="jl-modal-card" style="max-width:680px;">
+    <button class="jl-modal-close" onclick="closeM('customApiModal')">×</button>
+    <div class="jl-modal-h">
+      <div class="jl-broker-logo api" style="width:48px;height:48px;border-radius:11px;font-size:14px;">API</div>
+      <div>
+        <div class="jl-modal-title">Custom REST · Webhook</div>
+        <div class="jl-modal-sub">Push fills from your own bot · JSON</div>
+      </div>
+    </div>
+    <div id="customApiBody"></div>
   </div>
 </div>
 
@@ -2736,28 +2769,19 @@ function renderBrkStep(step){
     document.getElementById('brkTitle').textContent = 'Connect your trading account';
     document.getElementById('brkSub').textContent = 'Pick the platform or any regulated broker worldwide';
     body.innerHTML =
-      '<div class="brk-step">STEP 1 of 4</div>' +
-      '<div class="brk-h">Pick your platform or broker</div>' +
-      '<div class="brk-sub">MetaTrader works for ' + BROKERS_DB.filter(function(b){return (b.platforms||[]).some(function(p){return p==='MT4'||p==='MT5';});}).length + '+ brokers. OANDA has a native API. Or search the directory of '+BROKERS_DB.length+' regulated brokers below.</div>' +
-      // Quick-pick: MT4 / MT5 / OANDA
+      '<div class="brk-step">PICK A BROKER · LIVE API</div>' +
+      '<div class="brk-h">Connect a broker we sync live</div>' +
+      '<div class="brk-sub">Only brokers below have a real public API for retail accounts. Sign in with a personal token or read-only API key — we auto-pull every trade.</div>' +
+      // Quick-pick: only live brokers
       '<div class="brk-pick-grid" style="margin-bottom:18px;">' +
-        '<div class="brk-pick" onclick="brkPick(\'MT4\')"><span class="brk-pick-emoji">📊</span><div class="brk-pick-name">MetaTrader 4</div><div class="brk-pick-sub">Universal EA bridge</div></div>' +
-        '<div class="brk-pick" onclick="brkPick(\'MT5\')"><span class="brk-pick-emoji">📈</span><div class="brk-pick-name">MetaTrader 5</div><div class="brk-pick-sub">Multi-asset</div></div>' +
-        '<div class="brk-pick" onclick="brkPick(\'OANDA\')"><span class="brk-pick-emoji">🌐</span><div class="brk-pick-name">OANDA</div><div class="brk-pick-sub">REST v20 OAuth</div></div>' +
+        '<div class="brk-pick" onclick="openOandaConnect();closeBrkSim();"><span class="brk-pick-emoji">🌐</span><div class="brk-pick-name">OANDA</div><div class="brk-pick-sub">Live · REST v20</div></div>' +
+        '<div class="brk-pick" style="opacity:.55;cursor:default;" onclick="toast(\'Coming this week\',\'success\')"><span class="brk-pick-emoji">🟡</span><div class="brk-pick-name">Binance</div><div class="brk-pick-sub">Coming soon</div></div>' +
+        '<div class="brk-pick" style="opacity:.55;cursor:default;" onclick="toast(\'Coming this week\',\'success\')"><span class="brk-pick-emoji">🔵</span><div class="brk-pick-name">Coinbase</div><div class="brk-pick-sub">Coming soon</div></div>' +
       '</div>' +
-      '<div style="font-family:var(--f-mono);font-size:9.5px;color:var(--text3);font-weight:800;letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px;">Or search the regulated-broker directory</div>' +
-      '<div class="brk-search"><input class="brk-search-input" id="brkSearchInput" placeholder="Type a broker name… IG, Pepperstone, IC Markets, Robinhood, Binance…" oninput="renderBrkList()"></div>' +
-      '<div class="brk-region-tabs" id="brkRegionTabs">' +
-        ['all','uk','eu','us','au','asia','crypto','prop'].map(function(r){
-          var lbl = {all:'All ('+BROKERS_DB.length+')', uk:'UK · FCA', eu:'Europe', us:'US · NFA/SEC', au:'Australia · ASIC', asia:'Asia · MAS', crypto:'Crypto', prop:'Prop firms'}[r];
-          return '<button class="brk-region-tab'+(r==='all'?' on':'')+'" data-r="'+r+'" onclick="setBrkRegion(\''+r+'\')">'+lbl+'</button>';
-        }).join('') +
+      '<div style="padding:14px 16px;margin-bottom:14px;background:rgba(245,158,11,.05);border:1px solid rgba(245,158,11,.28);border-radius:11px;font-family:var(--f-mono);font-size:10.5px;color:var(--text2);line-height:1.65;">' +
+        '<strong style="color:var(--yellow);">ℹ️ Why not MT4/MT5?</strong> MetaQuotes doesn\'t expose a remote login API for retail traders. There\'s no real way to sign in to your MT4/MT5 account from a third-party website. CSV import handles MT4/MT5 statements until we ship Binance/Kraken/IBKR.' +
       '</div>' +
-      '<div class="brk-list" id="brkList"></div>' +
-      '<div class="brk-actions"><button class="brk-btn secondary" onclick="closeBrkSim()" style="flex:0 0 auto;padding:13px 22px;">Maybe later</button></div>';
-    _brkFilters = { region: 'all', query: '' };
-    renderBrkList();
-    setTimeout(function(){var i = document.getElementById('brkSearchInput'); if (i) i.focus();}, 100);
+      '<div class="brk-actions"><button class="brk-btn secondary" onclick="closeBrkSim()" style="flex:1;">Close</button></div>';
   }
   else if (step === 'install'){
     // ─── Real install flow for MT4/MT5 — no fake login form ───
@@ -2931,6 +2955,151 @@ function renderBrkStep(step){
       '</div>';
   }
 }
+
+// ═══════════════════════════════════════════════════════════════════
+// OANDA — REAL live API connect flow
+// ═══════════════════════════════════════════════════════════════════
+window.openOandaConnect = function(){
+  renderOandaStep('intro');
+  openM('oandaModal');
+};
+function renderOandaStep(step, ctx){
+  var body = document.getElementById('oandaModalBody');
+  if (!body) return;
+  if (step === 'intro'){
+    body.innerHTML =
+      (_authUser
+        ? '<div style="padding:13px 16px;margin-bottom:16px;background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.32);border-radius:11px;font-family:var(--f-mono);font-size:11px;color:var(--text);line-height:1.65;"><strong style="color:var(--green2);">🟢 Live.</strong> Trades will land in your real journal — already-signed in as <strong>'+(_authUser.email||'you')+'</strong>.</div>'
+        : '<div style="padding:13px 16px;margin-bottom:16px;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.32);border-radius:11px;font-family:var(--f-mono);font-size:11px;color:var(--text);line-height:1.65;"><strong style="color:var(--yellow);">⚠️ Not signed in.</strong> The OANDA connection saves to your account — <a href="../signup.html?mode=signin&next=/preview/journal.html" style="color:var(--blue);text-decoration:underline;">sign in first</a>, then come back.</div>') +
+      '<div class="jl-modal-help" style="margin-bottom:14px;">' +
+        '<strong style="color:var(--text);">How to get your token (~30 seconds):</strong><br>' +
+        '1. Log in at <a href="https://www.oanda.com/" target="_blank" rel="noopener" style="color:var(--blue2);">oanda.com</a><br>' +
+        '2. Go to <strong>My Services → Manage API Access</strong><br>' +
+        '3. Click <strong>Generate</strong> next to <em>Personal Access Token</em><br>' +
+        '4. Copy the token, paste it below.' +
+      '</div>' +
+      '<div class="jl-row-2">' +
+        '<div class="jl-modal-field"><label class="jl-modal-lbl">Environment</label>' +
+          '<select class="jl-select" id="oandaEnv">' +
+            '<option value="practice">Practice (demo)</option>' +
+            '<option value="live">Live</option>' +
+          '</select>' +
+        '</div>' +
+        '<div class="jl-modal-field"><label class="jl-modal-lbl">Account ID <span style="font-family:var(--f-sans);font-weight:600;color:var(--text3);text-transform:none;letter-spacing:0;margin-left:6px;">(format like 101-001-12345-001)</span></label><input class="jl-modal-input" id="oandaAcct" placeholder="101-001-…"></div>' +
+      '</div>' +
+      '<div class="jl-modal-field"><label class="jl-modal-lbl">Personal Access Token</label><input class="jl-modal-input" id="oandaToken" type="password" placeholder="paste here · never shown again"></div>' +
+      '<div class="jl-modal-actions">' +
+        '<button class="jl-modal-btn secondary" onclick="closeM(\'oandaModal\')">Cancel</button>' +
+        '<button class="jl-modal-btn primary" onclick="submitOandaConnect()">Validate + Connect →</button>' +
+      '</div>';
+  }
+  else if (step === 'syncing'){
+    body.innerHTML =
+      '<div style="padding:40px 20px;text-align:center;">' +
+        '<div class="bt-spinner" style="margin:0 auto 18px;"></div>' +
+        '<div style="font-family:var(--f-sans);font-size:15px;font-weight:800;margin-bottom:6px;">'+(ctx?.title||'Connecting to OANDA…')+'</div>' +
+        '<div style="font-family:var(--f-mono);font-size:11px;color:var(--text3);letter-spacing:.06em;">'+(ctx?.sub||'Validating token…')+'</div>' +
+      '</div>';
+  }
+  else if (step === 'success'){
+    body.innerHTML =
+      '<div style="padding:18px;background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.4);border-radius:12px;margin-bottom:18px;display:flex;align-items:center;gap:14px;">' +
+        '<div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#10b981,#34d399);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;">✓</div>' +
+        '<div>' +
+          '<div style="font-family:var(--f-sans);font-size:15px;font-weight:800;color:var(--green2);">OANDA connected · '+(ctx?.env||'')+'</div>' +
+          '<div style="font-family:var(--f-mono);font-size:10.5px;color:var(--text3);font-weight:700;letter-spacing:.06em;margin-top:3px;">'+(ctx?.imported||0)+' trades imported · '+(ctx?.fetched||0)+' fetched from OANDA</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="jl-modal-help">' +
+        'New trades will be available next time you click <strong>Sync OANDA</strong> from your journal. Background polling lands in a future update — for now, hit Sync after a trading session.' +
+      '</div>' +
+      '<div class="jl-modal-actions"><button class="jl-modal-btn primary" onclick="closeM(\'oandaModal\');render();" style="flex:1;">Open my journal →</button></div>';
+  }
+  else if (step === 'error'){
+    body.innerHTML =
+      '<div style="padding:18px;background:rgba(248,113,113,.06);border:1px solid rgba(248,113,113,.4);border-radius:12px;margin-bottom:18px;">' +
+        '<div style="font-family:var(--f-sans);font-size:14px;font-weight:800;color:var(--red2);margin-bottom:6px;">⚠ '+(ctx?.title||'Connection failed')+'</div>' +
+        '<div style="font-family:var(--f-mono);font-size:11px;color:var(--text2);line-height:1.6;">'+(ctx?.message||'Check your token + account ID and try again.')+'</div>' +
+      '</div>' +
+      '<div class="jl-modal-actions">' +
+        '<button class="jl-modal-btn secondary" onclick="closeM(\'oandaModal\')">Cancel</button>' +
+        '<button class="jl-modal-btn primary" onclick="renderOandaStep(\'intro\')">Try again</button>' +
+      '</div>';
+  }
+}
+window.submitOandaConnect = async function(){
+  var env = document.getElementById('oandaEnv').value;
+  var accountId = document.getElementById('oandaAcct').value.trim();
+  var token = document.getElementById('oandaToken').value.trim();
+  if (!token || !accountId) { toast('Token + account ID both required', 'error'); return; }
+  if (!_authUser) { toast('Sign in first — OANDA links to your account', 'error'); return; }
+
+  renderOandaStep('syncing', { title:'Validating with OANDA…', sub:'/v3/accounts → checking token + permissions' });
+
+  try {
+    var connectRes = await fetch(API + '/api/broker/oanda/connect', {
+      method:'POST', credentials:'include',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ token, accountId, environment: env }),
+    });
+    if (!connectRes.ok) {
+      var err = await connectRes.json().catch(function(){return{};});
+      var code = err.error?.code || err.code;
+      var msg = err.error?.message || 'OANDA refused the credentials.';
+      var title = code === 'OANDA_INVALID_TOKEN' ? 'Invalid token' : code === 'NOT_CONNECTED' ? 'Account not accessible' : 'Connection failed';
+      renderOandaStep('error', { title, message: msg });
+      return;
+    }
+    renderOandaStep('syncing', { title:'Pulling your trade history…', sub:'Importing last 200 trades' });
+
+    var importRes = await fetch(API + '/api/broker/oanda/import', {
+      method:'POST', credentials:'include',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ limit: 200 }),
+    });
+    if (!importRes.ok) {
+      var err = await importRes.json().catch(function(){return{};});
+      renderOandaStep('error', { title:'Import partially failed', message: err.error?.message || 'Trades may still appear next sync.' });
+      return;
+    }
+    var data = await importRes.json();
+    renderOandaStep('success', { env, imported: data.imported, fetched: data.fetched });
+    // Refresh the journal trades
+    await pullServerTrades();
+    render();
+    toast('🟢 OANDA connected · '+data.imported+' trades imported', 'success');
+  } catch(e) {
+    renderOandaStep('error', { title:'Network error', message: String(e && e.message || e) });
+  }
+};
+
+// ═══════════════════════════════════════════════════════════════════
+// CUSTOM API docs modal
+// ═══════════════════════════════════════════════════════════════════
+window.openCustomApi = function(e){
+  if (e && e.preventDefault) e.preventDefault();
+  var token = state._syncToken || '<sign-in-to-get-real-token>';
+  var origin = (location.hostname==='localhost'||location.hostname==='127.0.0.1') ? 'http://localhost:3001' : 'https://api.tradecontext.ai';
+  var url = origin + '/api/journal-bridge/fill?token=' + token;
+  var sample = JSON.stringify({
+    symbol: 'XAU/USD', side: 'long', qty: 1,
+    entryPrice: 3120.5, exitPrice: 3145.2, pnl: 24.7,
+    openedAt: '2026-05-11T08:00:00Z',
+    closedAt: '2026-05-11T11:23:00Z',
+    broker: 'My Bot',
+    externalId: 'deal-99001'
+  }, null, 2);
+  document.getElementById('customApiBody').innerHTML =
+    '<div class="jl-modal-help" style="margin-bottom:14px;">Push trade fills from <strong>any bot, script, or platform</strong> with one HTTP POST. Token is single-purpose: receive fills only. No withdrawal permission, no read access to anything else.</div>' +
+    '<div class="jl-modal-field"><label class="jl-modal-lbl">Webhook URL</label>' +
+      '<div style="display:flex;gap:8px;"><input class="jl-modal-input" id="customApiUrl" value="'+url+'" readonly>' +
+      '<button class="jl-modal-btn primary" onclick="copyText(this,\'customApiUrl\')" style="flex:0 0 auto;padding:11px 16px;">📋 Copy</button></div></div>' +
+    '<div class="jl-modal-field"><label class="jl-modal-lbl">Expected JSON body</label>' +
+      '<pre style="background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.06);padding:14px;border-radius:9px;font-family:var(--f-mono);font-size:11px;color:var(--text2);overflow-x:auto;line-height:1.6;">'+sample+'</pre></div>' +
+    '<div class="jl-modal-help"><strong>Required:</strong> symbol, side (long/short), entryPrice, openedAt. <strong>Optional:</strong> exitPrice, closedAt, qty, pnl, pnlR, stopLoss, takeProfit, broker, externalId (for dedup), setupType.</div>' +
+    '<div class="jl-modal-actions"><button class="jl-modal-btn primary" onclick="closeM(\'customApiModal\')" style="flex:1;">Got it</button></div>';
+  openM('customApiModal');
+};
 
 window.copyText = function(btn, inputId){
   var el = document.getElementById(inputId);
