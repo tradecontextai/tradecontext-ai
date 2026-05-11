@@ -120,7 +120,7 @@
     </ul>
     <div class="nav-cta-row">
       <div class="live-pill"><div class="live-dot"></div>Live</div>
-      <a href="../signup.html?mode=signin" class="nav-signin">Sign in</a>
+      <a href="signup.html?mode=signin" class="nav-signin">Sign in</a>
       <a href="dashboard-redesigned.html" class="nav-cta">Open the desk →</a>
     </div>
   </div>

@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign in / Sign up · TradeContext.ai</title>
+<meta name="description" content="Sign in to your TradeContext.ai account or create a new one. One plan · $39.95/mo · 14-day money-back guarantee · cancel any time.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Crect width='36' height='36' rx='8' fill='%230a1628'/%3E%3Cpolyline points='4,28 12,20 20,24 28,10' fill='none' stroke='%230ea5e9' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='28' cy='10' r='3.5' fill='%230ea5e9'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#03060d;--bg2:#070d1a;--bg3:#0c1626;
+  --border:#142035;--border-strong:#1f2e4a;
+  --blue:#0ea5e9;--blue2:#38bdf8;--violet:#8b5cf6;
+  --green:#10b981;--green2:#34d399;
+  --yellow:#f59e0b;--red:#ef4444;--red2:#f87171;
+  --text:#e2eaf4;--text2:#a5b8d0;--text3:#7a9ab8;--text4:#3a5570;
+  --f-sans:'Inter',sans-serif;--f-mono:'JetBrains Mono',monospace;
+  --grad-prem:linear-gradient(135deg,#0ea5e9 0%,#8b5cf6 100%);
+  --ease-out-quart:cubic-bezier(.25,1,.5,1);
+  --ease-out-expo:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--f-sans);font-size:14.5px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden;min-height:100vh;display:flex;flex-direction:column;}
+a{color:inherit;text-decoration:none;}
+
+/* Ambient aurora — same chrome as the rest of the site */
+body::before{content:'';position:fixed;inset:0;z-index:-2;pointer-events:none;background:radial-gradient(ellipse 1100px 700px at 15% -8%,rgba(14,165,233,.18),transparent 65%),radial-gradient(ellipse 900px 600px at 90% 5%,rgba(139,92,246,.16),transparent 70%);filter:blur(40px);opacity:.85;}
+body::after{content:'';position:fixed;inset:-50%;z-index:-1;pointer-events:none;background:conic-gradient(from 0deg at 50% 50%,transparent 0deg,rgba(14,165,233,.025) 60deg,transparent 120deg,rgba(139,92,246,.03) 180deg,transparent 240deg,rgba(52,211,153,.02) 300deg,transparent 360deg);animation:auroraSpin 90s linear infinite;mix-blend-mode:screen;}
+@keyframes auroraSpin{to{transform:rotate(360deg);}}
+
+/* Top bar — minimal, just brand */
+.au-top{padding:22px 32px;display:flex;align-items:center;justify-content:space-between;}
+.brand{display:inline-flex;align-items:center;font-size:19px;font-weight:900;letter-spacing:-.03em;color:var(--text);line-height:1;text-decoration:none;}
+.brand-mark{width:28px;height:28px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0a1628,#0e1f3a);border:1px solid rgba(14,165,233,.32);margin-right:8px;}
+.brand .ai{background:var(--grad-prem);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:800;}
+.au-top-link{font-family:var(--f-mono);font-size:11px;color:var(--text3);font-weight:700;letter-spacing:.06em;}
+.au-top-link a{color:var(--blue2);}
+.au-top-link a:hover{color:var(--text);}
+
+/* Main center stage */
+.au-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:30px 24px 60px;}
+.au-card{width:100%;max-width:460px;background:rgba(7,13,26,.78);border:1px solid rgba(255,255,255,.07);border-radius:18px;backdrop-filter:blur(22px) saturate(1.4);-webkit-backdrop-filter:blur(22px) saturate(1.4);overflow:hidden;box-shadow:0 28px 80px rgba(0,0,0,.55);}
+.au-card-h{padding:32px 32px 0;text-align:center;}
+.au-eyebrow{display:inline-flex;align-items:center;gap:7px;padding:5px 13px;background:rgba(14,165,233,.08);border:1px solid rgba(14,165,233,.28);border-radius:100px;font-family:var(--f-mono);font-size:10px;font-weight:800;color:var(--blue2);letter-spacing:.16em;text-transform:uppercase;margin-bottom:14px;}
+.au-eyebrow::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--blue2);box-shadow:0 0 6px var(--blue2);animation:lp 1.6s ease-in-out infinite;}
+@keyframes lp{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.55;transform:scale(.85);}}
+.au-title{font-family:var(--f-sans);font-size:30px;font-weight:900;letter-spacing:-.02em;line-height:1.12;margin-bottom:8px;}
+.au-title em{font-style:normal;background:var(--grad-prem);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.au-sub{font-size:14px;color:var(--text2);max-width:340px;margin:0 auto 22px;line-height:1.55;}
+
+/* Tabs */
+.au-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:6px;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.05);border-radius:11px;margin:0 32px;}
+.au-tab{padding:11px;background:transparent;border:none;color:var(--text2);font-family:var(--f-sans);font-size:13.5px;font-weight:700;border-radius:8px;cursor:pointer;letter-spacing:.02em;transition:.22s var(--ease-out-quart);position:relative;}
+.au-tab:hover{color:var(--text);}
+.au-tab.on{background:linear-gradient(135deg,rgba(14,165,233,.18),rgba(139,92,246,.12));color:#fff;box-shadow:0 0 0 1px rgba(14,165,233,.4) inset;}
+
+/* Forms — both share the same field style */
+.au-form{padding:24px 32px 32px;display:none;animation:formIn .25s var(--ease-out-quart);}
+.au-form.on{display:block;}
+@keyframes formIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.au-field{margin-bottom:14px;}
+.au-lbl{display:flex;align-items:center;justify-content:space-between;font-family:var(--f-mono);font-size:9.5px;font-weight:800;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;}
+.au-lbl a{color:var(--blue2);text-transform:none;letter-spacing:0;font-weight:600;font-size:11px;font-family:var(--f-sans);}
+.au-input-wrap{position:relative;}
+.au-input{width:100%;padding:13px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:var(--text);font-family:var(--f-sans);font-size:14.5px;border-radius:10px;outline:none;transition:.18s var(--ease-out-quart);}
+.au-input:focus{border-color:rgba(14,165,233,.5);box-shadow:0 0 0 3px rgba(14,165,233,.12);}
+.au-input.has-error{border-color:rgba(248,113,113,.55);}
+.au-toggle-eye{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text3);cursor:pointer;padding:6px;font-size:14px;}
+.au-toggle-eye:hover{color:var(--text);}
+.au-meter{height:3px;background:rgba(255,255,255,.05);border-radius:100px;overflow:hidden;margin-top:7px;}
+.au-meter-fill{height:100%;width:0;background:linear-gradient(90deg,#ef4444,#f59e0b,#34d399);transition:width .25s ease;border-radius:100px;}
+.au-meter-hint{font-family:var(--f-mono);font-size:10px;color:var(--text3);font-weight:700;letter-spacing:.04em;margin-top:5px;}
+.au-checkbox{display:flex;align-items:flex-start;gap:9px;font-size:12.5px;color:var(--text2);line-height:1.55;margin:14px 0 18px;cursor:pointer;}
+.au-checkbox input{margin-top:2px;accent-color:var(--blue);flex-shrink:0;}
+.au-checkbox a{color:var(--blue2);}
+.au-submit{width:100%;padding:13px;background:var(--grad-prem);color:#fff;border:none;border-radius:11px;font-family:var(--f-sans);font-size:14px;font-weight:800;cursor:pointer;letter-spacing:.04em;transition:.22s var(--ease-out-back, cubic-bezier(.34,1.56,.64,1));box-shadow:0 14px 32px -12px rgba(14,165,233,.6),inset 0 1px 0 rgba(255,255,255,.18);}
+.au-submit:hover{transform:translateY(-1px);box-shadow:0 18px 38px -10px rgba(14,165,233,.7),inset 0 1px 0 rgba(255,255,255,.18);}
+.au-submit:disabled{opacity:.55;cursor:not-allowed;transform:none;filter:grayscale(.3);}
+
+.au-error{padding:11px 14px;background:rgba(248,113,113,.06);border:1px solid rgba(248,113,113,.32);border-radius:10px;font-family:var(--f-mono);font-size:11.5px;color:var(--red2);line-height:1.5;font-weight:700;margin-bottom:14px;display:none;}
+.au-error.show{display:block;}
+.au-success{padding:11px 14px;background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.32);border-radius:10px;font-family:var(--f-mono);font-size:11.5px;color:var(--green2);line-height:1.5;font-weight:700;margin-bottom:14px;display:none;}
+.au-success.show{display:block;}
+
+/* Divider + social */
+.au-divider{display:flex;align-items:center;gap:10px;margin:18px 0;font-family:var(--f-mono);font-size:10px;color:var(--text3);font-weight:700;letter-spacing:.1em;text-transform:uppercase;}
+.au-divider::before,.au-divider::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.06);}
+
+.au-social-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.au-social{padding:11px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.08);color:var(--text);font-family:var(--f-sans);font-size:13px;font-weight:700;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:.18s var(--ease-out-quart);}
+.au-social:hover{border-color:rgba(14,165,233,.32);background:rgba(14,165,233,.04);}
+.au-social svg{width:16px;height:16px;flex-shrink:0;}
+
+/* Footer card */
+.au-foot-link{padding:18px 32px;text-align:center;font-family:var(--f-mono);font-size:11px;color:var(--text3);font-weight:700;letter-spacing:.04em;background:rgba(0,0,0,.18);border-top:1px solid rgba(255,255,255,.04);}
+.au-foot-link a{color:var(--blue2);}
+
+/* What-you-get strip */
+.au-perks{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:600px;margin:28px auto 0;font-family:var(--f-mono);font-size:11px;color:var(--text3);font-weight:700;letter-spacing:.04em;text-align:center;}
+.au-perk{display:flex;flex-direction:column;align-items:center;gap:6px;}
+.au-perk-ic{font-size:18px;}
+@media (max-width:540px){.au-perks{grid-template-columns:1fr;text-align:left;}.au-perk{flex-direction:row;}}
+
+.au-page-foot{padding:20px;text-align:center;font-family:var(--f-mono);font-size:10.5px;color:var(--text3);letter-spacing:.06em;}
+.au-page-foot a{color:var(--blue);}
+</style>
+</head>
+<body>
+
+<!-- Top bar -->
+<div class="au-top">
+  <a href="homepage-redesigned.html" class="brand">
+    <span class="brand-mark">
+      <svg width="18" height="18" viewBox="0 0 36 36" fill="none">
+        <polyline points="4,28 12,20 20,24 28,10" fill="none" stroke="url(#bg)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="28" cy="10" r="3.8" fill="url(#bg)"/>
+        <circle cx="28" cy="10" r="1.7" fill="#fff"/>
+        <defs><linearGradient id="bg" x1="0" y1="36" x2="36" y2="0"><stop offset="0%" stop-color="#0ea5e9"/><stop offset="100%" stop-color="#8b5cf6"/></linearGradient></defs>
+      </svg>
+    </span>
+    <span class="word">TradeContext<span class="ai">.ai</span></span>
+  </a>
+  <div class="au-top-link">Trouble? <a href="mailto:hello@tradecontext.ai">hello@tradecontext.ai</a></div>
+</div>
+
+<!-- Main -->
+<main class="au-wrap">
+  <div class="au-card">
+
+    <div class="au-card-h">
+      <div class="au-eyebrow" id="auEyebrow">WELCOME BACK</div>
+      <h1 class="au-title" id="auTitle">Sign in to <em>your desk</em></h1>
+      <p class="au-sub" id="auSub">Your journal · broker connections · AI coach context all sync across devices.</p>
+    </div>
+
+    <div class="au-tabs" role="tablist">
+      <button class="au-tab on" id="tabLogin"  role="tab" onclick="switchTab('login')">Login</button>
+      <button class="au-tab"    id="tabSignup" role="tab" onclick="switchTab('signup')">Sign Up</button>
+    </div>
+
+    <!-- ════ LOGIN FORM ════ -->
+    <form class="au-form on" id="loginForm" onsubmit="return submitAuth(event,'login')" autocomplete="on">
+      <div class="au-error" id="loginError"></div>
+      <div class="au-success" id="loginSuccess"></div>
+
+      <div class="au-field">
+        <label class="au-lbl" for="loginEmail">Email</label>
+        <div class="au-input-wrap"><input class="au-input" id="loginEmail" type="email" placeholder="you@example.com" required autocomplete="email"></div>
+      </div>
+
+      <div class="au-field">
+        <label class="au-lbl" for="loginPassword">
+          Password
+          <a href="#" onclick="openForgot(event)">Forgot password?</a>
+        </label>
+        <div class="au-input-wrap">
+          <input class="au-input" id="loginPassword" type="password" placeholder="••••••••" required autocomplete="current-password">
+          <button class="au-toggle-eye" type="button" onclick="toggleEye('loginPassword',this)" title="Show / hide">👁</button>
+        </div>
+      </div>
+
+      <label class="au-checkbox"><input type="checkbox" id="loginRemember" checked>Keep me signed in on this device</label>
+
+      <button class="au-submit" id="loginSubmit" type="submit">Sign in →</button>
+
+      <div class="au-divider">or</div>
+      <div class="au-social-row">
+        <button class="au-social" type="button" onclick="ssoComingSoon('Google')">
+          <svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg"><path fill="#4285F4" d="M17.6 9.2c0-.6-.05-1.2-.16-1.7H9v3.4h4.85c-.21 1.1-.85 2.05-1.81 2.7v2.25h2.93c1.72-1.58 2.63-3.92 2.63-6.65z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.93-2.25c-.8.55-1.83.88-3.03.88-2.33 0-4.3-1.57-5-3.7H1.04v2.32A8.99 8.99 0 0 0 9 18z"/><path fill="#FBBC05" d="M4 10.75c-.2-.6-.31-1.24-.31-1.9s.11-1.3.31-1.9V4.62H1.04A9 9 0 0 0 0 8.85c0 1.45.35 2.83.96 4.06L4 10.75z"/><path fill="#EA4335" d="M9 3.55c1.32 0 2.5.45 3.44 1.34l2.58-2.58A8.99 8.99 0 0 0 9 0a8.99 8.99 0 0 0-7.96 4.62L4 6.95C4.7 4.82 6.67 3.55 9 3.55z"/></svg>
+          Google
+        </button>
+        <button class="au-social" type="button" onclick="ssoComingSoon('Apple')">
+          <svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M12.5 0c-.1 1-.5 1.95-1.2 2.66-.66.7-1.7 1.24-2.7 1.16-.12-1 .42-2 1.08-2.65A4.2 4.2 0 0 1 12.5 0zM15.8 13.27c-.78 1.13-1.6 2.25-2.86 2.27-1.26.02-1.66-.74-3.1-.74-1.44 0-1.88.72-3.07.76-1.22.05-2.14-1.22-2.94-2.34C2.18 10.94 1 7.2 2.7 4.5c.84-1.34 2.34-2.18 3.96-2.2 1.2-.02 2.34.8 3.08.8.74 0 2.13-.99 3.6-.84.62.03 2.34.25 3.45 1.86-.09.06-2.07 1.21-2.05 3.6.03 2.85 2.52 3.8 2.55 3.81-.02.07-.4 1.36-1.49 2.74z"/></svg>
+          Apple
+        </button>
+      </div>
+    </form>
+
+    <!-- ════ SIGN UP FORM ════ -->
+    <form class="au-form" id="signupForm" onsubmit="return submitAuth(event,'signup')" autocomplete="on">
+      <div class="au-error"   id="signupError"></div>
+      <div class="au-success" id="signupSuccess"></div>
+
+      <div class="au-field">
+        <label class="au-lbl" for="signupEmail">Email</label>
+        <div class="au-input-wrap"><input class="au-input" id="signupEmail" type="email" placeholder="you@example.com" required autocomplete="email"></div>
+      </div>
+
+      <div class="au-field">
+        <label class="au-lbl" for="signupPassword">Password</label>
+        <div class="au-input-wrap">
+          <input class="au-input" id="signupPassword" type="password" placeholder="At least 8 characters" required autocomplete="new-password" minlength="8" oninput="rateStrength()">
+          <button class="au-toggle-eye" type="button" onclick="toggleEye('signupPassword',this)" title="Show / hide">👁</button>
+        </div>
+        <div class="au-meter"><div class="au-meter-fill" id="pwMeter"></div></div>
+        <div class="au-meter-hint" id="pwHint">Mix letters + numbers + a symbol</div>
+      </div>
+
+      <label class="au-checkbox"><input type="checkbox" id="signupTerms" required>I agree to the <a href="terms.html">Terms</a>, <a href="risk.html">Risk Disclaimer</a> and acknowledge trading carries risk of loss.</label>
+
+      <button class="au-submit" id="signupSubmit" type="submit">Create account →</button>
+
+      <div class="au-divider">or</div>
+      <div class="au-social-row">
+        <button class="au-social" type="button" onclick="ssoComingSoon('Google')">
+          <svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg"><path fill="#4285F4" d="M17.6 9.2c0-.6-.05-1.2-.16-1.7H9v3.4h4.85c-.21 1.1-.85 2.05-1.81 2.7v2.25h2.93c1.72-1.58 2.63-3.92 2.63-6.65z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.93-2.25c-.8.55-1.83.88-3.03.88-2.33 0-4.3-1.57-5-3.7H1.04v2.32A8.99 8.99 0 0 0 9 18z"/><path fill="#FBBC05" d="M4 10.75c-.2-.6-.31-1.24-.31-1.9s.11-1.3.31-1.9V4.62H1.04A9 9 0 0 0 0 8.85c0 1.45.35 2.83.96 4.06L4 10.75z"/><path fill="#EA4335" d="M9 3.55c1.32 0 2.5.45 3.44 1.34l2.58-2.58A8.99 8.99 0 0 0 9 0a8.99 8.99 0 0 0-7.96 4.62L4 6.95C4.7 4.82 6.67 3.55 9 3.55z"/></svg>
+          Google
+        </button>
+        <button class="au-social" type="button" onclick="ssoComingSoon('Apple')">
+          <svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M12.5 0c-.1 1-.5 1.95-1.2 2.66-.66.7-1.7 1.24-2.7 1.16-.12-1 .42-2 1.08-2.65A4.2 4.2 0 0 1 12.5 0zM15.8 13.27c-.78 1.13-1.6 2.25-2.86 2.27-1.26.02-1.66-.74-3.1-.74-1.44 0-1.88.72-3.07.76-1.22.05-2.14-1.22-2.94-2.34C2.18 10.94 1 7.2 2.7 4.5c.84-1.34 2.34-2.18 3.96-2.2 1.2-.02 2.34.8 3.08.8.74 0 2.13-.99 3.6-.84.62.03 2.34.25 3.45 1.86-.09.06-2.07 1.21-2.05 3.6.03 2.85 2.52 3.8 2.55 3.81-.02.07-.4 1.36-1.49 2.74z"/></svg>
+          Apple
+        </button>
+      </div>
+    </form>
+
+    <div class="au-foot-link" id="auFootLink">
+      No account yet? <a href="#" onclick="switchTab('signup');return false;">Create one →</a>
+    </div>
+  </div>
+</main>
+
+<!-- Perks strip -->
+<div class="au-perks">
+  <div class="au-perk"><span class="au-perk-ic">💰</span><span>$39.95/mo · one plan</span></div>
+  <div class="au-perk"><span class="au-perk-ic">🛡️</span><span>14-day money-back</span></div>
+  <div class="au-perk"><span class="au-perk-ic">🔓</span><span>Cancel any time</span></div>
+</div>
+
+<footer class="au-page-foot">
+  <strong>TradeContext.ai</strong> · By signing up you accept our <a href="terms.html">Terms</a> &amp; <a href="risk.html">Risk Disclaimer</a><br>
+  Educational tool only · not personal financial advice
+</footer>
+
+<script>
+var API = (location.hostname==='localhost'||location.hostname==='127.0.0.1') ? 'http://localhost:3001' : '';
+
+// ─── Read query string · ?mode=signin or ?mode=signup or ?tab=signup ───
+(function(){
+  var params = new URLSearchParams(location.search);
+  var mode = (params.get('mode')||params.get('tab')||'login').toLowerCase();
+  if (mode === 'signup' || mode === 'register' || mode === 'create') switchTab('signup', /*skipPushState*/true);
+})();
+
+window.switchTab = function(tab, skipPushState){
+  document.getElementById('tabLogin').classList.toggle('on',  tab === 'login');
+  document.getElementById('tabSignup').classList.toggle('on', tab === 'signup');
+  document.getElementById('loginForm').classList.toggle('on',  tab === 'login');
+  document.getElementById('signupForm').classList.toggle('on', tab === 'signup');
+  document.getElementById('auEyebrow').textContent = tab === 'signup' ? 'CREATE ACCOUNT' : 'WELCOME BACK';
+  document.getElementById('auTitle').innerHTML = tab === 'signup'
+    ? 'Start your <em>14-day trial</em>'
+    : 'Sign in to <em>your desk</em>';
+  document.getElementById('auSub').textContent = tab === 'signup'
+    ? 'One plan · $39.95/mo · cancel any time. Full access from minute one.'
+    : 'Your journal · broker connections · AI coach context all sync across devices.';
+  document.getElementById('auFootLink').innerHTML = tab === 'signup'
+    ? 'Already have an account? <a href="#" onclick="switchTab(\'login\');return false;">Sign in →</a>'
+    : 'No account yet? <a href="#" onclick="switchTab(\'signup\');return false;">Create one →</a>';
+  if (!skipPushState) {
+    var url = new URL(location.href);
+    url.searchParams.set('mode', tab === 'signup' ? 'signup' : 'signin');
+    history.replaceState(null, '', url.toString());
+  }
+};
+
+window.toggleEye = function(id, btn){
+  var el = document.getElementById(id);
+  if (el.type === 'password') { el.type = 'text'; btn.textContent = '🙈'; }
+  else                         { el.type = 'password'; btn.textContent = '👁'; }
+};
+
+window.rateStrength = function(){
+  var v = document.getElementById('signupPassword').value;
+  var score = 0;
+  if (v.length >= 8) score++;
+  if (v.length >= 12) score++;
+  if (/[A-Z]/.test(v) && /[a-z]/.test(v)) score++;
+  if (/\d/.test(v)) score++;
+  if (/[^A-Za-z0-9]/.test(v)) score++;
+  var pct = Math.min(100, (score / 5) * 100);
+  document.getElementById('pwMeter').style.width = pct + '%';
+  var hint = 'Mix letters + numbers + a symbol';
+  if (v.length === 0)       hint = 'Mix letters + numbers + a symbol';
+  else if (score <= 1)      hint = '⚠ Weak — at least 8 chars';
+  else if (score === 2)     hint = 'Fair — add a number';
+  else if (score === 3)     hint = 'Good — add a symbol to make it strong';
+  else if (score === 4)     hint = '✓ Strong';
+  else                       hint = '✓ Excellent';
+  document.getElementById('pwHint').textContent = hint;
+};
+
+function showMsg(id, msg, kind){
+  var el = document.getElementById(id);
+  el.textContent = msg;
+  el.className = 'au-' + kind + (msg ? ' show' : '');
+}
+
+window.submitAuth = async function(ev, mode){
+  ev.preventDefault();
+  var emailEl = mode === 'login' ? document.getElementById('loginEmail') : document.getElementById('signupEmail');
+  var pwEl    = mode === 'login' ? document.getElementById('loginPassword') : document.getElementById('signupPassword');
+  var btn     = mode === 'login' ? document.getElementById('loginSubmit')   : document.getElementById('signupSubmit');
+  var errId   = mode === 'login' ? 'loginError'   : 'signupError';
+  var okId    = mode === 'login' ? 'loginSuccess' : 'signupSuccess';
+
+  var email = emailEl.value.trim();
+  var pw    = pwEl.value;
+  if (!email || !pw) { showMsg(errId, 'Email + password required', 'error'); return false; }
+  if (mode === 'signup' && pw.length < 8) { showMsg(errId, 'Password must be at least 8 characters', 'error'); return false; }
+  if (mode === 'signup' && !document.getElementById('signupTerms').checked) {
+    showMsg(errId, 'Please accept the Terms + Risk Disclaimer to continue', 'error'); return false;
+  }
+  showMsg(errId, '', 'error'); showMsg(okId, '', 'success');
+  btn.disabled = true;
+  var orig = btn.textContent;
+  btn.textContent = mode === 'login' ? 'Signing in…' : 'Creating account…';
+
+  try {
+    var res = await fetch(API + '/api/auth/' + (mode === 'login' ? 'login' : 'signup'), {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password: pw }),
+    });
+    var data = await res.json().catch(function(){ return {}; });
+    if (!res.ok) {
+      var msg = (data.error && data.error.message)
+        || (data.issues && data.issues[0] && data.issues[0].message)
+        || data.message
+        || (mode === 'login' ? 'Login failed — check email + password' : 'Sign up failed');
+      showMsg(errId, msg, 'error');
+      btn.disabled = false; btn.textContent = orig;
+      return false;
+    }
+    showMsg(okId, mode === 'login' ? '✓ Signed in — redirecting…' : '✓ Account created — redirecting…', 'success');
+    setTimeout(function(){
+      var next = new URLSearchParams(location.search).get('next');
+      if (next && next.indexOf('/') === 0) location.href = next;       // safe absolute path
+      else location.href = 'dashboard-redesigned.html';
+    }, 700);
+  } catch(e) {
+    showMsg(errId, 'Network error — try again', 'error');
+    btn.disabled = false; btn.textContent = orig;
+  }
+  return false;
+};
+
+window.openForgot = function(ev){
+  ev.preventDefault();
+  var email = document.getElementById('loginEmail').value.trim();
+  showMsg('loginSuccess', email ? '📩 If that email exists, a reset link will arrive shortly.' : 'Type your email above first, then click Forgot password.', email ? 'success' : 'error');
+};
+
+window.ssoComingSoon = function(provider){
+  alert(provider + ' sign-in is coming next week — use email for now.');
+};
+</script>
+
+</body>
+</html>

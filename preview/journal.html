@@ -2879,7 +2879,7 @@ function renderBrkStep(step){
         '</div>'
       : '<div style="padding:13px 16px;margin-bottom:18px;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.32);border-radius:11px;font-family:var(--f-mono);font-size:11px;color:var(--text);line-height:1.65;">' +
           '<strong style="color:var(--yellow);">⚠️ Not signed in.</strong> Token below is browser-local. ' +
-          '<a href="../signup.html?mode=signin&next=/preview/journal.html" style="color:var(--blue);text-decoration:underline;">Sign in</a> to get a real persistent token bound to your account.' +
+          '<a href="signup.html?mode=signin&next=/preview/journal.html" style="color:var(--blue);text-decoration:underline;">Sign in</a> to get a real persistent token bound to your account.' +
         '</div>';
 
     body.innerHTML =
@@ -2998,7 +2998,7 @@ function renderBrkStep(step){
           '<strong style="color:var(--green2);">🟢 LIVE · Your token is bound to your account.</strong> Every fill the EA posts will create a real Trade row in your journal. Tested working end-to-end.' +
         '</div>'
       : '<div style="padding:13px 16px;margin-bottom:18px;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.32);border-radius:11px;font-family:var(--f-mono);font-size:11px;color:var(--text);line-height:1.65;">' +
-          '<strong style="color:var(--yellow);">⚠️ DEMO · You\'re not signed in.</strong> The token below is browser-local. <a href="../signup.html?mode=signin&next=/preview/journal.html" style="color:var(--blue);text-decoration:underline;">Sign in</a> to get a real persistent token bound to your account — then the EA will actually post fills into your journal.' +
+          '<strong style="color:var(--yellow);">⚠️ DEMO · You\'re not signed in.</strong> The token below is browser-local. <a href="signup.html?mode=signin&next=/preview/journal.html" style="color:var(--blue);text-decoration:underline;">Sign in</a> to get a real persistent token bound to your account — then the EA will actually post fills into your journal.' +
         '</div>';
     body.innerHTML =
       '<div class="brk-success">' +
@@ -3086,7 +3086,7 @@ function renderBybitStep(step, ctx){
     body.innerHTML =
       (_authUser
         ? '<div style="padding:13px 16px;margin-bottom:16px;background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.32);border-radius:11px;font-family:var(--f-mono);font-size:11px;color:var(--text);line-height:1.65;"><strong style="color:var(--green2);">🟢 Live.</strong> Connected as <strong>'+(_authUser.email||'you')+'</strong> — trades will land in your real journal.</div>'
-        : '<div style="padding:13px 16px;margin-bottom:16px;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.32);border-radius:11px;font-family:var(--f-mono);font-size:11px;color:var(--text);line-height:1.65;"><strong style="color:var(--yellow);">⚠️ Not signed in.</strong> Bybit connection saves to your account — <a href="../signup.html?mode=signin&next=/preview/journal.html" style="color:var(--blue);text-decoration:underline;">sign in first</a>.</div>') +
+        : '<div style="padding:13px 16px;margin-bottom:16px;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.32);border-radius:11px;font-family:var(--f-mono);font-size:11px;color:var(--text);line-height:1.65;"><strong style="color:var(--yellow);">⚠️ Not signed in.</strong> Bybit connection saves to your account — <a href="signup.html?mode=signin&next=/preview/journal.html" style="color:var(--blue);text-decoration:underline;">sign in first</a>.</div>') +
       '<div class="jl-modal-help" style="margin-bottom:14px;">' +
         '<strong style="color:var(--text);">How to get your API key (~60 seconds):</strong><br>' +
         '1. Log in at <a href="https://www.bybit.com/" target="_blank" rel="noopener" style="color:var(--blue2);">bybit.com</a><br>' +
@@ -3203,7 +3203,7 @@ function renderOandaStep(step, ctx){
     body.innerHTML =
       (_authUser
         ? '<div style="padding:13px 16px;margin-bottom:16px;background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.32);border-radius:11px;font-family:var(--f-mono);font-size:11px;color:var(--text);line-height:1.65;"><strong style="color:var(--green2);">🟢 Live.</strong> Trades will land in your real journal — already-signed in as <strong>'+(_authUser.email||'you')+'</strong>.</div>'
-        : '<div style="padding:13px 16px;margin-bottom:16px;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.32);border-radius:11px;font-family:var(--f-mono);font-size:11px;color:var(--text);line-height:1.65;"><strong style="color:var(--yellow);">⚠️ Not signed in.</strong> The OANDA connection saves to your account — <a href="../signup.html?mode=signin&next=/preview/journal.html" style="color:var(--blue);text-decoration:underline;">sign in first</a>, then come back.</div>') +
+        : '<div style="padding:13px 16px;margin-bottom:16px;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.32);border-radius:11px;font-family:var(--f-mono);font-size:11px;color:var(--text);line-height:1.65;"><strong style="color:var(--yellow);">⚠️ Not signed in.</strong> The OANDA connection saves to your account — <a href="signup.html?mode=signin&next=/preview/journal.html" style="color:var(--blue);text-decoration:underline;">sign in first</a>, then come back.</div>') +
       '<div class="jl-modal-help" style="margin-bottom:14px;">' +
         '<strong style="color:var(--text);">How to get your token (~30 seconds):</strong><br>' +
         '1. Log in at <a href="https://www.oanda.com/" target="_blank" rel="noopener" style="color:var(--blue2);">oanda.com</a><br>' +
@@ -3583,8 +3583,8 @@ function renderAuthBanner(){
       '<div class="jl-auth-banner signed-out">' +
         '<span class="jl-auth-banner-ic">🔓</span>' +
         '<div class="jl-auth-banner-body"><strong>Demo mode — local only.</strong> Trades, plans, reviews and brokers are saved to this browser. <strong>Sign in</strong> to sync your real journal across desktop / mobile.</div>' +
-        '<a class="jl-auth-banner-cta" href="../signup.html?mode=signin&next=/preview/journal.html">Sign in →</a>' +
-        '<a class="jl-auth-banner-cta secondary" href="../signup.html?next=/preview/journal.html">Sign up</a>' +
+        '<a class="jl-auth-banner-cta" href="signup.html?mode=signin&next=/preview/journal.html">Sign in →</a>' +
+        '<a class="jl-auth-banner-cta secondary" href="signup.html?next=/preview/journal.html">Sign up</a>' +
       '</div>';
   }
 }
