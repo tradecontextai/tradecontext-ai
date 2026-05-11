@@ -634,17 +634,30 @@ tr.jl-row-new td{animation:jlPulseIn 2.5s ease-out 1;}
         <button class="jl-broker-btn" onclick="openOandaConnect()">Connect OANDA → live</button>
       </div>
 
+      <div class="jl-broker">
+        <div class="jl-broker-status live">Direct API ✓</div>
+        <div class="jl-broker-h">
+          <div class="jl-broker-logo binance">BY</div>
+          <div>
+            <div class="jl-broker-name">Bybit</div>
+            <div class="jl-broker-sub">v5 REST · read-only API key</div>
+          </div>
+        </div>
+        <div class="jl-broker-body">Generate a <strong>read-only</strong> API key in Bybit → Account &amp; Security → API. Paste key + secret here, we validate against Bybit's API and pull every linear/inverse perpetual + spot fill in your account.</div>
+        <button class="jl-broker-btn" onclick="openBybitConnect()">Connect Bybit → live</button>
+      </div>
+
       <div class="jl-broker" style="opacity:.7;">
         <div class="jl-broker-status" style="background:rgba(245,158,11,.10);color:var(--yellow);border-color:rgba(245,158,11,.32);">Coming soon</div>
         <div class="jl-broker-h">
-          <div class="jl-broker-logo binance">BN</div>
+          <div class="jl-broker-logo" style="background:linear-gradient(135deg,#f3ba2f,#f0b90b);color:#0b1220;">BN</div>
           <div>
-            <div class="jl-broker-name">Binance / Bybit</div>
-            <div class="jl-broker-sub">Read-only API key</div>
+            <div class="jl-broker-name">Binance</div>
+            <div class="jl-broker-sub">Spot + futures · read-only API key</div>
           </div>
         </div>
-        <div class="jl-broker-body">Spot + futures + funding pulled via read-only API key (no withdrawal permission). Building this week.</div>
-        <button class="jl-broker-btn" onclick="toast('We\'ll email you when Binance + Bybit are live','success')">🔔 Notify me</button>
+        <div class="jl-broker-body">Spot + futures + funding pulled via read-only API key (no withdrawal permission). Same shape as Bybit; landing this week.</div>
+        <button class="jl-broker-btn" onclick="toast('We\'ll email you when Binance is live','success')">🔔 Notify me</button>
       </div>
 
       <div class="jl-broker" style="opacity:.7;">
@@ -1165,6 +1178,21 @@ tr.jl-row-new td{animation:jlPulseIn 2.5s ease-out 1;}
       <div class="jl-modal-lbl" style="margin-bottom:10px;">📂 RECENT NOTES</div>
       <div id="notesList" style="max-height:240px;overflow-y:auto;"></div>
     </div>
+  </div>
+</div>
+
+<!-- ═══════ BYBIT REAL CONNECT MODAL ═══════ -->
+<div class="jl-modal" id="bybitModal">
+  <div class="jl-modal-card" style="max-width:580px;">
+    <button class="jl-modal-close" onclick="closeM('bybitModal')">×</button>
+    <div class="jl-modal-h">
+      <div class="jl-broker-logo binance" style="width:48px;height:48px;border-radius:11px;font-size:14px;">BY</div>
+      <div>
+        <div class="jl-modal-title">Connect Bybit · Live</div>
+        <div class="jl-modal-sub">v5 REST · read-only · HMAC-SHA256 signed</div>
+      </div>
+    </div>
+    <div id="bybitModalBody"></div>
   </div>
 </div>
 
@@ -2819,8 +2847,8 @@ function renderBrkStep(step){
       '<div style="font-family:var(--f-mono);font-size:9.5px;color:var(--text3);font-weight:800;letter-spacing:.14em;text-transform:uppercase;margin:14px 0 8px;">🔌 Direct API · token / OAuth</div>' +
       '<div class="brk-pick-grid" style="margin-bottom:14px;">' +
         '<div class="brk-pick" onclick="openOandaConnect();closeBrkSim();"><span class="brk-pick-emoji">🌐</span><div class="brk-pick-name">OANDA</div><div class="brk-pick-sub">Live · REST v20</div></div>' +
+        '<div class="brk-pick" onclick="openBybitConnect();closeBrkSim();"><span class="brk-pick-emoji">🟠</span><div class="brk-pick-name">Bybit</div><div class="brk-pick-sub">Live · v5 REST</div></div>' +
         '<div class="brk-pick" style="opacity:.55;cursor:default;" onclick="toast(\'Coming this week\',\'success\')"><span class="brk-pick-emoji">🟡</span><div class="brk-pick-name">Binance</div><div class="brk-pick-sub">Coming soon</div></div>' +
-        '<div class="brk-pick" style="opacity:.55;cursor:default;" onclick="toast(\'Coming this week\',\'success\')"><span class="brk-pick-emoji">🔵</span><div class="brk-pick-name">Coinbase</div><div class="brk-pick-sub">Coming soon</div></div>' +
       '</div>' +
       // Search the regulated-broker directory
       '<div style="font-family:var(--f-mono);font-size:9.5px;color:var(--text3);font-weight:800;letter-spacing:.14em;text-transform:uppercase;margin:14px 0 8px;">🔎 Search the directory · 60+ regulated brokers</div>' +
@@ -3042,6 +3070,123 @@ window.gridPickPlatform = function(brokerName, platform){
   _brkState = { broker: platform, _displayName: brokerName };
   document.getElementById('brkModal').classList.add('show');
   renderBrkStep('install');
+};
+
+// ═══════════════════════════════════════════════════════════════════
+// BYBIT — REAL live API connect flow (v5 REST · HMAC-signed)
+// ═══════════════════════════════════════════════════════════════════
+window.openBybitConnect = function(){
+  renderBybitStep('intro');
+  openM('bybitModal');
+};
+function renderBybitStep(step, ctx){
+  var body = document.getElementById('bybitModalBody');
+  if (!body) return;
+  if (step === 'intro'){
+    body.innerHTML =
+      (_authUser
+        ? '<div style="padding:13px 16px;margin-bottom:16px;background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.32);border-radius:11px;font-family:var(--f-mono);font-size:11px;color:var(--text);line-height:1.65;"><strong style="color:var(--green2);">🟢 Live.</strong> Connected as <strong>'+(_authUser.email||'you')+'</strong> — trades will land in your real journal.</div>'
+        : '<div style="padding:13px 16px;margin-bottom:16px;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.32);border-radius:11px;font-family:var(--f-mono);font-size:11px;color:var(--text);line-height:1.65;"><strong style="color:var(--yellow);">⚠️ Not signed in.</strong> Bybit connection saves to your account — <a href="../signup.html?mode=signin&next=/preview/journal.html" style="color:var(--blue);text-decoration:underline;">sign in first</a>.</div>') +
+      '<div class="jl-modal-help" style="margin-bottom:14px;">' +
+        '<strong style="color:var(--text);">How to get your API key (~60 seconds):</strong><br>' +
+        '1. Log in at <a href="https://www.bybit.com/" target="_blank" rel="noopener" style="color:var(--blue2);">bybit.com</a><br>' +
+        '2. <strong>Profile → API → Create New Key</strong><br>' +
+        '3. Pick <strong>System-generated API key</strong> → <strong>Read-only</strong> permissions<br>' +
+        '4. ✅ Tick <em>Trade History</em>, <em>Wallet</em>. <strong>Do NOT</strong> tick withdrawal — we never need it<br>' +
+        '5. Copy the API Key + Secret, paste below.' +
+      '</div>' +
+      '<div class="jl-row-2">' +
+        '<div class="jl-modal-field"><label class="jl-modal-lbl">Environment</label>' +
+          '<select class="jl-select" id="bybitEnv">' +
+            '<option value="mainnet">Mainnet (real)</option>' +
+            '<option value="testnet">Testnet (demo)</option>' +
+          '</select>' +
+        '</div>' +
+        '<div class="jl-modal-field"><label class="jl-modal-lbl">API Key</label><input class="jl-modal-input" id="bybitKey" placeholder="ABC123…"></div>' +
+      '</div>' +
+      '<div class="jl-modal-field"><label class="jl-modal-lbl">API Secret</label><input class="jl-modal-input" id="bybitSecret" type="password" placeholder="paste here · never shown again"></div>' +
+      '<div class="jl-modal-actions">' +
+        '<button class="jl-modal-btn secondary" onclick="closeM(\'bybitModal\')">Cancel</button>' +
+        '<button class="jl-modal-btn primary" onclick="submitBybitConnect()">Validate + Connect →</button>' +
+      '</div>';
+  }
+  else if (step === 'syncing'){
+    body.innerHTML =
+      '<div style="padding:40px 20px;text-align:center;">' +
+        '<div class="bt-spinner" style="margin:0 auto 18px;"></div>' +
+        '<div style="font-family:var(--f-sans);font-size:15px;font-weight:800;margin-bottom:6px;">'+(ctx?.title||'Connecting to Bybit…')+'</div>' +
+        '<div style="font-family:var(--f-mono);font-size:11px;color:var(--text3);letter-spacing:.06em;">'+(ctx?.sub||'HMAC signing wallet-balance call…')+'</div>' +
+      '</div>';
+  }
+  else if (step === 'success'){
+    body.innerHTML =
+      '<div style="padding:18px;background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.4);border-radius:12px;margin-bottom:18px;display:flex;align-items:center;gap:14px;">' +
+        '<div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#10b981,#34d399);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;">✓</div>' +
+        '<div>' +
+          '<div style="font-family:var(--f-sans);font-size:15px;font-weight:800;color:var(--green2);">Bybit connected · '+(ctx?.env||'')+'</div>' +
+          '<div style="font-family:var(--f-mono);font-size:10.5px;color:var(--text3);font-weight:700;letter-spacing:.06em;margin-top:3px;">'+(ctx?.imported||0)+' trades imported · '+(ctx?.fetched||0)+' fetched from Bybit (linear + inverse + spot)</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="jl-modal-help">' +
+        'Closed perpetual positions arrive paired (entry → exit, P&L computed). Spot fills land individually. Hit <strong>Sync Bybit</strong> next session for new trades.' +
+      '</div>' +
+      '<div class="jl-modal-actions"><button class="jl-modal-btn primary" onclick="closeM(\'bybitModal\');render();" style="flex:1;">Open my journal →</button></div>';
+  }
+  else if (step === 'error'){
+    body.innerHTML =
+      '<div style="padding:18px;background:rgba(248,113,113,.06);border:1px solid rgba(248,113,113,.4);border-radius:12px;margin-bottom:18px;">' +
+        '<div style="font-family:var(--f-sans);font-size:14px;font-weight:800;color:var(--red2);margin-bottom:6px;">⚠ '+(ctx?.title||'Connection failed')+'</div>' +
+        '<div style="font-family:var(--f-mono);font-size:11px;color:var(--text2);line-height:1.6;">'+(ctx?.message||'Check key + secret and try again.')+'</div>' +
+      '</div>' +
+      '<div class="jl-modal-actions">' +
+        '<button class="jl-modal-btn secondary" onclick="closeM(\'bybitModal\')">Cancel</button>' +
+        '<button class="jl-modal-btn primary" onclick="renderBybitStep(\'intro\')">Try again</button>' +
+      '</div>';
+  }
+}
+window.submitBybitConnect = async function(){
+  var env = document.getElementById('bybitEnv').value;
+  var apiKey = document.getElementById('bybitKey').value.trim();
+  var apiSecret = document.getElementById('bybitSecret').value.trim();
+  if (!apiKey || !apiSecret) { toast('Both API key and secret are required', 'error'); return; }
+  if (!_authUser) { toast('Sign in first — Bybit links to your account', 'error'); return; }
+
+  renderBybitStep('syncing', { title:'Validating with Bybit…', sub:'/v5/account/wallet-balance · HMAC-SHA256 signed' });
+
+  try {
+    var connectRes = await fetch(API + '/api/broker/bybit/connect', {
+      method:'POST', credentials:'include',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ apiKey, apiSecret, environment: env }),
+    });
+    if (!connectRes.ok) {
+      var err = await connectRes.json().catch(function(){return{};});
+      var code = err.error?.code || err.code;
+      var msg = err.error?.message || 'Bybit refused the credentials.';
+      var title = code === 'BYBIT_INVALID_CREDS' ? 'Invalid API key / secret' : 'Connection failed';
+      renderBybitStep('error', { title, message: msg });
+      return;
+    }
+    renderBybitStep('syncing', { title:'Pulling your trade history…', sub:'Closed P&L (linear + inverse) + spot fills' });
+
+    var importRes = await fetch(API + '/api/broker/bybit/import', {
+      method:'POST', credentials:'include',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ limit: 200 }),
+    });
+    if (!importRes.ok) {
+      var err = await importRes.json().catch(function(){return{};});
+      renderBybitStep('error', { title:'Import partially failed', message: err.error?.message || 'Trades may still appear next sync.' });
+      return;
+    }
+    var data = await importRes.json();
+    renderBybitStep('success', { env, imported: data.imported, fetched: data.fetched });
+    await pullServerTrades();
+    render();
+    toast('🟢 Bybit connected · '+data.imported+' trades imported', 'success');
+  } catch(e) {
+    renderBybitStep('error', { title:'Network error', message: String(e && e.message || e) });
+  }
 };
 
 // ═══════════════════════════════════════════════════════════════════

@@ -28,6 +28,7 @@ enum PlanStatus {
 enum BrokerName {
   oanda
   binance
+  bybit
   mt4
   mt5
   ibkr

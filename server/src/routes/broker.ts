@@ -5,6 +5,7 @@ import { requirePlan } from '../middleware/plan';
 import { HttpError } from '../middleware/error';
 import { prisma } from '../config/db';
 import { createTrade } from '../services/journal.service';
+import { connectBybit, fetchClosedTrades, disconnectBybit } from '../services/bybit.service';
 import {
   validateToken,
   connectOanda,
@@ -185,6 +186,67 @@ brokerRouter.post('/oanda/import', async (req, res, next) => {
   } catch (e) {
     next(e);
   }
+});
+
+// ═══════════════════ BYBIT ═══════════════════
+
+const bybitConnectSchema = z.object({
+  apiKey:    z.string().min(8).max(80),
+  apiSecret: z.string().min(8).max(120),
+  environment: z.enum(['mainnet', 'testnet']).default('mainnet'),
+});
+
+brokerRouter.post('/bybit/connect', async (req, res, next) => {
+  try {
+    const body = bybitConnectSchema.parse(req.body);
+    const conn = await connectBybit({ userId: req.user!.id, ...body });
+    res.json({ ok: true, connection: { id: conn.id, environment: conn.environment } });
+  } catch (e) { next(e); }
+});
+
+brokerRouter.post('/bybit/import', async (req, res, next) => {
+  try {
+    const limit = z.coerce.number().int().min(1).max(500).default(200).parse(req.body?.limit);
+    const userId = req.user!.id;
+    const conn = await prisma.brokerConnection.findFirst({ where: { userId, brokerName: 'bybit', isConnected: true } });
+    if (!conn) throw new HttpError(404, 'Connect Bybit first', 'NOT_CONNECTED');
+
+    const trades = await fetchClosedTrades(conn.id, userId, limit);
+
+    // Dedup by externalId stored in Trade.notes
+    const existing = await prisma.trade.findMany({ where: { userId }, select: { notes: true } });
+    const seen = new Set(
+      existing.map((t) => (t.notes || '').match(/(bybit:[^\s]+)/)?.[1]).filter(Boolean) as string[]
+    );
+
+    let imported = 0;
+    for (const t of trades) {
+      if (seen.has(t.externalId)) continue;
+      try {
+        await createTrade(userId, {
+          symbol: t.symbol,
+          direction: t.direction,
+          size: t.size,
+          entryPrice: t.entryPrice,
+          exitPrice: t.exitPrice,
+          pnl: t.pnl,
+          broker: 'Bybit',
+          notes: t.externalId,    // dedup key — do not edit
+          openedAt: t.openedAt,
+          closedAt: t.closedAt,
+        });
+        imported++;
+      } catch { /* skip dupes / failures silently */ }
+    }
+    res.json({ ok: true, fetched: trades.length, imported });
+  } catch (e) { next(e); }
+});
+
+brokerRouter.delete('/bybit', async (req, res, next) => {
+  try {
+    await disconnectBybit(req.user!.id);
+    res.json({ ok: true });
+  } catch (e) { next(e); }
 });
 
 // ──────── DELETE /api/broker/oanda ────────
