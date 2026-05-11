@@ -154,7 +154,7 @@ body::after{
 .logos-h{font-family:var(--f-mono);font-size:10.5px;color:var(--text3);font-weight:700;letter-spacing:.16em;text-transform:uppercase;margin-bottom:6px;}
 .logos-sub{font-family:var(--f-sans);font-size:14px;color:var(--text2);margin-bottom:30px;max-width:560px;margin-left:auto;margin-right:auto;}
 .logos-marquee{position:relative;overflow:hidden;padding:14px 0;mask-image:linear-gradient(90deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 12%,#000 88%,transparent 100%);}
-.logos-track{display:inline-flex;gap:18px;white-space:nowrap;align-items:center;animation:slideX 80s linear infinite;padding-left:18px;}
+.logos-track{display:inline-flex;gap:18px;white-space:nowrap;align-items:center;animation:slideX 180s linear infinite;padding-left:18px;}
 .logo-pill{display:inline-flex;align-items:center;gap:9px;padding:9px 16px 9px 13px;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.008));border:1px solid rgba(255,255,255,.07);border-radius:10px;transition:.25s var(--ease-out-quart);flex-shrink:0;}
 .logo-pill:hover{border-color:rgba(14,165,233,.4);transform:translateY(-2px);background:linear-gradient(180deg,rgba(14,165,233,.06),rgba(14,165,233,.01));}
 .logo-pill img{width:18px;height:18px;display:block;object-fit:contain;}
@@ -209,7 +209,11 @@ body::after{
 .slide{position:absolute;inset:0;opacity:0;transform:translateX(20px);transition:opacity .5s var(--ease-out-quart),transform .55s var(--ease-out-expo);pointer-events:none;}
 .slide.active{opacity:1;transform:translateX(0);pointer-events:auto;position:relative;inset:auto;}
 .slide-foot{display:flex;align-items:center;justify-content:space-between;gap:14px;padding-top:14px;margin-top:14px;border-top:1px solid rgba(255,255,255,.05);}
-.slide-label{font-family:var(--f-mono);font-size:10px;font-weight:700;color:var(--text2);letter-spacing:.1em;text-transform:uppercase;}
+.slide-label{font-family:var(--f-mono);font-size:10.5px;font-weight:800;color:var(--text);letter-spacing:.12em;text-transform:uppercase;display:flex;align-items:center;gap:9px;}
+.slide-label::before{content:'';width:7px;height:7px;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,#8b5cf6);box-shadow:0 0 10px rgba(14,165,233,.85);animation:slideLblPulse 1.6s ease-in-out infinite;}
+@keyframes slideLblPulse{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(1.4);opacity:.6;}}
+.slide.active::after{content:'';position:absolute;inset:0;background:linear-gradient(110deg,transparent 20%,rgba(14,165,233,.06) 40%,transparent 60%);transform:translateX(-100%);animation:slideShine 1.4s ease-out 0.15s 1;pointer-events:none;border-radius:inherit;}
+@keyframes slideShine{to{transform:translateX(100%);}}
 .slide-dots{display:flex;gap:5px;}
 .slide-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.12);cursor:pointer;transition:.3s var(--ease-out-quart);}
 .slide-dot.active{width:22px;border-radius:3px;background:linear-gradient(90deg,var(--blue),var(--violet));box-shadow:0 0 8px rgba(14,165,233,.5);}
@@ -314,6 +318,55 @@ body::after{
 .footer-trust .dot{width:6px;height:6px;border-radius:50%;background:var(--green2);box-shadow:0 0 6px var(--green2);}
 .footer-disclosure{max-width:1280px;margin:14px auto 0;padding:0 32px;font-size:10.5px;color:var(--text4);line-height:1.7;letter-spacing:.02em;}
 .footer-disclosure strong{color:var(--yellow);}
+
+/* ═══════ AI CHAT — floating launcher + slide-out panel (bottom-right) ═══════ */
+.hp-fab{position:fixed;right:24px;bottom:24px;z-index:9999;width:62px;height:62px;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,#8b5cf6);color:#fff;border:none;cursor:pointer;font-size:26px;display:flex;align-items:center;justify-content:center;box-shadow:0 14px 38px rgba(14,165,233,.5),0 0 0 1px rgba(255,255,255,.08) inset;transition:transform .25s var(--ease-out-quart),box-shadow .25s;}
+.hp-fab:hover{transform:translateY(-3px) scale(1.04);box-shadow:0 18px 48px rgba(14,165,233,.65),0 0 0 1px rgba(255,255,255,.12) inset;}
+.hp-fab::before{content:'';position:absolute;inset:-4px;border-radius:50%;border:2px solid rgba(14,165,233,.45);animation:hpFabRing 2.2s ease-out infinite;}
+@keyframes hpFabRing{0%{transform:scale(.9);opacity:.85;}100%{transform:scale(1.45);opacity:0;}}
+.hp-fab-label{position:absolute;right:74px;top:50%;transform:translateY(-50%) translateX(6px);background:rgba(15,23,42,.92);color:#e5e7eb;font-family:var(--f-sans);font-size:12px;font-weight:700;padding:7px 12px;border-radius:8px;border:1px solid rgba(255,255,255,.08);white-space:nowrap;opacity:0;pointer-events:none;transition:.2s;}
+.hp-fab:hover .hp-fab-label{opacity:1;transform:translateY(-50%) translateX(0);}
+
+.hp-chat{position:fixed;right:24px;bottom:96px;width:400px;max-width:calc(100vw - 48px);height:560px;max-height:calc(100vh - 130px);background:rgba(15,20,32,.96);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border:1px solid rgba(255,255,255,.08);border-radius:16px;box-shadow:0 28px 72px rgba(0,0,0,.7);z-index:10000;display:none;flex-direction:column;overflow:hidden;transform-origin:bottom right;}
+.hp-chat.open{display:flex;animation:hpChatIn .26s cubic-bezier(.22,.61,.36,1);}
+@keyframes hpChatIn{from{opacity:0;transform:scale(.94) translateY(10px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.hp-chat-h{padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:11px;background:linear-gradient(135deg,rgba(14,165,233,.08),rgba(139,92,246,.05));flex-shrink:0;}
+.hp-chat-av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;box-shadow:0 4px 14px rgba(14,165,233,.4);}
+.hp-chat-h-title{font-family:var(--f-sans);font-size:13.5px;font-weight:800;color:var(--text);}
+.hp-chat-h-sub{font-family:var(--f-mono);font-size:10px;color:var(--text3);font-weight:700;letter-spacing:.06em;margin-top:2px;text-transform:uppercase;}
+.hp-chat-close{margin-left:auto;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);color:var(--text2);font-size:18px;cursor:pointer;line-height:1;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0;flex-shrink:0;transition:.15s;}
+.hp-chat-close:hover{background:#ef4444;color:#fff;border-color:#ef4444;transform:scale(1.05);}
+.hp-chat-body{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:14px;}
+.hp-chat-body::-webkit-scrollbar{width:6px;}
+.hp-chat-body::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:3px;}
+.hp-bubble{padding:12px 14px;border-radius:11px;font-family:var(--f-sans);font-size:13.5px;line-height:1.55;color:var(--text);max-width:90%;}
+.hp-bubble.user{align-self:flex-end;background:rgba(14,165,233,.15);border:1px solid rgba(14,165,233,.3);}
+.hp-bubble.assistant{align-self:flex-start;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);}
+.hp-bubble.assistant em{color:var(--text3);font-style:italic;font-size:11px;display:block;margin-top:8px;}
+.hp-typing{display:inline-flex;gap:4px;align-items:center;}
+.hp-typing span{width:6px;height:6px;border-radius:50%;background:var(--text3);animation:hpTypingBounce 1.2s ease-in-out infinite;}
+.hp-typing span:nth-child(2){animation-delay:.15s;}
+.hp-typing span:nth-child(3){animation-delay:.3s;}
+@keyframes hpTypingBounce{0%,80%,100%{transform:scale(.85);opacity:.5;}40%{transform:scale(1);opacity:1;}}
+.hp-empty{font-family:var(--f-sans);font-size:13.5px;color:var(--text2);text-align:center;padding:18px 12px 8px;line-height:1.6;}
+.hp-empty strong{color:var(--text);font-weight:800;}
+.hp-suggest-row{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:14px;}
+.hp-suggest{padding:8px 13px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:var(--text2);font-family:var(--f-mono);font-size:10.5px;font-weight:700;border-radius:100px;cursor:pointer;letter-spacing:.02em;transition:.15s;}
+.hp-suggest:hover{border-color:rgba(14,165,233,.6);color:#0ea5e9;background:rgba(14,165,233,.06);}
+.hp-chat-foot{padding:12px 14px;border-top:1px solid rgba(255,255,255,.06);background:rgba(0,0,0,.2);}
+.hp-input-row{display:flex;align-items:flex-end;gap:8px;}
+.hp-chat-input{flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:var(--text);font-family:var(--f-sans);font-size:13.5px;padding:10px 12px;border-radius:9px;resize:none;min-height:42px;max-height:120px;outline:none;transition:.15s;}
+.hp-chat-input:focus{border-color:rgba(14,165,233,.5);box-shadow:0 0 0 3px rgba(14,165,233,.12);}
+.hp-chat-send{padding:0 16px;height:42px;background:linear-gradient(135deg,#0ea5e9,#8b5cf6);color:#fff;border:none;border-radius:9px;font-family:var(--f-sans);font-size:13px;font-weight:800;cursor:pointer;letter-spacing:.04em;transition:.15s;}
+.hp-chat-send:hover{filter:brightness(1.1);}
+.hp-chat-send:disabled{opacity:.5;cursor:not-allowed;filter:grayscale(.4);}
+.hp-grounded{align-self:flex-start;max-width:90%;font-family:var(--f-mono);font-size:9.5px;color:var(--text3);font-weight:700;letter-spacing:.04em;margin-top:-6px;padding:7px 10px;background:rgba(14,165,233,.05);border-left:2px solid rgba(14,165,233,.5);border-radius:0 6px 6px 0;line-height:1.55;}
+
+@media (max-width:540px){
+  .hp-fab{width:56px;height:56px;font-size:22px;right:18px;bottom:18px;}
+  .hp-chat{right:12px;left:12px;bottom:88px;width:auto;}
+  .hp-fab-label{display:none;}
+}
 </style>
 </head>
 <body>
@@ -361,16 +414,16 @@ body::after{
       <li>
         <a><span>Features</span> <span class="chev">▾</span></a>
         <div class="dd-menu">
-          <a href="dashboard.html" class="dd-item primary"><span class="ic">📊</span>Dashboard Overview</a>
-          <a href="news-bias.html" class="dd-item"><span class="ic">📡</span>Live News Bias Feed</a>
-          <a href="markets.html" class="dd-item"><span class="ic">📈</span>Markets &amp; Charts</a>
-          <a href="journal.html" class="dd-item"><span class="ic">📓</span>AI Trading Journal</a>
-          <a href="broker-connect.html" class="dd-item"><span class="ic">🔌</span>Broker Hub</a>
-          <a href="prop-firm.html" class="dd-item"><span class="ic">🎯</span>Prop Firm Co-pilot</a>
-          <a href="track-record.html" class="dd-item"><span class="ic">📊</span>Public Track Record</a>
-          <a href="leaderboard.html" class="dd-item"><span class="ic">🏆</span>Leaderboard</a>
+          <a href="../dashboard.html" class="dd-item primary"><span class="ic">📊</span>Open the Full Dashboard</a>
           <div class="dd-divider"></div>
-          <a href="signup.html" class="dd-item primary"><span class="ic">🚀</span>Get Full Access →</a>
+          <a href="../dashboard.html#feat-live-chart" class="dd-item"><span class="ic">📈</span>Live Chart · TradingView</a>
+          <a href="../dashboard.html#aibPanel" class="dd-item"><span class="ic">📡</span>AI News Bias Engine</a>
+          <a href="../dashboard.html#feat-macro-pulse" class="dd-item"><span class="ic">⚡</span>Macro Pulse · Sessions · Risk · Vol</a>
+          <a href="../dashboard.html#feat-world-pulse" class="dd-item"><span class="ic">🌍</span>World Pulse · Geopolitical Map</a>
+          <a href="../dashboard.html#feat-ai-playbooks" class="dd-item"><span class="ic">🤖</span>AI Playbooks · Journal · Positions</a>
+          <a href="../dashboard.html#tradePanel" class="dd-item"><span class="ic">🎯</span>Trade Plan Generator</a>
+          <div class="dd-divider"></div>
+          <a href="../dashboard.html" class="dd-item primary"><span class="ic">🚀</span>Open the desk →</a>
         </div>
       </li>
       <li><a href="#how"><span>How it works</span></a></li>
@@ -378,13 +431,21 @@ body::after{
       <li>
         <a><span>Resources</span> <span class="chev">▾</span></a>
         <div class="dd-menu">
-          <a href="blog.html" class="dd-item"><span class="ic">📝</span>Blog &amp; Insights</a>
-          <a href="about.html" class="dd-item"><span class="ic">🏢</span>About Us</a>
-          <a href="mailto:hello@tradecontext.ai" class="dd-item"><span class="ic">✉️</span>Contact Us</a>
-          <a href="mailto:press@tradecontext.ai" class="dd-item"><span class="ic">🗞</span>Press Kit</a>
+          <a href="trading-concepts.html" class="dd-item primary"><span class="ic">📚</span>Trading Concepts Library</a>
           <div class="dd-divider"></div>
-          <a href="risk.html" class="dd-item"><span class="ic">⚠️</span>Risk Disclaimer</a>
-          <a href="terms.html" class="dd-item"><span class="ic">📜</span>Terms &amp; Privacy</a>
+          <a href="trading-concepts.html#liquidity" class="dd-item"><span class="ic">💧</span>Liquidity</a>
+          <a href="trading-concepts.html#liquidity-sweep" class="dd-item"><span class="ic">🌊</span>Liquidity Sweep</a>
+          <a href="trading-concepts.html#inducement" class="dd-item"><span class="ic">🎣</span>Inducement</a>
+          <a href="trading-concepts.html#support-resistance" class="dd-item"><span class="ic">📊</span>Support &amp; Resistance</a>
+          <a href="trading-concepts.html#order-block" class="dd-item"><span class="ic">🧱</span>Order Blocks</a>
+          <a href="trading-concepts.html#fvg" class="dd-item"><span class="ic">🪟</span>Fair Value Gap (FVG)</a>
+          <a href="trading-concepts.html#bos-choch" class="dd-item"><span class="ic">🔁</span>BOS &amp; CHoCH</a>
+          <div class="dd-divider"></div>
+          <a href="../blog.html" class="dd-item"><span class="ic">📝</span>Blog &amp; Insights</a>
+          <a href="../about.html" class="dd-item"><span class="ic">🏢</span>About Us</a>
+          <a href="mailto:hello@tradecontext.ai" class="dd-item"><span class="ic">✉️</span>Contact Us</a>
+          <div class="dd-divider"></div>
+          <a href="../risk.html" class="dd-item"><span class="ic">⚠️</span>Risk Disclaimer</a>
         </div>
       </li>
       <li><a href="#faq"><span>FAQ</span></a></li>
@@ -558,7 +619,86 @@ body::after{
         </div>
       </div>
 
-      <!-- SLIDE 5 · World Pulse with cities + Live TV switcher -->
+      <!-- SLIDE 5 · AI Playbooks · Live Positions · Journal -->
+      <div class="slide" data-label="AI Playbooks · Live Positions · AI Journal">
+        <div class="dash-mock-body">
+          <div class="dm-card">
+            <div class="dm-eyebrow"><span class="pulse"></span>🤖 AI Playbooks</div>
+            <div class="dm-h">Auto-generated <em>setups</em></div>
+            <div style="display:flex;flex-direction:column;gap:7px;">
+              <div style="padding:9px 10px;border:1px solid rgba(52,211,153,.28);background:rgba(52,211,153,.05);border-radius:8px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;"><span style="font-family:var(--f-mono);font-size:9px;color:var(--green2);font-weight:800;letter-spacing:.1em;">▲ LONG XAU/USD</span><span style="font-family:var(--f-mono);font-size:9px;color:var(--text3);">R:R 1 : 3.2</span></div>
+                <div style="font-size:11.5px;color:var(--text);line-height:1.45;">Entry on 4H pullback to OB · stop below the swept low · target prev day high</div>
+              </div>
+              <div style="padding:9px 10px;border:1px solid rgba(248,113,113,.25);background:rgba(248,113,113,.04);border-radius:8px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;"><span style="font-family:var(--f-mono);font-size:9px;color:var(--red2);font-weight:800;letter-spacing:.1em;">▼ SHORT USD/JPY</span><span style="font-family:var(--f-mono);font-size:9px;color:var(--text3);">R:R 1 : 2.1</span></div>
+                <div style="font-size:11.5px;color:var(--text);line-height:1.45;">Inducement above 152.10 · short the rejection · target 150.40 (FVG fill)</div>
+              </div>
+              <div style="padding:9px 10px;border:1px solid rgba(245,158,11,.25);background:rgba(245,158,11,.04);border-radius:8px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;"><span style="font-family:var(--f-mono);font-size:9px;color:var(--yellow);font-weight:800;letter-spacing:.1em;">◆ WATCH SPX</span><span style="font-family:var(--f-mono);font-size:9px;color:var(--text3);">Wait</span></div>
+                <div style="font-size:11.5px;color:var(--text);line-height:1.45;">Range-bound between 5,640–5,665 · wait for liquidity sweep either side</div>
+              </div>
+            </div>
+          </div>
+          <div class="dm-card">
+            <div class="dm-eyebrow"><span class="pulse"></span>📓 AI Trading Journal</div>
+            <div class="dm-h">Every trade <em>scored</em></div>
+            <div style="display:flex;gap:8px;margin-bottom:10px;">
+              <div style="flex:1;padding:9px;background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.25);border-radius:8px;text-align:center;">
+                <div style="font-family:var(--f-mono);font-size:8.5px;color:var(--text3);letter-spacing:.08em;font-weight:700;">DISCIPLINE</div>
+                <div style="font-family:var(--f-sans);font-size:22px;font-weight:900;color:var(--green2);margin-top:2px;">A−</div>
+              </div>
+              <div style="flex:1;padding:9px;background:rgba(14,165,233,.06);border:1px solid rgba(14,165,233,.28);border-radius:8px;text-align:center;">
+                <div style="font-family:var(--f-mono);font-size:8.5px;color:var(--text3);letter-spacing:.08em;font-weight:700;">PROFIT FACTOR</div>
+                <div style="font-family:var(--f-sans);font-size:22px;font-weight:900;color:var(--blue);margin-top:2px;">2.14</div>
+              </div>
+              <div style="flex:1;padding:9px;background:rgba(245,158,11,.05);border:1px solid rgba(245,158,11,.25);border-radius:8px;text-align:center;">
+                <div style="font-family:var(--f-mono);font-size:8.5px;color:var(--text3);letter-spacing:.08em;font-weight:700;">AVG R</div>
+                <div style="font-family:var(--f-sans);font-size:22px;font-weight:900;color:var(--yellow);margin-top:2px;">+0.38</div>
+              </div>
+            </div>
+            <div style="font-family:var(--f-mono);font-size:10px;color:var(--text2);padding:9px;background:rgba(14,165,233,.04);border-left:2px solid var(--blue);border-radius:0 6px 6px 0;line-height:1.55;">Claude flagged: <strong>3 revenge-trade clusters</strong> this month. Win rate drops to 31% on Mondays after Sunday losses.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 6 · Trade Plan Generator -->
+      <div class="slide" data-label="Trade Plan Generator · entry · stop · target · R:R">
+        <div class="dash-mock-body" style="grid-template-columns:1fr;">
+          <div class="dm-card" style="max-width:700px;margin:0 auto;width:100%;">
+            <div class="dm-eyebrow"><span class="pulse"></span>🎯 Trade Plan Generator</div>
+            <div class="dm-h">XAU/USD · <em>auto-generated</em></div>
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;">
+              <div style="padding:10px;background:rgba(14,165,233,.06);border:1px solid rgba(14,165,233,.3);border-radius:8px;">
+                <div style="font-family:var(--f-mono);font-size:8.5px;color:var(--text3);letter-spacing:.1em;font-weight:800;">ENTRY</div>
+                <div style="font-family:var(--f-mono);font-size:15px;font-weight:900;color:var(--blue);margin-top:3px;">$3,118</div>
+              </div>
+              <div style="padding:10px;background:rgba(248,113,113,.05);border:1px solid rgba(248,113,113,.28);border-radius:8px;">
+                <div style="font-family:var(--f-mono);font-size:8.5px;color:var(--text3);letter-spacing:.1em;font-weight:800;">STOP</div>
+                <div style="font-family:var(--f-mono);font-size:15px;font-weight:900;color:var(--red2);margin-top:3px;">$3,102</div>
+              </div>
+              <div style="padding:10px;background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.28);border-radius:8px;">
+                <div style="font-family:var(--f-mono);font-size:8.5px;color:var(--text3);letter-spacing:.1em;font-weight:800;">TARGET</div>
+                <div style="font-family:var(--f-mono);font-size:15px;font-weight:900;color:var(--green2);margin-top:3px;">$3,166</div>
+              </div>
+              <div style="padding:10px;background:rgba(245,158,11,.05);border:1px solid rgba(245,158,11,.3);border-radius:8px;">
+                <div style="font-family:var(--f-mono);font-size:8.5px;color:var(--text3);letter-spacing:.1em;font-weight:800;">R : R</div>
+                <div style="font-family:var(--f-mono);font-size:15px;font-weight:900;color:var(--yellow);margin-top:3px;">1 : 3.0</div>
+              </div>
+            </div>
+            <div style="font-family:var(--f-sans);font-size:12.5px;color:var(--text);padding:11px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:9px;line-height:1.55;">
+              <strong>The thesis:</strong> Gold is reacting off the 4H bullish order block at $3,118 after sweeping liquidity below the prev day low. With the Iran-Hormuz risk premium intact and a hawkish DXY softening, the path of least resistance is the prev week high at $3,166. <strong>Invalidate</strong> on a 4H close below the order block at $3,102.
+            </div>
+            <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap;">
+              <span style="font-family:var(--f-mono);font-size:9px;padding:4px 9px;background:rgba(14,165,233,.1);color:var(--blue);border-radius:100px;font-weight:800;letter-spacing:.06em;">📡 News-grounded</span>
+              <span style="font-family:var(--f-mono);font-size:9px;padding:4px 9px;background:rgba(52,211,153,.1);color:var(--green2);border-radius:100px;font-weight:800;letter-spacing:.06em;">🧠 SMC concepts</span>
+              <span style="font-family:var(--f-mono);font-size:9px;padding:4px 9px;background:rgba(245,158,11,.1);color:var(--yellow);border-radius:100px;font-weight:800;letter-spacing:.06em;">⚡ &lt; 2s to generate</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 7 · World Pulse with cities + Live TV switcher -->
       <div class="slide" data-label="World Pulse Map + Live Markets TV">
         <div class="dash-mock-body">
           <div class="dm-card">
@@ -898,6 +1038,149 @@ body::after{
     <strong>Important:</strong> TradeContext.ai is not a broker, never places trades, and does not provide personal financial advice. We earn affiliate commission from some broker referrals — this never influences which brokers we list. <strong>Trading involves significant risk of loss</strong> and is not suitable for all investors. AI-generated analysis is informational only. See <a href="risk.html" style="color:var(--blue);">risk warning</a>.
   </p>
 </footer>
+
+<!-- ═══════════ AI CHAT — same backend as the dashboard's AI Trading Analyst ═══════════ -->
+<button class="hp-fab" id="hpFab" onclick="hpChatToggle()" title="Ask the AI Trading Analyst" aria-label="Open AI chat">
+  💬<span class="hp-fab-label">Ask the AI analyst</span>
+</button>
+<aside class="hp-chat" id="hpChat" role="dialog" aria-labelledby="hpChatTitle">
+  <div class="hp-chat-h">
+    <div class="hp-chat-av">🧠</div>
+    <div>
+      <div class="hp-chat-h-title" id="hpChatTitle">AI Trading Analyst</div>
+      <div class="hp-chat-h-sub">Live · grounded in real news + price action</div>
+    </div>
+    <button class="hp-chat-close" onclick="hpChatToggle()" aria-label="Close">×</button>
+  </div>
+  <div class="hp-chat-body" id="hpChatBody">
+    <div class="hp-empty" id="hpChatEmpty">
+      <strong>Ask anything about today's markets.</strong><br>
+      I'll pull live news, geopolitical risk, and current prices to ground every answer.
+      <div class="hp-suggest-row">
+        <button class="hp-suggest" onclick="hpChatAsk('What\'s moving gold right now?')">What's moving gold?</button>
+        <button class="hp-suggest" onclick="hpChatAsk('Explain liquidity sweeps in simple terms')">Liquidity sweeps?</button>
+        <button class="hp-suggest" onclick="hpChatAsk('What\'s the next macro catalyst this week?')">Next catalyst</button>
+        <button class="hp-suggest" onclick="hpChatAsk('Bull and bear case for the S&P 500 right now')">SPX bull vs bear</button>
+      </div>
+    </div>
+  </div>
+  <div class="hp-chat-foot">
+    <div class="hp-input-row">
+      <textarea class="hp-chat-input" id="hpChatInput" rows="1" placeholder="Ask anything about markets…" onkeydown="hpChatKey(event)"></textarea>
+      <button class="hp-chat-send" id="hpChatSend" onclick="hpChatSend()">Send</button>
+    </div>
+  </div>
+</aside>
+
+<script>
+// ────────── AI CHAT — calls the same /api/ai/chat backend as the dashboard ──────────
+(function(){
+  var API=(location.hostname==='localhost'||location.hostname==='127.0.0.1')?'http://localhost:3001':'';
+  // Default symbol context — chat works without a chart on the homepage, so anchor to gold
+  var DEFAULT_SYM='XAU/USD';
+
+  window.hpChatToggle=function(){
+    var p=document.getElementById('hpChat');
+    if(!p)return;
+    p.classList.toggle('open');
+    if(p.classList.contains('open')){
+      setTimeout(function(){var i=document.getElementById('hpChatInput');if(i)i.focus();},220);
+    }
+  };
+  window.hpChatAsk=function(prompt){
+    var i=document.getElementById('hpChatInput');
+    if(i){i.value=prompt;}
+    hpChatSend();
+  };
+  window.hpChatKey=function(e){
+    if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();hpChatSend();}
+  };
+
+  function bubble(role,content){
+    var body=document.getElementById('hpChatBody');
+    var empty=document.getElementById('hpChatEmpty');
+    if(empty)empty.style.display='none';
+    var b=document.createElement('div');
+    b.className='hp-bubble '+role;
+    if(role==='assistant'){
+      var html=String(content||'')
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+        .replace(/\*(.+?)\*/g,'<em>$1</em>')
+        .replace(/\n/g,'<br>');
+      b.innerHTML=html;
+    }else{
+      b.textContent=content;
+    }
+    body.appendChild(b);
+    body.scrollTop=body.scrollHeight;
+    return b;
+  }
+
+  window.hpChatSend=function(){
+    var i=document.getElementById('hpChatInput');
+    var send=document.getElementById('hpChatSend');
+    if(!i||!send)return;
+    var msg=i.value.trim();
+    if(!msg)return;
+    i.value='';send.disabled=true;
+    bubble('user',msg);
+    // Typing indicator
+    var typing=document.createElement('div');
+    typing.className='hp-bubble assistant';
+    typing.innerHTML='<span class="hp-typing"><span></span><span></span><span></span></span>';
+    var bodyEl=document.getElementById('hpChatBody');
+    bodyEl.appendChild(typing);
+    bodyEl.scrollTop=999999;
+
+    fetch(API+'/api/ai/chat',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      credentials:'include',
+      body:JSON.stringify({symbol:DEFAULT_SYM,message:msg})
+    }).then(function(r){return r.json().then(function(d){return {ok:r.ok,data:d};});}).then(function(res){
+      typing.remove();send.disabled=false;
+      if(!res.ok){
+        var code=res.data&&res.data.error&&res.data.error.code;
+        if(code==='CLAUDE_NO_CREDITS'){
+          var b=document.createElement('div');
+          b.className='hp-bubble assistant';
+          b.innerHTML='<div style="font-size:24px;margin-bottom:6px;">💳</div>'
+            +'<strong>Anthropic credits exhausted</strong><br>'
+            +'<span style="font-size:12px;color:var(--text2);">AI chat needs Anthropic API credits to run. Once you top up the balance, the chat resumes automatically — no restart needed.</span><br>'
+            +'<a href="https://console.anthropic.com/settings/billing" target="_blank" rel="noopener" style="display:inline-block;margin-top:10px;padding:8px 14px;background:#0ea5e9;color:#fff;font-family:var(--f-mono);font-size:10px;font-weight:800;border-radius:6px;text-decoration:none;letter-spacing:.06em;text-transform:uppercase;">↗ Top up Anthropic</a>';
+          bodyEl.appendChild(b);bodyEl.scrollTop=bodyEl.scrollHeight;
+          return;
+        }
+        if(code==='CLAUDE_RATE_LIMIT'||code==='CLAUDE_OVERLOADED'){
+          bubble('assistant','The AI is busy right now — give it 10–20 seconds and try again.\n\n*Educational tool — not personal financial advice.*');
+          return;
+        }
+        if(code==='CLAUDE_DISABLED'){
+          bubble('assistant','AI chat is offline — Anthropic API not configured on this server.\n\n*Educational tool — not personal financial advice.*');
+          return;
+        }
+        var errMsg=(res.data&&res.data.error&&res.data.error.message)||"Couldn't reach the AI right now.";
+        bubble('assistant',errMsg+'\n\n*Educational tool — not personal financial advice.*');
+        return;
+      }
+      bubble('assistant',res.data.message);
+      // Show which news the AI grounded the answer in — same UX as dashboard
+      var ctx=res.data.contextNews||[];
+      if(ctx.length){
+        var box=document.createElement('div');
+        box.className='hp-grounded';
+        box.innerHTML='📡 grounded in '+ctx.length+' news '+(ctx.length===1?'story':'stories')+': '
+          +ctx.slice(0,3).map(function(n){return '<span title="'+(n.headline||'').replace(/"/g,'&quot;')+'" style="color:var(--text2);">"'+(n.headline||'').slice(0,55).replace(/"/g,'&quot;')+((n.headline||'').length>55?'…':'')+'"</span>';}).join(' · ');
+        bodyEl.appendChild(box);bodyEl.scrollTop=bodyEl.scrollHeight;
+      }
+    }).catch(function(){
+      typing.remove();send.disabled=false;
+      bubble('assistant','Network hiccup — couldn\'t reach the AI. Try again in a moment.\n\n*Educational tool — not personal financial advice.*');
+    });
+  };
+})();
+</script>
 
 <script>
 // ────────── COMPANY LOGO MARQUEE ──────────

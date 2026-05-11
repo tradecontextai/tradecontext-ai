@@ -1823,7 +1823,7 @@ body.focus-mode .aichat-panel{height:calc(100vh - 130px);}
     <div class="col-main">
 
       <!-- CHART + AI BIAS SIDEBAR -->
-      <div class="panel">
+      <div class="panel" id="feat-live-chart">
         <div class="panel-h">
           <div class="panel-h-title">📈 Live Chart <span style="font-family:var(--mono);font-size:10px;color:var(--text3);font-weight:600;margin-left:8px;">TradingView</span></div>
           <div style="display:flex;gap:8px;align-items:center;">
@@ -2005,7 +2005,7 @@ body.focus-mode .aichat-panel{height:calc(100vh - 130px);}
         </div>
 
         <!-- ═══ Col 2: AI Bias panel (live, Claude-generated) ═══ -->
-        <div class="panel aib-panel" id="aibPanel">
+        <div class="panel aib-panel" id="aibPanel" data-anchor="feat-news-bias">
           <div class="aib-head">
             <div class="aib-head-l">
               <div class="aib-eyebrow">🧠 AI BIAS · LIVE</div>
@@ -2037,7 +2037,7 @@ body.focus-mode .aichat-panel{height:calc(100vh - 130px);}
       </div>
 
       <!-- ═══════ MACRO PULSE — premium WOW widget ═══════ -->
-      <div class="panel macro-pulse-panel">
+      <div class="panel macro-pulse-panel" id="feat-macro-pulse">
         <div class="panel-h">
           <div class="panel-h-title">
             <span style="background:var(--grad-prem);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:900;">⚡ Macro Pulse</span>
@@ -2172,7 +2172,7 @@ body.focus-mode .aichat-panel{height:calc(100vh - 130px);}
           </div>
 
           <!-- RIGHT side: World Pulse Map (full height) -->
-          <div class="mp-card world-map-card">
+          <div class="mp-card world-map-card" id="feat-world-pulse">
             <div class="mp-card-h" style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
               <div>
                 <div class="mp-card-title" id="wpTitle">🌍 World Pulse</div>
@@ -2258,7 +2258,7 @@ body.focus-mode .aichat-panel{height:calc(100vh - 130px);}
       </div>
 
       <!-- ═══════ 3-COLUMN ROW: AI Playbook · Live Positions · AI Journal ═══════ -->
-      <div class="three-col-row">
+      <div class="three-col-row" id="feat-ai-playbooks">
         <!-- AI Playbook -->
         <div class="panel three-col-panel">
           <div class="panel-h">

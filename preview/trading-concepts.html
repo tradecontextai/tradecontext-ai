@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trading Concepts · TradeContext.ai — Liquidity, Sweeps, Inducement, S/R explained</title>
+<meta name="description" content="Plain-English explainers for the smart money concepts professional traders actually use: liquidity, liquidity sweeps, inducement, support & resistance, order blocks, fair value gaps, BOS &amp; CHoCH. With diagrams + ask the AI directly.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Crect width='36' height='36' rx='8' fill='%230a1628'/%3E%3Cpolyline points='4,28 12,20 20,24 28,10' fill='none' stroke='%230ea5e9' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='28' cy='10' r='3.5' fill='%230ea5e9'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#03060d;--bg2:#070d1a;--bg3:#0c1626;
+  --border:#142035;--border-strong:#1f2e4a;
+  --blue:#0ea5e9;--blue2:#38bdf8;--violet:#8b5cf6;
+  --green:#10b981;--green2:#34d399;
+  --yellow:#f59e0b;--orange:#f97316;
+  --red:#ef4444;--red2:#f87171;
+  --text:#e2eaf4;--text2:#a5b8d0;--text3:#7a9ab8;--text4:#3a5570;
+  --f-sans:'Inter',sans-serif;--f-mono:'JetBrains Mono',monospace;
+  --grad-prem:linear-gradient(135deg,#0ea5e9 0%,#8b5cf6 100%);
+  --grad-bull:linear-gradient(135deg,#10b981,#34d399);
+  --grad-bear:linear-gradient(135deg,#ef4444,#f97316);
+  --ease-out-quart:cubic-bezier(.25,1,.5,1);
+  --ease-out-expo:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;scroll-padding-top:120px;}
+body{background:var(--bg);color:var(--text);font-family:var(--f-sans);font-size:14.5px;line-height:1.6;letter-spacing:-.005em;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+a{color:inherit;text-decoration:none;}
+
+/* Ambient aurora — same as homepage */
+body::before{content:'';position:fixed;inset:0;z-index:-2;pointer-events:none;background:radial-gradient(ellipse 1100px 700px at 15% -8%,rgba(14,165,233,.18),transparent 65%),radial-gradient(ellipse 900px 600px at 90% 5%,rgba(139,92,246,.16),transparent 70%),radial-gradient(ellipse 1200px 500px at 50% 60%,rgba(52,211,153,.05),transparent 80%);filter:blur(40px);opacity:.85;}
+body::after{content:'';position:fixed;inset:-50%;z-index:-1;pointer-events:none;background:conic-gradient(from 0deg at 50% 50%,transparent 0deg,rgba(14,165,233,.025) 60deg,transparent 120deg,rgba(139,92,246,.03) 180deg,transparent 240deg,rgba(52,211,153,.02) 300deg,transparent 360deg);animation:auroraSpin 90s linear infinite;mix-blend-mode:screen;}
+@keyframes auroraSpin{to{transform:rotate(360deg);}}
+
+/* Preview bar */
+.preview-bar{position:sticky;top:0;z-index:200;padding:10px 24px;background:linear-gradient(90deg,rgba(14,165,233,.12),rgba(139,92,246,.12));border-bottom:1px solid rgba(14,165,233,.3);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);text-align:center;font-family:var(--f-mono);font-size:10.5px;font-weight:700;letter-spacing:.08em;}
+.preview-bar span{background:var(--grad-prem);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.preview-bar a{margin-left:14px;color:#fff;text-decoration:underline;text-underline-offset:3px;}
+
+/* Nav */
+.nav{position:sticky;top:38px;z-index:100;background:rgba(3,6,13,.7);backdrop-filter:blur(22px) saturate(1.4);-webkit-backdrop-filter:blur(22px) saturate(1.4);border-bottom:1px solid rgba(255,255,255,.05);}
+.nav-inner{max-width:1280px;margin:0 auto;padding:14px 32px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:24px;}
+.brand{display:inline-flex;align-items:center;font-size:19px;font-weight:900;letter-spacing:-.03em;color:var(--text);line-height:1;}
+.brand-mark{width:28px;height:28px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0a1628,#0e1f3a);border:1px solid rgba(14,165,233,.32);margin-right:8px;}
+.brand .ai{background:var(--grad-prem);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:800;}
+.nav-links{display:flex;gap:2px;list-style:none;align-items:center;justify-content:center;}
+.nav-links a{padding:8px 14px;font-size:13px;font-weight:500;color:var(--text2);border-radius:8px;transition:.18s var(--ease-out-quart);}
+.nav-links a:hover,.nav-links a.active{color:var(--text);background:rgba(255,255,255,.04);}
+.nav-cta-row{display:flex;align-items:center;gap:10px;justify-content:flex-end;}
+.nav-cta{padding:9px 18px;background:var(--grad-prem);color:#fff;font-weight:700;font-size:12.5px;border-radius:9px;box-shadow:0 6px 20px -8px rgba(14,165,233,.55);transition:.22s var(--ease-out-quart);}
+.nav-cta:hover{transform:translateY(-2px);}
+
+/* Hero */
+.tc-hero{max-width:980px;margin:0 auto;padding:78px 32px 48px;text-align:center;}
+.tc-eyebrow{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;background:rgba(14,165,233,.08);border:1px solid rgba(14,165,233,.25);border-radius:100px;font-family:var(--f-mono);font-size:10.5px;font-weight:800;color:var(--blue2);letter-spacing:.16em;text-transform:uppercase;margin-bottom:22px;}
+.tc-eyebrow::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--blue2);box-shadow:0 0 8px var(--blue2);animation:lp 1.6s ease-in-out infinite;}
+@keyframes lp{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.55;transform:scale(.85);}}
+.tc-h1{font-family:var(--f-sans);font-size:clamp(38px,5vw,62px);font-weight:900;letter-spacing:-.035em;line-height:1.04;margin-bottom:18px;}
+.tc-h1 em{font-style:normal;background:var(--grad-prem);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.tc-sub{font-size:17px;color:var(--text2);max-width:680px;margin:0 auto 30px;line-height:1.6;}
+.tc-sub strong{color:var(--text);font-weight:700;}
+
+/* Table of contents */
+.tc-toc{max-width:1080px;margin:0 auto 70px;padding:0 32px;}
+.tc-toc-inner{padding:22px 26px;background:rgba(7,13,26,.55);border:1px solid rgba(255,255,255,.06);border-radius:14px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);}
+.tc-toc-h{font-family:var(--f-mono);font-size:10.5px;font-weight:800;color:var(--text3);letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px;}
+.tc-toc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;}
+.tc-toc-link{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;font-size:13.5px;font-weight:600;color:var(--text2);transition:.18s var(--ease-out-quart);border:1px solid transparent;}
+.tc-toc-link:hover{color:var(--text);background:rgba(14,165,233,.06);border-color:rgba(14,165,233,.18);transform:translateX(3px);}
+.tc-toc-link .ic{width:28px;height:28px;border-radius:7px;background:rgba(14,165,233,.10);border:1px solid rgba(14,165,233,.22);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+
+/* Concept section */
+.tc-wrap{max-width:1080px;margin:0 auto 60px;padding:0 32px;}
+.tc-concept{margin-bottom:72px;scroll-margin-top:130px;}
+.tc-concept-h{display:flex;align-items:center;gap:16px;margin-bottom:8px;}
+.tc-concept-num{font-family:var(--f-mono);font-size:11px;font-weight:800;color:var(--text3);letter-spacing:.16em;}
+.tc-concept-ic{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;background:linear-gradient(135deg,rgba(14,165,233,.14),rgba(139,92,246,.10));border:1px solid rgba(14,165,233,.28);flex-shrink:0;}
+.tc-concept-title{font-family:var(--f-sans);font-size:30px;font-weight:900;letter-spacing:-.02em;color:var(--text);}
+.tc-concept-tag{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;background:rgba(139,92,246,.10);border:1px solid rgba(139,92,246,.3);border-radius:100px;font-family:var(--f-mono);font-size:9.5px;color:var(--violet);font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin-left:auto;}
+.tc-concept-tagline{font-size:16px;color:var(--text2);margin-bottom:24px;padding-left:64px;line-height:1.55;font-style:italic;}
+
+.tc-card{padding:32px;background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,.005));border:1px solid rgba(255,255,255,.07);border-radius:16px;box-shadow:0 22px 50px -22px rgba(0,0,0,.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
+
+.tc-row{display:grid;grid-template-columns:1.1fr .9fr;gap:28px;align-items:start;}
+@media (max-width:780px){.tc-row{grid-template-columns:1fr;}}
+.tc-prose h3{font-family:var(--f-mono);font-size:10.5px;font-weight:800;color:var(--blue2);letter-spacing:.14em;text-transform:uppercase;margin:18px 0 8px;}
+.tc-prose h3:first-child{margin-top:0;}
+.tc-prose p{font-size:14.5px;color:var(--text);line-height:1.7;margin-bottom:10px;}
+.tc-prose p strong{color:var(--text);font-weight:700;}
+.tc-prose ul{padding-left:18px;margin:8px 0 12px;}
+.tc-prose li{font-size:14px;color:var(--text2);line-height:1.65;margin-bottom:5px;}
+
+/* SVG diagrams */
+.tc-diagram{padding:22px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.06);border-radius:13px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:280px;}
+.tc-diagram svg{width:100%;max-width:340px;height:auto;}
+.tc-diagram-cap{font-family:var(--f-mono);font-size:10.5px;color:var(--text3);font-weight:700;letter-spacing:.06em;margin-top:14px;text-align:center;}
+
+/* Why-it-matters callout */
+.tc-callout{margin-top:18px;padding:14px 18px;background:linear-gradient(90deg,rgba(245,158,11,.06),transparent 80%);border-left:3px solid var(--yellow);border-radius:0 9px 9px 0;}
+.tc-callout-h{font-family:var(--f-mono);font-size:10px;font-weight:800;color:var(--yellow);letter-spacing:.14em;text-transform:uppercase;margin-bottom:5px;}
+.tc-callout p{font-size:13.5px;color:var(--text);line-height:1.6;margin:0;}
+
+/* Ask AI button */
+.tc-askai{margin-top:18px;display:inline-flex;align-items:center;gap:10px;padding:11px 18px;background:linear-gradient(135deg,rgba(14,165,233,.10),rgba(139,92,246,.06));border:1px solid rgba(14,165,233,.32);border-radius:10px;font-family:var(--f-sans);font-size:13px;font-weight:700;color:var(--blue2);cursor:pointer;transition:.2s var(--ease-out-quart);}
+.tc-askai:hover{transform:translateY(-2px);border-color:rgba(14,165,233,.55);box-shadow:0 8px 24px -8px rgba(14,165,233,.4);}
+
+/* Bottom CTA */
+.tc-cta{max-width:980px;margin:30px auto 80px;padding:48px 38px;text-align:center;background:linear-gradient(135deg,rgba(14,165,233,.08),rgba(139,92,246,.06));border:1px solid rgba(14,165,233,.22);border-radius:18px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);}
+.tc-cta h2{font-size:32px;font-weight:900;letter-spacing:-.02em;margin-bottom:10px;}
+.tc-cta h2 em{font-style:normal;background:var(--grad-prem);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.tc-cta p{color:var(--text2);max-width:580px;margin:0 auto 22px;font-size:15px;}
+.btn{display:inline-flex;align-items:center;gap:9px;padding:12px 22px;background:var(--grad-prem);color:#fff;font-weight:800;font-size:14px;border-radius:11px;box-shadow:0 12px 32px -12px rgba(14,165,233,.6);transition:.22s var(--ease-out-quart);border:none;cursor:pointer;}
+.btn:hover{transform:translateY(-2px);box-shadow:0 16px 38px -10px rgba(14,165,233,.7);}
+
+/* Footer */
+.tc-foot{max-width:1280px;margin:0 auto;padding:30px 32px 60px;text-align:center;color:var(--text3);font-size:12px;border-top:1px solid rgba(255,255,255,.05);}
+
+/* ═══════ AI CHAT — floating launcher + slide-out panel (bottom-right) — same as homepage ═══════ */
+.hp-fab{position:fixed;right:24px;bottom:24px;z-index:9999;width:62px;height:62px;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,#8b5cf6);color:#fff;border:none;cursor:pointer;font-size:26px;display:flex;align-items:center;justify-content:center;box-shadow:0 14px 38px rgba(14,165,233,.5),0 0 0 1px rgba(255,255,255,.08) inset;transition:transform .25s var(--ease-out-quart),box-shadow .25s;}
+.hp-fab:hover{transform:translateY(-3px) scale(1.04);box-shadow:0 18px 48px rgba(14,165,233,.65),0 0 0 1px rgba(255,255,255,.12) inset;}
+.hp-fab::before{content:'';position:absolute;inset:-4px;border-radius:50%;border:2px solid rgba(14,165,233,.45);animation:hpFabRing 2.2s ease-out infinite;}
+@keyframes hpFabRing{0%{transform:scale(.9);opacity:.85;}100%{transform:scale(1.45);opacity:0;}}
+.hp-fab-label{position:absolute;right:74px;top:50%;transform:translateY(-50%) translateX(6px);background:rgba(15,23,42,.92);color:#e5e7eb;font-family:var(--f-sans);font-size:12px;font-weight:700;padding:7px 12px;border-radius:8px;border:1px solid rgba(255,255,255,.08);white-space:nowrap;opacity:0;pointer-events:none;transition:.2s;}
+.hp-fab:hover .hp-fab-label{opacity:1;transform:translateY(-50%) translateX(0);}
+.hp-chat{position:fixed;right:24px;bottom:96px;width:400px;max-width:calc(100vw - 48px);height:560px;max-height:calc(100vh - 130px);background:rgba(15,20,32,.96);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border:1px solid rgba(255,255,255,.08);border-radius:16px;box-shadow:0 28px 72px rgba(0,0,0,.7);z-index:10000;display:none;flex-direction:column;overflow:hidden;transform-origin:bottom right;}
+.hp-chat.open{display:flex;animation:hpChatIn .26s cubic-bezier(.22,.61,.36,1);}
+@keyframes hpChatIn{from{opacity:0;transform:scale(.94) translateY(10px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.hp-chat-h{padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:11px;background:linear-gradient(135deg,rgba(14,165,233,.08),rgba(139,92,246,.05));flex-shrink:0;}
+.hp-chat-av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;box-shadow:0 4px 14px rgba(14,165,233,.4);}
+.hp-chat-h-title{font-family:var(--f-sans);font-size:13.5px;font-weight:800;color:var(--text);}
+.hp-chat-h-sub{font-family:var(--f-mono);font-size:10px;color:var(--text3);font-weight:700;letter-spacing:.06em;margin-top:2px;text-transform:uppercase;}
+.hp-chat-close{margin-left:auto;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);color:var(--text2);font-size:18px;cursor:pointer;line-height:1;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0;transition:.15s;}
+.hp-chat-close:hover{background:#ef4444;color:#fff;border-color:#ef4444;transform:scale(1.05);}
+.hp-chat-body{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:14px;}
+.hp-chat-body::-webkit-scrollbar{width:6px;}
+.hp-chat-body::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:3px;}
+.hp-bubble{padding:12px 14px;border-radius:11px;font-family:var(--f-sans);font-size:13.5px;line-height:1.55;color:var(--text);max-width:90%;}
+.hp-bubble.user{align-self:flex-end;background:rgba(14,165,233,.15);border:1px solid rgba(14,165,233,.3);}
+.hp-bubble.assistant{align-self:flex-start;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);}
+.hp-typing{display:inline-flex;gap:4px;align-items:center;}
+.hp-typing span{width:6px;height:6px;border-radius:50%;background:var(--text3);animation:hpTypingBounce 1.2s ease-in-out infinite;}
+.hp-typing span:nth-child(2){animation-delay:.15s;}
+.hp-typing span:nth-child(3){animation-delay:.3s;}
+@keyframes hpTypingBounce{0%,80%,100%{transform:scale(.85);opacity:.5;}40%{transform:scale(1);opacity:1;}}
+.hp-empty{font-family:var(--f-sans);font-size:13.5px;color:var(--text2);text-align:center;padding:18px 12px 8px;line-height:1.6;}
+.hp-empty strong{color:var(--text);font-weight:800;}
+.hp-suggest-row{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:14px;}
+.hp-suggest{padding:8px 13px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:var(--text2);font-family:var(--f-mono);font-size:10.5px;font-weight:700;border-radius:100px;cursor:pointer;letter-spacing:.02em;transition:.15s;}
+.hp-suggest:hover{border-color:rgba(14,165,233,.6);color:#0ea5e9;background:rgba(14,165,233,.06);}
+.hp-chat-foot{padding:12px 14px;border-top:1px solid rgba(255,255,255,.06);background:rgba(0,0,0,.2);}
+.hp-input-row{display:flex;align-items:flex-end;gap:8px;}
+.hp-chat-input{flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:var(--text);font-family:var(--f-sans);font-size:13.5px;padding:10px 12px;border-radius:9px;resize:none;min-height:42px;max-height:120px;outline:none;transition:.15s;}
+.hp-chat-input:focus{border-color:rgba(14,165,233,.5);box-shadow:0 0 0 3px rgba(14,165,233,.12);}
+.hp-chat-send{padding:0 16px;height:42px;background:linear-gradient(135deg,#0ea5e9,#8b5cf6);color:#fff;border:none;border-radius:9px;font-family:var(--f-sans);font-size:13px;font-weight:800;cursor:pointer;letter-spacing:.04em;transition:.15s;}
+.hp-chat-send:hover{filter:brightness(1.1);}
+.hp-chat-send:disabled{opacity:.5;cursor:not-allowed;filter:grayscale(.4);}
+.hp-grounded{align-self:flex-start;max-width:90%;font-family:var(--f-mono);font-size:9.5px;color:var(--text3);font-weight:700;letter-spacing:.04em;margin-top:-6px;padding:7px 10px;background:rgba(14,165,233,.05);border-left:2px solid rgba(14,165,233,.5);border-radius:0 6px 6px 0;line-height:1.55;}
+@media (max-width:540px){
+  .hp-fab{width:56px;height:56px;font-size:22px;right:18px;bottom:18px;}
+  .hp-chat{right:12px;left:12px;bottom:88px;width:auto;}
+  .hp-fab-label{display:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="preview-bar">
+  <span>📚 Trading Concepts Library</span> · plain-English explainers · ask the AI for examples
+</div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="homepage-redesigned.html" class="brand">
+      <span class="brand-mark">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <polyline points="2,14 6,10 10,12 14,5" fill="none" stroke="#0ea5e9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="14" cy="5" r="2.2" fill="#0ea5e9"/>
+        </svg>
+      </span>
+      <span class="word">TradeContext<span class="ai">.ai</span></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="homepage-redesigned.html">Home</a></li>
+      <li><a href="../dashboard.html">Dashboard</a></li>
+      <li><a href="trading-concepts.html" class="active">Trading Concepts</a></li>
+      <li><a href="homepage-redesigned.html#pricing">Pricing</a></li>
+      <li><a href="homepage-redesigned.html#faq">FAQ</a></li>
+    </ul>
+    <div class="nav-cta-row">
+      <a href="../dashboard.html" class="nav-cta">Open the desk →</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════ HERO ═══════════ -->
+<section class="tc-hero">
+  <div class="tc-eyebrow">SMART MONEY CONCEPTS · MADE SIMPLE</div>
+  <h1 class="tc-h1">The trading concepts <em>institutional desks</em> actually use.</h1>
+  <p class="tc-sub">
+    The vocabulary professional traders argue in — <strong>liquidity sweeps, inducement, order blocks, fair value gaps</strong> — explained in plain English with diagrams. <strong>Ask the AI</strong> (bottom-right) about anything you don't get.
+  </p>
+</section>
+
+<!-- ═══════════ TABLE OF CONTENTS ═══════════ -->
+<section class="tc-toc">
+  <div class="tc-toc-inner">
+    <div class="tc-toc-h">📑 Jump to a concept</div>
+    <div class="tc-toc-grid">
+      <a href="#liquidity" class="tc-toc-link"><span class="ic">💧</span>Liquidity</a>
+      <a href="#liquidity-sweep" class="tc-toc-link"><span class="ic">🌊</span>Liquidity Sweep</a>
+      <a href="#inducement" class="tc-toc-link"><span class="ic">🎣</span>Inducement</a>
+      <a href="#support-resistance" class="tc-toc-link"><span class="ic">📊</span>Support &amp; Resistance</a>
+      <a href="#order-block" class="tc-toc-link"><span class="ic">🧱</span>Order Block</a>
+      <a href="#fvg" class="tc-toc-link"><span class="ic">🪟</span>Fair Value Gap</a>
+      <a href="#bos-choch" class="tc-toc-link"><span class="ic">🔁</span>BOS &amp; CHoCH</a>
+      <a href="#supply-demand" class="tc-toc-link"><span class="ic">⚖️</span>Supply &amp; Demand</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ CONCEPT 1: LIQUIDITY ═══════════ -->
+<section class="tc-wrap">
+<div class="tc-concept" id="liquidity">
+  <div class="tc-concept-h">
+    <div class="tc-concept-ic">💧</div>
+    <div style="flex:1;">
+      <div class="tc-concept-num">CONCEPT 01</div>
+      <div class="tc-concept-title">Liquidity</div>
+    </div>
+    <span class="tc-concept-tag">SMC · FOUNDATION</span>
+  </div>
+  <div class="tc-concept-tagline">Where the orders are stacked. Price hunts liquidity the way water flows downhill.</div>
+
+  <div class="tc-card">
+    <div class="tc-row">
+      <div class="tc-prose">
+        <h3>What it is</h3>
+        <p><strong>Liquidity</strong> is just a pool of resting orders — stops, pending limits, breakout buyers — clustered around a price level. The bigger banks and prop desks need liquidity to fill their size, so price gets <em>drawn</em> to those pools before reversing.</p>
+        <h3>Where it pools</h3>
+        <ul>
+          <li><strong>Above swing highs</strong> — breakout buyers' entries + short-sellers' stops</li>
+          <li><strong>Below swing lows</strong> — breakout sellers' entries + long-holders' stops</li>
+          <li><strong>Above/below equal highs &amp; lows</strong> — magnet zones traders pile stops into</li>
+          <li><strong>Round numbers</strong> ($3,100 gold, 1.10 EUR/USD) — psychological clusters</li>
+          <li><strong>Trendlines</strong> — every retail trader puts a stop on the other side</li>
+        </ul>
+        <h3>Why it matters</h3>
+        <p>Once you start thinking in terms of <em>where the liquidity is</em>, charts stop looking random. Price doesn't move to make you money — it moves to find the next pool, then reverses.</p>
+        <button class="tc-askai" onclick="hpChatToggle();setTimeout(function(){hpChatAsk('Show me a recent liquidity example on gold or EUR/USD')},300)">💬 Ask the AI for a live example →</button>
+      </div>
+      <div class="tc-diagram">
+        <svg viewBox="0 0 320 280" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="liqgrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#f87171" stop-opacity=".5"/>
+              <stop offset="100%" stop-color="#f87171" stop-opacity="0"/>
+            </linearGradient>
+            <linearGradient id="liqgrad2" x1="0" y1="1" x2="0" y2="0">
+              <stop offset="0%" stop-color="#34d399" stop-opacity=".5"/>
+              <stop offset="100%" stop-color="#34d399" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <!-- Liquidity pool above -->
+          <rect x="20" y="30" width="280" height="22" fill="url(#liqgrad)"/>
+          <line x1="20" y1="52" x2="300" y2="52" stroke="#f87171" stroke-width="1.5" stroke-dasharray="4 3"/>
+          <text x="160" y="22" text-anchor="middle" font-family="JetBrains Mono" font-size="9.5" fill="#f87171" font-weight="700">↑ SELL-SIDE LIQUIDITY (long stops)</text>
+          <!-- Liquidity pool below -->
+          <rect x="20" y="216" width="280" height="22" fill="url(#liqgrad2)"/>
+          <line x1="20" y1="216" x2="300" y2="216" stroke="#34d399" stroke-width="1.5" stroke-dasharray="4 3"/>
+          <text x="160" y="258" text-anchor="middle" font-family="JetBrains Mono" font-size="9.5" fill="#34d399" font-weight="700">↓ BUY-SIDE LIQUIDITY (short stops)</text>
+          <!-- Price action (candles simplified) -->
+          <g stroke="#e2eaf4" stroke-width="2" fill="none">
+            <path d="M30 130 L60 110 L90 160 L120 90 L150 140 L180 80 L210 120 L240 100 L270 150"/>
+          </g>
+          <g fill="#34d399">
+            <rect x="56" y="106" width="8" height="20"/>
+            <rect x="116" y="86" width="8" height="20"/>
+            <rect x="176" y="76" width="8" height="22"/>
+          </g>
+          <g fill="#f87171">
+            <rect x="86" y="156" width="8" height="14"/>
+            <rect x="146" y="136" width="8" height="14"/>
+            <rect x="266" y="146" width="8" height="14"/>
+          </g>
+        </svg>
+        <div class="tc-diagram-cap">Pools form above highs &amp; below lows — price chases both</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ CONCEPT 2: LIQUIDITY SWEEP ═══════════ -->
+<div class="tc-concept" id="liquidity-sweep">
+  <div class="tc-concept-h">
+    <div class="tc-concept-ic">🌊</div>
+    <div style="flex:1;">
+      <div class="tc-concept-num">CONCEPT 02</div>
+      <div class="tc-concept-title">Liquidity Sweep</div>
+    </div>
+    <span class="tc-concept-tag">SMC · ENTRY TRIGGER</span>
+  </div>
+  <div class="tc-concept-tagline">The "stop hunt." Price spikes through a known level, grabs the orders, then snaps back.</div>
+
+  <div class="tc-card">
+    <div class="tc-row">
+      <div class="tc-prose">
+        <h3>What it is</h3>
+        <p>A <strong>liquidity sweep</strong> is when price <em>briefly</em> trades through a swing high or low — taking out the stops resting there — and then reverses hard in the opposite direction. It's the most reliable signal that an institution just filled their entry by sniping retail's stops.</p>
+        <h3>How to spot it</h3>
+        <ul>
+          <li><strong>Wick that pokes through</strong> a clear prev high or low</li>
+          <li><strong>Closes back inside</strong> the range — body doesn't follow the wick</li>
+          <li><strong>Volume spike</strong> on the sweep candle vs the previous few</li>
+          <li><strong>Immediate displacement</strong> the other way within 1–3 candles</li>
+        </ul>
+        <h3>Why it matters</h3>
+        <p>This is where serious traders get their <strong>highest-RR entries</strong>. The stop sits just beyond the wick (so risk is tiny), the target is the opposite liquidity pool (so reward is huge). A clean sweep is often a <strong>1:3 or 1:5 R:R</strong> trade waiting to happen.</p>
+        <button class="tc-askai" onclick="hpChatToggle();setTimeout(function(){hpChatAsk('Walk me through a liquidity sweep example with entry, stop and target')},300)">💬 Get a worked example →</button>
+      </div>
+      <div class="tc-diagram">
+        <svg viewBox="0 0 320 280" xmlns="http://www.w3.org/2000/svg">
+          <!-- Old high level -->
+          <line x1="20" y1="60" x2="300" y2="60" stroke="#f87171" stroke-width="1.2" stroke-dasharray="4 3"/>
+          <text x="28" y="55" font-family="JetBrains Mono" font-size="9" fill="#f87171" font-weight="700">Prev High (stops above)</text>
+          <!-- Price action: rallies, sweeps the high, snaps back -->
+          <g stroke="#e2eaf4" stroke-width="2" fill="none">
+            <path d="M30 200 L70 150 L100 100 L130 80 L160 45 L190 110 L220 160 L260 220"/>
+          </g>
+          <!-- The sweep candle -->
+          <g>
+            <line x1="160" y1="35" x2="160" y2="110" stroke="#f87171" stroke-width="1.5"/>
+            <rect x="155" y="80" width="10" height="30" fill="#f87171" stroke="#fff" stroke-width=".5"/>
+          </g>
+          <!-- Highlight: sweep arrow -->
+          <path d="M170 38 Q210 25 230 75" stroke="#f59e0b" stroke-width="1.5" fill="none" stroke-dasharray="3 3"/>
+          <text x="232" y="40" font-family="JetBrains Mono" font-size="10" fill="#f59e0b" font-weight="800">↪ sweep</text>
+          <!-- Entry zone -->
+          <rect x="180" y="100" width="40" height="22" fill="rgba(14,165,233,.18)" stroke="#0ea5e9" stroke-width="1"/>
+          <text x="200" y="138" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#0ea5e9" font-weight="800">SHORT ENTRY</text>
+          <!-- Target -->
+          <text x="160" y="252" text-anchor="middle" font-family="JetBrains Mono" font-size="9.5" fill="#34d399" font-weight="800">→ target: liquidity below</text>
+        </svg>
+        <div class="tc-diagram-cap">Wick takes the stops · body closes back inside · price reverses</div>
+      </div>
+    </div>
+    <div class="tc-callout">
+      <div class="tc-callout-h">⚠️ Common mistake</div>
+      <p>A <em>break-and-close</em> above the high is <strong>not</strong> a sweep — it's a breakout. The sweep is defined by closing back <strong>inside</strong> the range. If the body closes outside, the move is real.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ CONCEPT 3: INDUCEMENT ═══════════ -->
+<div class="tc-concept" id="inducement">
+  <div class="tc-concept-h">
+    <div class="tc-concept-ic">🎣</div>
+    <div style="flex:1;">
+      <div class="tc-concept-num">CONCEPT 03</div>
+      <div class="tc-concept-title">Inducement</div>
+    </div>
+    <span class="tc-concept-tag">SMC · TRAP</span>
+  </div>
+  <div class="tc-concept-tagline">The bait. A minor swing put there to make breakout traders enter early — so price can flush them.</div>
+
+  <div class="tc-card">
+    <div class="tc-row">
+      <div class="tc-prose">
+        <h3>What it is</h3>
+        <p><strong>Inducement</strong> is a <em>minor</em> swing high or low placed in front of a more important one. Retail traders see the small swing get broken and pile in expecting a breakout. Institutions use that flow to <strong>fill the other side of the trade</strong>, then push price to the real swing point.</p>
+        <h3>How to spot it</h3>
+        <ul>
+          <li>A <strong>shallow pullback</strong> after an impulsive move, leaving a small swing</li>
+          <li>That minor swing gets broken with conviction (looks like a breakout)</li>
+          <li>Price then <strong>reverses sharply</strong> back through the entry zone</li>
+          <li>The "real" target was the order block / FVG further away the whole time</li>
+        </ul>
+        <h3>Why it matters</h3>
+        <p>Inducement explains why "obvious" breakouts fail so often. Before entering a breakout, ask: <em>"Is this the actual breakout, or am I the liquidity for someone else's entry?"</em> If a clean order block sits just beyond, the breakout is usually inducement.</p>
+        <button class="tc-askai" onclick="hpChatToggle();setTimeout(function(){hpChatAsk('How do I tell inducement from a real breakout?')},300)">💬 Ask: real breakout vs inducement →</button>
+      </div>
+      <div class="tc-diagram">
+        <svg viewBox="0 0 320 280" xmlns="http://www.w3.org/2000/svg">
+          <!-- Minor swing high (inducement) -->
+          <line x1="100" y1="90" x2="200" y2="90" stroke="#f59e0b" stroke-width="1" stroke-dasharray="3 3"/>
+          <text x="100" y="85" font-family="JetBrains Mono" font-size="9" fill="#f59e0b" font-weight="700">Inducement (minor high)</text>
+          <!-- Real swing high target -->
+          <line x1="20" y1="40" x2="300" y2="40" stroke="#f87171" stroke-width="1.2" stroke-dasharray="4 3"/>
+          <text x="200" y="34" font-family="JetBrains Mono" font-size="9" fill="#f87171" font-weight="700">Real swing high · OB above</text>
+          <!-- Price action -->
+          <g stroke="#e2eaf4" stroke-width="2" fill="none">
+            <path d="M30 200 L60 150 L90 90 L115 130 L150 75 L175 60 L210 110 L250 180"/>
+          </g>
+          <!-- Retail entry on minor swing break -->
+          <circle cx="115" cy="86" r="5" fill="#ef4444"/>
+          <text x="120" y="115" font-family="JetBrains Mono" font-size="9" fill="#ef4444" font-weight="700">retail longs ▲</text>
+          <!-- True reversal at OB -->
+          <rect x="155" y="48" width="40" height="20" fill="rgba(248,113,113,.18)" stroke="#f87171" stroke-width="1"/>
+          <text x="175" y="78" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#f87171" font-weight="800">OB · short</text>
+          <!-- Arrow of the reversal -->
+          <path d="M180 78 L230 170" stroke="#f87171" stroke-width="1.5" fill="none"/>
+          <polygon points="230,170 222,160 226,170 222,176" fill="#f87171"/>
+        </svg>
+        <div class="tc-diagram-cap">Minor swing baits the breakout · real reversal sits further up</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ CONCEPT 4: SUPPORT & RESISTANCE ═══════════ -->
+<div class="tc-concept" id="support-resistance">
+  <div class="tc-concept-h">
+    <div class="tc-concept-ic">📊</div>
+    <div style="flex:1;">
+      <div class="tc-concept-num">CONCEPT 04</div>
+      <div class="tc-concept-title">Support &amp; Resistance</div>
+    </div>
+    <span class="tc-concept-tag">CLASSIC TA</span>
+  </div>
+  <div class="tc-concept-tagline">The oldest idea in trading — and still the most useful. Price has memory.</div>
+
+  <div class="tc-card">
+    <div class="tc-row">
+      <div class="tc-prose">
+        <h3>What it is</h3>
+        <p><strong>Support</strong> is a price floor where buyers historically step in. <strong>Resistance</strong> is a ceiling where sellers historically dominate. Both come from one simple fact: traders <em>remember</em> levels where pain or profit happened, and act on them again.</p>
+        <h3>How to draw them properly</h3>
+        <ul>
+          <li><strong>Use zones, not lines.</strong> Markets respect <em>areas</em> ±5–15 pips/cents, not exact prices.</li>
+          <li><strong>Higher timeframe wins.</strong> A weekly level outranks a 15-minute one — always.</li>
+          <li><strong>The more touches, the weaker.</strong> Counter-intuitive but true: every test absorbs orders. The 4th touch breaks more often than holds.</li>
+          <li><strong>Watch the flip.</strong> Old resistance becomes new support once broken (and vice versa) — that's where the cleanest re-entries live.</li>
+        </ul>
+        <h3>Why it matters</h3>
+        <p>S/R is the <strong>scaffolding everyone agrees on</strong>. Even traders who don't know about liquidity, order blocks or FVGs are watching these levels — so they become self-fulfilling reaction points.</p>
+        <button class="tc-askai" onclick="hpChatToggle();setTimeout(function(){hpChatAsk('What support and resistance levels matter on the S&P 500 right now?')},300)">💬 Get live S/R for any symbol →</button>
+      </div>
+      <div class="tc-diagram">
+        <svg viewBox="0 0 320 280" xmlns="http://www.w3.org/2000/svg">
+          <!-- Resistance zone -->
+          <rect x="20" y="55" width="280" height="22" fill="rgba(248,113,113,.14)" stroke="#f87171" stroke-width="1" stroke-dasharray="4 3"/>
+          <text x="160" y="50" text-anchor="middle" font-family="JetBrains Mono" font-size="9.5" fill="#f87171" font-weight="800">↑ RESISTANCE ZONE</text>
+          <!-- Support zone -->
+          <rect x="20" y="200" width="280" height="22" fill="rgba(52,211,153,.14)" stroke="#34d399" stroke-width="1" stroke-dasharray="4 3"/>
+          <text x="160" y="244" text-anchor="middle" font-family="JetBrains Mono" font-size="9.5" fill="#34d399" font-weight="800">↓ SUPPORT ZONE</text>
+          <!-- Price action bouncing between -->
+          <g stroke="#e2eaf4" stroke-width="2" fill="none">
+            <path d="M30 210 L60 75 L90 130 L120 70 L150 160 L180 65 L210 175 L240 80 L270 200"/>
+          </g>
+          <!-- Bounce arrows -->
+          <text x="55" y="100" font-family="JetBrains Mono" font-size="14" fill="#f87171" font-weight="800">×</text>
+          <text x="115" y="95" font-family="JetBrains Mono" font-size="14" fill="#f87171" font-weight="800">×</text>
+          <text x="175" y="90" font-family="JetBrains Mono" font-size="14" fill="#f87171" font-weight="800">×</text>
+          <text x="100" y="155" font-family="JetBrains Mono" font-size="14" fill="#34d399" font-weight="800">✓</text>
+          <text x="160" y="185" font-family="JetBrains Mono" font-size="14" fill="#34d399" font-weight="800">✓</text>
+        </svg>
+        <div class="tc-diagram-cap">Ranges respect S/R · zones, not lines</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ CONCEPT 5: ORDER BLOCK ═══════════ -->
+<div class="tc-concept" id="order-block">
+  <div class="tc-concept-h">
+    <div class="tc-concept-ic">🧱</div>
+    <div style="flex:1;">
+      <div class="tc-concept-num">CONCEPT 05</div>
+      <div class="tc-concept-title">Order Block</div>
+    </div>
+    <span class="tc-concept-tag">SMC · ENTRY ZONE</span>
+  </div>
+  <div class="tc-concept-tagline">The last candle before a big move. Institutional footprint, frozen on the chart.</div>
+
+  <div class="tc-card">
+    <div class="tc-row">
+      <div class="tc-prose">
+        <h3>What it is</h3>
+        <p>An <strong>order block</strong> is the <em>last opposing candle</em> before a strong displacement move. A <strong>bullish OB</strong> is the last down candle before a rally; a <strong>bearish OB</strong> is the last up candle before a sell-off. The idea: institutions left unfilled orders there, so when price returns to that zone, they get filled again.</p>
+        <h3>How to spot it</h3>
+        <ul>
+          <li>Find a <strong>strong move</strong> that broke market structure</li>
+          <li>Mark the <strong>last candle</strong> of the <em>opposite</em> colour before that move</li>
+          <li>Draw a box from the candle's <strong>open to wick</strong> (or open to body)</li>
+          <li>Watch for price to retrace into the box — that's the entry zone</li>
+        </ul>
+        <h3>Why it matters</h3>
+        <p>Order blocks give you <strong>specific, defined zones</strong> to react in — not vague levels. Combined with a liquidity sweep into the OB, you get the highest-probability entries the SMC framework offers.</p>
+        <button class="tc-askai" onclick="hpChatToggle();setTimeout(function(){hpChatAsk('Show me how to find a bullish order block on a chart')},300)">💬 Get a chart walkthrough →</button>
+      </div>
+      <div class="tc-diagram">
+        <svg viewBox="0 0 320 280" xmlns="http://www.w3.org/2000/svg">
+          <!-- Bullish OB box -->
+          <rect x="78" y="160" width="40" height="40" fill="rgba(14,165,233,.16)" stroke="#0ea5e9" stroke-width="1.2"/>
+          <text x="98" y="218" text-anchor="middle" font-family="JetBrains Mono" font-size="9.5" fill="#0ea5e9" font-weight="800">BULLISH OB</text>
+          <!-- The candles -->
+          <g>
+            <!-- Down candle (the OB) -->
+            <line x1="98" y1="155" x2="98" y2="205" stroke="#f87171" stroke-width="1"/>
+            <rect x="94" y="160" width="8" height="40" fill="#f87171"/>
+            <!-- Strong displacement up -->
+            <line x1="120" y1="100" x2="120" y2="170" stroke="#34d399" stroke-width="1"/>
+            <rect x="116" y="100" width="8" height="55" fill="#34d399"/>
+            <line x1="142" y1="80" x2="142" y2="115" stroke="#34d399" stroke-width="1"/>
+            <rect x="138" y="80" width="8" height="35" fill="#34d399"/>
+            <line x1="164" y1="60" x2="164" y2="92" stroke="#34d399" stroke-width="1"/>
+            <rect x="160" y="60" width="8" height="30" fill="#34d399"/>
+            <!-- Pullback -->
+            <line x1="186" y1="78" x2="186" y2="120" stroke="#f87171" stroke-width="1"/>
+            <rect x="182" y="78" width="8" height="40" fill="#f87171"/>
+            <line x1="208" y1="115" x2="208" y2="170" stroke="#f87171" stroke-width="1"/>
+            <rect x="204" y="115" width="8" height="55" fill="#f87171"/>
+            <!-- Tap into OB and rip -->
+            <line x1="230" y1="100" x2="230" y2="190" stroke="#34d399" stroke-width="1"/>
+            <rect x="226" y="100" width="8" height="90" fill="#34d399"/>
+          </g>
+          <!-- Annotation -->
+          <text x="78" y="35" font-family="JetBrains Mono" font-size="9.5" fill="#34d399" font-weight="800">↑ Strong displacement (breaks structure)</text>
+          <path d="M120 50 L160 65" stroke="#34d399" stroke-width="1" fill="none"/>
+          <text x="200" y="245" font-family="JetBrains Mono" font-size="9" fill="#0ea5e9" font-weight="700">price returns → fills the OB → rally</text>
+        </svg>
+        <div class="tc-diagram-cap">Last down candle before the rally = bullish OB</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ CONCEPT 6: FAIR VALUE GAP ═══════════ -->
+<div class="tc-concept" id="fvg">
+  <div class="tc-concept-h">
+    <div class="tc-concept-ic">🪟</div>
+    <div style="flex:1;">
+      <div class="tc-concept-num">CONCEPT 06</div>
+      <div class="tc-concept-title">Fair Value Gap (FVG)</div>
+    </div>
+    <span class="tc-concept-tag">SMC · IMBALANCE</span>
+  </div>
+  <div class="tc-concept-tagline">A 3-candle imbalance where price moved too fast. The market wants to fill it.</div>
+
+  <div class="tc-card">
+    <div class="tc-row">
+      <div class="tc-prose">
+        <h3>What it is</h3>
+        <p>A <strong>Fair Value Gap</strong> (also called an <em>imbalance</em>) is the price range where buyers and sellers didn't transact properly — usually because of an aggressive 3-candle sequence. On a <strong>bullish FVG</strong>, the gap is the space between candle 1's high and candle 3's low (where candle 2 didn't overlap either).</p>
+        <h3>How to spot it</h3>
+        <ul>
+          <li>Look for a candle with a <strong>large body</strong> (the displacement candle)</li>
+          <li>Check the candle <strong>before and after</strong> — if their wicks <em>don't overlap</em>, there's a gap</li>
+          <li>Mark the unfilled price range — that's your FVG</li>
+          <li>Price tends to return and "<strong>fill the gap</strong>" before continuing</li>
+        </ul>
+        <h3>Why it matters</h3>
+        <p>FVGs are <strong>magnets</strong>. The market is efficient and dislikes imbalance — unfilled FVGs from earlier sessions or the prev day are some of the highest-probability return-to-zone targets on the chart.</p>
+        <button class="tc-askai" onclick="hpChatToggle();setTimeout(function(){hpChatAsk('Show me an FVG on a recent BTC or gold chart')},300)">💬 See a recent FVG example →</button>
+      </div>
+      <div class="tc-diagram">
+        <svg viewBox="0 0 320 280" xmlns="http://www.w3.org/2000/svg">
+          <!-- The 3-candle sequence -->
+          <g>
+            <!-- Candle 1 (up) -->
+            <line x1="80" y1="180" x2="80" y2="220" stroke="#34d399" stroke-width="1"/>
+            <rect x="74" y="180" width="12" height="35" fill="#34d399"/>
+            <!-- Candle 2 (strong up displacement) -->
+            <line x1="130" y1="100" x2="130" y2="175" stroke="#34d399" stroke-width="1"/>
+            <rect x="124" y="100" width="12" height="70" fill="#34d399"/>
+            <!-- Candle 3 (up small) -->
+            <line x1="180" y1="80" x2="180" y2="105" stroke="#34d399" stroke-width="1"/>
+            <rect x="174" y="80" width="12" height="20" fill="#34d399"/>
+          </g>
+          <!-- FVG box (between c1 high and c3 low) -->
+          <rect x="62" y="100" width="140" height="80" fill="rgba(245,158,11,.12)" stroke="#f59e0b" stroke-width="1" stroke-dasharray="3 3"/>
+          <text x="132" y="148" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#f59e0b" font-weight="800">FVG</text>
+          <text x="132" y="162" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#f59e0b" font-weight="600">imbalance</text>
+          <!-- Future price returns to fill -->
+          <g stroke="#e2eaf4" stroke-width="2" fill="none">
+            <path d="M200 88 L230 60 L260 130 L290 95"/>
+          </g>
+          <path d="M260 130 L210 130" stroke="#0ea5e9" stroke-width="1" stroke-dasharray="2 2" fill="none"/>
+          <text x="220" y="125" font-family="JetBrains Mono" font-size="8.5" fill="#0ea5e9" font-weight="700">→ fills FVG</text>
+          <text x="160" y="248" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#7a9ab8">3-candle sequence · gap between c1 high and c3 low</text>
+        </svg>
+        <div class="tc-diagram-cap">Bullish FVG · price will usually return to fill</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ CONCEPT 7: BOS & CHoCH ═══════════ -->
+<div class="tc-concept" id="bos-choch">
+  <div class="tc-concept-h">
+    <div class="tc-concept-ic">🔁</div>
+    <div style="flex:1;">
+      <div class="tc-concept-num">CONCEPT 07</div>
+      <div class="tc-concept-title">BOS &amp; CHoCH</div>
+    </div>
+    <span class="tc-concept-tag">SMC · STRUCTURE</span>
+  </div>
+  <div class="tc-concept-tagline">Two letters that tell you if the trend is intact (BOS) or breaking (CHoCH).</div>
+
+  <div class="tc-card">
+    <div class="tc-row">
+      <div class="tc-prose">
+        <h3>BOS — Break of Structure</h3>
+        <p>A <strong>BOS</strong> is when price breaks the <em>most recent significant high</em> (in an uptrend) or <em>low</em> (in a downtrend) — confirming the trend is still in control. Higher highs = bullish BOS. Lower lows = bearish BOS.</p>
+        <h3>CHoCH — Change of Character</h3>
+        <p>A <strong>CHoCH</strong> is the <em>first</em> break in the opposite direction. After an uptrend of higher highs and higher lows, the first lower low is a bearish CHoCH — the first hint the trend may be flipping.</p>
+        <h3>How to use them</h3>
+        <ul>
+          <li><strong>Trade in the direction of the most recent BOS</strong> on your higher timeframe</li>
+          <li><strong>Wait for a CHoCH on the lower timeframe</strong> to confirm a reversal entry</li>
+          <li>BOS + retrace into OB or FVG = textbook continuation entry</li>
+          <li>CHoCH + retrace into the OB that caused it = textbook reversal entry</li>
+        </ul>
+        <button class="tc-askai" onclick="hpChatToggle();setTimeout(function(){hpChatAsk('How do I use BOS and CHoCH together on a real trade?')},300)">💬 BOS + CHoCH worked example →</button>
+      </div>
+      <div class="tc-diagram">
+        <svg viewBox="0 0 320 280" xmlns="http://www.w3.org/2000/svg">
+          <!-- Price action: HH-HL-HH then CHoCH -->
+          <g stroke="#e2eaf4" stroke-width="2" fill="none">
+            <path d="M20 220 L50 150 L80 175 L110 110 L140 145 L170 75 L200 130 L230 180 L260 210 L290 250"/>
+          </g>
+          <!-- BOS line at first HH -->
+          <line x1="50" y1="150" x2="290" y2="150" stroke="#34d399" stroke-width="1" stroke-dasharray="3 2"/>
+          <text x="85" y="146" font-family="JetBrains Mono" font-size="9" fill="#34d399" font-weight="700">BOS</text>
+          <line x1="110" y1="110" x2="290" y2="110" stroke="#34d399" stroke-width="1" stroke-dasharray="3 2"/>
+          <text x="148" y="106" font-family="JetBrains Mono" font-size="9" fill="#34d399" font-weight="700">BOS</text>
+          <!-- CHoCH line at first LL -->
+          <line x1="140" y1="145" x2="290" y2="145" stroke="#f87171" stroke-width="1.5" stroke-dasharray="4 3"/>
+          <text x="240" y="168" font-family="JetBrains Mono" font-size="10" fill="#f87171" font-weight="800">↓ CHoCH</text>
+          <!-- Trend swings -->
+          <circle cx="50" cy="150" r="3" fill="#34d399"/>
+          <circle cx="110" cy="110" r="3" fill="#34d399"/>
+          <circle cx="170" cy="75" r="3" fill="#34d399"/>
+        </svg>
+        <div class="tc-diagram-cap">Series of BOS = trend · first break the other way = CHoCH</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ CONCEPT 8: SUPPLY & DEMAND ═══════════ -->
+<div class="tc-concept" id="supply-demand">
+  <div class="tc-concept-h">
+    <div class="tc-concept-ic">⚖️</div>
+    <div style="flex:1;">
+      <div class="tc-concept-num">CONCEPT 08</div>
+      <div class="tc-concept-title">Supply &amp; Demand Zones</div>
+    </div>
+    <span class="tc-concept-tag">FOUNDATION</span>
+  </div>
+  <div class="tc-concept-tagline">The big-picture cousin of order blocks — bigger zones, bigger moves.</div>
+
+  <div class="tc-card">
+    <div class="tc-row">
+      <div class="tc-prose">
+        <h3>What they are</h3>
+        <p><strong>Demand zones</strong> are price areas where strong buying came in and price exploded up. <strong>Supply zones</strong> are the opposite — heavy selling that caused a sharp drop. Whenever price returns to these zones, more orders typically rest there.</p>
+        <h3>The patterns</h3>
+        <ul>
+          <li><strong>Drop-Base-Rally (DBR)</strong> → bullish demand zone at the base</li>
+          <li><strong>Rally-Base-Rally (RBR)</strong> → continuation demand</li>
+          <li><strong>Rally-Base-Drop (RBD)</strong> → bearish supply zone at the base</li>
+          <li><strong>Drop-Base-Drop (DBD)</strong> → continuation supply</li>
+        </ul>
+        <h3>Why it matters</h3>
+        <p>S/D zones are broader and more forgiving than order blocks — better for swing traders. Combine HTF S/D zones with LTF order blocks and FVGs and you've got the institutional framework most prop desks teach.</p>
+        <button class="tc-askai" onclick="hpChatToggle();setTimeout(function(){hpChatAsk('Explain Drop-Base-Rally with a real example')},300)">💬 Get a worked DBR example →</button>
+      </div>
+      <div class="tc-diagram">
+        <svg viewBox="0 0 320 280" xmlns="http://www.w3.org/2000/svg">
+          <!-- Supply zone -->
+          <rect x="20" y="60" width="280" height="30" fill="rgba(248,113,113,.12)" stroke="#f87171" stroke-width="1.2"/>
+          <text x="160" y="55" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#f87171" font-weight="800">SUPPLY ZONE</text>
+          <!-- Demand zone -->
+          <rect x="20" y="195" width="280" height="30" fill="rgba(52,211,153,.12)" stroke="#34d399" stroke-width="1.2"/>
+          <text x="160" y="248" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#34d399" font-weight="800">DEMAND ZONE</text>
+          <!-- Path: drop into demand → base → rally into supply → drop -->
+          <g stroke="#e2eaf4" stroke-width="2" fill="none">
+            <path d="M30 100 L70 200 L100 215 L130 210 L160 130 L200 75 L240 90 L280 195"/>
+          </g>
+          <!-- DBR label -->
+          <text x="105" y="195" font-family="JetBrains Mono" font-size="9" fill="#34d399" font-weight="700">D-B-R</text>
+          <text x="200" y="60" font-family="JetBrains Mono" font-size="9" fill="#f87171" font-weight="700">R-B-D</text>
+        </svg>
+        <div class="tc-diagram-cap">Supply &amp; demand zones · price respects them</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<!-- ═══════════ BOTTOM CTA ═══════════ -->
+<section class="tc-cta">
+  <h2>See these concepts on <em>live charts</em>.</h2>
+  <p>The TradeContext.ai dashboard auto-detects liquidity zones, order blocks and FVGs on every symbol you watch — and the AI explains each setup in plain English the moment you tap it.</p>
+  <a href="../dashboard.html" class="btn">Open the dashboard <span>→</span></a>
+</section>
+
+<footer class="tc-foot">
+  <strong>TradeContext.ai</strong> · Educational content only — not personal financial advice · See <a href="../risk.html" style="color:var(--blue);">risk warning</a>
+</footer>
+
+<!-- ═══════════ AI CHAT WIDGET — same as homepage, calls /api/ai/chat ═══════════ -->
+<button class="hp-fab" id="hpFab" onclick="hpChatToggle()" title="Ask the AI about any concept" aria-label="Open AI chat">
+  💬<span class="hp-fab-label">Ask about any concept</span>
+</button>
+<aside class="hp-chat" id="hpChat" role="dialog">
+  <div class="hp-chat-h">
+    <div class="hp-chat-av">🧠</div>
+    <div>
+      <div class="hp-chat-h-title">AI Trading Analyst</div>
+      <div class="hp-chat-h-sub">Concept walkthroughs · live examples</div>
+    </div>
+    <button class="hp-chat-close" onclick="hpChatToggle()" aria-label="Close">×</button>
+  </div>
+  <div class="hp-chat-body" id="hpChatBody">
+    <div class="hp-empty" id="hpChatEmpty">
+      <strong>Ask about any trading concept.</strong><br>
+      Liquidity, sweeps, order blocks, FVGs — get a plain-English walkthrough with a live example.
+      <div class="hp-suggest-row">
+        <button class="hp-suggest" onclick="hpChatAsk('Walk me through a liquidity sweep on gold')">Sweep example</button>
+        <button class="hp-suggest" onclick="hpChatAsk('How is inducement different from a real breakout?')">Inducement vs breakout</button>
+        <button class="hp-suggest" onclick="hpChatAsk('Show me an order block on the S&P 500')">Find an OB</button>
+        <button class="hp-suggest" onclick="hpChatAsk('What FVGs are unfilled on EUR/USD this week?')">Unfilled FVGs</button>
+      </div>
+    </div>
+  </div>
+  <div class="hp-chat-foot">
+    <div class="hp-input-row">
+      <textarea class="hp-chat-input" id="hpChatInput" rows="1" placeholder="Ask about any concept…" onkeydown="hpChatKey(event)"></textarea>
+      <button class="hp-chat-send" id="hpChatSend" onclick="hpChatSend()">Send</button>
+    </div>
+  </div>
+</aside>
+
+<script>
+(function(){
+  var API=(location.hostname==='localhost'||location.hostname==='127.0.0.1')?'http://localhost:3001':'';
+  var DEFAULT_SYM='XAU/USD';
+
+  window.hpChatToggle=function(){
+    var p=document.getElementById('hpChat');
+    if(!p)return;
+    p.classList.toggle('open');
+    if(p.classList.contains('open')){
+      setTimeout(function(){var i=document.getElementById('hpChatInput');if(i)i.focus();},220);
+    }
+  };
+  window.hpChatAsk=function(prompt){
+    var i=document.getElementById('hpChatInput');
+    if(i){i.value=prompt;}
+    hpChatSend();
+  };
+  window.hpChatKey=function(e){
+    if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();hpChatSend();}
+  };
+
+  function bubble(role,content){
+    var body=document.getElementById('hpChatBody');
+    var empty=document.getElementById('hpChatEmpty');
+    if(empty)empty.style.display='none';
+    var b=document.createElement('div');
+    b.className='hp-bubble '+role;
+    if(role==='assistant'){
+      var html=String(content||'')
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+        .replace(/\*(.+?)\*/g,'<em>$1</em>')
+        .replace(/\n/g,'<br>');
+      b.innerHTML=html;
+    }else{
+      b.textContent=content;
+    }
+    body.appendChild(b);
+    body.scrollTop=body.scrollHeight;
+    return b;
+  }
+
+  window.hpChatSend=function(){
+    var i=document.getElementById('hpChatInput');
+    var send=document.getElementById('hpChatSend');
+    if(!i||!send)return;
+    var msg=i.value.trim();
+    if(!msg)return;
+    i.value='';send.disabled=true;
+    bubble('user',msg);
+    var typing=document.createElement('div');
+    typing.className='hp-bubble assistant';
+    typing.innerHTML='<span class="hp-typing"><span></span><span></span><span></span></span>';
+    var bodyEl=document.getElementById('hpChatBody');
+    bodyEl.appendChild(typing);
+    bodyEl.scrollTop=999999;
+
+    fetch(API+'/api/ai/chat',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      credentials:'include',
+      body:JSON.stringify({symbol:DEFAULT_SYM,message:msg})
+    }).then(function(r){return r.json().then(function(d){return {ok:r.ok,data:d};});}).then(function(res){
+      typing.remove();send.disabled=false;
+      if(!res.ok){
+        var code=res.data&&res.data.error&&res.data.error.code;
+        if(code==='CLAUDE_NO_CREDITS'){
+          var b=document.createElement('div');
+          b.className='hp-bubble assistant';
+          b.innerHTML='<div style="font-size:24px;margin-bottom:6px;">💳</div><strong>Anthropic credits exhausted</strong><br><span style="font-size:12px;color:var(--text2);">AI chat needs Anthropic API credits to run.</span><br><a href="https://console.anthropic.com/settings/billing" target="_blank" rel="noopener" style="display:inline-block;margin-top:10px;padding:8px 14px;background:#0ea5e9;color:#fff;font-family:var(--f-mono);font-size:10px;font-weight:800;border-radius:6px;text-decoration:none;letter-spacing:.06em;text-transform:uppercase;">↗ Top up Anthropic</a>';
+          bodyEl.appendChild(b);bodyEl.scrollTop=bodyEl.scrollHeight;
+          return;
+        }
+        var errMsg=(res.data&&res.data.error&&res.data.error.message)||"Couldn't reach the AI right now.";
+        bubble('assistant',errMsg+'\n\n*Educational tool — not personal financial advice.*');
+        return;
+      }
+      bubble('assistant',res.data.message);
+      var ctx=res.data.contextNews||[];
+      if(ctx.length){
+        var box=document.createElement('div');
+        box.className='hp-grounded';
+        box.innerHTML='📡 grounded in '+ctx.length+' news '+(ctx.length===1?'story':'stories')+': '
+          +ctx.slice(0,3).map(function(n){return '<span title="'+(n.headline||'').replace(/"/g,'&quot;')+'" style="color:var(--text2);">"'+(n.headline||'').slice(0,55).replace(/"/g,'&quot;')+((n.headline||'').length>55?'…':'')+'"</span>';}).join(' · ');
+        bodyEl.appendChild(box);bodyEl.scrollTop=bodyEl.scrollHeight;
+      }
+    }).catch(function(){
+      typing.remove();send.disabled=false;
+      bubble('assistant','Network hiccup — couldn\'t reach the AI. Try again in a moment.\n\n*Educational tool — not personal financial advice.*');
+    });
+  };
+})();
+</script>
+
+</body>
+</html>
