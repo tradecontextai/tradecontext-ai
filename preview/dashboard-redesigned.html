@@ -3206,6 +3206,389 @@ div[style*="background:var(--bg3)"]:has(.cal-filter-btn){
 .score-ring svg circle{transition:stroke-dashoffset .8s var(--ease-out-expo) !important;}
 
 /* ▲▲▲ END REDESIGN OVERLAY (Phase 1 + 2 + 3 + 4 + 5) ▲▲▲ */
+
+/* ═══════════════ REDESIGN OVERLAY · PHASE 6 ═══════════════
+   The comprehensive sweep — every remaining interior widget that
+   was still showing default solid backgrounds or fonts.
+   ═══════════════════════════════════════════════════════════ */
+
+/* ─── News story affected-markets row (the asset chips with arrows + %) ── */
+.news-card .n-markets,.n-markets,
+.news-card .n-aff{
+  background:rgba(255,255,255,.02) !important;
+  border:1px solid rgba(255,255,255,.05) !important;
+  border-radius:7px !important;
+}
+.n-market,.n-mkt{
+  background:rgba(255,255,255,.025) !important;
+  border:1px solid rgba(255,255,255,.06) !important;
+  border-radius:5px !important;
+  font-family:var(--font-mono-new) !important;
+  font-feature-settings:"tnum" !important;
+}
+.n-market.up,.n-mkt.up{background:rgba(52,211,153,.10) !important;border-color:rgba(52,211,153,.28) !important;}
+.n-market.dn,.n-mkt.dn{background:rgba(248,113,113,.10) !important;border-color:rgba(248,113,113,.28) !important;}
+.news-tag{
+  font-family:var(--font-mono-new) !important;
+  letter-spacing:.06em !important;
+}
+.news-tag.breaking{
+  background:linear-gradient(135deg,rgba(248,113,113,.22),rgba(248,113,113,.08)) !important;
+}
+.news-tab .badge,.tab-badge{
+  font-family:var(--font-mono-new) !important;
+  font-feature-settings:"tnum" !important;
+  font-weight:800 !important;
+  background:rgba(14,165,233,.18) !important;
+  border:1px solid rgba(14,165,233,.4) !important;
+}
+
+/* ─── AI Strategy strip — card levels (S/R values) + notes ── */
+.strat-levels{
+  background:rgba(255,255,255,.02) !important;
+  border:1px solid rgba(255,255,255,.04) !important;
+  border-radius:6px !important;
+  padding:6px 8px !important;
+}
+.strat-lvl{padding:2px 0 !important;}
+.strat-card .strat-card-note{
+  font-family:var(--font-mono-new) !important;
+  color:rgba(226,234,244,.5) !important;
+  letter-spacing:.02em !important;
+  line-height:1.6 !important;
+}
+
+/* ─── Currency Strength bars ── */
+.ccy-strength{padding:4px 2px !important;}
+.ccy-row{
+  display:grid !important;
+  grid-template-columns:38px 1fr 56px !important;
+  align-items:center !important;
+  gap:10px !important;
+  padding:4px 0 !important;
+}
+.c-sym{
+  font-family:var(--font-mono-new) !important;
+  font-weight:800 !important;
+  letter-spacing:.06em !important;
+  color:rgba(226,234,244,.85) !important;
+  font-size:11.5px !important;
+}
+.c-bar-wrap{
+  position:relative !important;
+  height:8px !important;
+  background:rgba(255,255,255,.04) !important;
+  border-radius:4px !important;
+  overflow:hidden !important;
+}
+.c-bar-mid{
+  position:absolute !important;
+  left:50% !important;
+  top:0 !important;
+  bottom:0 !important;
+  width:1px !important;
+  background:rgba(255,255,255,.15) !important;
+  z-index:2 !important;
+}
+.c-bar.up{background:linear-gradient(90deg,rgba(52,211,153,.4),#34d399) !important;box-shadow:0 0 6px rgba(52,211,153,.4) !important;}
+.c-bar.dn{background:linear-gradient(90deg,#f87171,rgba(248,113,113,.4)) !important;box-shadow:0 0 6px rgba(248,113,113,.4) !important;}
+.c-pct{
+  font-family:var(--font-mono-new) !important;
+  font-feature-settings:"tnum" !important;
+  font-weight:700 !important;
+  text-align:right !important;
+  font-size:11px !important;
+}
+.c-pct.up{color:#34d399 !important;}
+.c-pct.dn{color:#f87171 !important;}
+
+/* ─── Risk Thermometer ── */
+.risk-thermometer{
+  display:flex !important;
+  align-items:stretch !important;
+  gap:14px !important;
+  padding:10px 0 !important;
+}
+.rt-track{
+  background:linear-gradient(180deg,rgba(52,211,153,.10),rgba(245,158,11,.06) 50%,rgba(248,113,113,.10)) !important;
+  border:1px solid rgba(255,255,255,.08) !important;
+  border-radius:18px !important;
+  overflow:hidden !important;
+  width:30px !important;
+}
+.rt-fill{
+  background:linear-gradient(180deg,#34d399,#f59e0b 50%,#f87171) !important;
+  box-shadow:0 0 12px rgba(14,165,233,.2) !important;
+}
+.rt-tick{
+  font-family:var(--font-mono-new) !important;
+  letter-spacing:.06em !important;
+  color:rgba(226,234,244,.55) !important;
+}
+.rt-val{
+  font-family:var(--font-mono-new) !important;
+  font-size:30px !important;
+  font-weight:800 !important;
+  letter-spacing:-.025em !important;
+  background:linear-gradient(135deg,#34d399,#0ea5e9) !important;
+  -webkit-background-clip:text !important;
+  -webkit-text-fill-color:transparent !important;
+  background-clip:text !important;
+}
+.rt-lbl{
+  font-family:var(--font-mono-new) !important;
+  letter-spacing:.1em !important;
+  font-weight:700 !important;
+}
+
+/* ─── Fear & Greed gauge ── */
+.fg-gauge{padding:6px 0 !important;}
+.fg-svg{filter:drop-shadow(0 4px 16px rgba(14,165,233,.18));}
+.fg-needle{
+  filter:drop-shadow(0 0 6px rgba(255,255,255,.5));
+}
+.fg-val{
+  font-family:var(--font-mono-new) !important;
+  font-size:30px !important;
+  font-weight:800 !important;
+  letter-spacing:-.025em !important;
+}
+.fg-lbl{
+  font-family:var(--font-mono-new) !important;
+  letter-spacing:.14em !important;
+  font-weight:800 !important;
+}
+.fg-context,.fg-tickrow{
+  font-family:var(--font-mono-new) !important;
+  color:rgba(226,234,244,.5) !important;
+}
+
+/* ─── VIX / DXY mini gauges (inside Risk+F&G card) ── */
+.vol-gauges{
+  display:grid !important;
+  grid-template-columns:1fr 1fr !important;
+  gap:8px !important;
+  margin-top:10px !important;
+}
+.vg{
+  background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,.005)) !important;
+  border:1px solid rgba(255,255,255,.06) !important;
+  border-radius:9px !important;
+  padding:10px 12px !important;
+  transition:.18s var(--ease-out-quart) !important;
+}
+.vg:hover{border-color:rgba(14,165,233,.3) !important;}
+.vg-name{
+  font-family:var(--font-mono-new) !important;
+  letter-spacing:.1em !important;
+  color:rgba(226,234,244,.5) !important;
+}
+.vg-val{
+  font-family:var(--font-mono-new) !important;
+  font-feature-settings:"tnum","ss01" !important;
+  font-weight:800 !important;
+}
+.vg-bar{
+  background:rgba(255,255,255,.04) !important;
+  border-radius:3px !important;
+  overflow:hidden !important;
+}
+.vg-zone{
+  font-family:var(--font-mono-new) !important;
+  letter-spacing:.04em !important;
+  color:rgba(226,234,244,.45) !important;
+}
+
+/* ─── Sessions NOW bar (the 24h tape with dot) ── */
+.sess-now-bar{
+  background:linear-gradient(90deg,
+    rgba(167,139,250,.08) 0% 25%,
+    rgba(245,158,11,.08) 25% 50%,
+    rgba(14,165,233,.08) 50% 75%,
+    rgba(248,113,113,.08) 75% 100%) !important;
+  border:1px solid rgba(255,255,255,.06) !important;
+  border-radius:100px !important;
+  height:8px !important;
+  position:relative !important;
+}
+.sess-now-track{display:none !important;}
+.sess-now-dot{
+  background:#fff !important;
+  box-shadow:0 0 0 3px rgba(14,165,233,.4),0 0 12px rgba(14,165,233,.6) !important;
+}
+.sess-overlap-info{
+  background:linear-gradient(135deg,rgba(245,158,11,.10),rgba(245,158,11,.02)) !important;
+  border:1px solid rgba(245,158,11,.3) !important;
+  border-radius:8px !important;
+  font-family:var(--font-mono-new) !important;
+  letter-spacing:.04em !important;
+}
+
+/* ─── Currency callout (Strongest/Weakest pair) ── */
+.ccy-callout{
+  background:linear-gradient(135deg,rgba(14,165,233,.06),rgba(139,92,246,.04)) !important;
+  border:1px solid rgba(14,165,233,.25) !important;
+}
+
+/* ─── Geo Risk fine polish ── */
+.geo-context{
+  background:linear-gradient(135deg,rgba(248,113,113,.06),rgba(245,158,11,.04)) !important;
+  border:1px solid rgba(248,113,113,.18) !important;
+  border-radius:8px !important;
+  font-family:var(--font-mono-new) !important;
+  letter-spacing:.03em !important;
+}
+.geo-foot{
+  background:rgba(255,255,255,.025) !important;
+  border:1px solid rgba(255,255,255,.05) !important;
+  border-radius:8px !important;
+  font-family:var(--font-mono-new) !important;
+}
+.driver{
+  background:linear-gradient(135deg,rgba(248,113,113,.10),rgba(245,158,11,.06)) !important;
+  border:1px solid rgba(248,113,113,.3) !important;
+}
+.driver .ct{
+  background:rgba(248,113,113,.25) !important;
+  font-family:var(--font-mono-new) !important;
+}
+
+/* ─── World Pulse TV channel select ── */
+.wp-tv-channel{
+  background:rgba(0,0,0,.35) !important;
+  border:1px solid rgba(255,255,255,.08) !important;
+  border-radius:8px !important;
+  font-family:var(--font-sans-new) !important;
+  padding:9px 12px !important;
+}
+.wp-tv-channel:focus{
+  border-color:rgba(14,165,233,.5) !important;
+  box-shadow:0 0 0 3px rgba(14,165,233,.12) !important;
+}
+.wp-tv-yt{
+  background:rgba(255,255,255,.03) !important;
+  border:1px solid rgba(255,255,255,.07) !important;
+  font-family:var(--font-mono-new) !important;
+  transition:.18s var(--ease-out-quart) !important;
+}
+.wp-tv-yt:hover{
+  background:rgba(248,113,113,.10) !important;
+  border-color:rgba(248,113,113,.4) !important;
+  color:#f87171 !important;
+}
+.wp-tv-frame-wrap{
+  border:1px solid rgba(255,255,255,.08) !important;
+  border-radius:12px !important;
+}
+
+/* ─── Calendar event row internals (when populated) ── */
+.cal-time{
+  font-family:var(--font-mono-new) !important;
+  font-feature-settings:"tnum" !important;
+}
+.cal-time.next{
+  background:linear-gradient(135deg,rgba(14,165,233,.18),rgba(14,165,233,.06)) !important;
+  border:1px solid rgba(14,165,233,.4) !important;
+  border-radius:5px !important;
+  padding:2px 6px !important;
+}
+.cal-time.high{
+  background:linear-gradient(135deg,rgba(248,113,113,.16),rgba(248,113,113,.05)) !important;
+  border:1px solid rgba(248,113,113,.4) !important;
+  border-radius:5px !important;
+  padding:2px 6px !important;
+}
+.cal-ccy{
+  font-family:var(--font-mono-new) !important;
+  font-weight:800 !important;
+  letter-spacing:.04em !important;
+  color:rgba(226,234,244,.75) !important;
+}
+.cal-event{
+  font-family:var(--font-sans-new) !important;
+  font-weight:600 !important;
+}
+.cal-num-lbl{
+  font-family:var(--font-mono-new) !important;
+  letter-spacing:.08em !important;
+}
+.cal-num-val{
+  font-family:var(--font-mono-new) !important;
+  font-feature-settings:"tnum" !important;
+}
+.cal-impact-row{
+  background:rgba(255,255,255,.02) !important;
+  border:1px solid rgba(255,255,255,.05) !important;
+  border-radius:8px !important;
+  padding:9px 11px !important;
+}
+.cal-impact-row.bull{background:linear-gradient(135deg,rgba(52,211,153,.08),rgba(52,211,153,.02)) !important;border-left:3px solid rgba(52,211,153,.5) !important;}
+.cal-impact-row.bear{background:linear-gradient(135deg,rgba(248,113,113,.08),rgba(248,113,113,.02)) !important;border-left:3px solid rgba(248,113,113,.5) !important;}
+.cal-impact-row.live{background:linear-gradient(135deg,rgba(14,165,233,.10),rgba(139,92,246,.06)) !important;border-left:3px solid rgba(14,165,233,.55) !important;}
+
+/* ─── Top Movers card internals (#1 of 10 dots + slot) ── */
+.mv-dots .mv-dot{background:rgba(255,255,255,.1) !important;}
+.mv-dots .mv-dot.active{
+  background:linear-gradient(90deg,#0ea5e9,#8b5cf6) !important;
+  box-shadow:0 0 8px rgba(14,165,233,.5) !important;
+}
+
+/* ─── Mood grid + summary line ── */
+.mood-summary{
+  font-family:var(--font-mono-new) !important;
+  color:rgba(226,234,244,.5) !important;
+  letter-spacing:.02em !important;
+  background:rgba(255,255,255,.02);
+  border:1px solid rgba(255,255,255,.04);
+  border-radius:6px;
+  padding:7px 10px;
+}
+
+/* ─── Active strategy "● ON" badge + manual strat pill ── */
+.strat-action.on{
+  background:linear-gradient(135deg,rgba(52,211,153,.22),rgba(52,211,153,.06)) !important;
+  border:1px solid rgba(52,211,153,.55) !important;
+  font-family:var(--font-mono-new) !important;
+  box-shadow:0 0 12px rgba(52,211,153,.25) !important;
+}
+.strat-action.off{
+  background:rgba(255,255,255,.04) !important;
+  border:1px solid rgba(255,255,255,.08) !important;
+  font-family:var(--font-mono-new) !important;
+}
+.strat-action.manual{
+  background:linear-gradient(135deg,rgba(14,165,233,.14),rgba(14,165,233,.04)) !important;
+  border:1px solid rgba(14,165,233,.35) !important;
+  font-family:var(--font-mono-new) !important;
+}
+
+/* ─── Top strip Live ticker shimmer ── */
+.t-c.up{color:#34d399 !important;}
+.t-c.dn{color:#f87171 !important;}
+.t-p{font-feature-settings:"tnum","ss01" !important;}
+
+/* ─── Sessions clock title bar inside Macro Pulse ── */
+.sess-card .mp-card-h{
+  background:linear-gradient(135deg,rgba(14,165,233,.04),rgba(139,92,246,.025)) !important;
+  border-bottom:1px solid rgba(255,255,255,.04) !important;
+  padding-bottom:10px;
+  margin-bottom:10px;
+}
+
+/* ─── Mp-card titles + subs ── */
+.mp-card-title{
+  font-family:var(--font-sans-new) !important;
+  font-weight:800 !important;
+  font-size:13px !important;
+  letter-spacing:-.005em !important;
+}
+.mp-card-sub{
+  font-family:var(--font-mono-new) !important;
+  letter-spacing:.04em !important;
+  color:rgba(226,234,244,.45) !important;
+}
+
+/* ▲▲▲ END REDESIGN OVERLAY (Phase 1 + 2 + 3 + 4 + 5 + 6) ▲▲▲ */
 </style>
 </head>
 <body>
