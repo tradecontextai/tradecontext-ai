@@ -160,6 +160,10 @@ body::after{
 .logo-pill img{width:18px;height:18px;display:block;object-fit:contain;}
 .logo-pill .lp-tick{font-family:var(--f-mono);font-size:10.5px;font-weight:700;color:var(--text);letter-spacing:.04em;}
 .logo-pill .lp-name{font-family:var(--f-sans);font-size:11.5px;font-weight:600;color:var(--text2);}
+.logo-pill .lp-pct{font-family:var(--f-mono);font-size:10px;font-weight:700;letter-spacing:.02em;padding:2px 6px;border-radius:5px;margin-left:2px;}
+.logo-pill .lp-pct:empty{display:none;}
+.logo-pill .lp-pct.up{color:#10b981;background:rgba(16,185,129,.12);}
+.logo-pill .lp-pct.dn{color:#ef4444;background:rgba(239,68,68,.12);}
 .logos-row + .logos-row{margin-top:10px;}
 .logos-row.reverse .logos-track{animation-direction:reverse;animation-duration:95s;}
 
@@ -325,36 +329,8 @@ body::after{
   <div class="top-ticker-inner">
     <div class="top-ticker-lbl"><span class="dot"></span>Live Prices</div>
     <div class="top-ticker-wrap">
-      <div class="top-ticker-track">
-        <span class="tt-item"><span class="sym">XAU/USD</span><span class="px">3,121.40</span><span class="pct up">+1.42%</span></span>
-        <span class="tt-item"><span class="sym">EUR/USD</span><span class="px">1.0853</span><span class="pct dn">-0.18%</span></span>
-        <span class="tt-item"><span class="sym">GBP/USD</span><span class="px">1.2784</span><span class="pct up">+0.22%</span></span>
-        <span class="tt-item"><span class="sym">USD/JPY</span><span class="px">151.82</span><span class="pct up">+0.42%</span></span>
-        <span class="tt-item"><span class="sym">BTC/USD</span><span class="px">92,148</span><span class="pct up">+2.18%</span></span>
-        <span class="tt-item"><span class="sym">ETH/USD</span><span class="px">3,482</span><span class="pct up">+1.85%</span></span>
-        <span class="tt-item"><span class="sym">SPX</span><span class="px">5,641</span><span class="pct dn">-0.28%</span></span>
-        <span class="tt-item"><span class="sym">NASDAQ</span><span class="px">17,924</span><span class="pct dn">-0.35%</span></span>
-        <span class="tt-item"><span class="sym">DOW</span><span class="px">38,720</span><span class="pct up">+0.12%</span></span>
-        <span class="tt-item"><span class="sym">FTSE 100</span><span class="px">8,442</span><span class="pct up">+0.18%</span></span>
-        <span class="tt-item"><span class="sym">DAX</span><span class="px">18,540</span><span class="pct dn">-0.21%</span></span>
-        <span class="tt-item"><span class="sym">NIKKEI</span><span class="px">38,180</span><span class="pct dn">-1.20%</span></span>
-        <span class="tt-item"><span class="sym">WTI Oil</span><span class="px">76.34</span><span class="pct up">+3.21%</span></span>
-        <span class="tt-item"><span class="sym">BRENT</span><span class="px">80.42</span><span class="pct up">+2.84%</span></span>
-        <!-- duplicate set so loop is seamless -->
-        <span class="tt-item"><span class="sym">XAU/USD</span><span class="px">3,121.40</span><span class="pct up">+1.42%</span></span>
-        <span class="tt-item"><span class="sym">EUR/USD</span><span class="px">1.0853</span><span class="pct dn">-0.18%</span></span>
-        <span class="tt-item"><span class="sym">GBP/USD</span><span class="px">1.2784</span><span class="pct up">+0.22%</span></span>
-        <span class="tt-item"><span class="sym">USD/JPY</span><span class="px">151.82</span><span class="pct up">+0.42%</span></span>
-        <span class="tt-item"><span class="sym">BTC/USD</span><span class="px">92,148</span><span class="pct up">+2.18%</span></span>
-        <span class="tt-item"><span class="sym">ETH/USD</span><span class="px">3,482</span><span class="pct up">+1.85%</span></span>
-        <span class="tt-item"><span class="sym">SPX</span><span class="px">5,641</span><span class="pct dn">-0.28%</span></span>
-        <span class="tt-item"><span class="sym">NASDAQ</span><span class="px">17,924</span><span class="pct dn">-0.35%</span></span>
-        <span class="tt-item"><span class="sym">DOW</span><span class="px">38,720</span><span class="pct up">+0.12%</span></span>
-        <span class="tt-item"><span class="sym">FTSE 100</span><span class="px">8,442</span><span class="pct up">+0.18%</span></span>
-        <span class="tt-item"><span class="sym">DAX</span><span class="px">18,540</span><span class="pct dn">-0.21%</span></span>
-        <span class="tt-item"><span class="sym">NIKKEI</span><span class="px">38,180</span><span class="pct dn">-1.20%</span></span>
-        <span class="tt-item"><span class="sym">WTI Oil</span><span class="px">76.34</span><span class="pct up">+3.21%</span></span>
-        <span class="tt-item"><span class="sym">BRENT</span><span class="px">80.42</span><span class="pct up">+2.84%</span></span>
+      <div class="top-ticker-track" id="topTickerTrack">
+        <!-- Live-populated from /api/price/bulk on page load + every 30s -->
       </div>
     </div>
   </div>
@@ -451,22 +427,12 @@ body::after{
   <div class="stat"><div class="stat-num">24/7</div><div class="stat-lbl">Live news scoring</div></div>
 </div>
 
-<!-- ═══════════ 100 ASSETS LOGO WALL — three rows of major tradable companies sliding ═══════════ -->
+<!-- ═══════════ ASSETS LOGO WALL — single continuous strip, LIVE prices ═══════════ -->
 <div class="logos-section">
   <div class="logos-h">Coverage you can trust</div>
-  <p class="logos-sub">Live across the 100+ biggest tradable assets on the planet.</p>
-
-  <!-- Row 1 · US tech + Apple/Google/Microsoft/Tesla cluster -->
+  <p class="logos-sub">Live across the 100+ biggest tradable assets on the planet · prices refresh every 30s.</p>
   <div class="logos-row">
-    <div class="logos-marquee"><div class="logos-track" id="logoRow1"></div></div>
-  </div>
-  <!-- Row 2 · Banks, energy, consumer — REVERSE direction for contrast -->
-  <div class="logos-row reverse">
-    <div class="logos-marquee"><div class="logos-track" id="logoRow2"></div></div>
-  </div>
-  <!-- Row 3 · Crypto + Asian + European leaders -->
-  <div class="logos-row">
-    <div class="logos-marquee"><div class="logos-track" id="logoRow3"></div></div>
+    <div class="logos-marquee"><div class="logos-track" id="logoRowAll"></div></div>
   </div>
 </div>
 
@@ -967,24 +933,116 @@ var LOGOS=[
   ["loreal","L'Oréal","OR.PA"],["nestle","Nestlé","NESN.SW"],["roche","Roche","ROG.SW"],
   ["asml","ASML","ASML"],["sap","SAP","SAP"],["siemens","Siemens","SIE.DE"]
 ];
+// Map display ticker → backend-compatible symbol for /api/price/bulk
+// (backend handles crypto via BTC/USD form, forex via EUR/USD, plain stock tickers, etc.)
+var SYMBOL_MAP={
+  BTC:'BTC/USD', ETH:'ETH/USD', SOL:'SOL/USD', BNB:'BNB/USD',
+  XRP:'XRP/USD', ADA:'ADA/USD', DOGE:'DOGE/USD', LINK:'LINK/USD',
+  LTC:'LTC/USD', DOT:'DOT/USD'
+};
+function backendSym(displayTick){ return SYMBOL_MAP[displayTick] || displayTick; }
+
 function logoHTML(slug,name,tick){
-  // Use simpleicons.org colored SVG CDN — free, no API key, fast
   var url='https://cdn.simpleicons.org/'+slug+'/_/_';
-  return '<a class="logo-pill" href="#" title="'+name+' · '+tick+'">'
+  var bs=backendSym(tick);
+  return '<a class="logo-pill" href="#" title="'+name+' · '+tick+'" data-sym="'+bs+'">'
     +'<img src="'+url+'" alt="'+name+'" loading="lazy" onerror="this.style.display=\'none\'">'
     +'<span class="lp-tick">'+tick+'</span>'
     +'<span class="lp-name">'+name+'</span>'
+    +'<span class="lp-pct" data-pct></span>'
     +'</a>';
 }
 function fillRow(el,items){
   if(!el)return;
-  // Duplicate the set so the marquee loops seamlessly
   var html=items.map(function(x){return logoHTML(x[0],x[1],x[2]);}).join('');
+  // Duplicate the set so the marquee loops seamlessly
   el.innerHTML=html+html;
 }
-fillRow(document.getElementById('logoRow1'),LOGOS.slice(0,20));
-fillRow(document.getElementById('logoRow2'),LOGOS.slice(20,40));
-fillRow(document.getElementById('logoRow3'),LOGOS.slice(40,70));
+// Single continuous strip — all 70+ assets
+fillRow(document.getElementById('logoRowAll'),LOGOS);
+
+// ────────── TOP TICKER + LIVE PRICES ──────────
+var TOP_TICKER_SYMBOLS=[
+  ['XAU/USD','XAU/USD'],['EUR/USD','EUR/USD'],['GBP/USD','GBP/USD'],
+  ['USD/JPY','USD/JPY'],['BTC/USD','BTC/USD'],['ETH/USD','ETH/USD'],
+  ['SPX','SPX'],['NASDAQ','NASDAQ'],['DOW','DOW'],
+  ['FTSE 100','FTSE 100'],['DAX','DAX'],['NIKKEI','NIKKEI'],
+  ['WTI Oil','WTI'],['Brent','Brent']
+];
+
+function fmtPrice(p){
+  if(p>=1000)return p.toLocaleString('en-US',{maximumFractionDigits:2});
+  if(p>=10)return p.toFixed(2);
+  if(p>=1)return p.toFixed(4);
+  return p.toFixed(4);
+}
+function fmtPct(pct){
+  var s=(pct>=0?'+':'')+pct.toFixed(2)+'%';
+  return s;
+}
+function tickerItemHTML(label,price,pct,source){
+  if(source==='unsupported'||price===0){
+    return '<span class="tt-item"><span class="sym">'+label+'</span><span class="px">—</span><span class="pct">—</span></span>';
+  }
+  var cls=pct>=0?'up':'dn';
+  return '<span class="tt-item"><span class="sym">'+label+'</span><span class="px">'+fmtPrice(price)+'</span><span class="pct '+cls+'">'+fmtPct(pct)+'</span></span>';
+}
+
+async function fetchPrices(symbols){
+  try{
+    var res=await fetch('http://localhost:3001/api/price/bulk',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({symbols:symbols})
+    });
+    if(!res.ok)return null;
+    var d=await res.json();
+    return d.ticks||null;
+  }catch(e){return null;}
+}
+
+async function refreshLivePrices(){
+  // Gather all unique backend symbols: top ticker + logo pills
+  var topSyms=TOP_TICKER_SYMBOLS.map(function(p){return p[1];});
+  var logoSyms=LOGOS.map(function(x){return backendSym(x[2]);});
+  var all=Array.from(new Set(topSyms.concat(logoSyms)));
+
+  // /api/price/bulk caps at 120 symbols — we're well under
+  var ticks=await fetchPrices(all);
+  if(!ticks)return;
+
+  // Top ticker
+  var trackEl=document.getElementById('topTickerTrack');
+  if(trackEl){
+    var items=TOP_TICKER_SYMBOLS.map(function(p){
+      var t=ticks[p[1]];
+      if(!t)return tickerItemHTML(p[0],0,0,'unsupported');
+      return tickerItemHTML(p[0],t.price,t.changePercent,t.source);
+    }).join('');
+    // duplicate for seamless loop
+    trackEl.innerHTML=items+items;
+  }
+
+  // Logo pills — update each .lp-pct
+  document.querySelectorAll('.logo-pill').forEach(function(el){
+    var bs=el.getAttribute('data-sym');
+    var t=ticks[bs];
+    var pctEl=el.querySelector('[data-pct]');
+    if(!pctEl)return;
+    if(!t||t.source==='unsupported'||t.price===0){
+      pctEl.textContent='';
+      pctEl.className='lp-pct';
+      return;
+    }
+    var cls=t.changePercent>=0?'up':'dn';
+    pctEl.textContent=fmtPct(t.changePercent);
+    pctEl.className='lp-pct '+cls;
+  });
+}
+
+// initial fetch + 30s refresh
+refreshLivePrices();
+setInterval(refreshLivePrices,30000);
 
 // ────────── DASHBOARD SLIDESHOW ──────────
 // 5 frames, auto-advances every 6 seconds. Click ← → arrows or dots to jump.

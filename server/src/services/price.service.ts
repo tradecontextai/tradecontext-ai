@@ -172,8 +172,16 @@ export async function getPrice(rawSymbol: string): Promise<PriceTick> {
     tick = await fetchYahoo(STOCK_INDICES[symbol]);
   } else if (COMMODITIES[symbol]) {
     tick = await fetchYahoo(COMMODITIES[symbol]);
+  } else if (/^[A-Z][A-Z0-9.\-]{0,11}$/.test(symbol)) {
+    // Generic stock ticker. Yahoo accepts plain tickers (AAPL, MSFT, TSLA),
+    // exchange-suffixed tickers (7203.T for Toyota Tokyo, 005930.KS for
+    // Samsung Korea, BMW.DE for BMW Germany, RACE.MI for Ferrari Milan,
+    // 0700.HK for Tencent HK, MC.PA for LVMH Paris), and ADRs.
+    // Try Yahoo first; if it returns nothing, fall back to Finnhub (which
+    // covers US stocks well but not international ones).
+    tick = await fetchYahoo(symbol);
+    if (!tick || !tick.price) tick = await fetchFinnhubQuote(symbol);
   } else {
-    // Treat as Finnhub stock ticker
     tick = await fetchFinnhubQuote(symbol);
   }
 

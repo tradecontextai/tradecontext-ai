@@ -23,7 +23,7 @@ priceRouter.get('/:symbol', async (req, res, next) => {
 // ──────── POST /api/price/bulk ────────
 // Body: { symbols: ["EUR/USD", "BTC/USD", "SPX", ...] }
 const bulkSchema = z.object({
-  symbols: z.array(z.string().min(1).max(40)).min(1).max(50),
+  symbols: z.array(z.string().min(1).max(40)).min(1).max(120),
 });
 
 priceRouter.post('/bulk', bulkLimiter, async (req, res, next) => {
