@@ -3807,27 +3807,41 @@ div[style*="background:var(--bg3)"]:has(.cal-filter-btn){
 
 <!-- ═══════ NAVBAR (centred, matches homepage) ═══════ -->
 <nav class="navbar">
-  <a class="nav-logo" href="index.html">
-    <svg width="26" height="26" viewBox="0 0 36 36" fill="none"><rect width="36" height="36" rx="8" fill="#0a1628"/><polyline points="4,28 12,20 20,24 28,10" fill="none" stroke="#0ea5e9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="28" cy="10" r="3.5" fill="#0ea5e9"/><circle cx="28" cy="10" r="1.5" fill="#fff"/></svg>
+  <a class="nav-logo" href="homepage-redesigned.html" aria-label="TradeContext.ai home">
+    <svg width="26" height="26" viewBox="0 0 36 36" fill="none" aria-hidden="true">
+      <rect width="36" height="36" rx="8" fill="#0a1628"/>
+      <polyline points="4,28 12,20 20,24 28,10" fill="none" stroke="url(#dbBrandGrad)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="28" cy="10" r="3.8" fill="url(#dbBrandGrad)"/>
+      <circle cx="28" cy="10" r="1.6" fill="#fff"/>
+      <defs>
+        <linearGradient id="dbBrandGrad" x1="0" y1="36" x2="36" y2="0">
+          <stop offset="0%" stop-color="#0ea5e9"/>
+          <stop offset="100%" stop-color="#8b5cf6"/>
+        </linearGradient>
+      </defs>
+    </svg>
     TradeContext<span>.ai</span>
   </a>
   <ul class="nav-links">
     <li onmouseenter="document.getElementById('ddFeat').style.display='block'" onmouseleave="document.getElementById('ddFeat').style.display='none'">
       <a class="active" style="display:flex;align-items:center;gap:4px;">Features <span style="font-size:9px;opacity:.5;">▾</span></a>
       <div class="nav-dropdown" id="ddFeat">
-        <a href="dashboard.html" style="color:var(--blue);font-weight:700;">📊 &nbsp;Dashboard Overview</a>
-        <a href="news-bias.html">📡 &nbsp;Live News Bias Feed</a>
-        <a href="markets.html">📈 &nbsp;Markets &amp; Charts</a>
-        <a href="journal.html">📓 &nbsp;AI Trading Journal</a>
-        <a href="broker-connect.html">🔌 &nbsp;Broker Hub</a>
+        <a href="dashboard-redesigned.html" style="color:var(--blue);font-weight:700;">📊 &nbsp;Full Dashboard <span style="color:#f59e0b;font-size:9px;letter-spacing:.06em;text-transform:uppercase;font-weight:800;margin-left:4px;">NEW</span></a>
+        <a href="journal.html" style="color:var(--blue);font-weight:700;">📓 &nbsp;AI Trading Journal <span style="color:#f59e0b;font-size:9px;letter-spacing:.06em;text-transform:uppercase;font-weight:800;margin-left:4px;">NEW</span></a>
+        <a href="backtest.html">📈 &nbsp;Backtest Engine</a>
         <div class="nav-divider"></div>
-        <a href="signup.html" style="color:var(--blue);font-weight:700;">🚀 &nbsp;Get Full Access →</a>
+        <a href="dashboard-redesigned.html" style="color:var(--blue);font-weight:700;">🚀 &nbsp;Open the desk →</a>
       </div>
     </li>
-    <li><a href="#faqSection" onclick="document.getElementById('faqSection').scrollIntoView({behavior:'smooth'});return false;">FAQ</a></li>
+    <li><a href="homepage-redesigned.html#pricing">Pricing</a></li>
     <li onmouseenter="document.getElementById('ddRes').style.display='block'" onmouseleave="document.getElementById('ddRes').style.display='none'">
       <a style="display:flex;align-items:center;gap:4px;">Resources <span style="font-size:9px;opacity:.5;">▾</span></a>
       <div class="nav-dropdown" id="ddRes">
+        <a href="trading-concepts.html" style="color:var(--blue);font-weight:700;">📚 &nbsp;Trading Concepts Library</a>
+        <a href="backtest.html">📈 &nbsp;Backtest Engine <span style="color:#f59e0b;font-size:9px;letter-spacing:.06em;text-transform:uppercase;font-weight:800;margin-left:4px;">NEW</span></a>
+        <a href="fundamentals.html">📰 &nbsp;Fundamental Analysis</a>
+        <a href="technicals.html">📊 &nbsp;Technical Analysis</a>
+        <div class="nav-divider"></div>
         <a href="blog.html">📝 &nbsp;Blog &amp; Insights</a>
         <a href="about.html">🏢 &nbsp;About Us</a>
         <a href="mailto:hello@tradecontext.ai">✉️ &nbsp;Contact Us</a>
@@ -3835,7 +3849,7 @@ div[style*="background:var(--bg3)"]:has(.cal-filter-btn){
         <a href="risk.html">⚠️ &nbsp;Risk Disclaimer</a>
       </div>
     </li>
-    <li><a href="signup.html" style="color:var(--blue);font-weight:700;">Unlock TradeContext</a></li>
+    <li><a href="#faqSection" onclick="document.getElementById('faqSection').scrollIntoView({behavior:'smooth'});return false;">FAQ</a></li>
   </ul>
   <div class="nav-r">
     <div class="live-pill"><div class="live-dot"></div>Live</div>
