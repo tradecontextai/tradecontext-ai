@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fundamental Analysis · TradeContext.ai — Read the story the chart can't tell you</title>
+<meta name="description" content="Plain-English explainers for the fundamentals that move markets: macro indicators (CPI, NFP, GDP), interest rates, earnings, geopolitical risk and central-bank policy. With live examples + the AI to ask follow-ups.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Crect width='36' height='36' rx='8' fill='%230a1628'/%3E%3Cpolyline points='4,28 12,20 20,24 28,10' fill='none' stroke='%230ea5e9' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='28' cy='10' r='3.5' fill='%230ea5e9'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#03060d;--bg2:#070d1a;--bg3:#0c1626;
+  --border:#142035;--border-strong:#1f2e4a;
+  --blue:#0ea5e9;--blue2:#38bdf8;--violet:#8b5cf6;
+  --green:#10b981;--green2:#34d399;
+  --yellow:#f59e0b;--orange:#f97316;
+  --red:#ef4444;--red2:#f87171;
+  --text:#e2eaf4;--text2:#a5b8d0;--text3:#7a9ab8;--text4:#3a5570;
+  --f-sans:'Inter',sans-serif;--f-mono:'JetBrains Mono',monospace;
+  --grad-prem:linear-gradient(135deg,#0ea5e9 0%,#8b5cf6 100%);
+  --ease-out-quart:cubic-bezier(.25,1,.5,1);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;scroll-padding-top:120px;}
+body{background:var(--bg);color:var(--text);font-family:var(--f-sans);font-size:14.5px;line-height:1.6;letter-spacing:-.005em;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+a{color:inherit;text-decoration:none;}
+
+/* Ambient aurora */
+body::before{content:'';position:fixed;inset:0;z-index:-2;pointer-events:none;background:radial-gradient(ellipse 1100px 700px at 15% -8%,rgba(14,165,233,.18),transparent 65%),radial-gradient(ellipse 900px 600px at 90% 5%,rgba(139,92,246,.16),transparent 70%);filter:blur(40px);opacity:.85;}
+body::after{content:'';position:fixed;inset:-50%;z-index:-1;pointer-events:none;background:conic-gradient(from 0deg at 50% 50%,transparent 0deg,rgba(14,165,233,.025) 60deg,transparent 120deg,rgba(139,92,246,.03) 180deg,transparent 240deg,rgba(52,211,153,.02) 300deg,transparent 360deg);animation:auroraSpin 90s linear infinite;mix-blend-mode:screen;}
+@keyframes auroraSpin{to{transform:rotate(360deg);}}
+
+/* Hero — matches the homepage treatment */
+.tc-hero{max-width:980px;margin:0 auto;padding:78px 32px 48px;text-align:center;}
+.tc-eyebrow{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;background:rgba(14,165,233,.08);border:1px solid rgba(14,165,233,.25);border-radius:100px;font-family:var(--f-mono);font-size:10.5px;font-weight:800;color:var(--blue2);letter-spacing:.16em;text-transform:uppercase;margin-bottom:22px;}
+.tc-eyebrow::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--blue2);box-shadow:0 0 8px var(--blue2);animation:lp 1.6s ease-in-out infinite;}
+@keyframes lp{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.55;transform:scale(.85);}}
+.tc-h1{font-family:var(--f-sans);font-size:clamp(38px,5vw,62px);font-weight:900;letter-spacing:-.035em;line-height:1.04;margin-bottom:18px;}
+.tc-h1 em{font-style:normal;background:var(--grad-prem);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.tc-sub{font-size:17px;color:var(--text2);max-width:680px;margin:0 auto 30px;line-height:1.6;}
+.tc-sub strong{color:var(--text);font-weight:700;}
+
+/* TOC */
+.tc-toc{max-width:1080px;margin:0 auto 70px;padding:0 32px;}
+.tc-toc-inner{padding:22px 26px;background:rgba(7,13,26,.55);border:1px solid rgba(255,255,255,.06);border-radius:14px;backdrop-filter:blur(14px);}
+.tc-toc-h{font-family:var(--f-mono);font-size:10.5px;font-weight:800;color:var(--text3);letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px;}
+.tc-toc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;}
+.tc-toc-link{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;font-size:13.5px;font-weight:600;color:var(--text2);transition:.18s var(--ease-out-quart);border:1px solid transparent;}
+.tc-toc-link:hover{color:var(--text);background:rgba(14,165,233,.06);border-color:rgba(14,165,233,.18);transform:translateX(3px);}
+.tc-toc-link .ic{width:28px;height:28px;border-radius:7px;background:rgba(14,165,233,.10);border:1px solid rgba(14,165,233,.22);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+
+/* Concept blocks */
+.tc-wrap{max-width:1080px;margin:0 auto 60px;padding:0 32px;}
+.tc-concept{margin-bottom:60px;scroll-margin-top:130px;}
+.tc-concept-h{display:flex;align-items:center;gap:16px;margin-bottom:8px;}
+.tc-concept-num{font-family:var(--f-mono);font-size:11px;font-weight:800;color:var(--text3);letter-spacing:.16em;}
+.tc-concept-ic{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;background:linear-gradient(135deg,rgba(14,165,233,.14),rgba(139,92,246,.10));border:1px solid rgba(14,165,233,.28);flex-shrink:0;}
+.tc-concept-title{font-family:var(--f-sans);font-size:30px;font-weight:900;letter-spacing:-.02em;}
+.tc-concept-tag{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;background:rgba(139,92,246,.10);border:1px solid rgba(139,92,246,.3);border-radius:100px;font-family:var(--f-mono);font-size:9.5px;color:var(--violet);font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin-left:auto;}
+.tc-concept-tagline{font-size:16px;color:var(--text2);margin-bottom:24px;padding-left:64px;line-height:1.55;font-style:italic;}
+.tc-card{padding:30px;background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,.005));border:1px solid rgba(255,255,255,.07);border-radius:16px;box-shadow:0 22px 50px -22px rgba(0,0,0,.7);backdrop-filter:blur(8px);}
+.tc-prose h3{font-family:var(--f-mono);font-size:10.5px;font-weight:800;color:var(--blue2);letter-spacing:.14em;text-transform:uppercase;margin:16px 0 7px;}
+.tc-prose h3:first-child{margin-top:0;}
+.tc-prose p{font-size:14.5px;line-height:1.7;margin-bottom:10px;}
+.tc-prose ul{padding-left:18px;margin:6px 0 12px;}
+.tc-prose li{font-size:14px;color:var(--text2);line-height:1.65;margin-bottom:5px;}
+.tc-prose li strong{color:var(--text);}
+
+/* Indicator grid */
+.fa-ind-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:14px 0 8px;}
+.fa-ind{padding:14px 16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:10px;}
+.fa-ind-name{font-family:var(--f-sans);font-size:13px;font-weight:800;color:var(--text);}
+.fa-ind-sub{font-family:var(--f-mono);font-size:10px;color:var(--text3);letter-spacing:.04em;font-weight:700;margin-top:3px;}
+.fa-ind-body{font-size:12.5px;color:var(--text2);margin-top:8px;line-height:1.55;}
+
+/* Callouts */
+.tc-callout{margin-top:18px;padding:14px 18px;background:linear-gradient(90deg,rgba(245,158,11,.06),transparent 80%);border-left:3px solid var(--yellow);border-radius:0 9px 9px 0;}
+.tc-callout-h{font-family:var(--f-mono);font-size:10px;font-weight:800;color:var(--yellow);letter-spacing:.14em;text-transform:uppercase;margin-bottom:5px;}
+.tc-callout p{font-size:13.5px;line-height:1.6;margin:0;}
+
+.tc-askai{margin-top:18px;display:inline-flex;align-items:center;gap:10px;padding:11px 18px;background:linear-gradient(135deg,rgba(14,165,233,.10),rgba(139,92,246,.06));border:1px solid rgba(14,165,233,.32);border-radius:10px;font-family:var(--f-sans);font-size:13px;font-weight:700;color:var(--blue2);cursor:pointer;transition:.2s var(--ease-out-quart);}
+.tc-askai:hover{transform:translateY(-2px);border-color:rgba(14,165,233,.55);box-shadow:0 8px 24px -8px rgba(14,165,233,.4);}
+
+/* Bottom CTA + footer */
+.tc-cta{max-width:980px;margin:30px auto 80px;padding:48px 38px;text-align:center;background:linear-gradient(135deg,rgba(14,165,233,.08),rgba(139,92,246,.06));border:1px solid rgba(14,165,233,.22);border-radius:18px;backdrop-filter:blur(12px);}
+.tc-cta h2{font-size:32px;font-weight:900;letter-spacing:-.02em;margin-bottom:10px;}
+.tc-cta h2 em{font-style:normal;background:var(--grad-prem);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.tc-cta p{color:var(--text2);max-width:580px;margin:0 auto 22px;font-size:15px;}
+.btn{display:inline-flex;align-items:center;gap:9px;padding:12px 22px;background:var(--grad-prem);color:#fff;font-weight:800;font-size:14px;border-radius:11px;box-shadow:0 12px 32px -12px rgba(14,165,233,.6);transition:.22s var(--ease-out-quart);border:none;cursor:pointer;}
+.btn:hover{transform:translateY(-2px);box-shadow:0 16px 38px -10px rgba(14,165,233,.7);}
+.tc-foot{max-width:1280px;margin:0 auto;padding:30px 32px 60px;text-align:center;color:var(--text3);font-size:12px;border-top:1px solid rgba(255,255,255,.05);}
+
+/* AI Chat widget — same as homepage */
+.hp-fab{position:fixed;right:24px;bottom:24px;z-index:9999;width:62px;height:62px;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,#8b5cf6);color:#fff;border:none;cursor:pointer;font-size:26px;display:flex;align-items:center;justify-content:center;box-shadow:0 14px 38px rgba(14,165,233,.5),0 0 0 1px rgba(255,255,255,.08) inset;transition:transform .25s var(--ease-out-quart),box-shadow .25s;}
+.hp-fab:hover{transform:translateY(-3px) scale(1.04);}
+.hp-fab::before{content:'';position:absolute;inset:-4px;border-radius:50%;border:2px solid rgba(14,165,233,.45);animation:hpFabRing 2.2s ease-out infinite;}
+@keyframes hpFabRing{0%{transform:scale(.9);opacity:.85;}100%{transform:scale(1.45);opacity:0;}}
+.hp-fab-label{position:absolute;right:74px;top:50%;transform:translateY(-50%) translateX(6px);background:rgba(15,23,42,.92);color:#e5e7eb;font-family:var(--f-sans);font-size:12px;font-weight:700;padding:7px 12px;border-radius:8px;border:1px solid rgba(255,255,255,.08);white-space:nowrap;opacity:0;pointer-events:none;transition:.2s;}
+.hp-fab:hover .hp-fab-label{opacity:1;transform:translateY(-50%) translateX(0);}
+.hp-chat{position:fixed;right:24px;bottom:96px;width:400px;max-width:calc(100vw - 48px);height:560px;max-height:calc(100vh - 130px);background:rgba(15,20,32,.96);backdrop-filter:blur(20px) saturate(180%);border:1px solid rgba(255,255,255,.08);border-radius:16px;box-shadow:0 28px 72px rgba(0,0,0,.7);z-index:10000;display:none;flex-direction:column;overflow:hidden;}
+.hp-chat.open{display:flex;animation:hpChatIn .26s cubic-bezier(.22,.61,.36,1);}
+@keyframes hpChatIn{from{opacity:0;transform:scale(.94) translateY(10px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.hp-chat-h{padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:11px;background:linear-gradient(135deg,rgba(14,165,233,.08),rgba(139,92,246,.05));flex-shrink:0;}
+.hp-chat-av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:0 4px 14px rgba(14,165,233,.4);}
+.hp-chat-h-title{font-family:var(--f-sans);font-size:13.5px;font-weight:800;}
+.hp-chat-h-sub{font-family:var(--f-mono);font-size:10px;color:var(--text3);font-weight:700;letter-spacing:.06em;margin-top:2px;text-transform:uppercase;}
+.hp-chat-close{margin-left:auto;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);color:var(--text2);font-size:18px;cursor:pointer;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.hp-chat-close:hover{background:#ef4444;color:#fff;}
+.hp-chat-body{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:14px;}
+.hp-bubble{padding:12px 14px;border-radius:11px;font-size:13.5px;line-height:1.55;max-width:90%;}
+.hp-bubble.user{align-self:flex-end;background:rgba(14,165,233,.15);border:1px solid rgba(14,165,233,.3);}
+.hp-bubble.assistant{align-self:flex-start;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);}
+.hp-typing{display:inline-flex;gap:4px;align-items:center;}
+.hp-typing span{width:6px;height:6px;border-radius:50%;background:var(--text3);animation:hpTypingBounce 1.2s ease-in-out infinite;}
+.hp-typing span:nth-child(2){animation-delay:.15s;}
+.hp-typing span:nth-child(3){animation-delay:.3s;}
+@keyframes hpTypingBounce{0%,80%,100%{transform:scale(.85);opacity:.5;}40%{transform:scale(1);opacity:1;}}
+.hp-empty{font-family:var(--f-sans);font-size:13.5px;color:var(--text2);text-align:center;padding:18px 12px 8px;line-height:1.6;}
+.hp-empty strong{color:var(--text);font-weight:800;}
+.hp-suggest-row{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:14px;}
+.hp-suggest{padding:8px 13px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:var(--text2);font-family:var(--f-mono);font-size:10.5px;font-weight:700;border-radius:100px;cursor:pointer;}
+.hp-suggest:hover{border-color:rgba(14,165,233,.6);color:#0ea5e9;}
+.hp-chat-foot{padding:12px 14px;border-top:1px solid rgba(255,255,255,.06);background:rgba(0,0,0,.2);}
+.hp-input-row{display:flex;align-items:flex-end;gap:8px;}
+.hp-chat-input{flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:var(--text);font-family:var(--f-sans);font-size:13.5px;padding:10px 12px;border-radius:9px;resize:none;min-height:42px;max-height:120px;outline:none;}
+.hp-chat-input:focus{border-color:rgba(14,165,233,.5);}
+.hp-chat-send{padding:0 16px;height:42px;background:linear-gradient(135deg,#0ea5e9,#8b5cf6);color:#fff;border:none;border-radius:9px;font-family:var(--f-sans);font-size:13px;font-weight:800;cursor:pointer;}
+.hp-chat-send:disabled{opacity:.5;cursor:not-allowed;}
+.hp-grounded{align-self:flex-start;max-width:90%;font-family:var(--f-mono);font-size:9.5px;color:var(--text3);font-weight:700;letter-spacing:.04em;margin-top:-6px;padding:7px 10px;background:rgba(14,165,233,.05);border-left:2px solid rgba(14,165,233,.5);border-radius:0 6px 6px 0;line-height:1.55;}
+</style>
+<script src="shared-nav.js" defer></script>
+</head>
+<body data-page="fundamentals">
+
+<!-- preview-bar + nav are injected by shared-nav.js so they stay identical to the homepage -->
+
+<!-- ═══════════ HERO ═══════════ -->
+<section class="tc-hero">
+  <div class="tc-eyebrow">FUNDAMENTAL ANALYSIS · MADE SIMPLE</div>
+  <h1 class="tc-h1">Read the <em>story</em> the chart can't tell you.</h1>
+  <p class="tc-sub">
+    Charts show <strong>what</strong> price did. <strong>Fundamentals tell you why.</strong> Macro indicators, central bank policy, earnings, geopolitical risk — the forces that move markets before the chart even reacts.
+  </p>
+</section>
+
+<!-- ═══════════ TOC ═══════════ -->
+<section class="tc-toc">
+  <div class="tc-toc-inner">
+    <div class="tc-toc-h">📑 Jump to a topic</div>
+    <div class="tc-toc-grid">
+      <a href="#what-is" class="tc-toc-link"><span class="ic">🧭</span>What is fundamental analysis?</a>
+      <a href="#macro" class="tc-toc-link"><span class="ic">🌍</span>The big macro indicators</a>
+      <a href="#central-banks" class="tc-toc-link"><span class="ic">🏦</span>Central banks &amp; interest rates</a>
+      <a href="#earnings" class="tc-toc-link"><span class="ic">📈</span>Earnings &amp; company data</a>
+      <a href="#geopolitics" class="tc-toc-link"><span class="ic">⚔️</span>Geopolitical risk</a>
+      <a href="#calendar" class="tc-toc-link"><span class="ic">📅</span>The economic calendar</a>
+      <a href="#sentiment" class="tc-toc-link"><span class="ic">🌡️</span>Market sentiment</a>
+    </div>
+  </div>
+</section>
+
+<section class="tc-wrap">
+
+<!-- ═══════════ 1: WHAT IS FA ═══════════ -->
+<div class="tc-concept" id="what-is">
+  <div class="tc-concept-h">
+    <div class="tc-concept-ic">🧭</div>
+    <div style="flex:1;">
+      <div class="tc-concept-num">TOPIC 01</div>
+      <div class="tc-concept-title">What is fundamental analysis?</div>
+    </div>
+    <span class="tc-concept-tag">FOUNDATION</span>
+  </div>
+  <div class="tc-concept-tagline">Looking at the value behind the price — the cash, the policy, the politics.</div>
+
+  <div class="tc-card">
+    <div class="tc-prose">
+      <h3>The core idea</h3>
+      <p><strong>Fundamental analysis</strong> values a market by what's actually happening in the underlying economy or company — interest rates, growth, profits, debt, geopolitics — and asks whether the current price reflects it. If it doesn't, you have an edge.</p>
+      <h3>The two flavours</h3>
+      <ul>
+        <li><strong>Macro fundamentals</strong> — used for forex, indices, commodities and crypto. Drivers: GDP, inflation, employment, rates, central-bank policy, geopolitical risk.</li>
+        <li><strong>Microeconomic fundamentals</strong> — used for individual stocks. Drivers: earnings, revenue growth, margins, guidance, balance-sheet health, valuation multiples.</li>
+      </ul>
+      <h3>Why it matters</h3>
+      <p>Fundamentals are <strong>the why</strong>. A trader who only watches the chart sees what moved. A trader watching fundamentals sees what's about to. Most blow-ups happen when traders ignore an economic release and a "clean technical setup" gets destroyed by an unexpected number.</p>
+      <button class="tc-askai" onclick="hpChatToggle();setTimeout(function(){hpChatAsk('Give me a real-world example of fundamentals overriding a technical setup')},300)">💬 See a real example →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ 2: BIG MACRO INDICATORS ═══════════ -->
+<div class="tc-concept" id="macro">
+  <div class="tc-concept-h">
+    <div class="tc-concept-ic">🌍</div>
+    <div style="flex:1;">
+      <div class="tc-concept-num">TOPIC 02</div>
+      <div class="tc-concept-title">The big macro indicators</div>
+    </div>
+    <span class="tc-concept-tag">MACRO · DAILY DRIVERS</span>
+  </div>
+  <div class="tc-concept-tagline">If you only watch four numbers, watch these.</div>
+
+  <div class="tc-card">
+    <div class="tc-prose">
+      <p>Most days, the market is reacting to one of a small set of macro releases. Learn what they are and you'll stop being blindsided.</p>
+      <div class="fa-ind-grid">
+        <div class="fa-ind">
+          <div class="fa-ind-name">CPI · Inflation</div>
+          <div class="fa-ind-sub">Released monthly · 13:30 UK / 08:30 ET</div>
+          <div class="fa-ind-body">The single biggest data point in markets right now. Hotter-than-expected CPI = central banks stay hawkish = bonds sell, dollar rallies, gold &amp; tech wobble.</div>
+        </div>
+        <div class="fa-ind">
+          <div class="fa-ind-name">NFP · Non-Farm Payrolls</div>
+          <div class="fa-ind-sub">First Friday of the month · 13:30 UK / 08:30 ET</div>
+          <div class="fa-ind-body">US jobs growth + wages. A strong print signals economic resilience but stickier inflation — usually bullish for the dollar, bearish for rate-sensitive assets.</div>
+        </div>
+        <div class="fa-ind">
+          <div class="fa-ind-name">GDP · Growth</div>
+          <div class="fa-ind-sub">Quarterly · advance, revised &amp; final readings</div>
+          <div class="fa-ind-body">The big picture: is the economy expanding or contracting? Two negative quarters = recession. Drives the medium-term equity/bond regime call.</div>
+        </div>
+        <div class="fa-ind">
+          <div class="fa-ind-name">PMI · Business Surveys</div>
+          <div class="fa-ind-sub">Monthly · manufacturing + services</div>
+          <div class="fa-ind-body">A reading above 50 = expansion, below 50 = contraction. Leading indicator — moves before GDP confirms it. Pay special attention to Germany &amp; China.</div>
+        </div>
+        <div class="fa-ind">
+          <div class="fa-ind-name">Retail Sales</div>
+          <div class="fa-ind-sub">Monthly · US, UK, EU</div>
+          <div class="fa-ind-body">The consumer is ~70% of most developed economies. Strong retail = strong economy = the central bank can stay tight. Weak = recession risk rising.</div>
+        </div>
+        <div class="fa-ind">
+          <div class="fa-ind-name">Unemployment Rate</div>
+          <div class="fa-ind-sub">Monthly · alongside NFP in the US</div>
+          <div class="fa-ind-body">Low unemployment + rising wages is the inflation engine — central bank stays hawkish. A sudden rise often signals the cycle is rolling over.</div>
+        </div>
+      </div>
+      <button class="tc-askai" onclick="hpChatToggle();setTimeout(function(){hpChatAsk('What macro release is most likely to move markets this week?')},300)">💬 What's the next big print? →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ 3: CENTRAL BANKS ═══════════ -->
+<div class="tc-concept" id="central-banks">
+  <div class="tc-concept-h">
+    <div class="tc-concept-ic">🏦</div>
+    <div style="flex:1;">
+      <div class="tc-concept-num">TOPIC 03</div>
+      <div class="tc-concept-title">Central banks &amp; interest rates</div>
+    </div>
+    <span class="tc-concept-tag">THE BIGGEST DRIVER</span>
+  </div>
+  <div class="tc-concept-tagline">The most powerful traders in the world don't trade — they set the price of money.</div>
+
+  <div class="tc-card">
+    <div class="tc-prose">
+      <h3>Why rates rule everything</h3>
+      <p>Interest rates are <strong>the cost of money</strong>. When they rise: bonds get more attractive, equities get repriced lower (the discount rate is higher), the currency strengthens (carry trade), and growth stocks suffer most. When they fall, the opposite. Almost every long-term market regime is anchored on rate expectations.</p>
+      <h3>The big four banks to watch</h3>
+      <ul>
+        <li><strong>Fed (US)</strong> — sets the global tone. Watch the FOMC statement, the press conference, and crucially the "dot plot" (committee members' rate projections).</li>
+        <li><strong>ECB (Eurozone)</strong> — drives EUR; second-most-watched.</li>
+        <li><strong>BoE (UK)</strong> — drives GBP; usually trails the Fed.</li>
+        <li><strong>BoJ (Japan)</strong> — for decades the dovish outlier. Any signal of tightening sends USD/JPY tumbling and global volatility surging.</li>
+      </ul>
+      <h3>Hawkish vs dovish</h3>
+      <ul>
+        <li><strong>Hawkish</strong> — favouring higher rates / tighter policy → bullish for the currency, bearish for risk assets.</li>
+        <li><strong>Dovish</strong> — favouring lower rates / looser policy → bearish for the currency, bullish for risk assets.</li>
+      </ul>
+      <div class="tc-callout">
+        <div class="tc-callout-h">⚠️ Pro tip</div>
+        <p>Trade the <strong>expectation</strong>, not the decision. Markets price in the most likely outcome days before the meeting; the move happens when reality differs from what was priced.</p>
+      </div>
+      <button class="tc-askai" onclick="hpChatToggle();setTimeout(function(){hpChatAsk('What is the Fed expected to do at the next FOMC?')},300)">💬 Get the current rate expectations →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ 4: EARNINGS ═══════════ -->
+<div class="tc-concept" id="earnings">
+  <div class="tc-concept-h">
+    <div class="tc-concept-ic">📈</div>
+    <div style="flex:1;">
+      <div class="tc-concept-num">TOPIC 04</div>
+      <div class="tc-concept-title">Earnings &amp; company data</div>
+    </div>
+    <span class="tc-concept-tag">STOCKS · MICRO</span>
+  </div>
+  <div class="tc-concept-tagline">For individual stocks, four times a year the truth comes out.</div>
+
+  <div class="tc-card">
+    <div class="tc-prose">
+      <h3>What gets reported</h3>
+      <ul>
+        <li><strong>EPS (Earnings per Share)</strong> — profit divided by shares outstanding. Beat consensus → usually a pop. Miss → usually a drop.</li>
+        <li><strong>Revenue</strong> — top-line sales. Growth here matters more for early-stage names.</li>
+        <li><strong>Guidance</strong> — management's forecast for next quarter / year. <em>This drives 70% of the post-earnings move.</em></li>
+        <li><strong>Margins</strong> — gross + operating + net. Expanding margins = efficient business. Contracting margins = warning sign.</li>
+      </ul>
+      <h3>Valuation multiples that matter</h3>
+      <ul>
+        <li><strong>P/E ratio</strong> — price ÷ earnings. ~15–20 is "normal" S&amp;P; >30 is expensive; >50 is priced-for-growth.</li>
+        <li><strong>P/S ratio</strong> — for unprofitable growth names that don't have P/E yet.</li>
+        <li><strong>Forward P/E</strong> — based on next year's expected earnings. Better than trailing.</li>
+      </ul>
+      <h3>The earnings playbook</h3>
+      <p>Strong stocks often <strong>run into</strong> earnings (price-action premium), then trade the reaction. Watch the <strong>1-min chart in after-hours</strong> right after the print — that's where the real fight between bulls and bears plays out.</p>
+      <button class="tc-askai" onclick="hpChatToggle();setTimeout(function(){hpChatAsk('Which big-cap stocks have earnings this week and what is expected?')},300)">💬 What earnings are due this week? →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ 5: GEOPOLITICS ═══════════ -->
+<div class="tc-concept" id="geopolitics">
+  <div class="tc-concept-h">
+    <div class="tc-concept-ic">⚔️</div>
+    <div style="flex:1;">
+      <div class="tc-concept-num">TOPIC 05</div>
+      <div class="tc-concept-title">Geopolitical risk</div>
+    </div>
+    <span class="tc-concept-tag">VOLATILITY · TAIL RISK</span>
+  </div>
+  <div class="tc-concept-tagline">Wars, elections, sanctions — slow to build, fast to unwind.</div>
+
+  <div class="tc-card">
+    <div class="tc-prose">
+      <h3>The flight-to-safety reflex</h3>
+      <p>When geopolitical risk spikes, capital flows out of risk and into "safe havens": <strong>gold, US Treasuries, USD, JPY, CHF</strong>. The classic combo: equities sell, gold rallies, oil reacts both ways (supply fear vs demand destruction).</p>
+      <h3>Where to watch</h3>
+      <ul>
+        <li><strong>Middle East</strong> — affects oil, gold, the dollar via safe-haven flows.</li>
+        <li><strong>Russia / Ukraine</strong> — affects European gas, EUR, defence stocks, food commodities.</li>
+        <li><strong>Taiwan strait / South China Sea</strong> — affects semiconductors (TSMC), AUD, regional risk premium.</li>
+        <li><strong>US elections + trade policy</strong> — affects USD, tariffs-sensitive stocks, foreign exporters.</li>
+      </ul>
+      <h3>How to trade it</h3>
+      <p>Don't try to predict events. <strong>React fast</strong>: watch a live news feed, score the impact, then trade the established safe-haven correlations. A clean Iran-related headline at 2pm + a long gold position is one of the most repeatable trades in the macro playbook.</p>
+      <button class="tc-askai" onclick="hpChatToggle();setTimeout(function(){hpChatAsk('What is the current geopolitical risk level and how should I position?')},300)">💬 Get the current geo-risk read →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ 6: ECONOMIC CALENDAR ═══════════ -->
+<div class="tc-concept" id="calendar">
+  <div class="tc-concept-h">
+    <div class="tc-concept-ic">📅</div>
+    <div style="flex:1;">
+      <div class="tc-concept-num">TOPIC 06</div>
+      <div class="tc-concept-title">Reading the economic calendar</div>
+    </div>
+    <span class="tc-concept-tag">PROCESS</span>
+  </div>
+  <div class="tc-concept-tagline">Your single most important tool. Free, accurate, predictive.</div>
+
+  <div class="tc-card">
+    <div class="tc-prose">
+      <h3>The three columns that matter</h3>
+      <ul>
+        <li><strong>Forecast</strong> (or "consensus") — what economists expect.</li>
+        <li><strong>Previous</strong> — last release.</li>
+        <li><strong>Actual</strong> — what just came out (the surprise vs forecast is what moves price).</li>
+      </ul>
+      <h3>How to filter the noise</h3>
+      <ul>
+        <li>Filter by <strong>impact: high</strong>. Anything else is mostly background.</li>
+        <li>Filter by your traded <strong>currency / region</strong>. If you trade NQ, you care about US data + Fed speakers.</li>
+        <li>Mark <strong>30 minutes before</strong> any high-impact release — that's "no new positions" time.</li>
+      </ul>
+      <h3>The surprise effect</h3>
+      <p>The move scales with the surprise, not the absolute number. CPI 3.1% vs 3.1% forecast = nothing. CPI 3.3% vs 3.1% forecast = big move, even though 3.3% by itself is unremarkable.</p>
+      <p><strong>The TradeContext dashboard ships with an economic calendar</strong> auto-tagged with severity + region. Use it.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ 7: SENTIMENT ═══════════ -->
+<div class="tc-concept" id="sentiment">
+  <div class="tc-concept-h">
+    <div class="tc-concept-ic">🌡️</div>
+    <div style="flex:1;">
+      <div class="tc-concept-num">TOPIC 07</div>
+      <div class="tc-concept-title">Market sentiment indicators</div>
+    </div>
+    <span class="tc-concept-tag">RISK-ON / RISK-OFF</span>
+  </div>
+  <div class="tc-concept-tagline">The crowd's emotional state — measured.</div>
+
+  <div class="tc-card">
+    <div class="tc-prose">
+      <h3>The big four sentiment gauges</h3>
+      <ul>
+        <li><strong>VIX</strong> — the "fear index." 30-day implied volatility on the S&amp;P 500. &lt;15 = complacent, 20–30 = normal, &gt;30 = panic.</li>
+        <li><strong>CNN Fear &amp; Greed Index</strong> — composite 0–100. Extreme greed = contrarian sell signal; extreme fear = contrarian buy signal.</li>
+        <li><strong>DXY (Dollar Index)</strong> — when DXY rallies hard, it's risk-off (dollar = safe haven). When it falls, risk-on.</li>
+        <li><strong>10Y Treasury yield</strong> — rising = expectations of growth + inflation; falling = expectations of slowing growth.</li>
+      </ul>
+      <h3>Risk-on vs risk-off in one line</h3>
+      <ul>
+        <li><strong>Risk-on:</strong> stocks ↑ · crypto ↑ · gold flat/down · AUD/JPY ↑ · VIX ↓</li>
+        <li><strong>Risk-off:</strong> stocks ↓ · gold ↑ · DXY ↑ · USD/JPY mixed · AUD/JPY ↓ · VIX ↑</li>
+      </ul>
+      <p>Most "smart money" first decides the regime (risk-on vs risk-off) and only then picks the trade. The dashboard's Macro Pulse shows this in one card.</p>
+      <button class="tc-askai" onclick="hpChatToggle();setTimeout(function(){hpChatAsk('What is the current risk regime — risk-on or risk-off?')},300)">💬 What's the regime right now? →</button>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<!-- CTA -->
+<section class="tc-cta">
+  <h2>See <em>live fundamentals</em> on every trade.</h2>
+  <p>The TradeContext.ai dashboard scores every news headline for bias, monitors 50+ geopolitical hotspots in real-time, and lays it next to the chart — so you trade the why, not just the what.</p>
+  <a href="../dashboard.html" class="btn">Open the dashboard <span>→</span></a>
+</section>
+
+<footer class="tc-foot">
+  <strong>TradeContext.ai</strong> · Educational content only — not personal financial advice · See <a href="../risk.html" style="color:var(--blue);">risk warning</a>
+</footer>
+
+<!-- ═══════════ AI CHAT WIDGET ═══════════ -->
+<button class="hp-fab" id="hpFab" onclick="hpChatToggle()" title="Ask about fundamentals" aria-label="Open AI chat">
+  💬<span class="hp-fab-label">Ask about any concept</span>
+</button>
+<aside class="hp-chat" id="hpChat" role="dialog">
+  <div class="hp-chat-h">
+    <div class="hp-chat-av">🧠</div>
+    <div>
+      <div class="hp-chat-h-title">AI Trading Analyst</div>
+      <div class="hp-chat-h-sub">Live macro · earnings · geopolitics</div>
+    </div>
+    <button class="hp-chat-close" onclick="hpChatToggle()" aria-label="Close">×</button>
+  </div>
+  <div class="hp-chat-body" id="hpChatBody">
+    <div class="hp-empty" id="hpChatEmpty">
+      <strong>Ask about any fundamental driver.</strong><br>
+      Macro releases, rates, earnings, geo-risk — get a plain-English answer grounded in live news.
+      <div class="hp-suggest-row">
+        <button class="hp-suggest" onclick="hpChatAsk('What is the Fed expected to do at the next meeting?')">Fed expectations</button>
+        <button class="hp-suggest" onclick="hpChatAsk('What macro release is most likely to move markets this week?')">Next big print</button>
+        <button class="hp-suggest" onclick="hpChatAsk('What is the current geopolitical risk level?')">Geo risk</button>
+        <button class="hp-suggest" onclick="hpChatAsk('Risk-on or risk-off right now?')">Risk regime</button>
+      </div>
+    </div>
+  </div>
+  <div class="hp-chat-foot">
+    <div class="hp-input-row">
+      <textarea class="hp-chat-input" id="hpChatInput" rows="1" placeholder="Ask about any fundamental…" onkeydown="hpChatKey(event)"></textarea>
+      <button class="hp-chat-send" id="hpChatSend" onclick="hpChatSend()">Send</button>
+    </div>
+  </div>
+</aside>
+
+<script>
+(function(){
+  var API=(location.hostname==='localhost'||location.hostname==='127.0.0.1')?'http://localhost:3001':'';
+  var DEFAULT_SYM='XAU/USD';
+  window.hpChatToggle=function(){var p=document.getElementById('hpChat');if(!p)return;p.classList.toggle('open');if(p.classList.contains('open'))setTimeout(function(){var i=document.getElementById('hpChatInput');if(i)i.focus();},220);};
+  window.hpChatAsk=function(prompt){var i=document.getElementById('hpChatInput');if(i)i.value=prompt;hpChatSend();};
+  window.hpChatKey=function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();hpChatSend();}};
+  function bubble(role,content){var body=document.getElementById('hpChatBody');var empty=document.getElementById('hpChatEmpty');if(empty)empty.style.display='none';var b=document.createElement('div');b.className='hp-bubble '+role;if(role==='assistant'){var html=String(content||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<em>$1</em>').replace(/\n/g,'<br>');b.innerHTML=html;}else b.textContent=content;body.appendChild(b);body.scrollTop=body.scrollHeight;return b;}
+  window.hpChatSend=function(){var i=document.getElementById('hpChatInput');var send=document.getElementById('hpChatSend');if(!i||!send)return;var msg=i.value.trim();if(!msg)return;i.value='';send.disabled=true;bubble('user',msg);var typing=document.createElement('div');typing.className='hp-bubble assistant';typing.innerHTML='<span class="hp-typing"><span></span><span></span><span></span></span>';var bodyEl=document.getElementById('hpChatBody');bodyEl.appendChild(typing);bodyEl.scrollTop=999999;fetch(API+'/api/ai/chat',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({symbol:DEFAULT_SYM,message:msg})}).then(function(r){return r.json().then(function(d){return {ok:r.ok,data:d};});}).then(function(res){typing.remove();send.disabled=false;if(!res.ok){var code=res.data&&res.data.error&&res.data.error.code;if(code==='CLAUDE_NO_CREDITS'){var b=document.createElement('div');b.className='hp-bubble assistant';b.innerHTML='<strong>Anthropic credits exhausted.</strong><br><a href="https://console.anthropic.com/settings/billing" target="_blank" rel="noopener" style="color:#0ea5e9;">Top up →</a>';bodyEl.appendChild(b);bodyEl.scrollTop=bodyEl.scrollHeight;return;}bubble('assistant',((res.data&&res.data.error&&res.data.error.message)||"Couldn't reach the AI right now.")+'\n\n*Educational tool — not personal financial advice.*');return;}bubble('assistant',res.data.message);var ctx=res.data.contextNews||[];if(ctx.length){var box=document.createElement('div');box.className='hp-grounded';box.innerHTML='📡 grounded in '+ctx.length+' news '+(ctx.length===1?'story':'stories')+': '+ctx.slice(0,3).map(function(n){return '<span style="color:#a5b8d0;">"'+(n.headline||'').slice(0,55)+((n.headline||'').length>55?'…':'')+'"</span>';}).join(' · ');bodyEl.appendChild(box);bodyEl.scrollTop=bodyEl.scrollHeight;}}).catch(function(){typing.remove();send.disabled=false;bubble('assistant',"Network hiccup — couldn't reach the AI. Try again in a moment.");});};
+})();
+</script>
+
+</body>
+</html>

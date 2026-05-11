@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Technical Analysis · TradeContext.ai — The trader's vocabulary, explained</title>
+<meta name="description" content="Trend, moving averages, RSI, MACD, volume, chart patterns, Bollinger Bands — the technical toolkit professional traders actually use, in plain English with diagrams.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Crect width='36' height='36' rx='8' fill='%230a1628'/%3E%3Cpolyline points='4,28 12,20 20,24 28,10' fill='none' stroke='%230ea5e9' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='28' cy='10' r='3.5' fill='%230ea5e9'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#03060d;--bg2:#070d1a;--bg3:#0c1626;
+  --border:#142035;--border-strong:#1f2e4a;
+  --blue:#0ea5e9;--blue2:#38bdf8;--violet:#8b5cf6;
+  --green:#10b981;--green2:#34d399;
+  --yellow:#f59e0b;--orange:#f97316;
+  --red:#ef4444;--red2:#f87171;
+  --text:#e2eaf4;--text2:#a5b8d0;--text3:#7a9ab8;--text4:#3a5570;
+  --f-sans:'Inter',sans-serif;--f-mono:'JetBrains Mono',monospace;
+  --grad-prem:linear-gradient(135deg,#0ea5e9 0%,#8b5cf6 100%);
+  --ease-out-quart:cubic-bezier(.25,1,.5,1);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;scroll-padding-top:120px;}
+body{background:var(--bg);color:var(--text);font-family:var(--f-sans);font-size:14.5px;line-height:1.6;letter-spacing:-.005em;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+a{color:inherit;text-decoration:none;}
+body::before{content:'';position:fixed;inset:0;z-index:-2;pointer-events:none;background:radial-gradient(ellipse 1100px 700px at 15% -8%,rgba(14,165,233,.18),transparent 65%),radial-gradient(ellipse 900px 600px at 90% 5%,rgba(139,92,246,.16),transparent 70%);filter:blur(40px);opacity:.85;}
+body::after{content:'';position:fixed;inset:-50%;z-index:-1;pointer-events:none;background:conic-gradient(from 0deg at 50% 50%,transparent 0deg,rgba(14,165,233,.025) 60deg,transparent 120deg,rgba(139,92,246,.03) 180deg,transparent 240deg,rgba(52,211,153,.02) 300deg,transparent 360deg);animation:auroraSpin 90s linear infinite;mix-blend-mode:screen;}
+@keyframes auroraSpin{to{transform:rotate(360deg);}}
+
+/* Hero */
+.tc-hero{max-width:980px;margin:0 auto;padding:78px 32px 48px;text-align:center;}
+.tc-eyebrow{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;background:rgba(14,165,233,.08);border:1px solid rgba(14,165,233,.25);border-radius:100px;font-family:var(--f-mono);font-size:10.5px;font-weight:800;color:var(--blue2);letter-spacing:.16em;text-transform:uppercase;margin-bottom:22px;}
+.tc-eyebrow::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--blue2);box-shadow:0 0 8px var(--blue2);animation:lp 1.6s ease-in-out infinite;}
+@keyframes lp{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.55;transform:scale(.85);}}
+.tc-h1{font-family:var(--f-sans);font-size:clamp(38px,5vw,62px);font-weight:900;letter-spacing:-.035em;line-height:1.04;margin-bottom:18px;}
+.tc-h1 em{font-style:normal;background:var(--grad-prem);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.tc-sub{font-size:17px;color:var(--text2);max-width:680px;margin:0 auto 30px;line-height:1.6;}
+.tc-sub strong{color:var(--text);font-weight:700;}
+
+/* TOC */
+.tc-toc{max-width:1080px;margin:0 auto 70px;padding:0 32px;}
+.tc-toc-inner{padding:22px 26px;background:rgba(7,13,26,.55);border:1px solid rgba(255,255,255,.06);border-radius:14px;backdrop-filter:blur(14px);}
+.tc-toc-h{font-family:var(--f-mono);font-size:10.5px;font-weight:800;color:var(--text3);letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px;}
+.tc-toc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;}
+.tc-toc-link{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;font-size:13.5px;font-weight:600;color:var(--text2);transition:.18s var(--ease-out-quart);border:1px solid transparent;}
+.tc-toc-link:hover{color:var(--text);background:rgba(14,165,233,.06);border-color:rgba(14,165,233,.18);transform:translateX(3px);}
+.tc-toc-link .ic{width:28px;height:28px;border-radius:7px;background:rgba(14,165,233,.10);border:1px solid rgba(14,165,233,.22);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+
+/* Concept blocks */
+.tc-wrap{max-width:1080px;margin:0 auto 60px;padding:0 32px;}
+.tc-concept{margin-bottom:60px;scroll-margin-top:130px;}
+.tc-concept-h{display:flex;align-items:center;gap:16px;margin-bottom:8px;}
+.tc-concept-num{font-family:var(--f-mono);font-size:11px;font-weight:800;color:var(--text3);letter-spacing:.16em;}
+.tc-concept-ic{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;background:linear-gradient(135deg,rgba(14,165,233,.14),rgba(139,92,246,.10));border:1px solid rgba(14,165,233,.28);flex-shrink:0;}
+.tc-concept-title{font-family:var(--f-sans);font-size:30px;font-weight:900;letter-spacing:-.02em;}
+.tc-concept-tag{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;background:rgba(139,92,246,.10);border:1px solid rgba(139,92,246,.3);border-radius:100px;font-family:var(--f-mono);font-size:9.5px;color:var(--violet);font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin-left:auto;}
+.tc-concept-tagline{font-size:16px;color:var(--text2);margin-bottom:24px;padding-left:64px;line-height:1.55;font-style:italic;}
+.tc-card{padding:30px;background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,.005));border:1px solid rgba(255,255,255,.07);border-radius:16px;box-shadow:0 22px 50px -22px rgba(0,0,0,.7);backdrop-filter:blur(8px);}
+.tc-row{display:grid;grid-template-columns:1.1fr .9fr;gap:28px;align-items:start;}
+@media (max-width:780px){.tc-row{grid-template-columns:1fr;}}
+.tc-prose h3{font-family:var(--f-mono);font-size:10.5px;font-weight:800;color:var(--blue2);letter-spacing:.14em;text-transform:uppercase;margin:16px 0 7px;}
+.tc-prose h3:first-child{margin-top:0;}
+.tc-prose p{font-size:14.5px;line-height:1.7;margin-bottom:10px;}
+.tc-prose ul{padding-left:18px;margin:6px 0 12px;}
+.tc-prose li{font-size:14px;color:var(--text2);line-height:1.65;margin-bottom:5px;}
+.tc-prose li strong{color:var(--text);}
+
+.tc-diagram{padding:20px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.06);border-radius:13px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:260px;}
+.tc-diagram svg{width:100%;max-width:340px;height:auto;}
+.tc-diagram-cap{font-family:var(--f-mono);font-size:10.5px;color:var(--text3);font-weight:700;letter-spacing:.06em;margin-top:14px;text-align:center;}
+
+.tc-callout{margin-top:18px;padding:14px 18px;background:linear-gradient(90deg,rgba(245,158,11,.06),transparent 80%);border-left:3px solid var(--yellow);border-radius:0 9px 9px 0;}
+.tc-callout-h{font-family:var(--f-mono);font-size:10px;font-weight:800;color:var(--yellow);letter-spacing:.14em;text-transform:uppercase;margin-bottom:5px;}
+.tc-callout p{font-size:13.5px;line-height:1.6;margin:0;}
+
+.tc-askai{margin-top:18px;display:inline-flex;align-items:center;gap:10px;padding:11px 18px;background:linear-gradient(135deg,rgba(14,165,233,.10),rgba(139,92,246,.06));border:1px solid rgba(14,165,233,.32);border-radius:10px;font-family:var(--f-sans);font-size:13px;font-weight:700;color:var(--blue2);cursor:pointer;transition:.2s var(--ease-out-quart);}
+.tc-askai:hover{transform:translateY(-2px);border-color:rgba(14,165,233,.55);box-shadow:0 8px 24px -8px rgba(14,165,233,.4);}
+
+.tc-cta{max-width:980px;margin:30px auto 80px;padding:48px 38px;text-align:center;background:linear-gradient(135deg,rgba(14,165,233,.08),rgba(139,92,246,.06));border:1px solid rgba(14,165,233,.22);border-radius:18px;backdrop-filter:blur(12px);}
+.tc-cta h2{font-size:32px;font-weight:900;letter-spacing:-.02em;margin-bottom:10px;}
+.tc-cta h2 em{font-style:normal;background:var(--grad-prem);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.tc-cta p{color:var(--text2);max-width:580px;margin:0 auto 22px;font-size:15px;}
+.btn{display:inline-flex;align-items:center;gap:9px;padding:12px 22px;background:var(--grad-prem);color:#fff;font-weight:800;font-size:14px;border-radius:11px;box-shadow:0 12px 32px -12px rgba(14,165,233,.6);transition:.22s var(--ease-out-quart);}
+.btn:hover{transform:translateY(-2px);box-shadow:0 16px 38px -10px rgba(14,165,233,.7);}
+.tc-foot{max-width:1280px;margin:0 auto;padding:30px 32px 60px;text-align:center;color:var(--text3);font-size:12px;border-top:1px solid rgba(255,255,255,.05);}
+
+/* AI Chat widget */
+.hp-fab{position:fixed;right:24px;bottom:24px;z-index:9999;width:62px;height:62px;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,#8b5cf6);color:#fff;border:none;cursor:pointer;font-size:26px;display:flex;align-items:center;justify-content:center;box-shadow:0 14px 38px rgba(14,165,233,.5),0 0 0 1px rgba(255,255,255,.08) inset;transition:transform .25s,box-shadow .25s;}
+.hp-fab:hover{transform:translateY(-3px) scale(1.04);}
+.hp-fab::before{content:'';position:absolute;inset:-4px;border-radius:50%;border:2px solid rgba(14,165,233,.45);animation:hpFabRing 2.2s ease-out infinite;}
+@keyframes hpFabRing{0%{transform:scale(.9);opacity:.85;}100%{transform:scale(1.45);opacity:0;}}
+.hp-fab-label{position:absolute;right:74px;top:50%;transform:translateY(-50%) translateX(6px);background:rgba(15,23,42,.92);color:#e5e7eb;font-family:var(--f-sans);font-size:12px;font-weight:700;padding:7px 12px;border-radius:8px;border:1px solid rgba(255,255,255,.08);white-space:nowrap;opacity:0;pointer-events:none;transition:.2s;}
+.hp-fab:hover .hp-fab-label{opacity:1;transform:translateY(-50%) translateX(0);}
+.hp-chat{position:fixed;right:24px;bottom:96px;width:400px;max-width:calc(100vw - 48px);height:560px;max-height:calc(100vh - 130px);background:rgba(15,20,32,.96);backdrop-filter:blur(20px) saturate(180%);border:1px solid rgba(255,255,255,.08);border-radius:16px;box-shadow:0 28px 72px rgba(0,0,0,.7);z-index:10000;display:none;flex-direction:column;overflow:hidden;}
+.hp-chat.open{display:flex;animation:hpChatIn .26s cubic-bezier(.22,.61,.36,1);}
+@keyframes hpChatIn{from{opacity:0;transform:scale(.94) translateY(10px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.hp-chat-h{padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:11px;background:linear-gradient(135deg,rgba(14,165,233,.08),rgba(139,92,246,.05));flex-shrink:0;}
+.hp-chat-av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:0 4px 14px rgba(14,165,233,.4);}
+.hp-chat-h-title{font-family:var(--f-sans);font-size:13.5px;font-weight:800;}
+.hp-chat-h-sub{font-family:var(--f-mono);font-size:10px;color:var(--text3);font-weight:700;letter-spacing:.06em;margin-top:2px;text-transform:uppercase;}
+.hp-chat-close{margin-left:auto;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);color:var(--text2);font-size:18px;cursor:pointer;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.hp-chat-close:hover{background:#ef4444;color:#fff;}
+.hp-chat-body{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:14px;}
+.hp-bubble{padding:12px 14px;border-radius:11px;font-size:13.5px;line-height:1.55;max-width:90%;}
+.hp-bubble.user{align-self:flex-end;background:rgba(14,165,233,.15);border:1px solid rgba(14,165,233,.3);}
+.hp-bubble.assistant{align-self:flex-start;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);}
+.hp-typing{display:inline-flex;gap:4px;align-items:center;}
+.hp-typing span{width:6px;height:6px;border-radius:50%;background:var(--text3);animation:hpTypingBounce 1.2s ease-in-out infinite;}
+.hp-typing span:nth-child(2){animation-delay:.15s;}
+.hp-typing span:nth-child(3){animation-delay:.3s;}
+@keyframes hpTypingBounce{0%,80%,100%{transform:scale(.85);opacity:.5;}40%{transform:scale(1);opacity:1;}}
+.hp-empty{font-family:var(--f-sans);font-size:13.5px;color:var(--text2);text-align:center;padding:18px 12px 8px;line-height:1.6;}
+.hp-empty strong{color:var(--text);font-weight:800;}
+.hp-suggest-row{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:14px;}
+.hp-suggest{padding:8px 13px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:var(--text2);font-family:var(--f-mono);font-size:10.5px;font-weight:700;border-radius:100px;cursor:pointer;}
+.hp-suggest:hover{border-color:rgba(14,165,233,.6);color:#0ea5e9;}
+.hp-chat-foot{padding:12px 14px;border-top:1px solid rgba(255,255,255,.06);background:rgba(0,0,0,.2);}
+.hp-input-row{display:flex;align-items:flex-end;gap:8px;}
+.hp-chat-input{flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:var(--text);font-family:var(--f-sans);font-size:13.5px;padding:10px 12px;border-radius:9px;resize:none;min-height:42px;max-height:120px;outline:none;}
+.hp-chat-input:focus{border-color:rgba(14,165,233,.5);}
+.hp-chat-send{padding:0 16px;height:42px;background:linear-gradient(135deg,#0ea5e9,#8b5cf6);color:#fff;border:none;border-radius:9px;font-family:var(--f-sans);font-size:13px;font-weight:800;cursor:pointer;}
+.hp-chat-send:disabled{opacity:.5;cursor:not-allowed;}
+.hp-grounded{align-self:flex-start;max-width:90%;font-family:var(--f-mono);font-size:9.5px;color:var(--text3);font-weight:700;letter-spacing:.04em;margin-top:-6px;padding:7px 10px;background:rgba(14,165,233,.05);border-left:2px solid rgba(14,165,233,.5);border-radius:0 6px 6px 0;line-height:1.55;}
+</style>
+<script src="shared-nav.js" defer></script>
+</head>
+<body data-page="technicals">
+
+<!-- preview-bar + nav are injected by shared-nav.js so they stay identical to the homepage -->
+
+<section class="tc-hero">
+  <div class="tc-eyebrow">TECHNICAL ANALYSIS · THE CHART TRADER'S TOOLKIT</div>
+  <h1 class="tc-h1">Every line, every indicator, <em>explained.</em></h1>
+  <p class="tc-sub">
+    Trend, moving averages, RSI, MACD, volume, chart patterns, Bollinger Bands — the technical vocabulary professional traders use every day, broken down in plain English with diagrams.
+  </p>
+</section>
+
+<section class="tc-toc">
+  <div class="tc-toc-inner">
+    <div class="tc-toc-h">📑 Jump to a topic</div>
+    <div class="tc-toc-grid">
+      <a href="#what-is" class="tc-toc-link"><span class="ic">📊</span>What is technical analysis?</a>
+      <a href="#trend" class="tc-toc-link"><span class="ic">📈</span>Trend &amp; structure</a>
+      <a href="#ma" class="tc-toc-link"><span class="ic">〰️</span>Moving averages</a>
+      <a href="#rsi" class="tc-toc-link"><span class="ic">📉</span>RSI · momentum</a>
+      <a href="#macd" class="tc-toc-link"><span class="ic">📡</span>MACD · trend + momentum</a>
+      <a href="#volume" class="tc-toc-link"><span class="ic">🔊</span>Volume</a>
+      <a href="#patterns" class="tc-toc-link"><span class="ic">🔷</span>Chart patterns</a>
+      <a href="#bollinger" class="tc-toc-link"><span class="ic">🎯</span>Bollinger Bands &amp; ATR</a>
+    </div>
+  </div>
+</section>
+
+<section class="tc-wrap">
+
+<!-- ═══ 1: WHAT IS TA ═══ -->
+<div class="tc-concept" id="what-is">
+  <div class="tc-concept-h">
+    <div class="tc-concept-ic">📊</div>
+    <div style="flex:1;">
+      <div class="tc-concept-num">TOPIC 01</div>
+      <div class="tc-concept-title">What is technical analysis?</div>
+    </div>
+    <span class="tc-concept-tag">FOUNDATION</span>
+  </div>
+  <div class="tc-concept-tagline">Reading price and volume to figure out the highest-probability next move.</div>
+
+  <div class="tc-card">
+    <div class="tc-prose">
+      <h3>The three assumptions</h3>
+      <ul>
+        <li><strong>Price discounts everything.</strong> All known information is already in the price. You don't need to read the news to read the chart.</li>
+        <li><strong>Price moves in trends.</strong> Once a direction is established, it tends to persist longer than people expect.</li>
+        <li><strong>History repeats.</strong> Patterns of human behaviour — fear, greed, FOMO — leave footprints on the chart that look the same across markets and decades.</li>
+      </ul>
+      <h3>What TA is good at</h3>
+      <ul>
+        <li>Defining <strong>entries, stops and targets</strong> with precision</li>
+        <li>Identifying <strong>trend regime</strong> — uptrend, downtrend, range</li>
+        <li>Finding <strong>support &amp; resistance</strong> where reactions are likely</li>
+      </ul>
+      <h3>What TA is bad at</h3>
+      <ul>
+        <li><strong>News-driven gaps.</strong> No technical signal predicts an Iran headline at 2pm.</li>
+        <li><strong>Regime shifts.</strong> Patterns that worked all year suddenly stop when the macro regime flips.</li>
+      </ul>
+      <div class="tc-callout">
+        <div class="tc-callout-h">⚠️ Pro principle</div>
+        <p>Technicals define <strong>where</strong>. Fundamentals define <strong>whether</strong>. The professionals use both — a clean technical entry only after the fundamental thesis lines up.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 2: TREND ═══ -->
+<div class="tc-concept" id="trend">
+  <div class="tc-concept-h">
+    <div class="tc-concept-ic">📈</div>
+    <div style="flex:1;">
+      <div class="tc-concept-num">TOPIC 02</div>
+      <div class="tc-concept-title">Trend &amp; market structure</div>
+    </div>
+    <span class="tc-concept-tag">FIRST PRINCIPLE</span>
+  </div>
+  <div class="tc-concept-tagline">Higher highs and higher lows = uptrend. Until that breaks, trade with it.</div>
+
+  <div class="tc-card">
+    <div class="tc-row">
+      <div class="tc-prose">
+        <h3>The classic definition</h3>
+        <ul>
+          <li><strong>Uptrend</strong> — a series of higher highs (HH) and higher lows (HL).</li>
+          <li><strong>Downtrend</strong> — a series of lower highs (LH) and lower lows (LL).</li>
+          <li><strong>Range</strong> — neither pattern; price oscillates between a ceiling and a floor.</li>
+        </ul>
+        <h3>The trend rule</h3>
+        <p>The trend is intact <strong>until a structural break</strong> — an uptrend ends when price prints a lower low. This single rule keeps you out of countless bad trades. <em>"Don't fight the trend"</em> isn't a cliché; it's mathematically supported by every backtest ever run.</p>
+        <h3>Multi-timeframe alignment</h3>
+        <p>Big money looks at <strong>at least two timeframes</strong>. A common setup: identify the trend on the daily, find the entry on the 1-hour. If the daily is up but the 1H is down, you're either fading a pullback or about to get crushed.</p>
+        <button class="tc-askai" onclick="hpChatToggle();setTimeout(function(){hpChatAsk('Is gold in an uptrend or downtrend right now on the daily chart?')},300)">💬 What's the current trend on any symbol →</button>
+      </div>
+      <div class="tc-diagram">
+        <svg viewBox="0 0 320 240" xmlns="http://www.w3.org/2000/svg">
+          <g stroke="#e2eaf4" stroke-width="2" fill="none">
+            <path d="M20 200 L60 150 L80 170 L120 100 L140 130 L180 70 L210 105 L260 50"/>
+          </g>
+          <line x1="60" y1="150" x2="270" y2="150" stroke="#34d399" stroke-dasharray="3 2" stroke-width="1"/>
+          <text x="68" y="146" font-family="JetBrains Mono" font-size="9" fill="#34d399" font-weight="800">HL</text>
+          <line x1="120" y1="100" x2="270" y2="100" stroke="#34d399" stroke-dasharray="3 2" stroke-width="1"/>
+          <text x="128" y="96" font-family="JetBrains Mono" font-size="9" fill="#34d399" font-weight="800">HH</text>
+          <line x1="180" y1="70" x2="270" y2="70" stroke="#34d399" stroke-dasharray="3 2" stroke-width="1"/>
+          <text x="188" y="66" font-family="JetBrains Mono" font-size="9" fill="#34d399" font-weight="800">HH</text>
+          <circle cx="60" cy="150" r="3" fill="#34d399"/>
+          <circle cx="120" cy="100" r="3" fill="#34d399"/>
+          <circle cx="180" cy="70" r="3" fill="#34d399"/>
+          <text x="160" y="222" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#7a9ab8">Uptrend = each high &amp; low strictly higher</text>
+        </svg>
+        <div class="tc-diagram-cap">HH-HL-HH-HL = clean uptrend</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 3: MOVING AVERAGES ═══ -->
+<div class="tc-concept" id="ma">
+  <div class="tc-concept-h">
+    <div class="tc-concept-ic">〰️</div>
+    <div style="flex:1;">
+      <div class="tc-concept-num">TOPIC 03</div>
+      <div class="tc-concept-title">Moving Averages</div>
+    </div>
+    <span class="tc-concept-tag">TREND FILTER</span>
+  </div>
+  <div class="tc-concept-tagline">A single line that smooths the chart and tells you which side to take.</div>
+
+  <div class="tc-card">
+    <div class="tc-prose">
+      <h3>SMA vs EMA</h3>
+      <ul>
+        <li><strong>SMA (Simple Moving Average)</strong> — average of the last N closes. Slow and smooth — great for higher timeframe trend.</li>
+        <li><strong>EMA (Exponential)</strong> — weights recent prices more heavily. More responsive — preferred by short-term traders.</li>
+      </ul>
+      <h3>The classics worth knowing</h3>
+      <ul>
+        <li><strong>20-EMA</strong> — short-term trend; price above = bullish bias on the daily.</li>
+        <li><strong>50-SMA</strong> — medium-term. The line most institutional desks watch on equities.</li>
+        <li><strong>200-SMA</strong> — the king. Above = secular bull market. Below = secular bear. Self-fulfilling because everyone watches it.</li>
+      </ul>
+      <h3>Golden cross / Death cross</h3>
+      <p>When the <strong>50 crosses above the 200</strong>, it's the "golden cross" — bullish trend confirmation. The opposite is the "death cross." These are lagging signals but they're powerful because they affect institutional asset allocation.</p>
+      <button class="tc-askai" onclick="hpChatToggle();setTimeout(function(){hpChatAsk('Is the SPX above or below its 200-day moving average?')},300)">💬 Check the 200-SMA on any symbol →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 4: RSI ═══ -->
+<div class="tc-concept" id="rsi">
+  <div class="tc-concept-h">
+    <div class="tc-concept-ic">📉</div>
+    <div style="flex:1;">
+      <div class="tc-concept-num">TOPIC 04</div>
+      <div class="tc-concept-title">RSI — momentum oscillator</div>
+    </div>
+    <span class="tc-concept-tag">MOMENTUM</span>
+  </div>
+  <div class="tc-concept-tagline">A 0–100 score for how stretched price is.</div>
+
+  <div class="tc-card">
+    <div class="tc-row">
+      <div class="tc-prose">
+        <h3>What it measures</h3>
+        <p>RSI (Relative Strength Index) compares the size of recent up-moves to recent down-moves over a 14-period window. The result is a number 0–100:</p>
+        <ul>
+          <li><strong>&gt; 70</strong> — overbought, momentum extended</li>
+          <li><strong>&lt; 30</strong> — oversold, sellers exhausted</li>
+          <li><strong>50</strong> — neutral midline</li>
+        </ul>
+        <h3>The common mistake</h3>
+        <p>Most beginners short the moment RSI hits 70 and lose money. <strong>In a strong trend, RSI can stay overbought for weeks.</strong> Overbought ≠ "about to fall." The signal is when RSI crosses <em>back through</em> the level.</p>
+        <h3>Where it really shines: divergence</h3>
+        <p>The highest-quality RSI signal is <strong>divergence</strong>: price makes a new high but RSI doesn't. Means momentum is weakening even though the chart looks fine. Bearish divergence at a key resistance is one of the cleanest reversal trades there is.</p>
+        <button class="tc-askai" onclick="hpChatToggle();setTimeout(function(){hpChatAsk('Backtest the RSI strategy on BTC — does it actually work?')},300)">💬 Backtest the RSI strategy →</button>
+      </div>
+      <div class="tc-diagram">
+        <svg viewBox="0 0 320 220" xmlns="http://www.w3.org/2000/svg">
+          <rect x="20" y="20" width="280" height="20" fill="rgba(248,113,113,.18)" stroke="#f87171" stroke-width="1" stroke-dasharray="3 2"/>
+          <text x="160" y="15" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#f87171" font-weight="800">70 · OVERBOUGHT</text>
+          <rect x="20" y="160" width="280" height="20" fill="rgba(52,211,153,.18)" stroke="#34d399" stroke-width="1" stroke-dasharray="3 2"/>
+          <text x="160" y="200" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#34d399" font-weight="800">30 · OVERSOLD</text>
+          <line x1="20" y1="100" x2="300" y2="100" stroke="rgba(255,255,255,.12)" stroke-dasharray="2 3"/>
+          <text x="22" y="96" font-family="JetBrains Mono" font-size="8" fill="#7a9ab8">50</text>
+          <g stroke="#8b5cf6" stroke-width="2" fill="none">
+            <path d="M20 170 L50 140 L80 60 L110 80 L140 30 L170 90 L200 130 L230 170 L260 110 L290 60"/>
+          </g>
+        </svg>
+        <div class="tc-diagram-cap">RSI oscillates between extremes</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 5: MACD ═══ -->
+<div class="tc-concept" id="macd">
+  <div class="tc-concept-h">
+    <div class="tc-concept-ic">📡</div>
+    <div style="flex:1;">
+      <div class="tc-concept-num">TOPIC 05</div>
+      <div class="tc-concept-title">MACD — trend &amp; momentum together</div>
+    </div>
+    <span class="tc-concept-tag">CLASSIC</span>
+  </div>
+  <div class="tc-concept-tagline">Two moving averages plotted as a single oscillator. Stupidly powerful for what it is.</div>
+
+  <div class="tc-card">
+    <div class="tc-prose">
+      <h3>The pieces</h3>
+      <ul>
+        <li><strong>MACD line</strong> — difference between the 12-EMA and 26-EMA. Above zero = uptrend; below zero = downtrend.</li>
+        <li><strong>Signal line</strong> — 9-EMA of the MACD line itself.</li>
+        <li><strong>Histogram</strong> — the gap between MACD and signal. Expanding = momentum accelerating; contracting = momentum fading.</li>
+      </ul>
+      <h3>The two signals that matter</h3>
+      <ul>
+        <li><strong>Bullish cross</strong> — MACD crosses above the signal line below zero. Trend-reversal signal.</li>
+        <li><strong>Zero-line cross</strong> — MACD crosses above zero. Confirms the trend has flipped.</li>
+      </ul>
+      <h3>MACD divergence</h3>
+      <p>Same idea as RSI — when price makes a new high but MACD doesn't, you have weakening momentum at the top. Combined with a resistance level, it's a high-probability fade.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 6: VOLUME ═══ -->
+<div class="tc-concept" id="volume">
+  <div class="tc-concept-h">
+    <div class="tc-concept-ic">🔊</div>
+    <div style="flex:1;">
+      <div class="tc-concept-num">TOPIC 06</div>
+      <div class="tc-concept-title">Volume — confirmation, not prediction</div>
+    </div>
+    <span class="tc-concept-tag">VALIDATION</span>
+  </div>
+  <div class="tc-concept-tagline">Price tells you what happened. Volume tells you whether to believe it.</div>
+
+  <div class="tc-card">
+    <div class="tc-prose">
+      <h3>What strong volume confirms</h3>
+      <ul>
+        <li><strong>Breakouts</strong> — a breakout on heavy volume is real. On thin volume, usually a fakeout.</li>
+        <li><strong>Trend continuation</strong> — pullbacks should happen on lower volume than the impulse moves.</li>
+        <li><strong>Reversals</strong> — a "key reversal candle" on huge volume often marks the turn.</li>
+      </ul>
+      <h3>Volume divergence</h3>
+      <p>If price keeps making new highs but volume keeps declining, the move is running out of fuel. Smart money is exiting; retail is the bag-holder. Very common just before a top.</p>
+      <h3>The VWAP shortcut</h3>
+      <p>For intraday traders, the <strong>VWAP (Volume-Weighted Average Price)</strong> is the level institutions use. Above VWAP = bullish session; below = bearish. Reverts to VWAP often.</p>
+      <div class="tc-callout">
+        <div class="tc-callout-h">⚠️ Forex caveat</div>
+        <p>Spot forex doesn't have real volume — it's decentralised. You can use tick volume as a proxy but it's not the same. Volume signals work much better on stocks, futures and crypto.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 7: PATTERNS ═══ -->
+<div class="tc-concept" id="patterns">
+  <div class="tc-concept-h">
+    <div class="tc-concept-ic">🔷</div>
+    <div style="flex:1;">
+      <div class="tc-concept-num">TOPIC 07</div>
+      <div class="tc-concept-title">The classic chart patterns</div>
+    </div>
+    <span class="tc-concept-tag">PRICE ACTION</span>
+  </div>
+  <div class="tc-concept-tagline">Shapes the crowd has watched for a century — and still watches.</div>
+
+  <div class="tc-card">
+    <div class="tc-prose">
+      <h3>Reversal patterns</h3>
+      <ul>
+        <li><strong>Head &amp; Shoulders</strong> — three peaks, middle one highest. Break of the "neckline" confirms reversal.</li>
+        <li><strong>Double top / Double bottom</strong> — two peaks/troughs at the same level. Failed retest = reversal.</li>
+        <li><strong>Inverse H&amp;S</strong> — same as H&amp;S but at a bottom. Cleanest bullish reversal pattern.</li>
+      </ul>
+      <h3>Continuation patterns</h3>
+      <ul>
+        <li><strong>Flags &amp; pennants</strong> — brief consolidation after a strong move. Break in the trend direction usually targets the same distance as the prior leg.</li>
+        <li><strong>Ascending / descending triangles</strong> — flat ceiling + rising floor (or vice versa). Breaks tend to honour the flat side.</li>
+        <li><strong>Cup &amp; handle</strong> — rounded bottom + small flag. William O'Neil's classic bullish continuation.</li>
+      </ul>
+      <h3>The truth about patterns</h3>
+      <p>Patterns don't work in isolation — they're <strong>probability shifts</strong>. A head-and-shoulders at major resistance + bearish divergence + risk-off macro = high-conviction trade. The same pattern in a roaring bull market with no resistance is a fade waiting to happen.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 8: BOLLINGER ═══ -->
+<div class="tc-concept" id="bollinger">
+  <div class="tc-concept-h">
+    <div class="tc-concept-ic">🎯</div>
+    <div style="flex:1;">
+      <div class="tc-concept-num">TOPIC 08</div>
+      <div class="tc-concept-title">Bollinger Bands &amp; ATR — volatility tools</div>
+    </div>
+    <span class="tc-concept-tag">VOLATILITY</span>
+  </div>
+  <div class="tc-concept-tagline">Measure how "stretched" or "compressed" the market is — and size stops accordingly.</div>
+
+  <div class="tc-card">
+    <div class="tc-prose">
+      <h3>Bollinger Bands</h3>
+      <p>Plotted as a 20-period moving average with bands ±2 standard deviations above and below. The bands <strong>widen when volatility expands</strong> and <strong>contract when it falls</strong>.</p>
+      <ul>
+        <li><strong>Band squeeze</strong> — the bands narrow to historic lows. Almost always followed by an explosive move (direction unclear from the bands alone — watch for the breakout direction).</li>
+        <li><strong>Walking the band</strong> — in a strong trend, price rides the upper or lower band. Don't fade it.</li>
+        <li><strong>Mean reversion at extremes</strong> — only in ranging markets, a poke outside the band tends to revert to the mid line.</li>
+      </ul>
+      <h3>ATR — the trader's friend</h3>
+      <p><strong>ATR (Average True Range)</strong> measures average daily range. It's the single best tool for sizing stops. Rule of thumb: place your stop <strong>1.5–2× the ATR</strong> away from entry — gives the trade room to breathe through normal noise without getting stopped on a wick.</p>
+      <p>Position size should scale inversely with ATR. High-ATR market = smaller size to keep risk constant. Most blow-ups come from using the same lot size on a quiet day and a volatile one.</p>
+      <button class="tc-askai" onclick="hpChatToggle();setTimeout(function(){hpChatAsk('What is the ATR on EUR/USD right now and how should I size?')},300)">💬 Get the current ATR for any symbol →</button>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<!-- CTA -->
+<section class="tc-cta">
+  <h2>Test these tools on <em>10 years of real data.</em></h2>
+  <p>Every technical strategy on this page can be backtested in seconds on the TradeContext.ai backtest engine — see for yourself whether the indicators actually edge a coin flip.</p>
+  <a href="backtest.html" class="btn">Run a backtest <span>→</span></a>
+</section>
+
+<footer class="tc-foot">
+  <strong>TradeContext.ai</strong> · Educational content only — not personal financial advice · See <a href="../risk.html" style="color:var(--blue);">risk warning</a>
+</footer>
+
+<!-- ═══════════ AI CHAT WIDGET ═══════════ -->
+<button class="hp-fab" id="hpFab" onclick="hpChatToggle()" title="Ask about technicals" aria-label="Open AI chat">
+  💬<span class="hp-fab-label">Ask about any indicator</span>
+</button>
+<aside class="hp-chat" id="hpChat" role="dialog">
+  <div class="hp-chat-h">
+    <div class="hp-chat-av">🧠</div>
+    <div>
+      <div class="hp-chat-h-title">AI Trading Analyst</div>
+      <div class="hp-chat-h-sub">Live charts · indicators · setups</div>
+    </div>
+    <button class="hp-chat-close" onclick="hpChatToggle()" aria-label="Close">×</button>
+  </div>
+  <div class="hp-chat-body" id="hpChatBody">
+    <div class="hp-empty" id="hpChatEmpty">
+      <strong>Ask about any technical indicator or setup.</strong><br>
+      RSI · MACD · moving averages · patterns — get plain-English answers with live examples.
+      <div class="hp-suggest-row">
+        <button class="hp-suggest" onclick="hpChatAsk('What is gold doing on the daily chart right now?')">Daily chart read</button>
+        <button class="hp-suggest" onclick="hpChatAsk('Is the SPX above or below its 200-day MA?')">200-SMA</button>
+        <button class="hp-suggest" onclick="hpChatAsk('Backtest the MA crossover on AAPL')">Backtest AAPL</button>
+        <button class="hp-suggest" onclick="hpChatAsk('Explain RSI divergence with a recent example')">RSI divergence</button>
+      </div>
+    </div>
+  </div>
+  <div class="hp-chat-foot">
+    <div class="hp-input-row">
+      <textarea class="hp-chat-input" id="hpChatInput" rows="1" placeholder="Ask about any indicator…" onkeydown="hpChatKey(event)"></textarea>
+      <button class="hp-chat-send" id="hpChatSend" onclick="hpChatSend()">Send</button>
+    </div>
+  </div>
+</aside>
+
+<script>
+(function(){
+  var API=(location.hostname==='localhost'||location.hostname==='127.0.0.1')?'http://localhost:3001':'';
+  var DEFAULT_SYM='XAU/USD';
+  window.hpChatToggle=function(){var p=document.getElementById('hpChat');if(!p)return;p.classList.toggle('open');if(p.classList.contains('open'))setTimeout(function(){var i=document.getElementById('hpChatInput');if(i)i.focus();},220);};
+  window.hpChatAsk=function(prompt){var i=document.getElementById('hpChatInput');if(i)i.value=prompt;hpChatSend();};
+  window.hpChatKey=function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();hpChatSend();}};
+  function bubble(role,content){var body=document.getElementById('hpChatBody');var empty=document.getElementById('hpChatEmpty');if(empty)empty.style.display='none';var b=document.createElement('div');b.className='hp-bubble '+role;if(role==='assistant'){var html=String(content||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<em>$1</em>').replace(/\n/g,'<br>');b.innerHTML=html;}else b.textContent=content;body.appendChild(b);body.scrollTop=body.scrollHeight;return b;}
+  window.hpChatSend=function(){var i=document.getElementById('hpChatInput');var send=document.getElementById('hpChatSend');if(!i||!send)return;var msg=i.value.trim();if(!msg)return;i.value='';send.disabled=true;bubble('user',msg);var typing=document.createElement('div');typing.className='hp-bubble assistant';typing.innerHTML='<span class="hp-typing"><span></span><span></span><span></span></span>';var bodyEl=document.getElementById('hpChatBody');bodyEl.appendChild(typing);bodyEl.scrollTop=999999;fetch(API+'/api/ai/chat',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({symbol:DEFAULT_SYM,message:msg})}).then(function(r){return r.json().then(function(d){return {ok:r.ok,data:d};});}).then(function(res){typing.remove();send.disabled=false;if(!res.ok){var code=res.data&&res.data.error&&res.data.error.code;if(code==='CLAUDE_NO_CREDITS'){var b=document.createElement('div');b.className='hp-bubble assistant';b.innerHTML='<strong>Anthropic credits exhausted.</strong><br><a href="https://console.anthropic.com/settings/billing" target="_blank" rel="noopener" style="color:#0ea5e9;">Top up →</a>';bodyEl.appendChild(b);bodyEl.scrollTop=bodyEl.scrollHeight;return;}bubble('assistant',((res.data&&res.data.error&&res.data.error.message)||"Couldn't reach the AI right now.")+'\n\n*Educational tool — not personal financial advice.*');return;}bubble('assistant',res.data.message);var ctx=res.data.contextNews||[];if(ctx.length){var box=document.createElement('div');box.className='hp-grounded';box.innerHTML='📡 grounded in '+ctx.length+' news '+(ctx.length===1?'story':'stories')+': '+ctx.slice(0,3).map(function(n){return '<span style="color:#a5b8d0;">"'+(n.headline||'').slice(0,55)+((n.headline||'').length>55?'…':'')+'"</span>';}).join(' · ');bodyEl.appendChild(box);bodyEl.scrollTop=bodyEl.scrollHeight;}}).catch(function(){typing.remove();send.disabled=false;bubble('assistant',"Network hiccup — couldn't reach the AI. Try again in a moment.");});};
+})();
+</script>
+
+</body>
+</html>
