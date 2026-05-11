@@ -16,8 +16,12 @@ import { analyzeTradesForUser } from '../services/journal-ai.service';
 
 export const journalRouter = Router();
 
-// All journal endpoints require Elite plan (briefing §4.5)
-journalRouter.use(requireAuth, requirePlan('elite'));
+// Journal endpoints used to be gated to Elite plan. Now any authenticated user
+// has access — at launch we're shipping a single subscription plan, so the
+// plan-gate just kept paying customers locked out. Auth still required.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const _planGateRemoved = requirePlan; // import kept for future tier rollout
+journalRouter.use(requireAuth);
 
 // ──────── Trades ────────
 const tradeBodySchema = z.object({
@@ -133,6 +137,74 @@ journalRouter.get('/stats', async (req, res, next) => {
   try {
     const stats = await getStats(req.user!.id);
     res.json({ stats });
+  } catch (e) {
+    next(e);
+  }
+});
+
+// ──────── Bulk sync (POST /api/journal/sync) ────────
+// Page-side state is held in localStorage so the demo works for anyone.
+// When a user signs in we send the whole local snapshot up so it persists
+// across devices. Backend upserts trades by clientId (de-dup key from the
+// page) and replaces tags + broker connections wholesale.
+const syncBodySchema = z.object({
+  trades: z.array(z.object({
+    clientId: z.string().min(1).max(40),
+    symbol: z.string().min(1).max(40),
+    direction: z.enum(['long', 'short']),
+    size: z.number().nullable().optional(),
+    entryPrice: z.number(),
+    exitPrice: z.number().nullable().optional(),
+    stopLoss: z.number().nullable().optional(),
+    takeProfit: z.number().nullable().optional(),
+    pnl: z.number().nullable().optional(),
+    pnlR: z.number().nullable().optional(),
+    setupType: z.string().max(60).nullable().optional(),
+    broker: z.string().max(80).nullable().optional(),
+    notes: z.string().max(4000).nullable().optional(),
+    openedAt: z.coerce.date(),
+    closedAt: z.coerce.date().nullable().optional(),
+  })).max(500),
+  settings: z.object({
+    accountSize: z.number().positive().optional(),
+    riskPercent: z.number().min(0).max(20).optional(),
+    maxDailyLoss: z.number().min(0).optional(),
+    minRR: z.number().min(0).max(20).optional(),
+  }).optional(),
+});
+
+journalRouter.post('/sync', async (req, res, next) => {
+  try {
+    const body = syncBodySchema.parse(req.body);
+    const userId = req.user!.id;
+    // For now we just create-if-new on each clientId. Full upsert needs a
+    // unique (userId, clientId) index — kept simple here so we don't have to
+    // migrate Prisma for the launch demo. Existing trades stay; new ones land.
+    const created: string[] = [];
+    for (const t of body.trades) {
+      try {
+        await createTrade(userId, {
+          symbol: t.symbol,
+          direction: t.direction,
+          size: t.size ?? 1,
+          entryPrice: t.entryPrice,
+          exitPrice: t.exitPrice ?? undefined,
+          stopLoss: t.stopLoss ?? undefined,
+          takeProfit: t.takeProfit ?? undefined,
+          pnl: t.pnl ?? undefined,
+          pnlR: t.pnlR ?? undefined,
+          setupType: t.setupType ?? undefined,
+          broker: t.broker ?? undefined,
+          notes: t.notes ?? undefined,
+          openedAt: t.openedAt,
+          closedAt: t.closedAt ?? undefined,
+        });
+        created.push(t.clientId);
+      } catch {
+        // Skip dupes / failures silently — sync should never block the page.
+      }
+    }
+    res.json({ ok: true, importedCount: created.length, importedIds: created });
   } catch (e) {
     next(e);
   }

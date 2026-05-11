@@ -86,9 +86,9 @@ body::after{content:'';position:fixed;inset:-50%;z-index:-1;pointer-events:none;
 .jl-chart svg{width:100%;height:100%;display:block;}
 
 /* Calendar heatmap */
-.jl-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
+.jl-cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;max-width:1400px;margin:0 auto;}
 .jl-cal-dow{font-family:var(--f-mono);font-size:9.5px;color:var(--text3);font-weight:800;letter-spacing:.1em;text-align:left;padding:6px 4px 4px;text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,.06);}
-.jl-cal-cell{aspect-ratio:1.4;border-radius:7px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.05);display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;padding:6px 8px;font-family:var(--f-mono);font-size:10.5px;color:var(--text3);font-weight:700;cursor:pointer;transition:.2s var(--ease-out-quart);position:relative;min-height:58px;max-height:78px;}
+.jl-cal-cell{height:72px;border-radius:7px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.05);display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;padding:7px 9px;font-family:var(--f-mono);font-size:10.5px;color:var(--text3);font-weight:700;cursor:pointer;transition:.2s var(--ease-out-quart);position:relative;}
 .jl-cal-cell:hover{transform:translateY(-2px);border-color:rgba(14,165,233,.5);z-index:2;box-shadow:0 12px 24px -10px rgba(14,165,233,.4);}
 .jl-cal-cell.empty{opacity:.2;cursor:default;}
 .jl-cal-cell.empty:hover{transform:none;box-shadow:none;}
@@ -345,6 +345,29 @@ body::after{content:'';position:fixed;inset:-50%;z-index:-1;pointer-events:none;
 .jl-row-act.has-plan{background:rgba(14,165,233,.10);color:var(--blue2);border-color:rgba(14,165,233,.32);}
 .jl-row-act.has-review{background:rgba(52,211,153,.10);color:var(--green2);border-color:rgba(52,211,153,.32);}
 
+/* ═══════ BROKER PICKER (searchable directory) ═══════ */
+.brk-search{position:relative;margin-bottom:12px;}
+.brk-search-input{width:100%;padding:13px 14px 13px 42px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:var(--text);font-family:var(--f-sans);font-size:14px;border-radius:10px;outline:none;}
+.brk-search-input:focus{border-color:rgba(14,165,233,.5);box-shadow:0 0 0 3px rgba(14,165,233,.12);}
+.brk-search::before{content:'🔎';position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:14px;opacity:.6;pointer-events:none;}
+.brk-region-tabs{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;}
+.brk-region-tab{padding:5px 11px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:100px;font-family:var(--f-mono);font-size:9.5px;font-weight:700;color:var(--text2);cursor:pointer;letter-spacing:.06em;transition:.15s;text-transform:uppercase;}
+.brk-region-tab:hover{color:var(--blue2);border-color:rgba(14,165,233,.4);}
+.brk-region-tab.on{background:linear-gradient(135deg,rgba(14,165,233,.18),rgba(139,92,246,.12));color:var(--blue2);border-color:rgba(14,165,233,.4);}
+.brk-list{max-height:320px;overflow-y:auto;border:1px solid rgba(255,255,255,.06);border-radius:11px;padding:6px;}
+.brk-list::-webkit-scrollbar{width:6px;}
+.brk-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:3px;}
+.brk-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:.15s;border:1px solid transparent;}
+.brk-item:hover{background:rgba(14,165,233,.06);border-color:rgba(14,165,233,.22);transform:translateX(2px);}
+.brk-item-logo{width:38px;height:38px;border-radius:9px;background:linear-gradient(135deg,#0a1628,#0e1f3a);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-family:var(--f-sans);font-size:13px;font-weight:900;color:var(--text);flex-shrink:0;letter-spacing:-.04em;}
+.brk-item-body{flex:1;min-width:0;}
+.brk-item-name{font-family:var(--f-sans);font-size:14px;font-weight:800;color:var(--text);}
+.brk-item-meta{font-family:var(--f-mono);font-size:9.5px;color:var(--text3);font-weight:700;letter-spacing:.04em;margin-top:3px;display:flex;flex-wrap:wrap;gap:8px;}
+.brk-item-reg{padding:2px 7px;background:rgba(52,211,153,.10);color:var(--green2);border-radius:4px;font-weight:800;letter-spacing:.06em;font-size:8.5px;}
+.brk-item-plat{padding:2px 7px;background:rgba(14,165,233,.08);color:var(--blue2);border-radius:4px;font-weight:800;font-size:8.5px;}
+.brk-no-results{padding:30px 20px;text-align:center;font-family:var(--f-mono);font-size:11px;color:var(--text3);letter-spacing:.06em;}
+.brk-no-results .brk-add-custom{display:inline-block;margin-top:14px;padding:10px 18px;background:linear-gradient(135deg,#0ea5e9,#8b5cf6);color:#fff;font-family:var(--f-sans);font-size:12.5px;font-weight:800;border-radius:8px;cursor:pointer;border:none;letter-spacing:.04em;}
+
 /* ═══════ BROKER LOGIN SIMULATION ═══════ */
 .brk-modal{position:fixed;inset:0;z-index:1500;background:rgba(3,6,13,.85);backdrop-filter:blur(14px);display:none;align-items:center;justify-content:center;padding:20px;}
 .brk-modal.show{display:flex;}
@@ -407,6 +430,17 @@ body::after{content:'';position:fixed;inset:-50%;z-index:-1;pointer-events:none;
 @keyframes jlPulseIn{0%{background:rgba(52,211,153,.22);}100%{background:transparent;}}
 tr.jl-row-new td{animation:jlPulseIn 2.5s ease-out 1;}
 
+/* ═══════ AUTH BANNER (top of journal) ═══════ */
+.jl-auth-banner{padding:13px 22px;border-radius:13px;display:flex;align-items:center;gap:14px;margin-bottom:18px;font-family:var(--f-sans);font-size:13.5px;font-weight:600;backdrop-filter:blur(10px);}
+.jl-auth-banner.signed-out{background:linear-gradient(90deg,rgba(245,158,11,.06),rgba(14,165,233,.04));border:1px solid rgba(245,158,11,.3);color:var(--text);}
+.jl-auth-banner.signed-in{background:linear-gradient(90deg,rgba(52,211,153,.06),rgba(14,165,233,.04));border:1px solid rgba(52,211,153,.32);color:var(--text);}
+.jl-auth-banner-ic{font-size:20px;line-height:1;flex-shrink:0;}
+.jl-auth-banner-body{flex:1;line-height:1.45;}
+.jl-auth-banner-body strong{color:var(--text);font-weight:800;}
+.jl-auth-banner-cta{padding:9px 18px;background:linear-gradient(135deg,#0ea5e9,#8b5cf6);color:#fff;border:none;border-radius:9px;font-family:var(--f-sans);font-size:12.5px;font-weight:800;cursor:pointer;letter-spacing:.04em;text-decoration:none;display:inline-flex;align-items:center;gap:6px;flex-shrink:0;transition:.18s;}
+.jl-auth-banner-cta:hover{transform:translateY(-1px);box-shadow:0 8px 22px -6px rgba(14,165,233,.55);}
+.jl-auth-banner-cta.secondary{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);color:var(--text2);box-shadow:none;}
+
 /* Toast */
 .jl-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:rgba(7,13,26,.97);border:1px solid rgba(255,255,255,.1);color:var(--text);padding:13px 22px;border-radius:12px;font-family:var(--f-sans);font-size:13px;font-weight:700;box-shadow:0 18px 48px rgba(0,0,0,.6);z-index:11000;opacity:0;transition:.3s var(--ease-out-quart);pointer-events:none;}
 .jl-toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
@@ -455,6 +489,9 @@ tr.jl-row-new td{animation:jlPulseIn 2.5s ease-out 1;}
     <div class="jl-mode-pill" id="jlMode">DEMO · LOCAL</div>
     <button class="jl-action" onclick="resetJournal()" title="Wipe localStorage and re-seed demo data" style="padding:9px 12px;font-size:11.5px;"><span class="ic">↻</span>Reset Demo</button>
   </div>
+
+  <!-- ═══════════ AUTH BANNER ═══════════ -->
+  <div id="jlAuthBanner"></div>
 
   <!-- ═══════════ FILTERS ═══════════ -->
   <div class="jl-filters" id="jlFilters">
@@ -2175,7 +2212,93 @@ var BRK_PORTALS = {
   'MT5':   { logoCls:'mt5',   title:'MetaTrader 5 · Web Terminal', sub:'Multi-asset · MetaQuotes',      servers:['ICMarkets-Live06','Pepperstone-Demo','IG-Live','Saxo-Live'] },
   'OANDA': { logoCls:'oanda', title:'OANDA · v20 REST API',         sub:'OAuth · Trader portal',         servers:['practice','live'] },
 };
+
+// ─── Regulated brokers worldwide. Each: {name, region, regs[], platforms[]} ───
+// Covers ~70 brokers across NA, UK/EU, AU, Asia, crypto + prop firms.
+var BROKERS_DB = [
+  // ── United Kingdom · FCA ──
+  { name: 'IG Group',          region: 'uk',   regs: ['FCA','BaFin','ASIC'],     platforms: ['Web','Mobile','MT4'] },
+  { name: 'CMC Markets',       region: 'uk',   regs: ['FCA','ASIC','MAS'],       platforms: ['Web','Mobile','MT4'] },
+  { name: 'Saxo Markets',      region: 'uk',   regs: ['FCA','MAS','FINMA'],      platforms: ['Web','SaxoTrader','API'] },
+  { name: 'City Index',        region: 'uk',   regs: ['FCA','ASIC'],             platforms: ['Web','MT4','TradingView'] },
+  { name: 'Spreadex',          region: 'uk',   regs: ['FCA'],                    platforms: ['Web','Mobile'] },
+  { name: 'Trading 212',       region: 'uk',   regs: ['FCA','CySEC'],            platforms: ['Web','Mobile'] },
+  { name: 'eToro',             region: 'uk',   regs: ['FCA','CySEC','ASIC'],     platforms: ['Web','Mobile'] },
+  { name: 'Plus500',           region: 'uk',   regs: ['FCA','CySEC','ASIC'],     platforms: ['Web','Mobile'] },
+  { name: 'Capital.com',       region: 'uk',   regs: ['FCA','CySEC','ASIC'],     platforms: ['Web','MT4','TradingView'] },
+  { name: 'OANDA',             region: 'uk',   regs: ['FCA','NFA','ASIC','MAS'], platforms: ['Web','MT4','API'] },
+
+  // ── EU · CySEC / BaFin / AMF ──
+  { name: 'XTB',               region: 'eu',   regs: ['FCA','CySEC','KNF'],      platforms: ['xStation 5','MT4'] },
+  { name: 'AvaTrade',          region: 'eu',   regs: ['ASIC','CySEC','FSA'],     platforms: ['MT4','MT5','AvaTradeGO'] },
+  { name: 'Pepperstone',       region: 'eu',   regs: ['FCA','ASIC','CySEC','BaFin'], platforms: ['MT4','MT5','cTrader','TradingView'] },
+  { name: 'FP Markets',        region: 'eu',   regs: ['ASIC','CySEC'],           platforms: ['MT4','MT5','cTrader','Iress'] },
+  { name: 'Tickmill',          region: 'eu',   regs: ['FCA','CySEC','FSA'],      platforms: ['MT4','MT5'] },
+  { name: 'Exness',            region: 'eu',   regs: ['CySEC','FCA','FSA'],      platforms: ['MT4','MT5','Web','Mobile'] },
+  { name: 'FXTM (ForexTime)',  region: 'eu',   regs: ['FCA','CySEC','FSCA'],     platforms: ['MT4','MT5'] },
+  { name: 'Admiral Markets',   region: 'eu',   regs: ['FCA','CySEC','ASIC'],     platforms: ['MT4','MT5'] },
+  { name: 'Naga',              region: 'eu',   regs: ['CySEC','BaFin'],          platforms: ['Web','MT5'] },
+  { name: 'comdirect',         region: 'eu',   regs: ['BaFin'],                  platforms: ['Web','Mobile'] },
+  { name: 'DEGIRO',            region: 'eu',   regs: ['BaFin','AFM'],            platforms: ['Web','Mobile'] },
+
+  // ── United States · NFA / SEC / FINRA / CFTC ──
+  { name: 'Interactive Brokers', region: 'us', regs: ['SEC','FINRA','CFTC','NFA'], platforms: ['TWS','IBKR Pro','API','MT5'] },
+  { name: 'Charles Schwab',    region: 'us',   regs: ['SEC','FINRA'],            platforms: ['Web','thinkorswim','Mobile'] },
+  { name: 'TD Ameritrade',     region: 'us',   regs: ['SEC','FINRA'],            platforms: ['thinkorswim','Web','Mobile'] },
+  { name: 'Fidelity',          region: 'us',   regs: ['SEC','FINRA'],            platforms: ['Active Trader Pro','Web'] },
+  { name: 'E*TRADE',           region: 'us',   regs: ['SEC','FINRA'],            platforms: ['Power E*TRADE','Web'] },
+  { name: 'Robinhood',         region: 'us',   regs: ['SEC','FINRA'],            platforms: ['Mobile','Web'] },
+  { name: 'Webull',            region: 'us',   regs: ['SEC','FINRA'],            platforms: ['Mobile','Desktop'] },
+  { name: 'Tastytrade',        region: 'us',   regs: ['SEC','FINRA'],            platforms: ['Tastytrade Desktop','Web'] },
+  { name: 'Tradestation',      region: 'us',   regs: ['SEC','FINRA','NFA'],      platforms: ['TradeStation Desktop','Web','API'] },
+  { name: 'NinjaTrader',       region: 'us',   regs: ['NFA'],                    platforms: ['NinjaTrader 8'] },
+  { name: 'AMP Futures',       region: 'us',   regs: ['NFA','CFTC'],             platforms: ['CQG','Rithmic','NinjaTrader'] },
+  { name: 'Tradovate',         region: 'us',   regs: ['NFA','CFTC'],             platforms: ['Web','Mobile','TradingView'] },
+  { name: 'Lightspeed',        region: 'us',   regs: ['SEC','FINRA'],            platforms: ['Lightspeed Trader'] },
+  { name: 'Forex.com',         region: 'us',   regs: ['NFA','CFTC','FCA'],       platforms: ['Web','MT4','MT5'] },
+
+  // ── Australia · ASIC ──
+  { name: 'IG Markets (AU)',   region: 'au',   regs: ['ASIC'],                   platforms: ['Web','Mobile','MT4'] },
+  { name: 'IC Markets',        region: 'au',   regs: ['ASIC','CySEC','FSA'],     platforms: ['MT4','MT5','cTrader','TradingView'] },
+  { name: 'Vantage Markets',   region: 'au',   regs: ['ASIC','FCA','CIMA'],      platforms: ['MT4','MT5','TradingView'] },
+  { name: 'Eightcap',          region: 'au',   regs: ['ASIC','SCB'],             platforms: ['MT4','MT5','TradingView'] },
+  { name: 'AxiTrader',         region: 'au',   regs: ['ASIC','FCA'],             platforms: ['MT4','MT5'] },
+  { name: 'GO Markets',        region: 'au',   regs: ['ASIC','CySEC'],           platforms: ['MT4','MT5'] },
+  { name: 'ThinkMarkets',      region: 'au',   regs: ['ASIC','FCA','FSCA'],      platforms: ['MT4','MT5','ThinkTrader'] },
+  { name: 'Blueberry Markets', region: 'au',   regs: ['ASIC'],                   platforms: ['MT4','MT5'] },
+
+  // ── Asia · MAS / SFC / FSA ──
+  { name: 'Saxo Markets (SG)', region: 'asia', regs: ['MAS'],                    platforms: ['SaxoTrader','Web'] },
+  { name: 'IG Singapore',      region: 'asia', regs: ['MAS'],                    platforms: ['Web','MT4'] },
+  { name: 'Phillip Securities',region: 'asia', regs: ['MAS','SFC'],              platforms: ['POEMS','Web'] },
+  { name: 'Tiger Brokers',     region: 'asia', regs: ['MAS','SEC','FCA'],        platforms: ['Tiger Trade','Web','API'] },
+  { name: 'Futu / Moomoo',     region: 'asia', regs: ['MAS','SFC','SEC'],        platforms: ['Moomoo','Web','Mobile'] },
+  { name: 'Maybank Securities',region: 'asia', regs: ['MAS','SC'],               platforms: ['Web','Mobile'] },
+
+  // ── Crypto exchanges (regulated where listed) ──
+  { name: 'Coinbase',          region: 'crypto', regs: ['NYDFS','FCA','MAS'],    platforms: ['Web','Mobile','Pro','API'] },
+  { name: 'Kraken',            region: 'crypto', regs: ['FinCEN','FCA','MAS'],   platforms: ['Web','Pro','API'] },
+  { name: 'Binance',           region: 'crypto', regs: ['VARA','various'],       platforms: ['Web','Spot','Futures','API'] },
+  { name: 'Bybit',             region: 'crypto', regs: ['VARA','BMA'],           platforms: ['Web','Mobile','API'] },
+  { name: 'OKX',               region: 'crypto', regs: ['VARA','various'],       platforms: ['Web','Mobile','API'] },
+  { name: 'Bitstamp',          region: 'crypto', regs: ['NYDFS','FCA'],          platforms: ['Web','Tradeview','API'] },
+  { name: 'Bitfinex',          region: 'crypto', regs: ['various'],              platforms: ['Web','API'] },
+  { name: 'Crypto.com',        region: 'crypto', regs: ['MAS','VFAA','FinCEN'],  platforms: ['Web','Mobile','API'] },
+  { name: 'Gemini',            region: 'crypto', regs: ['NYDFS','FCA'],          platforms: ['Web','ActiveTrader','API'] },
+
+  // ── Prop firms (treated as brokers for journaling) ──
+  { name: 'FTMO',              region: 'prop', regs: ['ČNB'],                    platforms: ['MT4','MT5','cTrader','DXtrade'] },
+  { name: 'The Funded Trader', region: 'prop', regs: ['—'],                      platforms: ['MT4','MT5','DXtrade','Match-Trader'] },
+  { name: 'Topstep',           region: 'prop', regs: ['—'],                      platforms: ['NinjaTrader','TradingView','TSTrader'] },
+  { name: 'Apex Trader Funding', region: 'prop', regs: ['—'],                    platforms: ['NinjaTrader','Tradovate','Rithmic'] },
+  { name: 'My Funded Futures', region: 'prop', regs: ['—'],                      platforms: ['NinjaTrader','Tradovate'] },
+  { name: 'The 5%ers',         region: 'prop', regs: ['—'],                      platforms: ['MT4','MT5','Match-Trader'] },
+  { name: 'E8 Markets',        region: 'prop', regs: ['—'],                      platforms: ['MT4','MT5'] },
+  { name: 'BluFX',             region: 'prop', regs: ['—'],                      platforms: ['MT4'] },
+];
+
 var _brkState = { broker: null, account: null, server: null };
+var _brkFilters = { region: 'all', query: '' };
 
 window.openBrokerSim = function(){
   _brkState = { broker: null, account: null, server: null };
@@ -2197,17 +2320,30 @@ function renderBrkStep(step){
   if (step === 'pick'){
     setBrkHead('MT4');
     document.getElementById('brkTitle').textContent = 'Connect your trading account';
-    document.getElementById('brkSub').textContent = 'Pick a broker · this is a guided demo of the real flow';
+    document.getElementById('brkSub').textContent = 'Pick the platform or any regulated broker worldwide';
     body.innerHTML =
       '<div class="brk-step">STEP 1 of 4</div>' +
-      '<div class="brk-h">Which broker do you trade with?</div>' +
-      '<div class="brk-sub">For this demo we\'ll simulate a successful login + live trade feed. Your real journal will use this exact flow once you\'ve subscribed.</div>' +
-      '<div class="brk-pick-grid">' +
-        '<div class="brk-pick" onclick="brkPick(\'MT4\')"><span class="brk-pick-emoji">📊</span><div class="brk-pick-name">MetaTrader 4</div><div class="brk-pick-sub">62 brokers</div></div>' +
-        '<div class="brk-pick" onclick="brkPick(\'MT5\')"><span class="brk-pick-emoji">📈</span><div class="brk-pick-name">MetaTrader 5</div><div class="brk-pick-sub">multi-asset</div></div>' +
-        '<div class="brk-pick" onclick="brkPick(\'OANDA\')"><span class="brk-pick-emoji">🌐</span><div class="brk-pick-name">OANDA</div><div class="brk-pick-sub">REST v20</div></div>' +
+      '<div class="brk-h">Pick your platform or broker</div>' +
+      '<div class="brk-sub">MetaTrader works for ' + BROKERS_DB.filter(function(b){return (b.platforms||[]).some(function(p){return p==='MT4'||p==='MT5';});}).length + '+ brokers. OANDA has a native API. Or search the directory of '+BROKERS_DB.length+' regulated brokers below.</div>' +
+      // Quick-pick: MT4 / MT5 / OANDA
+      '<div class="brk-pick-grid" style="margin-bottom:18px;">' +
+        '<div class="brk-pick" onclick="brkPick(\'MT4\')"><span class="brk-pick-emoji">📊</span><div class="brk-pick-name">MetaTrader 4</div><div class="brk-pick-sub">Universal EA bridge</div></div>' +
+        '<div class="brk-pick" onclick="brkPick(\'MT5\')"><span class="brk-pick-emoji">📈</span><div class="brk-pick-name">MetaTrader 5</div><div class="brk-pick-sub">Multi-asset</div></div>' +
+        '<div class="brk-pick" onclick="brkPick(\'OANDA\')"><span class="brk-pick-emoji">🌐</span><div class="brk-pick-name">OANDA</div><div class="brk-pick-sub">REST v20 OAuth</div></div>' +
       '</div>' +
-      '<div class="brk-actions"><button class="brk-btn secondary" onclick="closeBrkSim()">Maybe later</button></div>';
+      '<div style="font-family:var(--f-mono);font-size:9.5px;color:var(--text3);font-weight:800;letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px;">Or search the regulated-broker directory</div>' +
+      '<div class="brk-search"><input class="brk-search-input" id="brkSearchInput" placeholder="Type a broker name… IG, Pepperstone, IC Markets, Robinhood, Binance…" oninput="renderBrkList()"></div>' +
+      '<div class="brk-region-tabs" id="brkRegionTabs">' +
+        ['all','uk','eu','us','au','asia','crypto','prop'].map(function(r){
+          var lbl = {all:'All ('+BROKERS_DB.length+')', uk:'UK · FCA', eu:'Europe', us:'US · NFA/SEC', au:'Australia · ASIC', asia:'Asia · MAS', crypto:'Crypto', prop:'Prop firms'}[r];
+          return '<button class="brk-region-tab'+(r==='all'?' on':'')+'" data-r="'+r+'" onclick="setBrkRegion(\''+r+'\')">'+lbl+'</button>';
+        }).join('') +
+      '</div>' +
+      '<div class="brk-list" id="brkList"></div>' +
+      '<div class="brk-actions"><button class="brk-btn secondary" onclick="closeBrkSim()" style="flex:0 0 auto;padding:13px 22px;">Maybe later</button></div>';
+    _brkFilters = { region: 'all', query: '' };
+    renderBrkList();
+    setTimeout(function(){var i = document.getElementById('brkSearchInput'); if (i) i.focus();}, 100);
   }
   else if (step === 'login'){
     var cfg = BRK_PORTALS[_brkState.broker];
@@ -2256,11 +2392,12 @@ function renderBrkStep(step){
     runSyncProgress();
   }
   else if (step === 'success'){
+    var displayName = _brkState._displayName || _brkState.broker;
     body.innerHTML =
       '<div class="brk-success">' +
         '<div class="brk-success-ic">✓</div>' +
-        '<div><div class="brk-success-t">Connected · '+_brkState.broker+' · #'+_brkState.account+'</div>' +
-        '<div class="brk-success-sub">Live · subscribed to fill stream</div></div>' +
+        '<div><div class="brk-success-t">Connected · '+displayName+' · #'+_brkState.account+'</div>' +
+        '<div class="brk-success-sub">Live · subscribed to fill stream · '+_brkState.broker+' bridge</div></div>' +
       '</div>' +
       '<div class="brk-h">Account dashboard</div>' +
       '<div class="brk-stats">' +
@@ -2278,6 +2415,68 @@ function renderBrkStep(step){
 window.brkPick = function(broker){
   _brkState.broker = broker;
   setBrkHead(broker);
+  renderBrkStep('login');
+};
+
+window.setBrkRegion = function(r){
+  _brkFilters.region = r;
+  document.querySelectorAll('#brkRegionTabs .brk-region-tab').forEach(function(t){t.classList.toggle('on', t.dataset.r === r);});
+  renderBrkList();
+};
+
+window.renderBrkList = function(){
+  var input = document.getElementById('brkSearchInput');
+  _brkFilters.query = input ? input.value.trim().toLowerCase() : '';
+  var listEl = document.getElementById('brkList');
+  if (!listEl) return;
+  var matched = BROKERS_DB.filter(function(b){
+    if (_brkFilters.region !== 'all' && b.region !== _brkFilters.region) return false;
+    if (_brkFilters.query) {
+      var hay = (b.name + ' ' + (b.regs||[]).join(' ') + ' ' + (b.platforms||[]).join(' ')).toLowerCase();
+      if (hay.indexOf(_brkFilters.query) < 0) return false;
+    }
+    return true;
+  });
+  if (!matched.length) {
+    listEl.innerHTML =
+      '<div class="brk-no-results">' +
+        '<div style="font-size:32px;margin-bottom:10px;">🔎</div>' +
+        '<div>No matches for <strong style="color:var(--text);">'+(input?input.value:'')+'</strong></div>' +
+        '<div style="margin-top:6px;color:var(--text4);font-size:10px;">Not finding your broker? Use the custom flow:</div>' +
+        '<button class="brk-add-custom" onclick="brkPickCustom()">Add it anyway →</button>' +
+      '</div>';
+    return;
+  }
+  listEl.innerHTML = matched.slice(0, 40).map(function(b){
+    var logo = b.name.replace(/[^A-Za-z0-9]/g,'').slice(0,2).toUpperCase();
+    var regs = (b.regs||[]).slice(0,3).map(function(r){return '<span class="brk-item-reg">'+r+'</span>';}).join('');
+    var plats = (b.platforms||[]).slice(0,3).map(function(p){return '<span class="brk-item-plat">'+p+'</span>';}).join('');
+    return '<div class="brk-item" onclick="brkPickCustom(\''+b.name.replace(/'/g,"\\'")+'\')">' +
+      '<div class="brk-item-logo">'+logo+'</div>' +
+      '<div class="brk-item-body">' +
+        '<div class="brk-item-name">'+b.name+'</div>' +
+        '<div class="brk-item-meta">'+regs+plats+'</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+};
+
+// User clicked an arbitrary broker — figure out the right login flow
+window.brkPickCustom = function(brokerName){
+  var bname = brokerName || (document.getElementById('brkSearchInput')||{value:''}).value.trim() || 'Custom Broker';
+  var rec = BROKERS_DB.find(function(b){return b.name === bname;});
+  // If broker supports MT4/MT5/cTrader, route to that platform's flow
+  if (rec && rec.platforms) {
+    if (rec.platforms.indexOf('MT5') >= 0) { _brkState.broker = 'MT5'; _brkState._displayName = bname; setBrkHead('MT5'); renderBrkStep('login'); return; }
+    if (rec.platforms.indexOf('MT4') >= 0) { _brkState.broker = 'MT4'; _brkState._displayName = bname; setBrkHead('MT4'); renderBrkStep('login'); return; }
+  }
+  // Otherwise use generic OAuth-style flow with the broker's name
+  _brkState.broker = 'OANDA';   // reuse the OAuth shell — visually still OANDA but with custom name
+  _brkState._displayName = bname;
+  // Update the head to show the broker name
+  setBrkHead('OANDA');
+  document.getElementById('brkTitle').textContent = bname + ' · OAuth Bridge';
+  document.getElementById('brkSub').textContent = 'Read-only API · regulator-verified';
   renderBrkStep('login');
 };
 window.brkLogin = function(){
@@ -2319,7 +2518,8 @@ function backfillBrokerTrades(){
   var SETUPS = ['Sweep+OB','CHoCH','FVG fill','Breakout','News pop'];
   var count = 18 + Math.floor(Math.random()*8);
   var now = Date.now();
-  var broker = _brkState.broker + ' · #' + _brkState.account;
+  var displayName = _brkState._displayName || _brkState.broker;
+  var broker = displayName + ' · #' + _brkState.account;
   for (var i = 0; i < count; i++) {
     var sym = SYMS[Math.floor(Math.random()*SYMS.length)];
     var side = Math.random() > 0.45 ? 'long' : 'short';
@@ -2343,18 +2543,19 @@ function backfillBrokerTrades(){
     hydrateTrade(t);
     state.trades.push(t);
   }
-  // Mark broker as connected in state.brokers (replace any with same name)
-  state.brokers = state.brokers.filter(function(b){return b.name !== _brkState.broker;});
-  state.brokers.push({ id: uid(), name: _brkState.broker, accountNumber: _brkState.account, server: _brkState.server, status: 'connected', connectedAt: now });
+  // Mark broker as connected in state.brokers (replace any with same display name)
+  state.brokers = state.brokers.filter(function(b){return b.name !== displayName;});
+  state.brokers.push({ id: uid(), name: displayName, platform: _brkState.broker, accountNumber: _brkState.account, server: _brkState.server, status: 'connected', connectedAt: now });
   // Mark live mode
-  state._liveBroker = _brkState.broker;
+  state._liveBroker = displayName;
   state._liveSince = now;
   saveState();
 }
 
 window.brkFinish = function(){
   closeBrkSim();
-  toast('🟢 Live · '+_brkState.broker+' connected', 'success');
+  var displayName = _brkState._displayName || _brkState.broker;
+  toast('🟢 Live · '+displayName+' connected', 'success');
   render();
   showLivePill();
   startLiveFeed();
@@ -2428,6 +2629,118 @@ function resumeLiveIfAny(){
 }
 
 // ═══════════════════════════════════════════════════════════════════
+// AUTH + BACKEND SYNC — when signed in, persist local journal to server
+// ═══════════════════════════════════════════════════════════════════
+var _authUser = null;
+function renderAuthBanner(){
+  var el = document.getElementById('jlAuthBanner');
+  if (!el) return;
+  if (_authUser) {
+    el.innerHTML =
+      '<div class="jl-auth-banner signed-in">' +
+        '<span class="jl-auth-banner-ic">🟢</span>' +
+        '<div class="jl-auth-banner-body">Signed in as <strong>'+(_authUser.email||_authUser.name||'you')+'</strong> · journal syncs to your account across devices.<span id="jlSyncStatus" style="margin-left:10px;font-family:var(--f-mono);font-size:10.5px;color:var(--text3);letter-spacing:.06em;"></span></div>' +
+        '<a class="jl-auth-banner-cta secondary" href="../dashboard.html">Open dashboard →</a>' +
+      '</div>';
+  } else {
+    el.innerHTML =
+      '<div class="jl-auth-banner signed-out">' +
+        '<span class="jl-auth-banner-ic">🔓</span>' +
+        '<div class="jl-auth-banner-body"><strong>Demo mode — local only.</strong> Trades, plans, reviews and brokers are saved to this browser. <strong>Sign in</strong> to sync your real journal across desktop / mobile.</div>' +
+        '<a class="jl-auth-banner-cta" href="../signup.html?mode=signin&next=/preview/journal.html">Sign in →</a>' +
+        '<a class="jl-auth-banner-cta secondary" href="../signup.html?next=/preview/journal.html">Sign up</a>' +
+      '</div>';
+  }
+}
+
+async function checkAuth(){
+  try {
+    var res = await fetch(API + '/api/auth/me', { credentials: 'include' });
+    if (!res.ok) { _authUser = null; renderAuthBanner(); return; }
+    var d = await res.json();
+    _authUser = d.user || d;
+    renderAuthBanner();
+    // Hide demo-mode pill since we're real
+    var modePill = document.getElementById('jlMode');
+    if (modePill) { modePill.textContent = 'LIVE · CLOUD-SYNCED'; modePill.style.background = 'rgba(52,211,153,.10)'; modePill.style.borderColor = 'rgba(52,211,153,.4)'; modePill.style.color = 'var(--green2)'; }
+    // Initial fetch of server trades + bulk sync of local ones
+    await pullServerTrades();
+    await pushLocalToServer();
+  } catch(e) {
+    _authUser = null; renderAuthBanner();
+  }
+}
+
+async function pullServerTrades(){
+  try {
+    var res = await fetch(API + '/api/journal/trades?limit=500', { credentials: 'include' });
+    if (!res.ok) return;
+    var d = await res.json();
+    var server = (d.trades || []).map(function(t){
+      return {
+        id: t.id, _server: true,
+        symbol: t.symbol, side: t.direction,
+        entryPx: parseFloat(t.entryPrice), exitPx: t.exitPrice != null ? parseFloat(t.exitPrice) : null,
+        stopPx: t.stopLoss != null ? parseFloat(t.stopLoss) : null,
+        targetPx: t.takeProfit != null ? parseFloat(t.takeProfit) : null,
+        qty: t.size != null ? parseFloat(t.size) : null,
+        pnl: t.pnl != null ? parseFloat(t.pnl) : 0,
+        pnlR: t.pnlR != null ? parseFloat(t.pnlR) : 0,
+        pnlPct: 0,
+        setupTag: t.setupType, broker: t.broker,
+        openedAt: new Date(t.openedAt).getTime(),
+        closedAt: t.closedAt ? new Date(t.closedAt).getTime() : null,
+        status: t.closedAt ? 'closed' : 'open',
+      };
+    });
+    // Merge: prefer server records for ids that match; keep local-only items.
+    var serverIds = new Set(server.map(function(t){return t.id;}));
+    var localKept = state.trades.filter(function(t){return !serverIds.has(t.id);});
+    state.trades = server.concat(localKept).map(hydrateTrade);
+    saveState();
+    render();
+    setSyncStatus('✓ Pulled '+server.length+' trade'+(server.length===1?'':'s')+' from server');
+  } catch(e){}
+}
+
+async function pushLocalToServer(){
+  // Push only local-only trades (no _server flag) up to backend
+  var toSync = state.trades.filter(function(t){return !t._server;});
+  if (!toSync.length) return;
+  try {
+    setSyncStatus('Syncing '+toSync.length+' local trade'+(toSync.length===1?'':'s')+' to server…');
+    var res = await fetch(API + '/api/journal/sync', {
+      method: 'POST', credentials: 'include',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        trades: toSync.map(function(t){return {
+          clientId: t.id,
+          symbol: t.symbol, direction: t.side, size: t.qty,
+          entryPrice: t.entryPx, exitPrice: t.exitPx,
+          stopLoss: t.stopPx, takeProfit: t.targetPx,
+          pnl: t.pnl, pnlR: t.pnlR,
+          setupType: t.setupTag, broker: t.broker,
+          openedAt: new Date(t.openedAt).toISOString(),
+          closedAt: t.closedAt ? new Date(t.closedAt).toISOString() : null,
+        };}),
+        settings: state.settings,
+      }),
+    });
+    if (!res.ok) { setSyncStatus('Sync failed · keeping local copy'); return; }
+    var d = await res.json();
+    setSyncStatus('✓ Synced '+d.importedCount+' trade'+(d.importedCount===1?'':'s')+' to the cloud');
+    // mark synced
+    state.trades.forEach(function(t){t._server = true;});
+    saveState();
+  } catch(e) { setSyncStatus('Sync error · keeping local copy'); }
+}
+
+function setSyncStatus(msg){
+  var el = document.getElementById('jlSyncStatus');
+  if (el) el.textContent = msg;
+}
+
+// ═══════════════════════════════════════════════════════════════════
 // BOOT
 // ═══════════════════════════════════════════════════════════════════
 var state = loadState();
@@ -2443,7 +2756,9 @@ document.addEventListener('DOMContentLoaded', function(){
     b.onclick = function(){ b.classList.toggle('on'); };
   });
   render();
+  renderAuthBanner();   // optimistic signed-out banner; gets replaced after checkAuth
   resumeLiveIfAny();
+  checkAuth();          // async — updates banner + pulls trades if signed in
 });
 </script>
 
