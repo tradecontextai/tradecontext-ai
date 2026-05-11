@@ -3589,6 +3589,53 @@ div[style*="background:var(--bg3)"]:has(.cal-filter-btn){
 }
 
 /* ▲▲▲ END REDESIGN OVERLAY (Phase 1 + 2 + 3 + 4 + 5 + 6) ▲▲▲ */
+
+/* ═══════ HOMEPAGE-STYLE NAVBAR (rewires the dashboard nav to match) ═══════ */
+/* Override the original .navbar styles so the dashboard nav looks identical
+   to the homepage's nav. The HTML below now uses .nav / .brand / .dd-menu
+   matching the homepage; the old .navbar / .nav-logo styles become dead. */
+.nav{position:sticky;top:64px;z-index:499;background:rgba(3,6,13,.78);backdrop-filter:blur(22px) saturate(1.4);-webkit-backdrop-filter:blur(22px) saturate(1.4);border-bottom:1px solid rgba(255,255,255,.05);}
+html[data-theme="light"] .nav{background:rgba(255,255,255,.85);}
+.nav-inner{max-width:1280px;margin:0 auto;padding:14px 32px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:24px;position:relative;}
+.brand{display:inline-flex !important;align-items:center !important;gap:0 !important;font-size:19px !important;font-weight:900 !important;letter-spacing:-.03em !important;color:var(--text) !important;flex-shrink:0;transition:.18s cubic-bezier(.25,1,.5,1);text-decoration:none !important;line-height:1 !important;height:auto !important;border-bottom:none !important;padding:0 !important;}
+.brand:hover{transform:translateY(-1px);}
+.brand-mark{width:28px;height:28px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;background:linear-gradient(135deg,#0a1628,#0e1f3a);border:1px solid rgba(14,165,233,.32);box-shadow:0 4px 14px -4px rgba(14,165,233,.4),inset 0 1px 0 rgba(255,255,255,.06);position:relative;margin-right:8px;}
+.brand-mark::before{content:'';position:absolute;inset:0;border-radius:7px;background:radial-gradient(circle at 70% 30%,rgba(14,165,233,.20),transparent 60%);pointer-events:none;}
+.brand-mark svg{display:block;position:relative;z-index:1;}
+.brand .word{display:inline-flex;align-items:baseline;letter-spacing:-.035em;color:var(--text);}
+.brand .ai{background:linear-gradient(135deg,#0ea5e9 0%,#8b5cf6 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:800;margin-left:0;}
+.dash-nav-links{display:flex;gap:2px;list-style:none;padding:0;margin:0;align-items:center;justify-content:center;}
+.dash-nav-links > li{position:relative;}
+.dash-nav-links > li > a{display:inline-flex !important;align-items:center !important;gap:5px;padding:8px 14px !important;font-size:13px !important;font-weight:500 !important;color:var(--text2) !important;border-radius:8px;transition:.18s cubic-bezier(.25,1,.5,1);cursor:pointer;text-decoration:none !important;height:auto !important;border-bottom:none !important;letter-spacing:0 !important;}
+.dash-nav-links > li > a:hover,.dash-nav-links > li:hover > a,.dash-nav-links > li > a.active{color:var(--text) !important;background:rgba(255,255,255,.04) !important;border-bottom:none !important;}
+.dash-nav-links > li > a .chev{font-size:9px;opacity:.55;transition:transform .2s;}
+.dash-nav-links > li:hover > a .chev{transform:rotate(180deg);opacity:1;}
+.dd-menu{position:absolute;top:calc(100% + 4px);left:50%;transform:translateX(-50%) translateY(-6px);min-width:264px;padding:8px;background:rgba(7,13,26,.92);backdrop-filter:blur(22px) saturate(1.4);-webkit-backdrop-filter:blur(22px) saturate(1.4);border:1px solid rgba(255,255,255,.08);border-radius:12px;box-shadow:0 22px 50px rgba(0,0,0,.55);opacity:0;pointer-events:none;transition:opacity .18s,transform .22s;transform-origin:top center;display:block !important;animation:none !important;}
+.dash-nav-links > li:hover > .dd-menu{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto;}
+.dd-menu::before{content:'';position:absolute;top:-12px;left:0;right:0;height:12px;}
+.dd-item{display:flex !important;align-items:center !important;gap:12px;padding:9px 12px !important;border-radius:8px;font-family:'Inter',sans-serif;font-size:13px !important;font-weight:500 !important;color:var(--text2) !important;cursor:pointer;transition:background .15s,color .15s,transform .15s;text-decoration:none !important;height:auto !important;border:none !important;}
+.dd-item:hover{background:rgba(14,165,233,.10) !important;color:var(--text) !important;transform:translateX(2px);}
+.dd-item.primary{color:var(--blue) !important;font-weight:700 !important;}
+.dd-item .ic{width:26px;height:26px;border-radius:7px;background:rgba(14,165,233,.10);border:1px solid rgba(14,165,233,.2);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.dd-item.primary .ic{background:linear-gradient(135deg,rgba(14,165,233,.18),rgba(139,92,246,.12));border-color:rgba(14,165,233,.4);}
+.dd-divider{height:1px;background:rgba(255,255,255,.06);margin:6px 8px;}
+.nav-cta-row{display:flex;align-items:center;gap:10px;justify-content:flex-end;}
+.nav-cta-row .live-pill{padding:5px 10px;background:rgba(52,211,153,.10);border:1px solid rgba(52,211,153,.3);border-radius:100px;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#34d399;font-weight:700;letter-spacing:.1em;text-transform:uppercase;}
+.nav-cta-row .live-pill .live-dot{width:6px;height:6px;border-radius:50%;background:#34d399;box-shadow:0 0 6px #34d399;animation:blink 1.6s ease-in-out infinite;}
+.nav-signin{padding:8px 16px !important;font-size:12.5px !important;font-weight:600 !important;color:var(--text2) !important;border:1px solid rgba(255,255,255,.12) !important;border-radius:8px !important;transition:.18s;text-decoration:none !important;font-family:'Inter',sans-serif !important;letter-spacing:0 !important;}
+.nav-signin:hover{border-color:rgba(255,255,255,.2) !important;color:var(--text) !important;}
+.nav-cta{padding:9px 18px !important;background:linear-gradient(135deg,#0ea5e9 0%,#8b5cf6 100%) !important;color:#fff !important;font-weight:700 !important;font-size:12.5px !important;border-radius:9px !important;box-shadow:0 6px 20px -8px rgba(14,165,233,.55),inset 0 1px 0 rgba(255,255,255,.18) !important;transition:.22s;text-decoration:none !important;font-family:'Inter',sans-serif !important;letter-spacing:0 !important;border:none !important;}
+.nav-cta:hover{transform:translateY(-2px);box-shadow:0 10px 26px -8px rgba(14,165,233,.7),inset 0 1px 0 rgba(255,255,255,.18) !important;}
+
+/* Make the new theme toggle slot into the homepage-style cluster cleanly */
+.nav-cta-row .theme-toggle{width:32px;height:32px;}
+
+@media (max-width:880px){
+  .dash-nav-links{display:none;}
+}
+@media (max-width:560px){
+  .nav-cta-row #navSignin{display:none !important;}
+}
 </style>
 <script src="lifetime-counter.js" defer></script>
 </head>
@@ -3806,69 +3853,72 @@ div[style*="background:var(--bg3)"]:has(.cal-filter-btn){
 </div>
 
 <!-- ═══════ NAVBAR (centred, matches homepage) ═══════ -->
-<nav class="navbar">
-  <a class="nav-logo" href="homepage-redesigned.html" aria-label="TradeContext.ai home">
-    <svg width="26" height="26" viewBox="0 0 36 36" fill="none" aria-hidden="true">
-      <rect width="36" height="36" rx="8" fill="#0a1628"/>
-      <polyline points="4,28 12,20 20,24 28,10" fill="none" stroke="url(#dbBrandGrad)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-      <circle cx="28" cy="10" r="3.8" fill="url(#dbBrandGrad)"/>
-      <circle cx="28" cy="10" r="1.6" fill="#fff"/>
-      <defs>
-        <linearGradient id="dbBrandGrad" x1="0" y1="36" x2="36" y2="0">
-          <stop offset="0%" stop-color="#0ea5e9"/>
-          <stop offset="100%" stop-color="#8b5cf6"/>
-        </linearGradient>
-      </defs>
-    </svg>
-    TradeContext<span>.ai</span>
-  </a>
-  <ul class="nav-links">
-    <li onmouseenter="document.getElementById('ddFeat').style.display='block'" onmouseleave="document.getElementById('ddFeat').style.display='none'">
-      <a class="active" style="display:flex;align-items:center;gap:4px;">Features <span style="font-size:9px;opacity:.5;">▾</span></a>
-      <div class="nav-dropdown" id="ddFeat">
-        <a href="dashboard-redesigned.html" style="color:var(--blue);font-weight:700;">📊 &nbsp;Full Dashboard <span style="color:#f59e0b;font-size:9px;letter-spacing:.06em;text-transform:uppercase;font-weight:800;margin-left:4px;">NEW</span></a>
-        <a href="journal.html" style="color:var(--blue);font-weight:700;">📓 &nbsp;AI Trading Journal <span style="color:#f59e0b;font-size:9px;letter-spacing:.06em;text-transform:uppercase;font-weight:800;margin-left:4px;">NEW</span></a>
-        <a href="backtest.html">📈 &nbsp;Backtest Engine</a>
-        <div class="nav-divider"></div>
-        <a href="dashboard-redesigned.html" style="color:var(--blue);font-weight:700;">🚀 &nbsp;Open the desk →</a>
-      </div>
-    </li>
-    <li><a href="homepage-redesigned.html#pricing">Pricing</a></li>
-    <li onmouseenter="document.getElementById('ddRes').style.display='block'" onmouseleave="document.getElementById('ddRes').style.display='none'">
-      <a style="display:flex;align-items:center;gap:4px;">Resources <span style="font-size:9px;opacity:.5;">▾</span></a>
-      <div class="nav-dropdown" id="ddRes">
-        <a href="trading-concepts.html" style="color:var(--blue);font-weight:700;">📚 &nbsp;Trading Concepts Library</a>
-        <a href="backtest.html">📈 &nbsp;Backtest Engine <span style="color:#f59e0b;font-size:9px;letter-spacing:.06em;text-transform:uppercase;font-weight:800;margin-left:4px;">NEW</span></a>
-        <a href="fundamentals.html">📰 &nbsp;Fundamental Analysis</a>
-        <a href="technicals.html">📊 &nbsp;Technical Analysis</a>
-        <div class="nav-divider"></div>
-        <a href="blog.html">📝 &nbsp;Blog &amp; Insights</a>
-        <a href="about.html">🏢 &nbsp;About Us</a>
-        <a href="mailto:hello@tradecontext.ai">✉️ &nbsp;Contact Us</a>
-        <div class="nav-divider"></div>
-        <a href="risk.html">⚠️ &nbsp;Risk Disclaimer</a>
-      </div>
-    </li>
-    <li><a href="#faqSection" onclick="document.getElementById('faqSection').scrollIntoView({behavior:'smooth'});return false;">FAQ</a></li>
-  </ul>
-  <div class="nav-r">
-    <div class="live-pill"><div class="live-dot"></div>Live</div>
-    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle theme (T)">
-      <svg id="themeIconSun" width="16" height="16" viewBox="0 0 24 24" fill="none" style="display:none;"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      <svg id="themeIconMoon" width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </button>
-    <!-- Auth state: shows Sign in for anon, avatar+menu for logged-in -->
-    <div id="navAuth" style="display:flex;align-items:center;gap:8px;margin-left:8px;">
-      <a id="navSignin" href="signup.html?mode=signin" style="display:inline-flex;align-items:center;padding:7px 14px;font-family:var(--mono);font-size:11px;font-weight:700;color:var(--text2);text-decoration:none;border:1px solid var(--border);border-radius:6px;letter-spacing:.04em;transition:.15s;">Sign in</a>
-      <a id="navSignup" href="signup.html" style="display:inline-flex;align-items:center;padding:7px 14px;font-family:var(--mono);font-size:11px;font-weight:800;color:#fff;background:var(--grad-prem);text-decoration:none;border-radius:6px;letter-spacing:.04em;">Get started →</a>
-      <div id="navUser" style="display:none;position:relative;">
-        <button id="navUserBtn" onclick="toggleUserMenu(event)" style="width:36px;height:36px;border-radius:50%;background:var(--grad-prem);border:none;cursor:pointer;color:#fff;font-family:var(--sans);font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;">?</button>
-        <div id="navUserMenu" style="display:none;position:absolute;top:calc(100% + 8px);right:0;min-width:220px;background:var(--bg2);border:1px solid var(--border2);border-radius:10px;box-shadow:0 14px 30px rgba(0,0,0,.55);padding:8px;z-index:600;font-family:var(--sans);">
-          <div id="navUserEmail" style="padding:9px 12px;font-size:12px;color:var(--text2);border-bottom:1px solid var(--border);margin-bottom:6px;">—</div>
-          <a href="journal.html" style="display:block;padding:8px 12px;font-size:13px;color:var(--text);text-decoration:none;border-radius:6px;">📓 Journal</a>
-          <a href="track-record.html" style="display:block;padding:8px 12px;font-size:13px;color:var(--text);text-decoration:none;border-radius:6px;">📊 Track Record</a>
-          <a href="#" onclick="event.preventDefault();window.open('/api/stripe/portal','_blank');" style="display:block;padding:8px 12px;font-size:13px;color:var(--text);text-decoration:none;border-radius:6px;">💳 Billing</a>
-          <a href="#" onclick="event.preventDefault();signOut();" style="display:block;padding:8px 12px;font-size:13px;color:var(--red2);text-decoration:none;border-radius:6px;border-top:1px solid var(--border);margin-top:6px;">↪ Sign out</a>
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="homepage-redesigned.html" aria-label="TradeContext.ai home">
+      <span class="brand-mark">
+        <svg width="18" height="18" viewBox="0 0 36 36" fill="none" aria-hidden="true">
+          <polyline points="4,28 12,20 20,24 28,10" fill="none" stroke="url(#dbBrandGrad)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="28" cy="10" r="3.8" fill="url(#dbBrandGrad)"/>
+          <circle cx="28" cy="10" r="1.7" fill="#fff"/>
+          <defs>
+            <linearGradient id="dbBrandGrad" x1="0" y1="36" x2="36" y2="0">
+              <stop offset="0%" stop-color="#0ea5e9"/>
+              <stop offset="100%" stop-color="#8b5cf6"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </span>
+      <span class="word">TradeContext<span class="ai">.ai</span></span>
+    </a>
+    <ul class="dash-nav-links">
+      <li>
+        <a><span>Features</span> <span class="chev">▾</span></a>
+        <div class="dd-menu">
+          <a href="dashboard-redesigned.html" class="dd-item primary"><span class="ic">📊</span>Full Dashboard <em style="color:#f59e0b;font-style:normal;font-size:9px;letter-spacing:.06em;text-transform:uppercase;font-weight:800;margin-left:4px;">NEW</em></a>
+          <a href="journal.html" class="dd-item primary"><span class="ic">📓</span>AI Trading Journal <em style="color:#f59e0b;font-style:normal;font-size:9px;letter-spacing:.06em;text-transform:uppercase;font-weight:800;margin-left:4px;">NEW</em></a>
+          <a href="backtest.html" class="dd-item"><span class="ic">📈</span>Backtest Engine</a>
+          <div class="dd-divider"></div>
+          <a href="dashboard-redesigned.html" class="dd-item primary"><span class="ic">🚀</span>Open the desk →</a>
+        </div>
+      </li>
+      <li><a href="homepage-redesigned.html#pricing"><span>Pricing</span></a></li>
+      <li>
+        <a><span>Resources</span> <span class="chev">▾</span></a>
+        <div class="dd-menu">
+          <a href="trading-concepts.html" class="dd-item primary"><span class="ic">📚</span>Trading Concepts Library</a>
+          <a href="backtest.html" class="dd-item"><span class="ic">📈</span>Backtest Engine <em style="color:#f59e0b;font-style:normal;font-size:9px;letter-spacing:.06em;text-transform:uppercase;font-weight:800;margin-left:4px;">NEW</em></a>
+          <a href="fundamentals.html" class="dd-item"><span class="ic">📰</span>Fundamental Analysis</a>
+          <a href="technicals.html" class="dd-item"><span class="ic">📊</span>Technical Analysis</a>
+          <div class="dd-divider"></div>
+          <a href="blog.html" class="dd-item"><span class="ic">📝</span>Blog &amp; Insights</a>
+          <a href="about.html" class="dd-item"><span class="ic">🏢</span>About Us</a>
+          <a href="mailto:hello@tradecontext.ai" class="dd-item"><span class="ic">✉️</span>Contact Us</a>
+          <div class="dd-divider"></div>
+          <a href="risk.html" class="dd-item"><span class="ic">⚠️</span>Risk Disclaimer</a>
+        </div>
+      </li>
+      <li><a href="#faqSection" onclick="document.getElementById('faqSection').scrollIntoView({behavior:'smooth'});return false;"><span>FAQ</span></a></li>
+    </ul>
+    <div class="nav-cta-row">
+      <div class="live-pill"><div class="live-dot"></div>Live</div>
+      <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle theme (T)">
+        <svg id="themeIconSun" width="16" height="16" viewBox="0 0 24 24" fill="none" style="display:none;"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <svg id="themeIconMoon" width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <!-- Auth state: shows Sign in for anon, avatar+menu for logged-in -->
+      <div id="navAuth" style="display:flex;align-items:center;gap:8px;">
+        <a id="navSignin" class="nav-signin" href="signup.html?mode=signin">Sign in</a>
+        <a id="navSignup" class="nav-cta" href="signup.html">Open the desk →</a>
+        <div id="navUser" style="display:none;position:relative;">
+          <button id="navUserBtn" onclick="toggleUserMenu(event)" style="width:36px;height:36px;border-radius:50%;background:var(--grad-prem);border:none;cursor:pointer;color:#fff;font-family:var(--sans);font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;">?</button>
+          <div id="navUserMenu" style="display:none;position:absolute;top:calc(100% + 8px);right:0;min-width:220px;background:var(--bg2);border:1px solid var(--border2);border-radius:10px;box-shadow:0 14px 30px rgba(0,0,0,.55);padding:8px;z-index:600;font-family:var(--sans);">
+            <div id="navUserEmail" style="padding:9px 12px;font-size:12px;color:var(--text2);border-bottom:1px solid var(--border);margin-bottom:6px;">—</div>
+            <a href="journal.html" style="display:block;padding:8px 12px;font-size:13px;color:var(--text);text-decoration:none;border-radius:6px;">📓 Journal</a>
+            <a href="track-record.html" style="display:block;padding:8px 12px;font-size:13px;color:var(--text);text-decoration:none;border-radius:6px;">📊 Track Record</a>
+            <a href="#" onclick="event.preventDefault();window.open('/api/stripe/portal','_blank');" style="display:block;padding:8px 12px;font-size:13px;color:var(--text);text-decoration:none;border-radius:6px;">💳 Billing</a>
+            <a href="#" onclick="event.preventDefault();signOut();" style="display:block;padding:8px 12px;font-size:13px;color:var(--red2);text-decoration:none;border-radius:6px;border-top:1px solid var(--border);margin-top:6px;">↪ Sign out</a>
+          </div>
         </div>
       </div>
     </div>
