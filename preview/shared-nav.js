@@ -100,7 +100,6 @@
           <a href="dashboard-redesigned.html" class="dd-item primary"><span class="ic">🚀</span>Open the desk →</a>
         </div>
       </li>
-      <li><a href="homepage-redesigned.html#how"${act('how')}><span>How it works</span></a></li>
       <li><a href="homepage-redesigned.html#pricing"${act('pricing')}><span>Pricing</span></a></li>
       <li>
         <a><span>Resources</span> <span class="chev">▾</span></a>
