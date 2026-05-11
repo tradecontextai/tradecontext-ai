@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Risk Disclaimer · TradeContext.ai — Educational tool · not personal financial advice</title>
+<meta name="description" content="TradeContext.ai is an educational analytics platform — not a broker, not an advisor. Trading carries significant risk of loss. Read our full risk disclaimer and regulatory notices.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Crect width='36' height='36' rx='8' fill='%230a1628'/%3E%3Cpolyline points='4,28 12,20 20,24 28,10' fill='none' stroke='%230ea5e9' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='28' cy='10' r='3.5' fill='%230ea5e9'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#03060d;--bg2:#070d1a;--bg3:#0c1626;
+  --border:#142035;--border-strong:#1f2e4a;
+  --blue:#0ea5e9;--blue2:#38bdf8;--violet:#8b5cf6;
+  --green:#10b981;--green2:#34d399;
+  --yellow:#f59e0b;--orange:#f97316;
+  --red:#ef4444;--red2:#f87171;
+  --text:#e2eaf4;--text2:#a5b8d0;--text3:#7a9ab8;--text4:#3a5570;
+  --f-sans:'Inter',sans-serif;--f-mono:'JetBrains Mono',monospace;
+  --grad-prem:linear-gradient(135deg,#0ea5e9 0%,#8b5cf6 100%);
+  --grad-warn:linear-gradient(135deg,#f59e0b 0%,#ef4444 100%);
+  --ease-out-quart:cubic-bezier(.25,1,.5,1);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;scroll-padding-top:130px;}
+body{background:var(--bg);color:var(--text);font-family:var(--f-sans);font-size:14.5px;line-height:1.65;letter-spacing:-.005em;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+a{color:inherit;text-decoration:none;}
+
+body::before{content:'';position:fixed;inset:0;z-index:-2;pointer-events:none;background:radial-gradient(ellipse 1100px 700px at 15% -8%,rgba(245,158,11,.10),transparent 65%),radial-gradient(ellipse 900px 600px at 90% 5%,rgba(239,68,68,.08),transparent 70%);filter:blur(40px);opacity:.85;}
+body::after{content:'';position:fixed;inset:-50%;z-index:-1;pointer-events:none;background:conic-gradient(from 0deg at 50% 50%,transparent 0deg,rgba(245,158,11,.018) 60deg,transparent 120deg,rgba(239,68,68,.02) 180deg,transparent 240deg,rgba(14,165,233,.015) 300deg,transparent 360deg);animation:auroraSpin 90s linear infinite;mix-blend-mode:screen;}
+@keyframes auroraSpin{to{transform:rotate(360deg);}}
+
+/* Hero */
+.rd-hero{max-width:880px;margin:0 auto;padding:70px 32px 40px;text-align:center;}
+.rd-eyebrow{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;background:rgba(245,158,11,.10);border:1px solid rgba(245,158,11,.32);border-radius:100px;font-family:var(--f-mono);font-size:10.5px;font-weight:800;color:var(--yellow);letter-spacing:.16em;text-transform:uppercase;margin-bottom:22px;}
+.rd-eyebrow::before{content:'⚠️';font-size:14px;}
+.rd-h1{font-family:var(--f-sans);font-size:clamp(34px,4.6vw,54px);font-weight:900;letter-spacing:-.03em;line-height:1.06;margin-bottom:16px;}
+.rd-h1 em{font-style:normal;background:var(--grad-warn);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.rd-sub{font-size:16.5px;color:var(--text2);max-width:680px;margin:0 auto;line-height:1.65;}
+.rd-sub strong{color:var(--text);font-weight:700;}
+
+/* TL;DR strip */
+.rd-tldr{max-width:1080px;margin:30px auto 60px;padding:0 32px;}
+.rd-tldr-inner{padding:22px 26px;background:linear-gradient(135deg,rgba(245,158,11,.06),rgba(239,68,68,.04));border:1px solid rgba(245,158,11,.32);border-radius:14px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;}
+.rd-tldr-cell{display:flex;gap:10px;align-items:flex-start;}
+.rd-tldr-ic{font-size:22px;line-height:1;flex-shrink:0;}
+.rd-tldr-h{font-family:var(--f-sans);font-size:13.5px;font-weight:800;margin-bottom:3px;}
+.rd-tldr-body{font-size:12.5px;color:var(--text2);line-height:1.55;}
+
+/* Body wrap */
+.rd-wrap{max-width:880px;margin:0 auto 60px;padding:0 32px;}
+.rd-section{margin-bottom:48px;scroll-margin-top:130px;}
+.rd-section-h{display:flex;align-items:baseline;gap:14px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.06);}
+.rd-section-num{font-family:var(--f-mono);font-size:11px;font-weight:800;color:var(--text3);letter-spacing:.14em;flex-shrink:0;}
+.rd-section-title{font-family:var(--f-sans);font-size:24px;font-weight:900;letter-spacing:-.02em;}
+.rd-section-body p{font-size:15px;color:var(--text);line-height:1.75;margin-bottom:14px;}
+.rd-section-body p strong{color:var(--text);font-weight:700;}
+.rd-section-body ul{padding-left:20px;margin:8px 0 16px;}
+.rd-section-body li{font-size:14.5px;color:var(--text2);line-height:1.7;margin-bottom:6px;}
+.rd-section-body li strong{color:var(--text);font-weight:700;}
+
+/* Callouts */
+.rd-callout{margin:18px 0;padding:16px 20px;border-radius:11px;font-size:14px;line-height:1.7;}
+.rd-callout.warn{background:rgba(245,158,11,.06);border-left:4px solid var(--yellow);color:var(--text);}
+.rd-callout.warn strong{color:var(--yellow);}
+.rd-callout.danger{background:rgba(239,68,68,.06);border-left:4px solid var(--red);color:var(--text);}
+.rd-callout.danger strong{color:var(--red2);}
+
+/* Regulator badges */
+.rd-regs{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:14px 0 6px;}
+.rd-reg{padding:13px 14px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);border-radius:10px;display:flex;align-items:center;gap:11px;}
+.rd-reg-tag{font-family:var(--f-mono);font-size:10.5px;font-weight:800;color:var(--green2);letter-spacing:.06em;background:rgba(52,211,153,.10);border:1px solid rgba(52,211,153,.32);padding:3px 8px;border-radius:6px;flex-shrink:0;}
+.rd-reg-name{font-size:12.5px;font-weight:600;color:var(--text2);line-height:1.4;}
+
+/* Footer / CTA */
+.rd-cta{max-width:880px;margin:40px auto 70px;padding:30px 28px;text-align:center;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);border-radius:14px;}
+.rd-cta-meta{font-family:var(--f-mono);font-size:11px;color:var(--text3);font-weight:700;letter-spacing:.08em;margin-bottom:14px;text-transform:uppercase;}
+.rd-cta p{font-size:13.5px;color:var(--text2);max-width:560px;margin:0 auto 16px;line-height:1.65;}
+.rd-cta a{color:var(--blue2);font-weight:700;}
+
+.rd-foot{max-width:1280px;margin:0 auto;padding:24px 32px 60px;text-align:center;color:var(--text3);font-size:11.5px;line-height:1.7;border-top:1px solid rgba(255,255,255,.05);}
+.rd-foot a{color:var(--blue);}
+</style>
+<script src="shared-nav.js" defer></script>
+</head>
+<body data-page="risk">
+
+<!-- preview-bar + nav injected by shared-nav.js -->
+
+<!-- ═══════════ HERO ═══════════ -->
+<section class="rd-hero">
+  <div class="rd-eyebrow">RISK DISCLAIMER · READ BEFORE YOU TRADE</div>
+  <h1 class="rd-h1">Trading carries <em>significant risk of loss.</em></h1>
+  <p class="rd-sub">
+    TradeContext.ai is an <strong>educational analytics platform</strong> — we are not a broker, not a financial advisor, and we never execute trades on your behalf. All content on this site is for informational purposes only. <strong>You alone are responsible for every trade you place.</strong>
+  </p>
+</section>
+
+<!-- ═══════════ TL;DR strip ═══════════ -->
+<section class="rd-tldr">
+  <div class="rd-tldr-inner">
+    <div class="rd-tldr-cell">
+      <span class="rd-tldr-ic">🚫</span>
+      <div><div class="rd-tldr-h">We're not a broker</div><div class="rd-tldr-body">We never place trades, never hold client funds, never recommend specific entries.</div></div>
+    </div>
+    <div class="rd-tldr-cell">
+      <span class="rd-tldr-ic">📊</span>
+      <div><div class="rd-tldr-h">No personal advice</div><div class="rd-tldr-body">AI bias and analysis is informational only — never tailored to your circumstances.</div></div>
+    </div>
+    <div class="rd-tldr-cell">
+      <span class="rd-tldr-ic">💸</span>
+      <div><div class="rd-tldr-h">You can lose money</div><div class="rd-tldr-body">CFD, FX, futures, options and crypto trading can result in losses exceeding your deposit.</div></div>
+    </div>
+    <div class="rd-tldr-cell">
+      <span class="rd-tldr-ic">🏛️</span>
+      <div><div class="rd-tldr-h">Regulator-aware</div><div class="rd-tldr-body">We list only FCA · ASIC · MAS · CFTC · CySEC-regulated brokers in our directory.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ BODY ═══════════ -->
+<div class="rd-wrap">
+
+  <section class="rd-section" id="what-we-are">
+    <div class="rd-section-h"><div class="rd-section-num">SECTION 01</div><h2 class="rd-section-title">What TradeContext.ai is — and isn't</h2></div>
+    <div class="rd-section-body">
+      <p>TradeContext.ai is an <strong>educational analytics and journaling platform</strong>. We aggregate live market data, score news headlines using AI, monitor geopolitical risk, and give you tools to track your own trades and reflect on them.</p>
+      <p><strong>We are NOT:</strong></p>
+      <ul>
+        <li>A regulated broker · dealer · investment adviser · portfolio manager · or any other type of financial services firm requiring authorisation from the FCA, SEC, ASIC, MAS, CySEC or any other regulator.</li>
+        <li>A signal service. We do not tell you when to enter or exit a trade, or what size to use.</li>
+        <li>A copy-trading or mirror-trading platform. We never execute trades on your behalf.</li>
+        <li>A custodian. We never hold client funds or assets.</li>
+      </ul>
+      <p><strong>We ARE:</strong> a software tool that helps you organise, analyse and improve your own decision-making. Every trade you place — every dollar you risk — is your decision and your responsibility.</p>
+    </div>
+  </section>
+
+  <section class="rd-section" id="risk-of-loss">
+    <div class="rd-section-h"><div class="rd-section-num">SECTION 02</div><h2 class="rd-section-title">Risk of loss</h2></div>
+    <div class="rd-section-body">
+      <p>Trading financial markets is <strong>high-risk</strong>. The instruments most commonly traded by our users — <strong>CFDs, foreign exchange (FX), futures, options and crypto-assets</strong> — are leveraged or volatile instruments. Some carry the risk of losses <em>exceeding your deposit</em>.</p>
+      <div class="rd-callout danger">
+        <strong>You could lose all of your invested capital — and in some cases more.</strong> Trading is not suitable for everyone. Only trade with money you can afford to lose completely. Past performance is not a reliable indicator of future results.
+      </div>
+      <p>Industry-published statistics suggest that <strong>between 70% and 85% of retail CFD accounts lose money</strong> on a typical broker. Specific figures are published by each regulated broker on their website.</p>
+    </div>
+  </section>
+
+  <section class="rd-section" id="no-advice">
+    <div class="rd-section-h"><div class="rd-section-num">SECTION 03</div><h2 class="rd-section-title">No personal financial advice</h2></div>
+    <div class="rd-section-body">
+      <p>Everything you see on TradeContext.ai — including but not limited to <strong>AI-generated bias scores, the AI Trading Analyst chat, trade plan suggestions, news interpretation, the AI Performance Coach, AI-generated playbooks, backtest results, and any other algorithmic output</strong> — is <strong>generic educational content</strong>.</p>
+      <p>It is <strong>not</strong>, and does not constitute, personal financial advice. It is not tailored to your financial situation, your investment objectives, your risk tolerance, your tax position, or your jurisdiction. We do not know you and we do not know your account.</p>
+      <p>If you require personal financial advice, please consult an appropriately authorised financial adviser in your jurisdiction.</p>
+    </div>
+  </section>
+
+  <section class="rd-section" id="ai-limits">
+    <div class="rd-section-h"><div class="rd-section-num">SECTION 04</div><h2 class="rd-section-title">AI output — what it can and can't do</h2></div>
+    <div class="rd-section-body">
+      <p>TradeContext.ai uses large language models (currently Anthropic's Claude) to interpret news headlines, generate trade context, and coach users on their journal. These models are <strong>statistical</strong> — they predict plausible-sounding next words based on patterns in their training data.</p>
+      <p>That means:</p>
+      <ul>
+        <li><strong>AI output can be wrong.</strong> Hallucinated levels, mis-interpreted news, missed context, outdated information — all possible.</li>
+        <li><strong>AI output is not a forecast.</strong> A bullish bias score on a headline does not mean the market will rise. It means our model assessed the <em>sentiment</em> of the headline as bullish.</li>
+        <li><strong>AI output has no liability.</strong> Following an AI suggestion does not transfer responsibility — every trade decision and outcome is yours.</li>
+      </ul>
+      <p>We log every AI bias call we publish on our public <a href="../track-record.html" style="color:var(--blue2);">Track Record</a> page (when available) so accuracy is visible — but historical hit rate does not predict future hit rate.</p>
+    </div>
+  </section>
+
+  <section class="rd-section" id="regulatory">
+    <div class="rd-section-h"><div class="rd-section-num">SECTION 05</div><h2 class="rd-section-title">Regulatory framework</h2></div>
+    <div class="rd-section-body">
+      <p>TradeContext.ai is operated as an <strong>information services / software-as-a-service business</strong>. We do not perform any activities that would require authorisation from a financial services regulator in the United Kingdom, the European Union, the United States, Australia, Singapore, or any other jurisdiction.</p>
+      <p>We may, however, list and link to <strong>third-party brokers and exchanges</strong> in our directory. We only list brokers that are authorised by at least one of the following regulators:</p>
+      <div class="rd-regs">
+        <div class="rd-reg"><span class="rd-reg-tag">FCA</span><span class="rd-reg-name">Financial Conduct Authority · UK</span></div>
+        <div class="rd-reg"><span class="rd-reg-tag">ASIC</span><span class="rd-reg-name">Australian Securities &amp; Investments Commission</span></div>
+        <div class="rd-reg"><span class="rd-reg-tag">SEC / FINRA</span><span class="rd-reg-name">US Securities and Exchange Commission</span></div>
+        <div class="rd-reg"><span class="rd-reg-tag">NFA · CFTC</span><span class="rd-reg-name">US futures / FX regulators</span></div>
+        <div class="rd-reg"><span class="rd-reg-tag">MAS</span><span class="rd-reg-name">Monetary Authority of Singapore</span></div>
+        <div class="rd-reg"><span class="rd-reg-tag">CySEC</span><span class="rd-reg-name">Cyprus Securities &amp; Exchange Commission</span></div>
+        <div class="rd-reg"><span class="rd-reg-tag">BaFin</span><span class="rd-reg-name">Federal Financial Supervisory Authority · Germany</span></div>
+        <div class="rd-reg"><span class="rd-reg-tag">FINMA</span><span class="rd-reg-name">Swiss Financial Market Supervisory Authority</span></div>
+      </div>
+      <p>Listing a broker does <strong>not</strong> constitute a recommendation. Their authorisation does not transfer to us. You must verify a broker's status with the relevant regulator before opening an account.</p>
+    </div>
+  </section>
+
+  <section class="rd-section" id="affiliate">
+    <div class="rd-section-h"><div class="rd-section-num">SECTION 06</div><h2 class="rd-section-title">Affiliate commissions &amp; conflicts of interest</h2></div>
+    <div class="rd-section-body">
+      <p>We earn <strong>affiliate commission</strong> on some broker sign-ups originating from links on our site. This is disclosed on every page where it applies.</p>
+      <div class="rd-callout warn">
+        <strong>Affiliate fees never influence which brokers we list.</strong> Inclusion in our directory is driven solely by the broker's regulatory status, product quality, and trader feedback. We will list a broker that pays us nothing if they meet the bar, and we will exclude a broker that pays us well if they don't.
+      </div>
+      <p>If you would prefer to bypass our affiliate link, you can always sign up directly on the broker's website — your trading experience is identical either way.</p>
+    </div>
+  </section>
+
+  <section class="rd-section" id="data">
+    <div class="rd-section-h"><div class="rd-section-num">SECTION 07</div><h2 class="rd-section-title">Market data &amp; accuracy</h2></div>
+    <div class="rd-section-body">
+      <p>Prices and trade history shown on TradeContext.ai are sourced from <strong>third-party data providers</strong> — currently Yahoo Finance (equities · forex · commodities · indices), Binance (crypto spot + perpetual prices), Bybit, and Finnhub (news + US equities). We refresh prices every 5 seconds, but data is provided "as-is" and is not guaranteed to be tick-accurate or suitable for live trading decisions.</p>
+      <p>Your broker's own quoted price is always the authoritative source for trade execution. Discrepancies between our display and your broker's quotes are normal.</p>
+    </div>
+  </section>
+
+  <section class="rd-section" id="jurisdiction">
+    <div class="rd-section-h"><div class="rd-section-num">SECTION 08</div><h2 class="rd-section-title">Jurisdiction-specific notes</h2></div>
+    <div class="rd-section-body">
+      <p><strong>UK users:</strong> CFDs and spread bets are restricted-leverage instruments. The FCA has published consumer warnings on retail CFD trading. You can read the latest at <a href="https://www.fca.org.uk/" target="_blank" rel="noopener" style="color:var(--blue2);">fca.org.uk</a>.</p>
+      <p><strong>US users:</strong> Retail spot FX is regulated by the NFA / CFTC. Many CFD-style products available to overseas traders are <strong>not permitted</strong> for US persons. Verify with your broker before opening a position.</p>
+      <p><strong>EU users:</strong> ESMA leverage limits apply. The 70-85% retail loss statistic referenced above is published by ESMA-regulated brokers on their own websites.</p>
+      <p><strong>Australia:</strong> ASIC has imposed product intervention measures on retail CFDs since March 2021. Leverage and marketing restrictions apply.</p>
+      <p><strong>Singapore:</strong> CFDs are restricted to accredited investors in most cases under MAS rules.</p>
+      <p>If TradeContext.ai is not legally available in your jurisdiction or for your account type, do not use it. We accept no liability for use outside its intended scope.</p>
+    </div>
+  </section>
+
+  <section class="rd-section" id="liability">
+    <div class="rd-section-h"><div class="rd-section-num">SECTION 09</div><h2 class="rd-section-title">Limitation of liability</h2></div>
+    <div class="rd-section-body">
+      <p>To the maximum extent permitted by applicable law, <strong>TradeContext.ai accepts no liability whatsoever</strong> for any direct, indirect, incidental, consequential, special or exemplary loss or damage arising from:</p>
+      <ul>
+        <li>Any trade you place based on content, AI output, or data shown on this platform;</li>
+        <li>Any error, omission, delay, downtime, or inaccuracy in the data or analytics we display;</li>
+        <li>Any decision you make in reliance on information provided by TradeContext.ai;</li>
+        <li>Any loss of capital, profit, business opportunity, or any other commercial loss whatsoever.</li>
+      </ul>
+      <p>Your use of this platform constitutes acceptance of the foregoing. If you do not agree, do not use the platform.</p>
+    </div>
+  </section>
+
+  <section class="rd-section" id="updates">
+    <div class="rd-section-h"><div class="rd-section-num">SECTION 10</div><h2 class="rd-section-title">Updates to this disclaimer</h2></div>
+    <div class="rd-section-body">
+      <p>We may update this risk disclaimer from time to time. The current version is always the authoritative one — last updated <strong>11 May 2026</strong>. Material changes will be flagged in the product or via email to subscribers.</p>
+      <p>Questions? Reach us at <a href="mailto:hello@tradecontext.ai" style="color:var(--blue2);">hello@tradecontext.ai</a>.</p>
+    </div>
+  </section>
+
+</div>
+
+<!-- ═══════════ CTA / META ═══════════ -->
+<section class="rd-cta">
+  <div class="rd-cta-meta">By using TradeContext.ai</div>
+  <p>You acknowledge that you have read, understood, and accepted this Risk Disclaimer in full — and that you alone are responsible for any trades placed on your broker accounts.</p>
+  <p style="font-family:var(--f-mono);font-size:11px;color:var(--text3);">Document version 1.0 · Effective 11 May 2026 · <a href="mailto:hello@tradecontext.ai">hello@tradecontext.ai</a></p>
+</section>
+
+<footer class="rd-foot">
+  <strong>TradeContext.ai</strong> · Educational analytics platform · Not a broker · Not personal financial advice<br>
+  <a href="../terms.html">Terms &amp; Privacy</a> · <a href="risk.html">Risk Disclaimer (this page)</a> · <a href="mailto:hello@tradecontext.ai">Contact</a>
+</footer>
+
+</body>
+</html>

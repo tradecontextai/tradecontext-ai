@@ -113,7 +113,7 @@
           <a href="about.html" class="dd-item"><span class="ic">🏢</span>About Us</a>
           <a href="mailto:hello@tradecontext.ai" class="dd-item"><span class="ic">✉️</span>Contact Us</a>
           <div class="dd-divider"></div>
-          <a href="../risk.html" class="dd-item"><span class="ic">⚠️</span>Risk Disclaimer</a>
+          <a href="risk.html" class="dd-item"><span class="ic">⚠️</span>Risk Disclaimer</a>
         </div>
       </li>
       <li><a href="homepage-redesigned.html#faq"${act('faq')}><span>FAQ</span></a></li>
