@@ -2767,6 +2767,192 @@ body{padding-top:32px;}
 .watch-row:hover{background:rgba(14,165,233,.06) !important;}
 
 /* ▲▲▲ END REDESIGN OVERLAY (Phase 1 + 2 + 3) ▲▲▲ */
+
+/* ═══════════════ REDESIGN OVERLAY · PHASE 4 ═══════════════
+   Punchier Trade panel + beautiful error states everywhere.
+   ═══════════════════════════════════════════════════════════ */
+
+/* ─── Trade panel: MUCH more visible glass, ambient glow halo ── */
+.trade-panel{
+  background:
+    radial-gradient(ellipse 280px 200px at 0% 0%,rgba(14,165,233,.10),transparent 70%),
+    linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.008)) !important;
+  border:1px solid rgba(255,255,255,.09) !important;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.04) inset,
+    0 22px 50px -22px rgba(0,0,0,.7),
+    0 0 60px -20px rgba(14,165,233,.18) !important;
+}
+.trade-form{
+  background:
+    radial-gradient(ellipse 400px 200px at 100% 100%,rgba(139,92,246,.06),transparent 60%) !important;
+}
+
+/* ─── Trade header sub-line ("Pick direction · single-form · saves space") ── */
+.trade-panel-h-sub,.trade-panel-h-title + div{
+  font-family:var(--font-mono-new) !important;
+  font-size:9.5px !important;
+  color:rgba(226,234,244,.45) !important;
+  letter-spacing:.06em !important;
+}
+
+/* ─── Trade input wrapper rows ── */
+.trade-input-group{
+  background:rgba(255,255,255,.02) !important;
+  border:1px solid rgba(255,255,255,.05) !important;
+  border-radius:10px !important;
+  padding:10px 12px !important;
+  transition:border-color .2s var(--ease-out-quart) !important;
+}
+.trade-input-group:hover{border-color:rgba(255,255,255,.1) !important;}
+.trade-input-group:focus-within{
+  border-color:rgba(14,165,233,.4) !important;
+  background:rgba(14,165,233,.04) !important;
+}
+.trade-input-group input{
+  background:transparent !important;
+  border:none !important;
+  padding:4px 0 !important;
+  font-size:15px !important;
+}
+.trade-input-group input:focus{
+  box-shadow:none !important;
+  background:transparent !important;
+}
+
+/* ─── AI Bias panel body — make EVERY state look premium ── */
+.aib-panel{
+  position:relative;overflow:hidden;
+  background:
+    radial-gradient(ellipse 280px 200px at 0% 0%,rgba(139,92,246,.08),transparent 70%),
+    linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.008)) !important;
+  border:1px solid rgba(255,255,255,.09) !important;
+}
+.aib-body{
+  background:transparent !important;
+}
+.aib-head{
+  background:linear-gradient(135deg,rgba(139,92,246,.05),rgba(14,165,233,.04)) !important;
+  border-bottom:1px solid rgba(255,255,255,.05) !important;
+}
+.aib-loading{
+  font-family:var(--font-mono-new) !important;
+  letter-spacing:.04em !important;
+  padding:34px 20px !important;
+  text-align:center !important;
+  display:flex !important;
+  flex-direction:column;
+  align-items:center;
+  gap:14px;
+}
+.aib-loading .spinner{
+  width:32px;height:32px;
+  border:3px solid rgba(14,165,233,.15);
+  border-top-color:#0ea5e9;
+  border-radius:50%;
+  display:inline-block;
+  animation:spinAib 1s linear infinite;
+}
+@keyframes spinAib{to{transform:rotate(360deg);}}
+/* Error state inside aib-body (when backend is down) */
+.aib-body > div[style*="color:var(--red2)"],
+.aib-loading[style*="red"]{
+  font-family:var(--font-sans-new) !important;
+  font-size:13.5px !important;
+  background:linear-gradient(135deg,rgba(248,113,113,.06),rgba(248,113,113,.01)) !important;
+  border:1px dashed rgba(248,113,113,.3) !important;
+  border-radius:10px !important;
+  padding:18px !important;
+  margin:14px !important;
+  color:rgba(248,113,113,.9) !important;
+}
+
+/* ─── Calendar header refresh button + last-updated stamp ── */
+button[onclick="refreshCalendar()"]{
+  background:rgba(255,255,255,.04) !important;
+  border:1px solid rgba(255,255,255,.08) !important;
+  border-radius:7px !important;
+  font-family:var(--font-mono-new) !important;
+  color:rgba(226,234,244,.7) !important;
+  transition:.18s var(--ease-out-quart) !important;
+}
+button[onclick="refreshCalendar()"]:hover{
+  background:rgba(14,165,233,.08) !important;
+  border-color:rgba(14,165,233,.4) !important;
+  color:#0ea5e9 !important;
+  transform:rotate(180deg);
+}
+#calLastUpdated{font-family:var(--font-mono-new) !important;letter-spacing:.06em !important;}
+#calDateLabel{font-family:var(--font-mono-new) !important;letter-spacing:.04em !important;}
+
+/* ─── Calendar empty / error state ("Calendar unavailable — backend offline.") ── */
+#calWrap > div[style*="text-align:center"]{
+  background:linear-gradient(135deg,rgba(245,158,11,.05),rgba(245,158,11,.01)) !important;
+  border:1px dashed rgba(245,158,11,.25) !important;
+  border-radius:12px !important;
+  padding:32px 20px !important;
+  margin:14px !important;
+  font-family:var(--font-sans-new) !important;
+  font-size:13px !important;
+  color:rgba(245,158,11,.85) !important;
+  letter-spacing:0 !important;
+}
+#calWrap > div[style*="text-align:center"]::before{
+  content:'📡';
+  display:block;
+  font-size:28px;
+  margin-bottom:10px;
+}
+
+/* ─── Generic empty/loading state polish for any "Loading…" / "Awaiting" message ── */
+[style*="font-family:var(--mono)"][style*="color:var(--text3)"]:not(.kpi-sub):not(.trade-disclaimer):empty,
+.empty-state,
+.aib-body > .aib-loading{
+  font-family:var(--font-mono-new) !important;
+}
+
+/* ─── Top-strip "View:" / "Impact:" labels (cal toolbar) ── */
+div[style*="background:var(--bg2)"]:has(.cal-range-btn),
+div[style*="background:var(--bg3)"]:has(.cal-filter-btn){
+  background:rgba(255,255,255,.018) !important;
+  border-bottom-color:rgba(255,255,255,.05) !important;
+}
+
+/* ─── AI Bias error state — give it a beautiful empty-state design ── */
+.aib-body{padding:0;}
+.aib-body > div{
+  font-family:var(--font-sans-new) !important;
+}
+
+/* ─── Trade panel column 2 (Open in [Broker] + MT5 launcher) hover synergy ── */
+.mt-launcher:hover .mt-launcher-btn.main,
+.mt-launcher:hover .mt-launcher-btn.toggle{
+  background:linear-gradient(135deg,rgba(14,165,233,.24),rgba(14,165,233,.10)) !important;
+  border-color:rgba(14,165,233,.55) !important;
+  color:#0ea5e9 !important;
+}
+
+/* ─── R:R row — make the values stand out more ── */
+.trade-rr-row .val{
+  font-size:13px !important;
+  color:#34d399 !important;
+  background:rgba(52,211,153,.10);
+  border:1px solid rgba(52,211,153,.25);
+  border-radius:5px;
+  padding:2px 8px;
+  font-feature-settings:"tnum";
+}
+
+/* ─── Trade disclaimer footer ── */
+.trade-disclaimer{
+  background:linear-gradient(180deg,rgba(245,158,11,.04),rgba(245,158,11,.01)) !important;
+  border-top:1px solid rgba(245,158,11,.18) !important;
+  padding:10px 20px !important;
+  margin-top:8px;
+  color:rgba(245,158,11,.65) !important;
+}
+
+/* ▲▲▲ END REDESIGN OVERLAY (Phase 1 + 2 + 3 + 4) ▲▲▲ */
 </style>
 </head>
 <body>
