@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Trading Journal · TradeContext.ai — Better than Tradezella</title>
+<meta name="description" content="Connect MT4, MT5, OANDA, TradingView or any broker — every trade auto-imported, AI-scored for discipline, news-contextualised. The trading journal Tradezella wishes it built.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Crect width='36' height='36' rx='8' fill='%230a1628'/%3E%3Cpolyline points='4,28 12,20 20,24 28,10' fill='none' stroke='%230ea5e9' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='28' cy='10' r='3.5' fill='%230ea5e9'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#03060d;--bg2:#070d1a;--bg3:#0c1626;
+  --border:#142035;--border-strong:#1f2e4a;
+  --blue:#0ea5e9;--blue2:#38bdf8;--violet:#8b5cf6;
+  --green:#10b981;--green2:#34d399;
+  --yellow:#f59e0b;--orange:#f97316;
+  --red:#ef4444;--red2:#f87171;
+  --text:#e2eaf4;--text2:#a5b8d0;--text3:#7a9ab8;--text4:#3a5570;
+  --f-sans:'Inter',sans-serif;--f-mono:'JetBrains Mono',monospace;
+  --grad-prem:linear-gradient(135deg,#0ea5e9 0%,#8b5cf6 100%);
+  --grad-bull:linear-gradient(135deg,#10b981,#34d399);
+  --grad-bear:linear-gradient(135deg,#ef4444,#f87171);
+  --ease-out-quart:cubic-bezier(.25,1,.5,1);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;scroll-padding-top:120px;}
+body{background:var(--bg);color:var(--text);font-family:var(--f-sans);font-size:14.5px;line-height:1.6;letter-spacing:-.005em;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+a{color:inherit;text-decoration:none;}
+
+body::before{content:'';position:fixed;inset:0;z-index:-2;pointer-events:none;background:radial-gradient(ellipse 1100px 700px at 15% -8%,rgba(14,165,233,.18),transparent 65%),radial-gradient(ellipse 900px 600px at 90% 5%,rgba(139,92,246,.16),transparent 70%);filter:blur(40px);opacity:.85;}
+body::after{content:'';position:fixed;inset:-50%;z-index:-1;pointer-events:none;background:conic-gradient(from 0deg at 50% 50%,transparent 0deg,rgba(14,165,233,.025) 60deg,transparent 120deg,rgba(139,92,246,.03) 180deg,transparent 240deg,rgba(52,211,153,.02) 300deg,transparent 360deg);animation:auroraSpin 90s linear infinite;mix-blend-mode:screen;}
+@keyframes auroraSpin{to{transform:rotate(360deg);}}
+
+/* Hero — same chrome as homepage */
+.tc-hero{max-width:1080px;margin:0 auto;padding:78px 32px 24px;text-align:center;}
+.tc-eyebrow{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;background:rgba(14,165,233,.08);border:1px solid rgba(14,165,233,.25);border-radius:100px;font-family:var(--f-mono);font-size:10.5px;font-weight:800;color:var(--blue2);letter-spacing:.16em;text-transform:uppercase;margin-bottom:22px;}
+.tc-eyebrow::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--blue2);box-shadow:0 0 8px var(--blue2);animation:lp 1.6s ease-in-out infinite;}
+@keyframes lp{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.55;transform:scale(.85);}}
+.tc-h1{font-family:var(--f-sans);font-size:clamp(38px,5vw,62px);font-weight:900;letter-spacing:-.035em;line-height:1.04;margin-bottom:18px;}
+.tc-h1 em{font-style:normal;background:var(--grad-prem);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.tc-sub{font-size:17px;color:var(--text2);max-width:720px;margin:0 auto 14px;line-height:1.65;}
+.tc-sub strong{color:var(--text);font-weight:700;}
+.tc-sub-foot{font-family:var(--f-mono);font-size:11px;color:var(--text3);font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-top:6px;}
+
+/* Comparison strip */
+.jl-vs{max-width:980px;margin:30px auto 50px;padding:0 32px;display:flex;justify-content:center;gap:14px;flex-wrap:wrap;align-items:center;}
+.jl-vs-card{padding:12px 18px;background:rgba(7,13,26,.55);border:1px solid rgba(255,255,255,.06);border-radius:11px;font-family:var(--f-mono);font-size:11px;color:var(--text2);font-weight:700;letter-spacing:.06em;display:flex;align-items:center;gap:8px;}
+.jl-vs-card.win{border-color:rgba(52,211,153,.32);background:rgba(52,211,153,.06);color:var(--green2);}
+.jl-vs-card.win::before{content:'✓';font-size:13px;color:var(--green2);font-weight:900;}
+.jl-vs-card.lose{opacity:.55;}
+.jl-vs-card.lose::before{content:'×';font-size:13px;color:var(--text3);font-weight:900;}
+
+/* Layout */
+.jl-wrap{max-width:1280px;margin:0 auto 60px;padding:0 32px;}
+
+/* Hero KPI strip */
+.jl-kpi-row{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:24px;}
+@media (max-width:1100px){.jl-kpi-row{grid-template-columns:repeat(3,1fr);}}
+@media (max-width:680px){.jl-kpi-row{grid-template-columns:repeat(2,1fr);}}
+.jl-kpi{padding:16px 18px;background:rgba(7,13,26,.55);border:1px solid rgba(255,255,255,.06);border-radius:13px;backdrop-filter:blur(10px);position:relative;overflow:hidden;}
+.jl-kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--grad-prem);opacity:.5;}
+.jl-kpi.good::before{background:linear-gradient(90deg,#10b981,#34d399);opacity:.85;}
+.jl-kpi.bad::before{background:linear-gradient(90deg,#ef4444,#f87171);opacity:.85;}
+.jl-kpi-lbl{font-family:var(--f-mono);font-size:9px;color:var(--text3);letter-spacing:.14em;font-weight:800;text-transform:uppercase;margin-bottom:6px;}
+.jl-kpi-val{font-family:var(--f-sans);font-size:24px;font-weight:900;letter-spacing:-.02em;color:var(--text);}
+.jl-kpi-val.good{color:var(--green2);}
+.jl-kpi-val.bad{color:var(--red2);}
+.jl-kpi-sub{font-family:var(--f-mono);font-size:10px;color:var(--text3);font-weight:700;margin-top:3px;}
+
+/* Cards / panels */
+.jl-card{background:rgba(7,13,26,.55);border:1px solid rgba(255,255,255,.06);border-radius:14px;backdrop-filter:blur(10px);padding:20px;margin-bottom:18px;}
+.jl-card-h{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.jl-card-h-t{font-family:var(--f-sans);font-size:15px;font-weight:800;color:var(--text);}
+.jl-card-h-sub{font-family:var(--f-mono);font-size:10px;color:var(--text3);font-weight:700;letter-spacing:.06em;margin-left:auto;text-transform:uppercase;}
+.jl-card-h-link{font-family:var(--f-mono);font-size:10px;color:var(--blue);font-weight:700;letter-spacing:.06em;margin-left:auto;text-transform:uppercase;cursor:pointer;}
+
+/* Two-column row for charts */
+.jl-row{display:grid;grid-template-columns:1.4fr 1fr;gap:18px;margin-bottom:18px;}
+@media (max-width:1000px){.jl-row{grid-template-columns:1fr;}}
+
+/* Equity / DD chart */
+.jl-chart{height:280px;width:100%;position:relative;}
+.jl-chart svg{width:100%;height:100%;display:block;}
+
+/* Calendar heatmap */
+.jl-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;}
+.jl-cal-dow{font-family:var(--f-mono);font-size:9px;color:var(--text3);font-weight:800;letter-spacing:.08em;text-align:center;padding:4px 0;text-transform:uppercase;}
+.jl-cal-cell{aspect-ratio:1;border-radius:6px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.04);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--f-mono);font-size:9.5px;color:var(--text3);font-weight:700;cursor:pointer;transition:.15s;position:relative;}
+.jl-cal-cell:hover{transform:scale(1.06);border-color:rgba(14,165,233,.4);z-index:2;}
+.jl-cal-cell.empty{opacity:.3;}
+.jl-cal-cell.pos1{background:rgba(52,211,153,.10);color:#34d399;border-color:rgba(52,211,153,.25);}
+.jl-cal-cell.pos2{background:rgba(52,211,153,.20);color:#34d399;border-color:rgba(52,211,153,.4);}
+.jl-cal-cell.pos3{background:rgba(52,211,153,.32);color:#fff;border-color:rgba(52,211,153,.6);}
+.jl-cal-cell.pos4{background:linear-gradient(135deg,rgba(16,185,129,.55),rgba(52,211,153,.45));color:#fff;border-color:rgba(52,211,153,.8);}
+.jl-cal-cell.neg1{background:rgba(248,113,113,.10);color:#f87171;border-color:rgba(248,113,113,.25);}
+.jl-cal-cell.neg2{background:rgba(248,113,113,.22);color:#f87171;border-color:rgba(248,113,113,.4);}
+.jl-cal-cell.neg3{background:rgba(248,113,113,.36);color:#fff;border-color:rgba(248,113,113,.6);}
+.jl-cal-cell-day{font-size:10px;}
+.jl-cal-cell-pnl{font-size:8.5px;margin-top:1px;letter-spacing:0;}
+
+/* AI Insights panel */
+.jl-ai{position:relative;background:linear-gradient(135deg,rgba(14,165,233,.06),rgba(139,92,246,.04));border:1px solid rgba(14,165,233,.22);}
+.jl-ai-grade{display:flex;align-items:center;gap:18px;padding:18px;background:rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.06);border-radius:12px;margin-bottom:14px;}
+.jl-ai-grade-circle{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--f-sans);font-size:30px;font-weight:900;color:#fff;background:linear-gradient(135deg,#10b981,#34d399);box-shadow:0 12px 28px -8px rgba(16,185,129,.5);flex-shrink:0;position:relative;}
+.jl-ai-grade-circle::after{content:'';position:absolute;inset:-3px;border-radius:50%;background:conic-gradient(from 0deg,#10b981,#34d399,#10b981);z-index:-1;filter:blur(6px);opacity:.45;}
+.jl-ai-grade-t{font-family:var(--f-sans);font-size:18px;font-weight:900;}
+.jl-ai-grade-sub{font-family:var(--f-mono);font-size:10.5px;color:var(--text3);font-weight:700;letter-spacing:.08em;margin-top:3px;text-transform:uppercase;}
+.jl-ai-insights{display:flex;flex-direction:column;gap:10px;}
+.jl-ai-ins{padding:13px 15px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:10px;display:flex;gap:12px;align-items:flex-start;}
+.jl-ai-ins-ic{width:30px;height:30px;border-radius:8px;background:rgba(14,165,233,.12);border:1px solid rgba(14,165,233,.3);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.jl-ai-ins-ic.warn{background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.4);}
+.jl-ai-ins-ic.bad{background:rgba(248,113,113,.12);border-color:rgba(248,113,113,.4);}
+.jl-ai-ins-ic.good{background:rgba(52,211,153,.12);border-color:rgba(52,211,153,.4);}
+.jl-ai-ins-t{font-family:var(--f-sans);font-size:13px;font-weight:800;color:var(--text);margin-bottom:3px;}
+.jl-ai-ins-body{font-size:12.5px;color:var(--text2);line-height:1.5;}
+.jl-ai-ins-body strong{color:var(--text);}
+
+/* Broker connect cards */
+.jl-broker-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;}
+.jl-broker{padding:18px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:12px;transition:.22s var(--ease-out-quart);position:relative;overflow:hidden;}
+.jl-broker:hover{transform:translateY(-3px);border-color:rgba(14,165,233,.4);background:rgba(14,165,233,.04);box-shadow:0 18px 38px -16px rgba(14,165,233,.4);}
+.jl-broker-h{display:flex;align-items:center;gap:11px;margin-bottom:10px;}
+.jl-broker-logo{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--f-sans);font-size:14px;font-weight:900;color:#fff;flex-shrink:0;letter-spacing:-.04em;position:relative;overflow:hidden;}
+.jl-broker-logo.mt4{background:linear-gradient(135deg,#dc2626,#f97316);}
+.jl-broker-logo.mt5{background:linear-gradient(135deg,#1d4ed8,#0ea5e9);}
+.jl-broker-logo.oanda{background:linear-gradient(135deg,#0f766e,#10b981);}
+.jl-broker-logo.tv{background:linear-gradient(135deg,#1e40af,#3b82f6);}
+.jl-broker-logo.ic{background:linear-gradient(135deg,#7c3aed,#a78bfa);}
+.jl-broker-logo.csv{background:linear-gradient(135deg,#374151,#6b7280);}
+.jl-broker-logo.binance{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#0b1220;}
+.jl-broker-logo.api{background:linear-gradient(135deg,#0ea5e9,#8b5cf6);}
+.jl-broker-name{font-family:var(--f-sans);font-size:14px;font-weight:800;}
+.jl-broker-sub{font-family:var(--f-mono);font-size:9.5px;color:var(--text3);font-weight:700;letter-spacing:.06em;margin-top:2px;text-transform:uppercase;}
+.jl-broker-status{position:absolute;top:14px;right:14px;display:inline-flex;align-items:center;gap:5px;padding:3px 9px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:100px;font-family:var(--f-mono);font-size:9px;color:var(--text3);font-weight:800;letter-spacing:.1em;text-transform:uppercase;}
+.jl-broker-status.live{background:rgba(52,211,153,.10);color:var(--green2);border-color:rgba(52,211,153,.32);}
+.jl-broker-status.live::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--green2);box-shadow:0 0 5px var(--green2);animation:lp 1.6s ease-in-out infinite;}
+.jl-broker-body{font-size:12.5px;color:var(--text2);line-height:1.5;margin-bottom:14px;}
+.jl-broker-btn{padding:9px 14px;background:rgba(14,165,233,.10);border:1px solid rgba(14,165,233,.4);border-radius:9px;font-family:var(--f-sans);font-size:12px;font-weight:800;color:var(--blue2);cursor:pointer;letter-spacing:.04em;width:100%;transition:.18s;display:flex;align-items:center;justify-content:center;gap:6px;}
+.jl-broker-btn:hover{background:rgba(14,165,233,.18);transform:translateY(-1px);}
+.jl-broker-btn.connected{background:rgba(52,211,153,.10);border-color:rgba(52,211,153,.4);color:var(--green2);}
+
+/* Performance breakdowns */
+.jl-perf-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+@media (max-width:780px){.jl-perf-grid{grid-template-columns:1fr;}}
+.jl-bar-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.jl-bar-row:last-child{border-bottom:none;}
+.jl-bar-lbl{font-family:var(--f-mono);font-size:11px;font-weight:700;color:var(--text);width:80px;flex-shrink:0;}
+.jl-bar-track{flex:1;height:8px;background:rgba(255,255,255,.04);border-radius:100px;overflow:hidden;position:relative;}
+.jl-bar{height:100%;border-radius:100px;}
+.jl-bar.pos{background:linear-gradient(90deg,#10b981,#34d399);}
+.jl-bar.neg{background:linear-gradient(90deg,#ef4444,#f87171);}
+.jl-bar-val{font-family:var(--f-mono);font-size:11px;font-weight:800;width:70px;text-align:right;flex-shrink:0;}
+.jl-bar-val.pos{color:var(--green2);}
+.jl-bar-val.neg{color:var(--red2);}
+
+/* Trades table */
+.jl-tbl{width:100%;border-collapse:collapse;font-family:var(--f-mono);font-size:11.5px;}
+.jl-tbl th{text-align:left;padding:10px 12px;font-size:9.5px;font-weight:800;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,.08);position:sticky;top:0;background:rgba(7,13,26,.95);backdrop-filter:blur(8px);}
+.jl-tbl td{padding:10px 12px;color:var(--text2);border-bottom:1px solid rgba(255,255,255,.04);}
+.jl-tbl tr:hover td{background:rgba(255,255,255,.02);color:var(--text);}
+.jl-tbl-wrap{max-height:520px;overflow-y:auto;}
+.jl-tbl-wrap::-webkit-scrollbar{width:6px;}
+.jl-tbl-wrap::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:3px;}
+.jl-side{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border-radius:5px;font-weight:800;font-size:9.5px;letter-spacing:.04em;}
+.jl-side.long{background:rgba(52,211,153,.12);color:var(--green2);}
+.jl-side.short{background:rgba(248,113,113,.12);color:var(--red2);}
+.jl-pnl-pos{color:var(--green2);font-weight:800;}
+.jl-pnl-neg{color:var(--red2);font-weight:800;}
+.jl-tag{display:inline-flex;align-items:center;padding:2px 7px;background:rgba(14,165,233,.10);color:var(--blue2);border-radius:5px;font-size:9.5px;font-weight:700;letter-spacing:.04em;}
+.jl-news-ic{font-size:11px;cursor:help;}
+
+/* Tag chips for performance-by-setup */
+.jl-setups{display:flex;flex-direction:column;gap:10px;}
+
+/* CTA */
+.jl-cta{max-width:980px;margin:30px auto 60px;padding:48px 38px;text-align:center;background:linear-gradient(135deg,rgba(14,165,233,.08),rgba(139,92,246,.06));border:1px solid rgba(14,165,233,.22);border-radius:18px;backdrop-filter:blur(12px);}
+.jl-cta h2{font-size:32px;font-weight:900;letter-spacing:-.025em;margin-bottom:10px;}
+.jl-cta h2 em{font-style:normal;background:var(--grad-prem);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.jl-cta p{color:var(--text2);max-width:580px;margin:0 auto 22px;font-size:15px;line-height:1.6;}
+.btn{display:inline-flex;align-items:center;gap:9px;padding:13px 24px;background:var(--grad-prem);color:#fff;font-weight:800;font-size:14px;border-radius:11px;box-shadow:0 14px 32px -12px rgba(14,165,233,.6);transition:.22s var(--ease-out-quart);border:none;cursor:pointer;}
+.btn:hover{transform:translateY(-2px);box-shadow:0 18px 38px -10px rgba(14,165,233,.7);}
+.tc-foot{max-width:1280px;margin:0 auto;padding:30px 32px 60px;text-align:center;color:var(--text3);font-size:12px;border-top:1px solid rgba(255,255,255,.05);}
+.tc-foot a{color:var(--blue);}
+
+/* Connect modal */
+.jl-modal{position:fixed;inset:0;z-index:1000;background:rgba(3,6,13,.78);backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;padding:20px;}
+.jl-modal.show{display:flex;}
+.jl-modal-card{max-width:520px;width:100%;background:rgba(7,13,26,.97);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:32px;position:relative;}
+.jl-modal-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad-prem);border-radius:16px 16px 0 0;}
+.jl-modal-close{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:var(--text2);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.jl-modal-close:hover{background:#ef4444;color:#fff;}
+.jl-modal-h{display:flex;align-items:center;gap:14px;margin-bottom:18px;}
+.jl-modal-title{font-family:var(--f-sans);font-size:20px;font-weight:900;letter-spacing:-.02em;}
+.jl-modal-sub{font-family:var(--f-mono);font-size:10.5px;color:var(--text3);font-weight:700;letter-spacing:.06em;margin-top:3px;text-transform:uppercase;}
+.jl-modal-field{margin-bottom:14px;}
+.jl-modal-lbl{display:block;font-family:var(--f-mono);font-size:9.5px;font-weight:800;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px;}
+.jl-modal-input{width:100%;padding:11px 13px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:var(--text);font-family:var(--f-mono);font-size:13px;border-radius:9px;outline:none;}
+.jl-modal-input:focus{border-color:rgba(14,165,233,.5);box-shadow:0 0 0 3px rgba(14,165,233,.12);}
+.jl-modal-help{font-family:var(--f-mono);font-size:10.5px;color:var(--text3);line-height:1.6;padding:11px 14px;background:rgba(14,165,233,.04);border-left:2px solid rgba(14,165,233,.4);border-radius:0 8px 8px 0;margin-bottom:14px;}
+.jl-modal-actions{display:flex;gap:10px;margin-top:18px;}
+.jl-modal-btn{flex:1;padding:12px;border:none;border-radius:9px;font-family:var(--f-sans);font-size:13px;font-weight:800;cursor:pointer;transition:.18s;}
+.jl-modal-btn.primary{background:var(--grad-prem);color:#fff;}
+.jl-modal-btn.secondary{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:var(--text2);}
+.jl-modal-btn:hover{transform:translateY(-1px);}
+
+@media (max-width:680px){
+  .jl-kpi-val{font-size:20px;}
+}
+</style>
+<script src="shared-nav.js" defer></script>
+</head>
+<body data-page="journal">
+
+<!-- preview-bar + nav are injected by shared-nav.js so they stay identical to the homepage -->
+
+<!-- ═══════════ HERO ═══════════ -->
+<section class="tc-hero">
+  <div class="tc-eyebrow">📓 AI TRADING JOURNAL · BETTER THAN TRADEZELLA</div>
+  <h1 class="tc-h1">Every trade. Every <em>broker</em>. <br>Scored by AI.</h1>
+  <p class="tc-sub">
+    Connect <strong>MT4, MT5, OANDA, TradingView</strong> or any broker — and the journal auto-imports every trade, scores you on discipline, flags revenge-trade clusters, and contextualises each fill with the news that was breaking when you clicked.
+  </p>
+  <div class="tc-sub-foot">No CSV exports · No manual entry · No bullshit</div>
+</section>
+
+<!-- vs Tradezella -->
+<div class="jl-vs">
+  <div class="jl-vs-card win">AI discipline grading</div>
+  <div class="jl-vs-card win">News context per trade</div>
+  <div class="jl-vs-card win">Revenge-trade detection</div>
+  <div class="jl-vs-card win">MT4 / MT5 native</div>
+  <div class="jl-vs-card win">Free — included with $39.95/mo</div>
+  <div class="jl-vs-card lose">Tradezella · $39+/mo extra</div>
+</div>
+
+<div class="jl-wrap">
+
+  <!-- ═══════════ KPI STRIP ═══════════ -->
+  <div class="jl-kpi-row">
+    <div class="jl-kpi good"><div class="jl-kpi-lbl">Net P&amp;L · 90d</div><div class="jl-kpi-val good">+$18,420</div><div class="jl-kpi-sub">+22.4%</div></div>
+    <div class="jl-kpi"><div class="jl-kpi-lbl">Trades</div><div class="jl-kpi-val">247</div><div class="jl-kpi-sub">160 W · 87 L</div></div>
+    <div class="jl-kpi good"><div class="jl-kpi-lbl">Win Rate</div><div class="jl-kpi-val good">64.8%</div><div class="jl-kpi-sub">expectancy +0.42R</div></div>
+    <div class="jl-kpi good"><div class="jl-kpi-lbl">Profit Factor</div><div class="jl-kpi-val good">2.13</div><div class="jl-kpi-sub">edge confirmed</div></div>
+    <div class="jl-kpi"><div class="jl-kpi-lbl">Avg R · win</div><div class="jl-kpi-val">+1.82R</div><div class="jl-kpi-sub">avg loss −1.0R</div></div>
+    <div class="jl-kpi bad"><div class="jl-kpi-lbl">Max Drawdown</div><div class="jl-kpi-val bad">−8.4%</div><div class="jl-kpi-sub">Mar 14 → Mar 22</div></div>
+  </div>
+
+  <!-- ═══════════ CHARTS ROW ═══════════ -->
+  <div class="jl-row">
+    <div class="jl-card">
+      <div class="jl-card-h">
+        <div class="jl-card-h-t">💰 Equity Curve</div>
+        <div class="jl-card-h-sub">Last 90 days · $20k start</div>
+      </div>
+      <div class="jl-chart" id="jlEquity"></div>
+    </div>
+    <div class="jl-card jl-ai">
+      <div class="jl-card-h">
+        <div class="jl-card-h-t">🧠 AI Insights</div>
+        <div class="jl-card-h-sub">Updated daily</div>
+      </div>
+      <div class="jl-ai-grade">
+        <div class="jl-ai-grade-circle">A−</div>
+        <div>
+          <div class="jl-ai-grade-t">Discipline Grade: A−</div>
+          <div class="jl-ai-grade-sub">Top 12% of TradeContext users · 90 days</div>
+        </div>
+      </div>
+      <div class="jl-ai-insights">
+        <div class="jl-ai-ins">
+          <div class="jl-ai-ins-ic warn">⚠️</div>
+          <div>
+            <div class="jl-ai-ins-t">Revenge-trade pattern detected</div>
+            <div class="jl-ai-ins-body"><strong>3 clusters</strong> this month: every time you took a &gt;2R loss before lunch, you re-entered within 18 min. Win rate on those re-entries: <strong>31%</strong> (your overall: 64.8%).</div>
+          </div>
+        </div>
+        <div class="jl-ai-ins">
+          <div class="jl-ai-ins-ic good">✓</div>
+          <div>
+            <div class="jl-ai-ins-t">Best edge: London Open sweeps</div>
+            <div class="jl-ai-ins-body"><strong>74% win rate</strong> on liquidity sweeps between 07:00–09:30 GMT. That's your highest-conviction setup — consider sizing up here.</div>
+          </div>
+        </div>
+        <div class="jl-ai-ins">
+          <div class="jl-ai-ins-ic bad">×</div>
+          <div>
+            <div class="jl-ai-ins-t">Monday morning losses</div>
+            <div class="jl-ai-ins-body">Win rate drops to <strong>38%</strong> on Mondays before 11:00 GMT. Suggested action: <strong>no positions</strong> until London is fully open.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ BROKER CONNECT ═══════════ -->
+  <div class="jl-card" id="connect-brokers">
+    <div class="jl-card-h">
+      <div class="jl-card-h-t">🔌 Connect your broker</div>
+      <div class="jl-card-h-sub">Auto-import every fill · live · forever</div>
+    </div>
+    <div class="jl-broker-grid">
+
+      <div class="jl-broker">
+        <div class="jl-broker-status live">Connected</div>
+        <div class="jl-broker-h">
+          <div class="jl-broker-logo mt4">MT4</div>
+          <div>
+            <div class="jl-broker-name">MetaTrader 4</div>
+            <div class="jl-broker-sub">EA bridge · account #</div>
+          </div>
+        </div>
+        <div class="jl-broker-body">Drop our small EA on any chart. Trades stream in real-time. <strong>62 brokers</strong> supported including Pepperstone, IC Markets, FXCM.</div>
+        <button class="jl-broker-btn connected" onclick="connectBroker('MT4')">✓ Connected · #91827361</button>
+      </div>
+
+      <div class="jl-broker">
+        <div class="jl-broker-status">Available</div>
+        <div class="jl-broker-h">
+          <div class="jl-broker-logo mt5">MT5</div>
+          <div>
+            <div class="jl-broker-name">MetaTrader 5</div>
+            <div class="jl-broker-sub">EA bridge · multi-asset</div>
+          </div>
+        </div>
+        <div class="jl-broker-body">Same EA, MT5 build. Streams trades for forex, indices, crypto CFDs and equities. Two-way sync ready.</div>
+        <button class="jl-broker-btn" onclick="connectBroker('MT5')">Connect MT5 →</button>
+      </div>
+
+      <div class="jl-broker">
+        <div class="jl-broker-status live">Connected</div>
+        <div class="jl-broker-h">
+          <div class="jl-broker-logo oanda">OA</div>
+          <div>
+            <div class="jl-broker-name">OANDA</div>
+            <div class="jl-broker-sub">REST v20 · live key</div>
+          </div>
+        </div>
+        <div class="jl-broker-body">Native OAuth flow. Sub-second fill push, full position book + historical trade pull from day one.</div>
+        <button class="jl-broker-btn connected" onclick="connectBroker('OANDA')">✓ Connected · Practice</button>
+      </div>
+
+      <div class="jl-broker">
+        <div class="jl-broker-status">Available</div>
+        <div class="jl-broker-h">
+          <div class="jl-broker-logo tv">TV</div>
+          <div>
+            <div class="jl-broker-name">TradingView</div>
+            <div class="jl-broker-sub">Webhook alerts</div>
+          </div>
+        </div>
+        <div class="jl-broker-body">Drop our webhook URL into any TradingView alert. Strategy fills stream straight into the journal with tags.</div>
+        <button class="jl-broker-btn" onclick="connectBroker('TradingView')">Get webhook URL →</button>
+      </div>
+
+      <div class="jl-broker">
+        <div class="jl-broker-status">Available</div>
+        <div class="jl-broker-h">
+          <div class="jl-broker-logo ic">IC</div>
+          <div>
+            <div class="jl-broker-name">IC Markets</div>
+            <div class="jl-broker-sub">cTrader · FIX API</div>
+          </div>
+        </div>
+        <div class="jl-broker-body">Direct cTrader account link via OAuth. Pulls full trade history + live positions. FIX bridge available for institutional accounts.</div>
+        <button class="jl-broker-btn" onclick="connectBroker('IC Markets')">Connect IC →</button>
+      </div>
+
+      <div class="jl-broker">
+        <div class="jl-broker-status">Available</div>
+        <div class="jl-broker-h">
+          <div class="jl-broker-logo binance">BN</div>
+          <div>
+            <div class="jl-broker-name">Binance / Bybit</div>
+            <div class="jl-broker-sub">Read-only API key</div>
+          </div>
+        </div>
+        <div class="jl-broker-body">Spot + futures trade history pulled via read-only API. Funding fees, fees and PnL reconciled automatically.</div>
+        <button class="jl-broker-btn" onclick="connectBroker('Binance')">Connect Binance →</button>
+      </div>
+
+      <div class="jl-broker">
+        <div class="jl-broker-status">Available</div>
+        <div class="jl-broker-h">
+          <div class="jl-broker-logo api">API</div>
+          <div>
+            <div class="jl-broker-name">Custom · REST API</div>
+            <div class="jl-broker-sub">Webhook · JSON</div>
+          </div>
+        </div>
+        <div class="jl-broker-body">Push your own fills from a custom bot or platform. Documented JSON schema, idempotent endpoints, instant ingest.</div>
+        <button class="jl-broker-btn" onclick="connectBroker('Custom API')">Get API docs →</button>
+      </div>
+
+      <div class="jl-broker">
+        <div class="jl-broker-status">Available</div>
+        <div class="jl-broker-h">
+          <div class="jl-broker-logo csv">CSV</div>
+          <div>
+            <div class="jl-broker-name">CSV Import</div>
+            <div class="jl-broker-sub">For anything else</div>
+          </div>
+        </div>
+        <div class="jl-broker-body">Got an export from cTrader, ThinkOrSwim, Interactive Brokers, NinjaTrader? Drop the CSV — auto-mapping detects the broker.</div>
+        <button class="jl-broker-btn" onclick="connectBroker('CSV')">Upload CSV →</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════ CALENDAR + PERFORMANCE BY SETUP ═══════════ -->
+  <div class="jl-row" style="grid-template-columns:1.5fr 1fr;">
+    <div class="jl-card">
+      <div class="jl-card-h">
+        <div class="jl-card-h-t">📅 Calendar Heatmap</div>
+        <div class="jl-card-h-sub">May 2026 · click any day for the trade log</div>
+      </div>
+      <div class="jl-cal-grid" id="jlCal"></div>
+      <div style="margin-top:14px;display:flex;align-items:center;gap:10px;justify-content:flex-end;font-family:var(--f-mono);font-size:9.5px;color:var(--text3);font-weight:700;letter-spacing:.06em;">
+        <span>LESS</span>
+        <span style="display:inline-block;width:14px;height:14px;background:rgba(248,113,113,.36);border-radius:3px;"></span>
+        <span style="display:inline-block;width:14px;height:14px;background:rgba(248,113,113,.18);border-radius:3px;"></span>
+        <span style="display:inline-block;width:14px;height:14px;background:rgba(255,255,255,.05);border-radius:3px;"></span>
+        <span style="display:inline-block;width:14px;height:14px;background:rgba(52,211,153,.18);border-radius:3px;"></span>
+        <span style="display:inline-block;width:14px;height:14px;background:rgba(52,211,153,.36);border-radius:3px;"></span>
+        <span style="display:inline-block;width:14px;height:14px;background:linear-gradient(135deg,#10b981,#34d399);border-radius:3px;"></span>
+        <span>MORE</span>
+      </div>
+    </div>
+    <div class="jl-card">
+      <div class="jl-card-h">
+        <div class="jl-card-h-t">🎯 Win Rate by Setup</div>
+        <div class="jl-card-h-sub">90d</div>
+      </div>
+      <div class="jl-setups">
+        <div class="jl-bar-row">
+          <div class="jl-bar-lbl">Sweep + OB</div>
+          <div class="jl-bar-track"><div class="jl-bar pos" style="width:74%;"></div></div>
+          <div class="jl-bar-val pos">74%</div>
+        </div>
+        <div class="jl-bar-row">
+          <div class="jl-bar-lbl">CHoCH</div>
+          <div class="jl-bar-track"><div class="jl-bar pos" style="width:68%;"></div></div>
+          <div class="jl-bar-val pos">68%</div>
+        </div>
+        <div class="jl-bar-row">
+          <div class="jl-bar-lbl">FVG fill</div>
+          <div class="jl-bar-track"><div class="jl-bar pos" style="width:62%;"></div></div>
+          <div class="jl-bar-val pos">62%</div>
+        </div>
+        <div class="jl-bar-row">
+          <div class="jl-bar-lbl">Breakout</div>
+          <div class="jl-bar-track"><div class="jl-bar pos" style="width:55%;"></div></div>
+          <div class="jl-bar-val pos">55%</div>
+        </div>
+        <div class="jl-bar-row">
+          <div class="jl-bar-lbl">Range fade</div>
+          <div class="jl-bar-track"><div class="jl-bar pos" style="width:51%;"></div></div>
+          <div class="jl-bar-val pos">51%</div>
+        </div>
+        <div class="jl-bar-row">
+          <div class="jl-bar-lbl">News pop</div>
+          <div class="jl-bar-track"><div class="jl-bar neg" style="width:42%;"></div></div>
+          <div class="jl-bar-val neg">42%</div>
+        </div>
+        <div class="jl-bar-row">
+          <div class="jl-bar-lbl">Trend pull</div>
+          <div class="jl-bar-track"><div class="jl-bar neg" style="width:38%;"></div></div>
+          <div class="jl-bar-val neg">38%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ TRADE LOG ═══════════ -->
+  <div class="jl-card">
+    <div class="jl-card-h">
+      <div class="jl-card-h-t">📒 Trade Log</div>
+      <div class="jl-card-h-sub">247 trades · last 90 days</div>
+    </div>
+    <div class="jl-tbl-wrap">
+      <table class="jl-tbl">
+        <thead>
+          <tr>
+            <th>Date / Time</th>
+            <th>Symbol</th>
+            <th>Side</th>
+            <th>Entry</th>
+            <th>Exit</th>
+            <th>R</th>
+            <th>P&amp;L</th>
+            <th>Setup</th>
+            <th>Broker</th>
+            <th>News</th>
+          </tr>
+        </thead>
+        <tbody id="jlTrades"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- CTA -->
+<section class="jl-cta">
+  <h2>Stop journaling. <em>Start improving.</em></h2>
+  <p>Tradezella charges $39/month to type in your trades manually. We auto-import them, score your discipline, flag your bad habits, and contextualise every fill with the news that was breaking. Included in the $39.95/mo TradeContext subscription.</p>
+  <a href="../dashboard.html" class="btn">Open the dashboard <span>→</span></a>
+</section>
+
+<footer class="tc-foot">
+  <strong>TradeContext.ai</strong> · Educational content only — not personal financial advice · See <a href="../risk.html">risk warning</a>
+</footer>
+
+<!-- Connect modal -->
+<div class="jl-modal" id="jlModal">
+  <div class="jl-modal-card">
+    <button class="jl-modal-close" onclick="closeModal()">×</button>
+    <div class="jl-modal-h">
+      <div class="jl-broker-logo mt4" id="jlModalLogo" style="width:48px;height:48px;border-radius:11px;font-size:14px;">MT4</div>
+      <div>
+        <div class="jl-modal-title" id="jlModalTitle">Connect MetaTrader 4</div>
+        <div class="jl-modal-sub" id="jlModalSub">EA bridge · 30-second setup</div>
+      </div>
+    </div>
+    <div class="jl-modal-help" id="jlModalHelp">
+      Download our small Expert Advisor and drop it on any chart in MT4. It streams every fill to TradeContext in real-time. No passwords, no broker login needed.
+    </div>
+    <div class="jl-modal-field">
+      <label class="jl-modal-lbl">Account number</label>
+      <input class="jl-modal-input" type="text" placeholder="e.g. 91827361" id="jlModalAcct">
+    </div>
+    <div class="jl-modal-field">
+      <label class="jl-modal-lbl">Server</label>
+      <input class="jl-modal-input" type="text" placeholder="e.g. ICMarkets-Live01" id="jlModalServer">
+    </div>
+    <div class="jl-modal-actions">
+      <button class="jl-modal-btn secondary" onclick="closeModal()">Cancel</button>
+      <button class="jl-modal-btn primary" onclick="finishConnect()">Download EA → Continue</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════ Calendar heatmap ═══════
+(function buildCalendar(){
+  // May 2026 starts on a Friday. 31 days.
+  // Mocked daily PnL — realistic shape with a drawdown cluster.
+  var DAILY_PNL = {
+     1:  +320,  2: null,  3: null,  4: +780,  5:  +1240, 6:  +420,  7:  -180,
+     8:  +890,  9: null, 10: null, 11: +560, 12:  +1890,13: +1140, 14: -1850,
+    15: -2210, 16: null, 17: null, 18:  +320,19:   +780,20: +1640, 21: +2210,
+    22: +1450, 23: null, 24: null, 25:  +560,26:   +890,27:   +320,28: -1180,
+    29:  -560, 30: null, 31: null,
+  };
+  var grid = document.getElementById('jlCal');
+  ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].forEach(function(d){
+    var el = document.createElement('div'); el.className='jl-cal-dow'; el.textContent = d; grid.appendChild(el);
+  });
+  // May 1, 2026 was a Friday (sundayIdx = 5). Build leading empties.
+  var leading = 5;
+  for (var i = 0; i < leading; i++){
+    var el = document.createElement('div'); el.className = 'jl-cal-cell empty'; grid.appendChild(el);
+  }
+  function bucket(pnl){
+    if (pnl == null) return '';
+    if (pnl >= 1500) return 'pos4';
+    if (pnl >= 800)  return 'pos3';
+    if (pnl >= 300)  return 'pos2';
+    if (pnl > 0)     return 'pos1';
+    if (pnl <= -1500) return 'neg3';
+    if (pnl <= -800)  return 'neg2';
+    return 'neg1';
+  }
+  for (var d = 1; d <= 31; d++){
+    var pnl = DAILY_PNL[d];
+    var cls = bucket(pnl);
+    var el = document.createElement('div');
+    el.className = 'jl-cal-cell ' + cls;
+    el.title = pnl == null ? 'Weekend / no trades' : ('May '+d+' · $'+(pnl>=0?'+':'')+pnl);
+    el.innerHTML = '<div class="jl-cal-cell-day">'+d+'</div>'+(pnl!=null?'<div class="jl-cal-cell-pnl">'+(pnl>=0?'+':'')+'$'+Math.round(Math.abs(pnl)/100)*100/1000+'k</div>':'');
+    grid.appendChild(el);
+  }
+})();
+
+// ═══════ Equity curve (pure SVG) ═══════
+(function buildEquity(){
+  // 90-day equity curve — start $20k, end ~$24,420. Includes a drawdown around day 60.
+  var points = [];
+  var v = 20000;
+  var seed = 7;
+  function r(){seed = (seed*9301 + 49297) % 233280; return seed / 233280;}
+  for (var i = 0; i < 90; i++){
+    var change = (r() - 0.40) * 360;
+    if (i > 50 && i < 64) change -= 220; // drawdown cluster
+    v += change;
+    points.push(v);
+  }
+  // Normalise to ~$18,420 net
+  var target = 20000 + 18420;
+  var scale = (target - 20000) / (points[points.length-1] - 20000);
+  for (var i = 0; i < points.length; i++) points[i] = 20000 + (points[i] - 20000) * scale;
+
+  var wrap = document.getElementById('jlEquity');
+  var W = wrap.clientWidth || 600;
+  var H = 280;
+  var PADL = 60, PADR = 14, PADT = 18, PADB = 28;
+  var iw = W - PADL - PADR;
+  var ih = H - PADT - PADB;
+  var min = Infinity, max = -Infinity;
+  for (var i = 0; i < points.length; i++){if(points[i]<min)min=points[i];if(points[i]>max)max=points[i];}
+  var pad = (max - min) * 0.08; min -= pad; max += pad;
+  function x(i){return PADL + (i/(points.length-1)) * iw;}
+  function y(v){return PADT + ih - ((v - min)/(max - min)) * ih;}
+
+  var path = '';
+  for (var i = 0; i < points.length; i++) path += (i===0?'M ':' L ')+x(i).toFixed(1)+' '+y(points[i]).toFixed(1);
+  var areaPath = path + ' L '+x(points.length-1).toFixed(1)+' '+(PADT+ih)+' L '+x(0).toFixed(1)+' '+(PADT+ih)+' Z';
+
+  // Y ticks (5)
+  var yTicks = '';
+  var gridLines = '';
+  for (var k = 0; k <= 4; k++){
+    var p = min + ((max - min) * (k/4));
+    var yp = y(p);
+    gridLines += '<line x1="'+PADL+'" y1="'+yp+'" x2="'+(W-PADR)+'" y2="'+yp+'" stroke="rgba(255,255,255,.05)" stroke-width="1"/>';
+    yTicks += '<text x="'+(PADL-8)+'" y="'+(yp+3)+'" text-anchor="end" font-family="JetBrains Mono" font-size="9.5" fill="#7a9ab8">$'+Math.round(p/1000)+'k</text>';
+  }
+  // Date ticks
+  var dt = ['Feb 11','Mar 1','Mar 20','Apr 8','Apr 27','May 11'];
+  var dts = '';
+  for (var k = 0; k < dt.length; k++){
+    var idx = Math.round((points.length-1) * (k/(dt.length-1)));
+    dts += '<text x="'+x(idx)+'" y="'+(H-9)+'" text-anchor="middle" font-family="JetBrains Mono" font-size="9.5" fill="#7a9ab8">'+dt[k]+'</text>';
+  }
+  // Start line $20k
+  var yStart = y(20000);
+  var svg = '<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">'+
+    '<defs><linearGradient id="eqFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#34d399" stop-opacity=".26"/><stop offset="100%" stop-color="#34d399" stop-opacity="0"/></linearGradient></defs>'+
+    gridLines + yTicks +
+    '<line x1="'+PADL+'" y1="'+yStart+'" x2="'+(W-PADR)+'" y2="'+yStart+'" stroke="rgba(255,255,255,.18)" stroke-dasharray="3 3" stroke-width="1"/>'+
+    '<text x="'+(W-PADR-4)+'" y="'+(yStart-3)+'" text-anchor="end" font-family="JetBrains Mono" font-size="9" fill="#a5b8d0" font-weight="700">starting $20k</text>'+
+    '<path d="'+areaPath+'" fill="url(#eqFill)"/>'+
+    '<path d="'+path+'" fill="none" stroke="#34d399" stroke-width="1.8"/>'+
+    dts +
+    '</svg>';
+  wrap.innerHTML = svg;
+})();
+
+// ═══════ Trade log mock data ═══════
+(function buildTrades(){
+  var SETUPS = ['Sweep + OB', 'CHoCH', 'FVG fill', 'Breakout', 'Range fade', 'News pop', 'Trend pull'];
+  var SYMS   = ['XAU/USD','EUR/USD','GBP/USD','BTC/USD','NDX','SPX','USD/JPY','ETH/USD','TSLA','AAPL'];
+  var BROKERS= ['MT4 · IC','OANDA','MT5 · Pep','Binance','OANDA','MT4 · IC','OANDA'];
+  var NEWS   = ['CPI Day','FOMC','—','—','BoE','—','NFP','OPEC+','—','Earnings'];
+  var seed=42;
+  function r(){seed=(seed*9301+49297)%233280;return seed/233280;}
+  var out='';
+  var d = new Date('2026-05-11T15:30:00Z');
+  for (var i = 0; i < 40; i++){
+    var sym = SYMS[Math.floor(r()*SYMS.length)];
+    var side = r() > .4 ? 'long' : 'short';
+    var setup = SETUPS[Math.floor(r()*SETUPS.length)];
+    var broker = BROKERS[Math.floor(r()*BROKERS.length)];
+    var news = NEWS[Math.floor(r()*NEWS.length)];
+    var entry = 100 + r()*1000;
+    var rm = (r()*5 - 1.4).toFixed(2);
+    var pnl = (parseFloat(rm) * (200 + r()*300));
+    var exit = entry * (1 + parseFloat(rm)*.01 * (side==='long'?1:-1));
+    var rCls = parseFloat(rm) >= 0 ? 'jl-pnl-pos' : 'jl-pnl-neg';
+    var pCls = pnl >= 0 ? 'jl-pnl-pos' : 'jl-pnl-neg';
+    var ts = new Date(d.getTime() - i * (1.4 + r()*4) * 3600 * 1000);
+    var tsStr = ts.toISOString().slice(0,16).replace('T',' ');
+    out += '<tr>'+
+      '<td>'+tsStr+'</td>'+
+      '<td><strong style="color:var(--text);">'+sym+'</strong></td>'+
+      '<td><span class="jl-side '+side+'">'+(side==='long'?'▲ LONG':'▼ SHORT')+'</span></td>'+
+      '<td>'+entry.toFixed(2)+'</td>'+
+      '<td>'+exit.toFixed(2)+'</td>'+
+      '<td class="'+rCls+'">'+(parseFloat(rm)>=0?'+':'')+rm+'R</td>'+
+      '<td class="'+pCls+'">'+(pnl>=0?'+$':'-$')+Math.abs(Math.round(pnl))+'</td>'+
+      '<td><span class="jl-tag">'+setup+'</span></td>'+
+      '<td style="font-family:var(--f-mono);font-size:10.5px;color:var(--text3);">'+broker+'</td>'+
+      '<td>'+(news!=='—' ? '<span class="jl-news-ic" title="News context: '+news+'">📡 '+news+'</span>' : '<span style="color:var(--text4);">—</span>')+'</td>'+
+      '</tr>';
+  }
+  document.getElementById('jlTrades').innerHTML = out;
+})();
+
+// ═══════ Broker connect modal ═══════
+var BROKER_CFG = {
+  'MT4':         { logo:'MT4', cls:'mt4', title:'Connect MetaTrader 4',         sub:'EA bridge · 30-second setup', help:'Download our small Expert Advisor and drop it on any chart. Streams every fill to TradeContext in real-time. No passwords, no broker login needed.' },
+  'MT5':         { logo:'MT5', cls:'mt5', title:'Connect MetaTrader 5',         sub:'EA bridge · multi-asset',      help:'Same one-file EA as MT4 but for MT5. Forex, indices, crypto CFDs, equities — every fill streams to the journal.' },
+  'OANDA':       { logo:'OA',  cls:'oanda', title:'Connect OANDA',              sub:'OAuth + REST v20',             help:'One-click OAuth flow. Sub-second fill push, full position book + 5 years of historical trades pulled from day one.' },
+  'TradingView': { logo:'TV',  cls:'tv',  title:'TradingView Webhook',           sub:'Pine alerts',                  help:'Copy our webhook URL into any TradingView alert message. Strategy fills + manual alerts both ingest into the journal.' },
+  'IC Markets':  { logo:'IC',  cls:'ic',  title:'Connect IC Markets cTrader',    sub:'OAuth · FIX bridge',           help:'OAuth into your cTrader account. Pulls full trade history + live positions. FIX bridge available for institutional accounts.' },
+  'Binance':     { logo:'BN',  cls:'binance', title:'Connect Binance / Bybit',  sub:'Read-only API key',            help:'Generate a read-only API key in Binance. Paste it here. We pull spot + futures fills, fees, funding rates. We can never trade with this key.' },
+  'Custom API':  { logo:'API', cls:'api', title:'Custom REST · Webhook',         sub:'JSON ingest',                  help:'Push trade fills from any bot via our documented JSON endpoint. Idempotent. Rate-limited to 60 events/min per account.' },
+  'CSV':         { logo:'CSV', cls:'csv', title:'Upload CSV',                    sub:'Auto-mapped',                  help:'Drop a CSV from ThinkOrSwim, IBKR, NinjaTrader, cTrader or any broker. We auto-detect the format and map columns.' },
+};
+window.connectBroker = function(name){
+  var cfg = BROKER_CFG[name]; if(!cfg)return;
+  var logo = document.getElementById('jlModalLogo');
+  logo.textContent = cfg.logo;
+  logo.className = 'jl-broker-logo ' + cfg.cls;
+  logo.style.width = '48px'; logo.style.height='48px'; logo.style.borderRadius='11px'; logo.style.fontSize='14px';
+  document.getElementById('jlModalTitle').textContent = cfg.title;
+  document.getElementById('jlModalSub').textContent = cfg.sub;
+  document.getElementById('jlModalHelp').textContent = cfg.help;
+  document.getElementById('jlModal').classList.add('show');
+};
+window.closeModal = function(){document.getElementById('jlModal').classList.remove('show');};
+window.finishConnect = function(){
+  var btn = event.target;
+  btn.textContent = '✓ Connection request sent — check email';
+  btn.disabled = true;
+  setTimeout(function(){closeModal();},1600);
+};
+// click outside to close
+document.getElementById('jlModal').addEventListener('click', function(e){
+  if (e.target === this) closeModal();
+});
+</script>
+
+</body>
+</html>

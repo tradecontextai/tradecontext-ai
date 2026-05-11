@@ -93,15 +93,9 @@
       <li>
         <a><span>Features</span> <span class="chev">▾</span></a>
         <div class="dd-menu">
-          <a href="../dashboard.html" class="dd-item primary"><span class="ic">📊</span>Open the Full Dashboard</a>
-          <div class="dd-divider"></div>
-          <a href="../dashboard.html#feat-live-chart" class="dd-item"><span class="ic">📈</span>Live Chart · TradingView</a>
-          <a href="../dashboard.html#aibPanel" class="dd-item"><span class="ic">📡</span>AI News Bias Engine</a>
-          <a href="../dashboard.html#feat-macro-pulse" class="dd-item"><span class="ic">⚡</span>Macro Pulse · Sessions · Risk · Vol</a>
-          <a href="../dashboard.html#feat-world-pulse" class="dd-item"><span class="ic">🌍</span>World Pulse · Geopolitical Map</a>
-          <a href="../dashboard.html#feat-ai-playbooks" class="dd-item"><span class="ic">🤖</span>AI Playbooks · Journal · Positions</a>
-          <a href="../dashboard.html#tradePanel" class="dd-item"><span class="ic">🎯</span>Trade Plan Generator</a>
-          <a href="backtest.html" class="dd-item"><span class="ic">📈</span>Backtest Engine <em style="color:#f59e0b;font-style:normal;font-size:9px;letter-spacing:.06em;text-transform:uppercase;font-weight:800;margin-left:4px;">NEW</em></a>
+          <a href="../dashboard.html" class="dd-item primary"><span class="ic">📊</span>Full Dashboard</a>
+          <a href="journal.html" class="dd-item primary"><span class="ic">📓</span>AI Trading Journal <em style="color:#f59e0b;font-style:normal;font-size:9px;letter-spacing:.06em;text-transform:uppercase;font-weight:800;margin-left:4px;">NEW</em></a>
+          <a href="backtest.html" class="dd-item"><span class="ic">📈</span>Backtest Engine</a>
           <div class="dd-divider"></div>
           <a href="../dashboard.html" class="dd-item primary"><span class="ic">🚀</span>Open the desk →</a>
         </div>
